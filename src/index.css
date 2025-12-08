@@ -1,0 +1,75 @@
+/* Full-screen black background, green text, mono font */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #000;
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+}
+
+/* Overall layout: column, full height */
+.game-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Header bar at top */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  border-bottom: 1px solid #00ff00;
+  background: #000;
+}
+
+.game-header-location {
+  font-weight: bold;
+}
+
+.game-header-stats span {
+  margin-left: 16px;
+}
+
+/* Main scrollable transcript area */
+.game-main {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  background: #000;
+}
+
+.game-line {
+  margin: 0 0 8px;
+  white-space: pre-wrap;
+}
+
+/* Input bar at bottom */
+.game-footer {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-top: 1px solid #00ff00;
+  background: #000;
+}
+
+.game-prompt {
+  margin-right: 6px;
+}
+
+.game-input {
+  flex: 1;
+  background: #000;
+  color: #00ff00;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 1rem;
+}
