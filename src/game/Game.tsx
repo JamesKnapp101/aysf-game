@@ -42,6 +42,7 @@ export const Game: React.FC = () => {
   const inventoryItems = getItemsInInventory(state);
   const exits = getCurrentRoomExits(state);
   const desc = buildRoomDescription(state, state.playerRoomId);
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = input.trim();

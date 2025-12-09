@@ -52,27 +52,52 @@ export function getItemById(state: GameState, id: string): Item | undefined {
   return state.world.items.find((it: Item) => it.id === id);
 }
 
+function normalize(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim();
+}
+
+function tokenize(text: string): string[] {
+  return normalize(text).split(/\s+/).filter(Boolean);
+}
+
 export function resolveItemByNoun(
   state: GameState,
-  roomId: string,
-  noun: string,
-  includeInventory = true
+  noun: string
 ): Item | undefined {
-  const lower = noun.toLowerCase();
+  const room = getCurrentRoom(state);
+  const tokens = tokenize(noun);
 
-  const roomItems = getItemsInCurrentRoom(state, roomId);
-  const invItems = includeInventory
-    ? state.world.items.filter((it: Item) => state.inventory.includes(it.id))
-    : [];
+  // Items in scope: in room or in inventory (you can expand this later)
+  const itemsInScope = state.world.items.filter((it) => {
+    return it.location === room.id || it.location === "INVENTORY";
+  });
 
-  const candidates = [...roomItems, ...invItems];
-
-  return candidates.find((it) =>
-    [
-      it.name.toLowerCase(),
-      ...it.vocab.map((v: string) => v.toLowerCase()),
-    ].includes(lower)
+  // 1) Exact id match (user typed the id directly)
+  const exactId = itemsInScope.find(
+    (it) => normalize(it.id) === normalize(noun)
   );
+  if (exactId) return exactId;
+
+  // 2) Match by name: all tokens appear in item.name
+  const byName = itemsInScope.find((it) => {
+    const nameTokens = new Set(tokenize(it.name));
+    return tokens.every((t) => nameTokens.has(t));
+  });
+  if (byName) return byName;
+
+  // 3) Match by vocab: all tokens appear in item.vocab
+  const byVocab = itemsInScope.find((it) => {
+    if (!it.vocab?.length) return false;
+    const vocabTokens = new Set(it.vocab.map((v) => normalize(v)));
+    return tokens.every((t) => vocabTokens.has(t));
+  });
+  if (byVocab) return byVocab;
+
+  // No match
+  return undefined;
 }
 
 export function resolveDoorByNoun(

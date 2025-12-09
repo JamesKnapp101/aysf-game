@@ -1,3 +1,4 @@
+import { levelSevenItems } from "../objects/levelSevenMisc";
 import type { WorldChunk } from "../types";
 
 export const LEVEL_SEVEN: WorldChunk = {
@@ -333,6 +334,7 @@ export const LEVEL_SEVEN: WorldChunk = {
     },
   ],
 
-  items: [],
+  items: [...levelSevenItems],
   doors: [],
+  teleportPads: [],
 };

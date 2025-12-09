@@ -1,3 +1,4 @@
+import { levelSixItems } from "../objects/levelSixMisc";
 import type { WorldChunk } from "../types";
 
 export const LEVEL_SIX: WorldChunk = {
@@ -157,7 +158,7 @@ export const LEVEL_SIX: WorldChunk = {
     },
   ],
 
-  items: [],
+  items: [...levelSixItems],
   doors: [
     {
       id: "InnerDoor",
@@ -192,4 +193,5 @@ export const LEVEL_SIX: WorldChunk = {
       initiallyLocked: true,
     },
   ],
+  teleportPads: [],
 };

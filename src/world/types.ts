@@ -10,6 +10,9 @@ export interface GameState {
   moves: number;
   health: number;
   doorStates: DoorState[];
+  syringe: SyringeState;
+  spentCartridges: Record<string, boolean>;
+  openItems: Record<string, boolean>;
 }
 
 export type Direction =
@@ -52,6 +55,13 @@ export interface Room {
 
 export type ItemClass = "solid" | "liquid" | "gas";
 export type ItemCategory = "scenery" | "collectable" | "fluid";
+export type clothingSlots =
+  | "head"
+  | "torso"
+  | "legs"
+  | "feet"
+  | "jewelry"
+  | "full"; // full is for things like the space suit
 
 export interface Item {
   id: string;
@@ -59,18 +69,66 @@ export interface Item {
   description: string;
   location: string; // room id or "INVENTORY"
   vocab: string[];
-
+  initialDescription?: string;
   itemClass: ItemClass;
   itemCategory: ItemCategory;
   itemWeight: number;
   itemSize: number;
-
   isWearable: boolean;
+  clothingSlot?: clothingSlots;
   isReadable: boolean;
+  readableText?: string;
   isContainer: boolean;
-
-  hasEffect?: (state: any) => any;
+  isOpenable?: boolean;
+  capacity?: number;
+  contains?: string[];
+  hasDose?: boolean;
+  sceneryDescription?: string;
+  hasEffect?: (state: GameState, item: Item) => GameState;
+  isSwitchable?: boolean;
+  isOn?: boolean;
+  remainingCharge?: number;
+  providesLight?: boolean;
+  overrides?: ItemOverrides;
+  isContagious?: boolean;
+  isRadioactive?: boolean;
+  isEdible?: boolean;
 }
+
+export type ItemOverrideVerb =
+  | "open"
+  | "close"
+  | "insert"
+  | "remove"
+  | "take"
+  | "drop"
+  | "get"
+  | "smell"
+  | "taste"
+  | "wear"
+  | "lookunder"
+  | "knock"
+  | "light"
+  | "siton"
+  | "enter"
+  | "use"
+  | "kiss"
+  | "push"
+  | "pull"
+  | "lift"
+  | "lower"
+  | "listen"
+  | "touch"
+  | "attack"
+  | "cut"
+  | "switch"
+  | "search"
+  | "climb"
+  | "eat"
+  | "move"
+  | "examine";
+
+export type ItemOverrides = Partial<Record<ItemOverrideVerb, string>>;
 
 export type DoorKind =
   | "standard" // open/close, optionally locked
@@ -149,4 +207,8 @@ export interface WorldChunk {
   rooms: Room[];
   items: Item[];
   doors: DoorDefinition[];
+  teleportPads: TeleportPadDefinition[];
+}
+export interface SyringeState {
+  loadedCartridgeId?: string;
 }

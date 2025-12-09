@@ -9,6 +9,10 @@ export type ParsedCommand =
   | { type: "drop"; noun: string }
   | { type: "open"; noun: string }
   | { type: "close"; noun: string }
+  | { type: "read"; noun: string }
+  | { type: "smell"; noun: string }
+  | { type: "ask"; noun: string }
+  | { type: "fill"; noun: string }
   | { type: "unknown"; raw: string };
 
 const DIR_MAP: Record<string, Direction> = {
@@ -61,6 +65,10 @@ export function parseCommand(rawInput: string): ParsedCommand {
     case "inspect":
       if (!noun) return { type: "unknown", raw: rawInput };
       return { type: "examine", noun };
+    case "read":
+    case "scan":
+      if (!noun) return { type: "unknown", raw: rawInput };
+      return { type: "read", noun };
     case "take":
     case "get":
       if (!noun) return { type: "unknown", raw: rawInput };

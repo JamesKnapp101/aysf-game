@@ -1,3 +1,4 @@
+import { levelOneItems } from "../objects/levelOneMisc";
 import type { WorldChunk } from "../types";
 
 export const LEVEL_ONE: WorldChunk = {
@@ -89,7 +90,7 @@ export const LEVEL_ONE: WorldChunk = {
     },
   ],
 
-  items: [],
+  items: [...levelOneItems],
   doors: [
     {
       id: "BridgeDoors",
@@ -110,4 +111,5 @@ export const LEVEL_ONE: WorldChunk = {
       badgeItemId: "GrayBadge",
     },
   ],
+  teleportPads: [],
 };

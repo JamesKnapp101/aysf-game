@@ -1,3 +1,4 @@
+import { levelTwoItems } from "../objects/levelTwoMisc";
 import type { WorldChunk } from "../types";
 
 export const LEVEL_TWO: WorldChunk = {
@@ -223,7 +224,7 @@ export const LEVEL_TWO: WorldChunk = {
       exits: [{ direction: "north", toRoomId: "LevelTwoSecondaryCorridorOne" }],
     },
   ],
-  items: [],
+  items: [...levelTwoItems],
   doors: [
     {
       id: "DOOR2AE",
@@ -259,4 +260,5 @@ export const LEVEL_TWO: WorldChunk = {
       initiallyLocked: false,
     },
   ],
+  teleportPads: [],
 };

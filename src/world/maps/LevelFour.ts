@@ -1,3 +1,4 @@
+import { levelFourItems } from "../objects/levelFourMisc";
 import type { WorldChunk } from "../types";
 
 export const LEVEL_FOUR: WorldChunk = {
@@ -102,7 +103,7 @@ export const LEVEL_FOUR: WorldChunk = {
     },
   ],
 
-  items: [],
+  items: [...levelFourItems],
   doors: [
     {
       id: "PowerGridDoors",
@@ -158,4 +159,5 @@ export const LEVEL_FOUR: WorldChunk = {
       initiallyLocked: true,
     },
   ],
+  teleportPads: [],
 };

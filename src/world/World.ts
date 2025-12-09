@@ -13,6 +13,7 @@ function mergeWorldChunks(...chunks: WorldChunk[]): World {
     rooms: chunks.flatMap((c) => c.rooms),
     items: chunks.flatMap((c) => c.items),
     doors: chunks.flatMap((c) => c.doors),
+    teleportPads: chunks.flatMap((c) => c.teleportPads),
   };
 }
 

@@ -3,6 +3,7 @@ import {
   getCurrentRoom,
   getDoorById,
   getDoorState,
+  getItemById,
   getItemsInCurrentRoom,
   getItemsInInventory,
   resolveDoorByNoun,
@@ -15,12 +16,38 @@ import type {
   Exit,
   GameState,
   Item,
+  ItemOverrideVerb,
   RoomExit,
   TeleportPadDefinition,
 } from "../world/types";
 
-function appendLog(state: GameState, text: string): GameState {
+export function appendLog(state: GameState, text: string): GameState {
   return { ...state, log: [...state.log, text] };
+}
+
+function describeActionResult(
+  item: Item,
+  verb: ItemOverrideVerb,
+  fallback: string
+): string {
+  return item.overrides?.[verb] ?? fallback;
+}
+function isItemOpen(state: GameState, itemId: string): boolean {
+  return !!state.openItems[itemId];
+}
+
+function setItemOpen(
+  state: GameState,
+  itemId: string,
+  open: boolean
+): GameState {
+  return {
+    ...state,
+    openItems: {
+      ...state.openItems,
+      [itemId]: open,
+    },
+  };
 }
 
 // --- Items / inventory ------------------------------------------------------
@@ -72,6 +99,42 @@ export function dropItem(state: GameState, noun: string): GameState {
 
   const next = updateItemLocation(state, item.id, state.playerRoomId);
   return appendLog(next, "Dropped.");
+}
+
+function isItemOpenable(item: Item): boolean {
+  // For now, treat containers as openable.
+  // If you later add item.isOpenable, use that instead or in addition.
+  return !!item.isContainer;
+}
+
+export function tryOpenItem(
+  state: GameState,
+  item: Item
+): { state: GameState; message: string } {
+  if (!isItemOpenable(item)) {
+    return {
+      state,
+      message: "You can't open that.",
+    };
+  }
+
+  if (isItemOpen(state, item.id)) {
+    return {
+      state,
+      message: "It's already open.",
+    };
+  }
+
+  // Mark the item as open
+  const updatedState = setItemOpen(state, item.id, true);
+
+  // Use override text if present, otherwise generic "Opened."
+  const message = item.overrides?.open ?? "Opened.";
+
+  return {
+    state: updatedState,
+    message,
+  };
 }
 
 // --- Doors  ------------------------
@@ -331,7 +394,7 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
   // 2) Scenery item descriptions (these are your “room dressing” lines)
   if (sceneryItems.length > 0) {
     const sceneryText = sceneryItems
-      .map((item) => item.description?.trim())
+      .map((item) => item.sceneryDescription?.trim())
       .filter(Boolean)
       .join("\n\n");
     if (sceneryText) {
@@ -428,6 +491,14 @@ function resolveTeleportPadByNoun(
   );
 }
 
+function readReadable(state: GameState, noun: string): string {
+  const item = resolveItemByNoun(state, noun);
+  if (!item?.isReadable) {
+    return `There's nothing to read.`;
+  }
+  return `You read the ${item.name}...\n\n    "${item.readableText}"`;
+}
+
 // --- Command handling -------------------------------------------------------
 
 export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
@@ -438,7 +509,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       const desc = buildRoomDescription(state, state.playerRoomId);
       return appendLog(state, desc);
     }
-
+    case "read": {
+      const readResult = readReadable(state, cmd.noun);
+      return appendLog(state, readResult);
+    }
     case "inventory": {
       if (state.inventory.length === 0) {
         return appendLog(state, "You are carrying nothing.");
@@ -508,7 +582,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     }
 
     case "examine": {
-      const item = resolveItemByNoun(state, room.id, cmd.noun);
+      const item = resolveItemByNoun(state, cmd.noun);
       if (!item) return appendLog(state, "You don't see that here.");
       const desc = item.description || "You see nothing special.";
       return appendLog(state, desc);
@@ -523,6 +597,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     }
 
     case "open": {
+      // 1) Is this a door?
       const doorResult = resolveDoorByNoun(state, cmd.noun);
 
       if (doorResult) {
@@ -537,7 +612,19 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         return appendLog(withDoorUpdated, message);
       }
 
-      return appendLog(state, "You don't see that here.");
+      // 2) Otherwise, try to open an item
+      const itemToOpen = getItemById(state, cmd.noun);
+
+      if (!itemToOpen) {
+        return appendLog(state, "You don't see that here.");
+      }
+
+      const { state: withItemUpdated, message } = tryOpenItem(
+        state,
+        itemToOpen
+      );
+
+      return appendLog(withItemUpdated, message);
     }
 
     case "unknown":

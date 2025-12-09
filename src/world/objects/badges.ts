@@ -1,4 +1,4 @@
-import type { Item } from "../world/types";
+import type { Item } from "../types";
 
 export const badgeItems: Item[] = [
   {
@@ -7,19 +7,23 @@ export const badgeItems: Item[] = [
     description:
       "This is a slim, rectangular plastic badge that is entirely pink. It doesn't have any insignia, name, rank, or bar code.",
     location: "INVENTORY",
-    vocab: ["badge", "pink", "plastic"],
+    vocab: ["badge", "pink", "plastic", "pink badge"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
-    isReadable: false,
+    isReadable: true,
     isContainer: false,
+    readableText:
+      "This pink badge entitles the carrier to one free pink badge.",
   },
 
   {
     id: "blackbadge",
     name: "black plastic badge",
+    initialDescription:
+      "Peeking out of the Captain's breast pocket is what looks like a black badge.",
     description:
       "This is another slim plastic badge, but it doesn't have a clip like the others. It is a glossy jet black.",
     location: "INVENTORY",
@@ -52,6 +56,8 @@ export const badgeItems: Item[] = [
   {
     id: "brownbadge",
     name: "brown plastic badge",
+    initialDescription:
+      "From inside the shredded torso of the space suit, you can see a brown badge peeking out of the corpse's breast pocket.",
     description:
       "This is a slim, rectangular plastic badge that is entirely brown except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'EDWARD GAINS, E1' and beneath that a bar code of some kind.",
     location: "INVENTORY",
@@ -100,6 +106,7 @@ export const badgeItems: Item[] = [
   {
     id: "yellowbadge",
     name: "yellow plastic badge",
+    initialDescription: "Lying in the damp grass is a sooty yellow badge",
     description:
       "This is a slim, rectangular plastic badge that is entirely yellow except for a black insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'JOHN RAWLINS, EE2' and beneath that a bar code of some kind.",
     location: "INVENTORY",

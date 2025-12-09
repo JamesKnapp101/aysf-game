@@ -1,4 +1,7 @@
-import { badgeItems } from "../../game/badges";
+import { badgeItems } from "../objects/badges";
+import { corpseItems } from "../objects/bodies";
+import { drugItems } from "../objects/drugs";
+import { specialItems } from "../objects/gadgets";
 import type { WorldChunk } from "../types";
 
 export const STAIRWELL: WorldChunk = {
@@ -253,7 +256,7 @@ export const STAIRWELL: WorldChunk = {
     },
   ],
 
-  items: [...badgeItems],
+  items: [...badgeItems, ...corpseItems, ...drugItems, ...specialItems],
   doors: [
     {
       id: "BridgeStairDoors",
@@ -352,4 +355,5 @@ export const STAIRWELL: WorldChunk = {
       badgeItemId: "WhiteBadge",
     },
   ],
+  teleportPads: [],
 };
