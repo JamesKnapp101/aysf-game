@@ -5,6 +5,7 @@ import {
   describeCurrentEffects,
   describeRadiationLevel,
   describeSicknessLevel,
+  getStatusEffectById,
 } from "./selectors";
 
 interface StatusTabProps {
@@ -42,10 +43,12 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
         <MeterRow
           label="Rads"
           icon="☢"
-          value={gameState.player?.vitals?.radiation ?? 0}
-          display={`${(gameState.player?.vitals?.radiation ?? 0).toFixed(
-            0
-          )}\u00a0mSv`}
+          value={
+            getStatusEffectById(gameState, "radiation")?.[0]?.intensity ?? 0
+          }
+          display={`${(
+            getStatusEffectById(gameState, "radiation")?.[0]?.intensity ?? 0
+          ).toFixed(0)}\u00a0mSv`}
           min={0}
           max={100}
           goodWhenHigh={false}

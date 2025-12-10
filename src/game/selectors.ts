@@ -5,6 +5,7 @@ import type {
   GameState,
   Item,
   Room,
+  StatusEffect,
 } from "../world/types";
 
 export function getCurrentRoom(state: GameState): Room {
@@ -146,6 +147,16 @@ export function describeRoomWithItems(state: GameState): string {
   return room.description + itemsText;
 }
 
+export function getStatusEffectById(
+  state: GameState,
+  effectId: string
+): StatusEffect[] {
+  const effect = state.player.statuses.filter((status: StatusEffect) => {
+    return status.id === effectId;
+  });
+  return effect;
+}
+
 export function describeSicknessLevel(state: GameState): string {
   const s = state.player.vitals.theSickness ?? 0;
 
@@ -194,42 +205,49 @@ export function describeSicknessLevel(state: GameState): string {
 }
 
 export function describeRadiationLevel(state: GameState): string {
-  const r = state.player.vitals.radiation ?? 0;
-
-  // No radiation at all
-  if (r <= 0) {
+  const re =
+    state.player.statuses.filter((status: StatusEffect) => {
+      return status.id === "radiation";
+    }) ?? [];
+  if (re.length === 0) {
     return "You have no signs of radiation exposure.";
-  }
+  } else {
+    const r = re[0];
+    // No radiation at all
+    if (r.intensity <= 0) {
+      return "You have no signs of radiation exposure.";
+    }
 
-  // Very low exposure, mild discomfort
-  if (r < 10) {
-    return "Your face and neck feel a little burned.";
+    // Very low exposure, mild discomfort
+    if (r.intensity < 10) {
+      return "Your face and neck feel a little burned.";
+    }
+    if (r.intensity < 20) {
+      return "Your face and neck feel a little burned and you feel a little tired.";
+    }
+    if (r.intensity < 30) {
+      return "Your face and neck feel burned and you're starting to feel queasy.";
+    }
+    if (r.intensity < 40) {
+      return "Your skin is starting to feel burned and itchy. You feel sick to your stomach.";
+    }
+    if (r.intensity < 50) {
+      return "Your skin is starting to develop red blotches. You're starting to feel really sick.";
+    }
+    if (r.intensity < 60) {
+      return "Your skin is starting to develop blisters. You feel really sick.";
+    }
+    if (r.intensity < 70) {
+      return "Your skin is getting red and developing blisters. You feel weak and very nauseous.";
+    }
+    if (r.intensity < 80) {
+      return "Your skin is blotchy and blistered and you're covered in sweat. Your hair is starting to fall out and you're sick to your stomach.";
+    }
+    if (r.intensity < 90) {
+      return "Your skin is blotchy and blistered and sweat is pouring off you. Your hair is coming loose in clumps and you can barely keep from vomiting.";
+    }
+    return "Your skin is blotchy and blistered and sweat is pouring off you. Your hair is coming loose in clumps and you can barely keep from vomiting…";
   }
-  if (r < 20) {
-    return "Your face and neck feel a little burned and you feel a little tired.";
-  }
-  if (r < 30) {
-    return "Your face and neck feel burned and you're starting to feel queasy.";
-  }
-  if (r < 40) {
-    return "Your skin is starting to feel burned and itchy. You feel sick to your stomach.";
-  }
-  if (r < 50) {
-    return "Your skin is starting to develop red blotches. You're starting to feel really sick.";
-  }
-  if (r < 60) {
-    return "Your skin is starting to develop blisters. You feel really sick.";
-  }
-  if (r < 70) {
-    return "Your skin is getting red and developing blisters. You feel weak and very nauseous.";
-  }
-  if (r < 80) {
-    return "Your skin is blotchy and blistered and you're covered in sweat. Your hair is starting to fall out and you're sick to your stomach.";
-  }
-  if (r < 90) {
-    return "Your skin is blotchy and blistered and sweat is pouring off you. Your hair is coming loose in clumps and you can barely keep from vomiting.";
-  }
-  return "Your skin is blotchy and blistered and sweat is pouring off you. Your hair is coming loose in clumps and you can barely keep from vomiting…";
 }
 
 export function describeBodyTemperatureLevel(state: GameState): string {

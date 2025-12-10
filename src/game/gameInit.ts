@@ -50,7 +50,6 @@ export const createInitialState = (world: World): GameState => {
         oxygen: 100,
         temperature: 98.6,
         brainActivity: 1,
-        radiation: 0,
         theSickness: 0,
       },
       statuses: [
@@ -61,6 +60,10 @@ export const createInitialState = (world: World): GameState => {
         {
           id: "vanitrax",
           intensity: 1,
+        },
+        {
+          id: "radiation",
+          intensity: 58,
         },
       ],
     },
