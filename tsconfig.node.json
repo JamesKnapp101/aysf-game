@@ -20,9 +20,9 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
+    "noUncheckedSideEffectImports": true
 
-    "editor.wordWrap": "on"
+    //  "editor.wordWrap": "on"
   },
   "include": ["vite.config.ts"]
 }

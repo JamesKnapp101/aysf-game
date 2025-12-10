@@ -1,7 +1,11 @@
+import { levelOneDoors } from "../doors/levelOneDoors";
 import { levelOneItems } from "../objects/levelOneMisc";
 import type { WorldChunk } from "../types";
 
 export const LEVEL_ONE: WorldChunk = {
+  items: [...levelOneItems],
+  doors: [...levelOneDoors],
+  teleportPads: [],
   rooms: [
     {
       id: "Bridge",
@@ -89,27 +93,4 @@ export const LEVEL_ONE: WorldChunk = {
       exits: [{ direction: "east", toRoomId: "LevelOneCorridorOne" }],
     },
   ],
-
-  items: [...levelOneItems],
-  doors: [
-    {
-      id: "BridgeDoors",
-      name: "a security door",
-      descriptionFromA:
-        "To the north is a security door, mounted next to which is a badge scanner of some kind with a blue strip across the top. A sign over the door reads 'Lab'.",
-      descriptionFromB:
-        "To the south is a security door leading back to the corridor.",
-      kind: "badgeScanner",
-      vocab: ["doors", "bridge doors", "security doors", "door"],
-      connects: {
-        roomAId: "LevelOneCorridorOne",
-        roomBId: "Bridge",
-      },
-      directions: { fromA: "north", fromB: "south" },
-      initiallyOpen: false,
-      initiallyLocked: true,
-      badgeItemId: "GrayBadge",
-    },
-  ],
-  teleportPads: [],
 };

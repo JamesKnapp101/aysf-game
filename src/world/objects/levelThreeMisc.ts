@@ -1029,6 +1029,29 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
+    id: "HubPassSlot",
+    name: "card slot",
+    description:
+      "A thin horizontal slot in a mounted electronic reader. It looks like it takes some sort of card.",
+    sceneryDescription:
+      "Next to the engraved door is mounted some kind of electronic reader, with a thin horizontal slot at its base.",
+    location: "LevelThreeSecondCorridorTwo",
+    vocab: ["card reader", "reader", "slot"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    isWearable: false,
+    isReadable: true,
+    readableText:
+      "K. Danko\n" +
+      "HUB PASS\n" +
+      "24 Hours\n" +
+      "Day: Any\n" +
+      "Exp. 03/07/71\n",
+    isContainer: false,
+  },
+  {
     id: "MetalPanelHubEast",
     name: "metal panel",
     description:

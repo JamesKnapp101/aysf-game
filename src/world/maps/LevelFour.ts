@@ -1,7 +1,11 @@
+import { levelFourDoors } from "../doors/levelFourDoors";
 import { levelFourItems } from "../objects/levelFourMisc";
 import type { WorldChunk } from "../types";
 
 export const LEVEL_FOUR: WorldChunk = {
+  items: [...levelFourItems],
+  doors: [...levelFourDoors],
+  teleportPads: [],
   rooms: [
     {
       id: "LevelFourCorridorTwo",
@@ -102,62 +106,4 @@ export const LEVEL_FOUR: WorldChunk = {
       exits: [{ direction: "north", doorId: "PowerGridDoors" }],
     },
   ],
-
-  items: [...levelFourItems],
-  doors: [
-    {
-      id: "PowerGridDoors",
-      name: "a security door",
-      descriptionFromA:
-        "To the south is a security door, mounted next to which is a badge scanner of some kind with a yellow strip across the top. A sign over the door reads 'MAIN POWER GRID'.",
-      descriptionFromB:
-        "To the north is a security door leading back to the corridor.",
-      kind: "badgeScanner",
-      vocab: ["door", "power doors", "security door", "power grid door"],
-      connects: {
-        roomAId: "LevelFourCorridorTwo",
-        roomBId: "PowerGrid",
-      },
-      directions: { fromA: "south", fromB: "north" },
-      initiallyOpen: false,
-      initiallyLocked: true,
-      badgeItemId: "yellowbadge",
-      checkBadgeOnDir: "south",
-    },
-    {
-      id: "HydroponicsDoors",
-      name: "a security door",
-      descriptionFromA:
-        "To the west is a security door, mounted next to which is a badge scanner of some kind with a green strip across the top. A sign over the door reads 'BOTANITCAL'.",
-      descriptionFromB:
-        "To the east is a security door leading back to the corridor.",
-      kind: "badgeScanner",
-      vocab: ["door", "security door", "botanical door"],
-      connects: {
-        roomAId: "LevelFourCorridorOne",
-        roomBId: "HydroponicsOne",
-      },
-      directions: { fromA: "west", fromB: "east" },
-      initiallyOpen: false,
-      initiallyLocked: true,
-      badgeItemId: "greenbadge",
-    },
-    {
-      id: "CellarDoor",
-      name: "a small trap door",
-      descriptionFromA:
-        "In the grass nearby you can see a circular hatch of some kind.",
-      descriptionFromB: "A hatch above leads back outside.",
-      kind: "keyed",
-      vocab: ["door", "hatch", "maintenance hatch"],
-      connects: {
-        roomAId: "HydroponicsOne",
-        roomBId: "HydroponicsCellar",
-      },
-      directions: { fromA: "down", fromB: "up" },
-      initiallyOpen: false,
-      initiallyLocked: true,
-    },
-  ],
-  teleportPads: [],
 };

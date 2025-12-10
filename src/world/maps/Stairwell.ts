@@ -1,3 +1,5 @@
+import { badgeScannerDoors } from "../doors/badgeScannerDoors";
+import { stairwellDoors } from "../doors/stairwellDoors";
 import { badgeItems } from "../objects/badges";
 import { corpseItems } from "../objects/bodies";
 import { drugItems } from "../objects/drugs";
@@ -5,6 +7,9 @@ import { specialItems } from "../objects/gadgets";
 import type { WorldChunk } from "../types";
 
 export const STAIRWELL: WorldChunk = {
+  items: [...badgeItems, ...corpseItems, ...drugItems, ...specialItems],
+  doors: [...stairwellDoors, ...badgeScannerDoors],
+  teleportPads: [],
   rooms: [
     {
       id: "StairOne",
@@ -255,105 +260,4 @@ export const STAIRWELL: WorldChunk = {
       ],
     },
   ],
-
-  items: [...badgeItems, ...corpseItems, ...drugItems, ...specialItems],
-  doors: [
-    {
-      id: "BridgeStairDoors",
-      name: "bridge access door",
-      descriptionFromA:
-        "To the west is a door which is different from those on the other floors; this door has no handle, and mounted on the wall next to it is some kind of badge scanner with a grey strip across the top. Printed on the door are the words 'MAIN BRIDGE'.",
-      descriptionFromB:
-        "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
-      kind: "badgeScanner",
-      vocab: ["door"],
-      connects: { roomAId: "StairOne", roomBId: "LevelOneStairAccess" },
-      directions: { fromA: "east", fromB: "west" },
-      initiallyOpen: true,
-      initiallyLocked: false,
-      badgeItemId: "GreyBadge",
-    },
-    {
-      id: "StairDoorTwo",
-      name: "stairwell access door",
-      descriptionFromA:
-        "There is a door to the west with the words 'LIVING QUARTERS' printed on it and mounted over it is a plastic sign labeled '2'.",
-      descriptionFromB:
-        "To the east is a plain metal door labeled 'STAIRS', warped, and marred with soot.",
-      kind: "standard",
-      vocab: ["door"],
-      connects: { roomAId: "StairTwo", roomBId: "DestroyedCorridor" },
-      directions: { fromA: "west", fromB: "east" },
-      initiallyOpen: true,
-      initiallyLocked: false,
-    },
-    {
-      id: "StairDoorThree",
-      name: "stairwell access door",
-      descriptionFromA:
-        "There is a door to the west with the words 'LIVING QUARTERS/MEDICAL/RECREATION' printed on it and mounted over it is a plastic sign labeled '3'.",
-      descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
-      kind: "standard",
-      vocab: ["door"],
-      connects: { roomAId: "StairThree", roomBId: "LevelThreeStairAccess" },
-      directions: { fromA: "west", fromB: "east" },
-      initiallyOpen: true,
-      initiallyLocked: false,
-    },
-    {
-      id: "StairDoorFour",
-      name: "stairwell access door",
-      descriptionFromA:
-        "There is a door to the west with the words 'BIOSPHERE/POWER GRID' printed on it and mounted over it is a plastic sign labeled '4'.",
-      descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
-      kind: "standard",
-      vocab: ["door"],
-      connects: { roomAId: "StairFour", roomBId: "LevelFourStairAccess" },
-      directions: { fromA: "west", fromB: "east" },
-      initiallyOpen: true,
-      initiallyLocked: false,
-    },
-    {
-      id: "StairDoorFive",
-      name: "stairwell access door",
-      descriptionFromA:
-        "There is a door to the west with the word 'ENGINEERING' printed on it and mounted over it is a plastic sign labeled '5'.",
-      descriptionFromB: "To the west is a plain metal door labeled 'STAIRS'.",
-      kind: "standard",
-      vocab: ["door"],
-      connects: { roomAId: "StairFive", roomBId: "LevelFiveStairAccess" },
-      directions: { fromA: "west", fromB: "east" },
-      initiallyOpen: true,
-      initiallyLocked: false,
-    },
-    {
-      id: "StairDoorSix",
-      name: "stairwell access door",
-      descriptionFromA:
-        "There is a door to the west with the word 'STORAGE' printed on it and mounted over it is a plastic sign labeled '6'.",
-      descriptionFromB: "To the west is a plain metal door labeled 'STAIRS'.",
-      kind: "standard",
-      vocab: ["door"],
-      connects: { roomAId: "StairSix", roomBId: "LevelSixStairAccess" },
-      directions: { fromA: "west", fromB: "east" },
-      initiallyOpen: true,
-      initiallyLocked: false,
-    },
-    {
-      id: "CryoStairDoors",
-      name: "cryo access door",
-      descriptionFromA:
-        "There is a door to the west with the word 'CRYONICS' printed on it and mounted over it is a plastic sign labeled '7'.",
-      descriptionFromB:
-        "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
-      kind: "badgeScanner",
-      vocab: ["door"],
-      connects: { roomAId: "StairSeven", roomBId: "LevelSevenStairAccess" },
-      directions: { fromA: "east", fromB: "west" },
-      initiallyOpen: true,
-      initiallyLocked: false,
-      badgeItemId: "WhiteBadge",
-    },
-  ],
-  teleportPads: [],
 };

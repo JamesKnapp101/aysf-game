@@ -24,23 +24,58 @@ export function getOpeningSplashLogs(): string[] {
   ];
 }
 
-export const createInitialState = (world: World): GameState => ({
-  world,
-  playerRoomId: "LivingQuartersFiveEast",
-  inventory: [],
-  log: getOpeningSplashLogs(),
-  score: 0,
-  memory: 0,
-  rating: 0,
-  moves: 0,
-  health: 100,
-  doorStates: initDoorStates(world.doors),
-  syringe: {
-    loadedCartridgeId: undefined,
-  },
-  spentCartridges: {},
-  openItems: {},
-});
+export const createInitialState = (world: World): GameState => {
+  // If initDoorStates still returns an array, convert it to a map here
+  const initialDoorStatesArray = initDoorStates(world.doors);
+  const doors: Record<string, DoorState> = {};
+  for (const ds of initialDoorStatesArray) {
+    doors[ds.id] = ds;
+  }
+
+  return {
+    world,
+    log: getOpeningSplashLogs(),
+    score: 0,
+    rating: 0,
+    moves: 0,
+    player: {
+      roomId: "LivingQuartersFiveEast",
+      inventory: [],
+      memories: {
+        memoryScore: 0,
+        revealedFlags: new Set<string>(),
+      },
+      vitals: {
+        health: 100,
+        oxygen: 100,
+        temperature: 98.6,
+        brainActivity: 1,
+        radiation: 0,
+        theSickness: 0,
+      },
+      statuses: [
+        {
+          id: "trixophine",
+          intensity: 1,
+        },
+        {
+          id: "vanitrax",
+          intensity: 1,
+        },
+      ],
+    },
+    worldState: {
+      doors,
+    },
+    itemState: {
+      syringe: {
+        loadedCartridgeId: undefined,
+      },
+      spentCartridges: {},
+      openItems: {},
+    },
+  };
+};
 
 function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {
   return doorDefs.map((def) => ({

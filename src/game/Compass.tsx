@@ -12,22 +12,40 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
 
   return (
     <div className="room-compass">
-      {/* U in upper-left */}
+      {/* Up (upper-left) */}
       <div
         className={`room-compass-label room-compass-label--u ${labelClass(
           "up"
         )}`}
       >
-        U
+        <svg viewBox="0 0 10 10" className="compass-icon" aria-hidden="true">
+          <polyline
+            points="5,1 1,5 3,5 3,9 7,9 7,5 9,5 5,1"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        </svg>
       </div>
 
-      {/* D in lower-right */}
+      {/* Down (lower-right) */}
       <div
         className={`room-compass-label room-compass-label--d ${labelClass(
           "down"
         )}`}
       >
-        D
+        <svg viewBox="0 0 10 10" className="compass-icon" aria-hidden="true">
+          <polyline
+            points="5,9 1,5 3,5 3,1 7,1 7,5 9,5 5,9"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        </svg>
       </div>
 
       <svg

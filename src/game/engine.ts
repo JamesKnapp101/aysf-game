@@ -33,7 +33,7 @@ function describeActionResult(
   return item.overrides?.[verb] ?? fallback;
 }
 function isItemOpen(state: GameState, itemId: string): boolean {
-  return !!state.openItems[itemId];
+  return !!state.itemState.openItems[itemId];
 }
 
 function setItemOpen(
@@ -43,9 +43,12 @@ function setItemOpen(
 ): GameState {
   return {
     ...state,
-    openItems: {
-      ...state.openItems,
-      [itemId]: open,
+    itemState: {
+      ...state.itemState,
+      openItems: {
+        ...state.itemState.openItems,
+        [itemId]: open,
+      },
     },
   };
 }
@@ -69,7 +72,7 @@ function updateItemLocation(
 }
 
 function takeItem(state: GameState, noun: string): GameState {
-  const itemsHere = getItemsInCurrentRoom(state, state.playerRoomId);
+  const itemsHere = getItemsInCurrentRoom(state, state.player.roomId);
   const lower = noun.toLowerCase();
 
   const item = itemsHere.find(
@@ -97,7 +100,7 @@ export function dropItem(state: GameState, noun: string): GameState {
   );
   if (!item) return appendLog(state, "You aren't carrying that.");
 
-  const next = updateItemLocation(state, item.id, state.playerRoomId);
+  const next = updateItemLocation(state, item.id, state.player.roomId);
   return appendLog(next, "Dropped.");
 }
 
@@ -238,23 +241,19 @@ function updateDoor(state: GameState, updated: DoorDefinition): GameState {
 }
 
 function playerHasBadge(state: GameState, badgeId: string): boolean {
-  return state.inventory.includes(badgeId);
+  return state.player.inventory.includes(badgeId);
 }
 
 function upsertDoorState(state: GameState, updated: DoorState): GameState {
-  const idx = state.doorStates.findIndex((ds) => ds.id === updated.id);
-  if (idx === -1) {
-    return {
-      ...state,
-      doorStates: [...state.doorStates, updated],
-    };
-  }
-
-  const nextDoorStates = [...state.doorStates];
-  nextDoorStates[idx] = updated;
   return {
     ...state,
-    doorStates: nextDoorStates,
+    worldState: {
+      ...state.worldState,
+      doors: {
+        ...state.worldState.doors,
+        [updated.id]: updated,
+      },
+    },
   };
 }
 
@@ -290,7 +289,7 @@ export function tryOpenDoor(
           return { state, message: "It's locked." };
         }
 
-        const hasKey = nextState.inventory.includes(doorDef.keyItemId);
+        const hasKey = nextState.player.inventory.includes(doorDef.keyItemId);
         if (!hasKey) {
           return {
             state,
@@ -308,7 +307,9 @@ export function tryOpenDoor(
           return { state, message: "The scanner flashes red." };
         }
 
-        const hasBadge = nextState.inventory.includes(doorDef.badgeItemId);
+        const hasBadge = nextState.player.inventory.includes(
+          doorDef.badgeItemId
+        );
         if (!hasBadge) {
           return {
             state,
@@ -428,13 +429,13 @@ function getTeleportPadsInCurrentRoom(
   state: GameState
 ): TeleportPadDefinition[] {
   return state.world.teleportPads.filter(
-    (pad) => pad.roomId === state.playerRoomId
+    (pad) => pad.roomId === state.player.roomId
   );
 }
 
 function describeTeleportPads(state: GameState): string[] {
   const padsHere = state.world.teleportPads.filter(
-    (pad) => pad.roomId === state.playerRoomId
+    (pad) => pad.roomId === state.player.roomId
   );
 
   return padsHere.map((pad) => `A ${pad.label} glows faintly on the floor.`);
@@ -461,7 +462,10 @@ export function activateTeleportPad(
 
   const newState: GameState = {
     ...state,
-    playerRoomId: dest.roomId,
+    player: {
+      ...state.player,
+      roomId: dest.roomId,
+    },
   };
 
   return appendLog(
@@ -506,7 +510,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
   switch (cmd.type) {
     case "look": {
-      const desc = buildRoomDescription(state, state.playerRoomId);
+      const desc = buildRoomDescription(state, state.player.roomId);
       return appendLog(state, desc);
     }
     case "read": {
@@ -514,11 +518,11 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       return appendLog(state, readResult);
     }
     case "inventory": {
-      if (state.inventory.length === 0) {
+      if (state.player.inventory.length === 0) {
         return appendLog(state, "You are carrying nothing.");
       }
 
-      const names = state.inventory
+      const names = state.player.inventory
         .map(
           (id) =>
             state.world.items.find((i) => i.id === id)?.name ?? "something"
@@ -561,7 +565,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
           moveMessage += message;
         }
 
-        destinationRoomId = resolveDoorDestination(doorDef, state.playerRoomId);
+        destinationRoomId = resolveDoorDestination(
+          doorDef,
+          state.player.roomId
+        );
       } else if (exit.toRoomId) {
         destinationRoomId = exit.toRoomId;
       }
@@ -572,7 +579,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
       const newState: GameState = {
         ...state,
-        playerRoomId: destinationRoomId,
+        player: {
+          ...state.player,
+          roomId: destinationRoomId,
+        },
       };
       moveMessage +=
         moveMessage === ""

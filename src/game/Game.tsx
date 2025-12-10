@@ -1,10 +1,11 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { buildRoomDescription, handleCommand } from "./engine";
 import {
-  describeRoomWithItems,
+  describeBodyTemperatureLevel,
+  describeRadiationLevel,
+  describeSicknessLevel,
   getCurrentRoom,
   getCurrentRoomExits,
-  getItemsInCurrentRoom,
   getItemsInInventory,
 } from "./selectors";
 import { parseCommand } from "../parse/parser";
@@ -12,6 +13,7 @@ import { WORLD } from "../world/World";
 import { RoomCompass } from "./Compass";
 import type { GameState } from "../world/types";
 import { createInitialState } from "./gameInit";
+import { StatusTab } from "./StatusTab";
 
 type Action = { type: "command"; input: string };
 
@@ -33,7 +35,7 @@ function reducer(state: GameState, action: Action): GameState {
 export const Game: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, createInitialState(WORLD));
   const [input, setInput] = useState("");
-  const [activeTab, setActiveTab] = useState<"inventory" | "status">(
+  const [activeTab, setActiveTab] = useState<"inventory" | "status" | "hints">(
     "inventory"
   );
   const logRef = useRef<HTMLDivElement | null>(null);
@@ -41,7 +43,10 @@ export const Game: React.FC = () => {
   const currentRoom = getCurrentRoom(state);
   const inventoryItems = getItemsInInventory(state);
   const exits = getCurrentRoomExits(state);
-  const desc = buildRoomDescription(state, state.playerRoomId);
+  const desc = buildRoomDescription(state, state.player.roomId);
+
+  const formatLabel = (key: string) =>
+    key.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +76,7 @@ export const Game: React.FC = () => {
         </div>
         <div className="game-header-stats">
           <span>Score: {state.score}</span>
-          <span>Memory: {state.memory}%</span>
+          <span>Memory: {state.player.memories.memoryScore}%</span>
           <span>Rating: {state.rating}</span>
           <span>Moves: {state.moves}</span>
         </div>
@@ -138,9 +143,19 @@ export const Game: React.FC = () => {
             >
               Status
             </button>
+            <button
+              type="button"
+              className={
+                "game-tab" + (activeTab === "hints" ? " game-tab-active" : "")
+              }
+              onClick={() => setActiveTab("hints")}
+            >
+              Hints
+            </button>
           </div>
+
           <div className="game-sidebar-content">
-            {activeTab === "inventory" ? (
+            {activeTab === "inventory" && (
               <div>
                 {inventoryItems.length === 0 ? (
                   <p className="game-line">You are carrying nothing.</p>
@@ -157,12 +172,15 @@ export const Game: React.FC = () => {
                   </>
                 )}
               </div>
-            ) : (
+            )}
+
+            {/* STATUS TAB */}
+            {activeTab === "status" && <StatusTab gameState={state} />}
+
+            {activeTab === "hints" && (
               <div>
-                <p className="game-line">Score: {state.score}</p>
-                <p className="game-line">Health: {state.health}</p>
-                <p className="game-line">Memory: {state.memory}%</p>
-                <p className="game-line">Rating: {state.rating}</p>
+                <p className="game-line">Hint system coming online soon…</p>
+                {/* Later: render your actual hint UI here */}
               </div>
             )}
           </div>

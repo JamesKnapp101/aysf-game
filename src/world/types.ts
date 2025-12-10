@@ -1,18 +1,109 @@
 export interface GameState {
+  // Static world definition (rooms, items, doors, etc.)
   world: World;
-  playerRoomId: string;
 
-  inventory: string[];
+  // Meta / progression
+  moves: number; // was: moves
+  score: number; // was: score
+  rating: number; // was: rating
+
+  // Output log for the UI
   log: string[];
-  score: number;
-  memory: number;
-  rating: number;
-  moves: number;
-  health: number;
-  doorStates: DoorState[];
-  syringe: SyringeState;
-  spentCartridges: Record<string, boolean>;
-  openItems: Record<string, boolean>;
+
+  // Dynamic slices
+  player: PlayerState;
+  worldState: WorldState;
+  itemState: ItemState;
+}
+
+export interface PlayerVitals {
+  health: number; // 0–100
+  oxygen: number; // 0–100 (stub for later)
+  temperature: number;
+  brainActivity: number; // 1: "normal" 2: "excited" 3: "slowed" 4: "stoned" 5: "possessed"
+  radiation: number;
+  theSickness: number; // Invisible stat, affects diagnosis
+}
+
+export type StatusId =
+  | "bleeding"
+  | "drunk"
+  | "nanites"
+  | "smokeInhalation"
+  | "radiation"
+  | "blind"
+  | "virus"
+  | "trixophine"
+  | "vanitrax"
+  | "seritroxin"
+  | "pentatrosin"
+  | "innoculant"
+  | "xantophol"
+  | "dreaming";
+
+export interface StatusEffect {
+  id: StatusId;
+  intensity: number; // 1–3 or whatever you like
+  remainingTurns?: number; // optional: undefined = indefinite
+  source?: string; // item id, event id, etc.
+}
+
+export interface PlayerMemories {
+  memoryScore: number; // replaces top-level `memory`
+  revealedFlags: Set<string>; // e.g. "knowsName", "remembersKiraParty"
+}
+
+export interface PlayerState {
+  // Where the player is
+  roomId: string; // was: playerRoomId
+
+  // Inventory is just item ids you already use
+  inventory: string[]; // was: top-level inventory
+
+  // Core condition
+  vitals: PlayerVitals;
+  statuses: StatusEffect[];
+
+  // Narrative progress
+  memories: PlayerMemories;
+}
+
+export interface Countdown {
+  id: string;
+  remainingTurns: number;
+  isActive: boolean;
+}
+
+export interface WorldState {
+  // Doors keyed by door id instead of an array
+  doors: Record<string, DoorState>; // was: doorStates: DoorState[]
+
+  // Threat timers, hazard countdowns, etc. (stubbed for now)
+  threatTimers?: {
+    engineMeltdown?: Countdown;
+    reactorOverload?: Countdown;
+    hullBreach?: Countdown;
+  };
+
+  // Global environmental conditions (easy extension point)
+  globalConditions?: {
+    shipPressure: "normal" | "low" | "vacuum";
+    radiationLevel: number; // 0–100
+  };
+
+  // Later: biosigns, power state per deck, etc.
+}
+
+export interface ItemState {
+  // Syringe-specific state
+  syringe: SyringeState; // was: top-level syringe
+
+  // Dynamic bits keyed by item id
+  openItems: Record<string, boolean>; // was: top-level openItems
+  spentCartridges: Record<string, boolean>; // was: top-level spentCartridges
+
+  // Extension point for more per-item flags later
+  // e.g. hackedConsoles, repairedPanels, etc.
 }
 
 export type Direction =
