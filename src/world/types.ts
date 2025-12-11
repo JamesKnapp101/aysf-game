@@ -25,6 +25,7 @@ export interface PlayerVitals {
 }
 
 export type StatusId =
+  | "none"
   | "bleeding"
   | "drunk"
   | "nanites"
@@ -61,7 +62,7 @@ export interface PlayerState {
 
   // Core condition
   vitals: PlayerVitals;
-  statuses: StatusEffect[];
+  statusEffects: StatusEffect[];
 
   // Narrative progress
   memories: PlayerMemories;
@@ -101,8 +102,8 @@ export interface ItemState {
   openItems: Record<string, boolean>; // was: top-level openItems
   spentCartridges: Record<string, boolean>; // was: top-level spentCartridges
 
-  // Extension point for more per-item flags later
-  // e.g. hackedConsoles, repairedPanels, etc.
+  openContainers: Record<string, boolean>;
+  containerContents: Record<string, string[]>;
 }
 
 export type Direction =
@@ -172,7 +173,7 @@ export interface Item {
   isOpenable?: boolean;
   capacity?: number;
   contains?: string[];
-  hasDose?: boolean;
+  doses?: number;
   sceneryDescription?: string;
   hasEffect?: (state: GameState, item: Item) => GameState;
   isSwitchable?: boolean;
@@ -183,6 +184,13 @@ export interface Item {
   isContagious?: boolean;
   isRadioactive?: boolean;
   isEdible?: boolean;
+  /** Can only accept these item IDs (used for syringe). */
+  allowedContentsIds?: string[];
+  /** True if this item can be injected with the syringe. */
+  isInjectable?: boolean;
+  /** Optional effect key applied when this item is injected. */
+  injectionEffectId?: StatusId;
+  isSyringeCartridge?: boolean;
 }
 
 export type ItemOverrideVerb =

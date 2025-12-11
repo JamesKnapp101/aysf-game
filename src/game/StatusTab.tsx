@@ -1,5 +1,5 @@
 import React from "react";
-import type { CompassProps, Direction, GameState } from "../world/types";
+import type { GameState } from "../world/types";
 import {
   describeBodyTemperatureLevel,
   describeCurrentEffects,
@@ -313,24 +313,25 @@ export const BrainWaveRow: React.FC<BrainWaveRowProps> = ({ level }) => {
         <svg className="brain-icon" viewBox="0 0 32 20" aria-hidden="true">
           <polyline
             points="
-      0,10
-      6,10
-      8,8
-      10,12
-      12,7
-      14,13
-      16,10
-      20,10
-      24,10
-      28,10
-      32,10
-    "
+                0,12
+                6,12
+                8,4
+                10,20
+                12,3
+                14,21
+                16,12
+                22,12
+                28,12
+                34,12
+                40,12
+              "
             fill="none"
             stroke="currentColor"
-            stroke-width="1"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
+
           <circle cx="32" cy="10" r="1" fill="currentColor" />
         </svg>
         EEG

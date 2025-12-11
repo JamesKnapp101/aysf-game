@@ -17,7 +17,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -40,7 +40,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -65,7 +65,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -87,7 +87,7 @@ export const levelTwoItems: Item[] = [
     clothingSlot: "jewelry",
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     overrides: {
       wear: "The collar it used to hang from burned away with the rest of the dog. You’d have to improvise something if you really wanted to wear it.",
       take: "You pry the tag free from the ash and bone with a soft metallic scrape. Poor Nugget. At least someone is finally carrying his name out of this room.",
@@ -116,7 +116,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false, // if you later want to open that bottom drawer, flip this
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -139,7 +139,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -162,7 +162,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -185,7 +185,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -208,7 +208,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -231,7 +231,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -257,7 +257,7 @@ export const levelTwoItems: Item[] = [
     isReadable: false,
     isContainer: true,
     capacity: 20,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false, // could flip to true if you want the blue glow to matter mechanically
@@ -280,7 +280,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false, // you’re treating supporter-ness elsewhere
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -303,7 +303,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -326,7 +326,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -349,7 +349,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false, // supporter handled in room logic
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -371,7 +371,7 @@ export const levelTwoItems: Item[] = [
     clothingSlot: "jewelry",
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     overrides: {
       examine:
         "The metal catches the light with an almost stubborn brightness, star and twin hearts etched in crisp detail. Whatever alloy this is, it was built to outlive the people wearing it.",
@@ -400,7 +400,7 @@ export const levelTwoItems: Item[] = [
     readableText:
       "Looking closer, you see the footsteps from the south stop here and it looks like someone kneeled down to trace this message in the ash. What does it mean?",
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -423,7 +423,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -446,7 +446,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -469,7 +469,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false, // supporter-style usage handled elsewhere
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -492,7 +492,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -515,7 +515,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false, // enterable handled in room logic
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -538,7 +538,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -561,7 +561,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     overrides: {
       smell:
         "It gives off a faint musty scent under the overwhelming burn-smell, like old machine oil and overheated wiring.",
@@ -590,7 +590,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -616,7 +616,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: true,
     providesLight: true,
@@ -640,7 +640,7 @@ export const levelTwoItems: Item[] = [
     readableText:
       "WARNING\nUNAUTHORIZED ACCESS PROHIBITED\nANOXIFLOURINE HAZARD",
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     overrides: {
       examine:
         "The sign reads:^  WARNING^  UNAUTHORIZED ACCESS PROHIBITED^  ANOXIFLOURINE HAZARD.",
@@ -668,7 +668,7 @@ export const levelTwoItems: Item[] = [
     isReadable: false,
     isContainer: true,
     capacity: 50,
-    hasDose: false,
+    doses: 0,
     overrides: {
       get: "You decide against messing with the cages. If there’s a security system still awake in here, this is exactly how you’d trip it.",
     },
@@ -696,7 +696,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     overrides: {
       smell:
         "You take the tiniest experimental breath. It’s utterly odorless, which is usually a bad sign when the word ‘hazard’ is involved.",
@@ -723,7 +723,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false, // treating this as a supporter, not a container
-    hasDose: false,
+    doses: 0,
     overrides: {
       get: "You rest your hand on the rack, then think better of trying to reorganize the armory. If there’s any security still running, this is the kind of thing it might notice.",
     },
@@ -749,7 +749,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false, // again, treating as supporter
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -772,7 +772,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true, // if you want to treat rounds as doses
+    doses: 0, // if you want to treat rounds as doses
     overrides: {
       take: "You slide the clip free from the rack. Somewhere nearby, a system you can’t see notes the change and quietly updates its threat assessment.",
     },
@@ -798,7 +798,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     overrides: {
       lookunder:
         "You crouch and peer under the conference table. A young woman lies curled into the fetal position, her face a dull ashen gray with a faint bluish cast. Her lips are bloodless, dark speckling freckles the skin around her eyes and mouth, and her tongue bulges slightly between her teeth. One hand is half-open, fingers frozen around a small metal key that never made it to the lock it was meant for.",
@@ -825,7 +825,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     overrides: {
       examine:
         "It’s a polished black dress shoe with the foot of a young woman still inside it. Following the line of her leg draws your gaze under the conference table, where her body is curled up tight in the shadows.",
@@ -855,7 +855,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: false,
     isOn: false,
     providesLight: false,
@@ -880,7 +880,7 @@ export const levelTwoItems: Item[] = [
     readableText:
       "A little wedge labeled “SHIP” and a nearby circle marked “X”, surrounded by notes:\n1. Field disrupted unexpectedly\n2. Field contraction/tear/dissolution caused major energy surge\n3. Intentional/accidental?\n4. What was X?\n5. Where is X?",
     isContainer: false,
-    hasDose: false,
+    doses: 0,
     isSwitchable: true,
     isOn: true,
     providesLight: true,

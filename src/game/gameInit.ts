@@ -25,22 +25,38 @@ export function getOpeningSplashLogs(): string[] {
 }
 
 export const createInitialState = (world: World): GameState => {
-  // If initDoorStates still returns an array, convert it to a map here
-  const initialDoorStatesArray = initDoorStates(world.doors);
+  // Normalize / dedupe items by id in case any world-building merged them twice
+  const uniqueItems = Array.from(
+    new Map(world.items.map((it) => [it.id, it])).values()
+  );
+
+  const normalizedWorld: World = {
+    ...world,
+    items: uniqueItems,
+  };
+
+  // Initialize doorStates as a map keyed by door id
+  const initialDoorStatesArray = initDoorStates(normalizedWorld.doors);
   const doors: Record<string, DoorState> = {};
   for (const ds of initialDoorStatesArray) {
     doors[ds.id] = ds;
   }
 
+  // Anything defined with location === "INVENTORY" should start in the player's inventory
+  const startingInventoryIds = normalizedWorld.items
+    .filter((it) => it.location === "INVENTORY")
+    .map((it) => it.id);
+
   return {
-    world,
+    world: normalizedWorld,
     log: getOpeningSplashLogs(),
     score: 0,
     rating: 0,
     moves: 0,
+
     player: {
       roomId: "LivingQuartersFiveEast",
-      inventory: [],
+      inventory: startingInventoryIds,
       memories: {
         memoryScore: 0,
         revealedFlags: new Set<string>(),
@@ -52,30 +68,19 @@ export const createInitialState = (world: World): GameState => {
         brainActivity: 1,
         theSickness: 0,
       },
-      statuses: [
-        {
-          id: "trixophine",
-          intensity: 1,
-        },
-        {
-          id: "vanitrax",
-          intensity: 1,
-        },
-        {
-          id: "radiation",
-          intensity: 58,
-        },
-      ],
+      statusEffects: [],
     },
+
     worldState: {
       doors,
     },
+
     itemState: {
-      syringe: {
-        loadedCartridgeId: undefined,
-      },
+      syringe: { loadedCartridgeId: undefined },
       spentCartridges: {},
       openItems: {},
+      openContainers: {},
+      containerContents: {},
     },
   };
 };

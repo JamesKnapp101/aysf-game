@@ -5,11 +5,10 @@ import {
 } from "../doors/levelThreeDoors";
 import { drugItems } from "../objects/drugs";
 import { levelThreeItems } from "../objects/levelThreeMisc";
-import { syringe } from "../objects/syringe";
 import type { WorldChunk } from "../types";
 
 export const LEVEL_THREE: WorldChunk = {
-  items: [...syringe, ...drugItems, ...levelThreeItems],
+  items: [...drugItems, ...levelThreeItems],
   doors: [
     ...levelThreeLivingQuartersDoors,
     ...levelThreeHubDoors,

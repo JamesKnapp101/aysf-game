@@ -649,7 +649,7 @@ export const levelThreeItems: Item[] = [
     isOpenable: true,
     capacity: 10,
     contains: [],
-    hasDose: true,
+    doses: 25,
   },
   {
     id: "FISHBOWL",
@@ -2722,7 +2722,7 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true,
+    doses: 1,
     overrides: {
       smell:
         "It smells metallic and faintly sour, the iron tang cutting through even the lingering antiseptic.",

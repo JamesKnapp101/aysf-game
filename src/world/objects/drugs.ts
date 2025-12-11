@@ -3,11 +3,12 @@ import type { Item } from "../types";
 export const drugItems: Item[] = [
   {
     id: "Syringe",
-    name: "syringe",
+    name: "a medical syringe",
     description:
-      "A heavy hypodermic syringe with a clamp for holding drug cartridges.",
-    initialDescription: "Lying amongst the mess is a large syringe.",
-    location: "MedicalStorage",
+      "A heavy hypodermic syringe with a spring-clamp assembly for holding drug cartridges.",
+    initialDescription:
+      "Lying amidst the clutter is a large hypodermic syringe.",
+    location: "Dresser", // inside the dresser to start
     vocab: ["syringe", "hypodermic", "needle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -16,13 +17,46 @@ export const drugItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: true,
+    isOpenable: false,
+    capacity: 1,
+    contains: [],
+    allowedContentsIds: [
+      "GroovyCart",
+      "RadBGoneCart",
+      "DeathCart",
+      "NANOCart",
+      "InocCart",
+      "SleepyCart",
+      "PainKillerCart",
+    ],
   },
+  {
+    id: "Dresser",
+    name: "dresser",
+    description:
+      "A scarred wooden dresser with several misaligned drawers and a faint chemical smell.",
+    sceneryDescription:
+      "Against the wall sits a battered wooden dresser, its drawers slightly ajar as if searched in a hurry.",
+    location: "LivingQuartersFiveEast",
+    vocab: ["dresser", "drawers", "bureau"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 100,
+    itemSize: 20,
+    isWearable: false,
+    isReadable: false,
+    isContainer: true,
+    isOpenable: true,
+    capacity: 8,
+    contains: ["Syringe"],
+  },
+
   {
     id: "GroovyCart",
     name: "green serum cartridge",
     description:
       "A translucent cartridge filled with green serum, labeled ‘TRIXOPHINE’.",
-    location: "DRUGTIN",
+    location: "INVENTORY", //"DRUGTIN",
     vocab: ["green", "serum", "cartridge", "trixophine"],
     itemClass: "liquid",
     itemCategory: "fluid",
@@ -31,7 +65,9 @@ export const drugItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true,
+    isSyringeCartridge: true,
+    injectionEffectId: "trixophine",
+    doses: 3,
   },
   {
     id: "RadBGoneCart",
@@ -47,7 +83,8 @@ export const drugItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true,
+    isSyringeCartridge: true,
+    doses: 1,
   },
   {
     id: "DeathCart",
@@ -65,7 +102,8 @@ export const drugItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true,
+    isSyringeCartridge: true,
+    doses: 5,
     // TODO: handle syringe-related logic later
   },
   {
@@ -82,7 +120,8 @@ export const drugItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true,
+    isSyringeCartridge: true,
+    doses: 1,
   },
   {
     id: "InocCart",
@@ -99,7 +138,8 @@ export const drugItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true,
+    isSyringeCartridge: true,
+    doses: 1,
   },
   {
     id: "SleepyCart",
@@ -116,7 +156,8 @@ export const drugItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true,
+    isSyringeCartridge: true,
+    doses: 3,
   },
   {
     id: "PainKillerCart",
@@ -133,6 +174,7 @@ export const drugItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: true,
+    isSyringeCartridge: true,
+    doses: 5,
   },
 ];
