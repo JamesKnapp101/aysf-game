@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const drugItems: Item[] = [
   {
@@ -84,6 +84,7 @@ export const drugItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isSyringeCartridge: true,
+    injectionEffectId: "seritroxin",
     doses: 1,
   },
   {

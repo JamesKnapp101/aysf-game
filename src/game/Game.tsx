@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
-import { buildRoomDescription, handleCommand } from "./engine";
 import { parseCommand } from "../parse/parser";
 import { WORLD } from "../world/World";
 import { RoomCompass } from "./Compass";
@@ -10,6 +9,8 @@ import { allHintsRoot } from "../hints/allHintsRoot";
 import { getCurrentRoom, getCurrentRoomExits } from "./selectors/roomSelectors";
 import { getItemsInInventory } from "./selectors/itemSelectors";
 import type { GameState } from "./types/gameTypes";
+import { handleCommand } from "./engine/handleCommand";
+import { buildRoomDescription } from "./text/roomDescription";
 
 type Action = { type: "command"; input: string };
 

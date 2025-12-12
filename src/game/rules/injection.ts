@@ -1,9 +1,10 @@
 import type { ParsedCommand } from "../../parse/parser";
-import { appendLog } from "../engine";
+import { appendLog } from "../engine/handleCommand";
+import { getItemById } from "../selectors/itemSelectors";
+import { applyStatusEffectToPlayer } from "../selectors/statusSelectors";
 import type { GameState, StatusId } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
-import { getItemById, resolveItemInScopeByNoun } from "./itemSelectors";
-import { applyStatusEffectToPlayer } from "./statusSelectors";
+import { resolveItemInScopeByNoun } from "./scope";
 
 export function applyInjectionEffect(
   state: GameState,

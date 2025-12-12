@@ -18,37 +18,37 @@ export function getDoorState(
   return state.worldState.doors[id];
 }
 
-/**
- * Resolve a door from a noun like "door" / "hatch" / "airlock"
- * scoped to the exits of the *current* room.
- */
-export function resolveDoorByNoun(
+export function getVisibleDoorsInRoom(
   state: GameState,
-  noun: string
-): { def: DoorDefinition; state: DoorState } | null {
-  const room = getCurrentRoom(state);
-  const lower = noun.toLowerCase();
+  roomId: string
+): DoorDefinition[] {
+  const room = state.world.rooms.find((r) => r.id === roomId);
+  if (!room) return [];
 
-  // Doors attached to exits from THIS room
   const doorIds = room.exits
-    .map((e: Exit) => e.doorId)
+    .map((e) => e.doorId)
     .filter((id): id is string => Boolean(id));
 
-  for (const doorId of doorIds) {
-    const def = state.world.doors.find((d) => d.id === doorId);
-    const doorState = state.worldState.doors[doorId];
+  const uniqueDoorIds = [...new Set(doorIds)];
 
-    if (!def || !doorState) continue;
+  return uniqueDoorIds
+    .map((id) => state.world.doors.find((d) => d.id === id))
+    .filter((d): d is DoorDefinition => Boolean(d));
+}
 
-    const matches =
-      def.name.toLowerCase() === lower ||
-      (Array.isArray(def.vocab) &&
-        def.vocab.some((v: string) => v.toLowerCase() === lower));
+export function getDoorDescriptionForRoom(
+  doorDef: DoorDefinition,
+  roomId: string
+): string | undefined {
+  const { connects } = doorDef;
 
-    if (matches) {
-      return { def, state: doorState };
-    }
+  if (roomId === connects.roomAId) {
+    return doorDef.descriptionFromA ?? doorDef.description;
   }
 
-  return null;
+  if (roomId === connects.roomBId) {
+    return doorDef.descriptionFromB ?? doorDef.description;
+  }
+
+  return doorDef.description;
 }

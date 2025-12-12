@@ -1,17 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  activateByIndex,
-  activateSelection,
   createInitialHintState,
   getVisibleEntries,
-  moveSelection,
 } from "../game/selectors/hintSelectors";
 import type {
   HintMenuNode,
   HintUIState,
   VisibleEntry,
 } from "../game/types/hintTypes";
+import {
+  activateByIndex,
+  activateSelection,
+  moveSelection,
+} from "../game/rules/hints";
 
 interface HintsTabProps {
   rootMenu: HintMenuNode;

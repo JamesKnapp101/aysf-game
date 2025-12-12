@@ -64,7 +64,12 @@ export const createInitialState = (world: World): GameState => {
         brainActivity: 1,
         theSickness: 0,
       },
-      statusEffects: [],
+      statusEffects: [
+        {
+          id: "radiation",
+          intensity: 57,
+        },
+      ],
     },
 
     worldState: {
