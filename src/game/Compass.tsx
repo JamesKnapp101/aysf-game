@@ -1,5 +1,5 @@
 import React from "react";
-import type { CompassProps, Direction } from "../world/types";
+import type { CompassProps, Direction } from "./types/roomTypes";
 
 export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
   const active = new Set(exits.map((d) => d.toLowerCase()));
@@ -61,12 +61,17 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
         </text>
         {/* Needle Shapes — each is a thin triangle */}
         {/* N */}
-        <polygon className={armClass("north")} points={CARDINAL_POINTS} />
+        <polygon
+          className={armClass("north")}
+          fill={"var(--crt-color)"}
+          points={CARDINAL_POINTS}
+        />
 
         {/* E */}
         <polygon
           className={armClass("east")}
           points={CARDINAL_POINTS}
+          fill={"none"}
           transform="rotate(90 60 60)"
         />
 
@@ -74,6 +79,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
         <polygon
           className={armClass("south")}
           points={CARDINAL_POINTS}
+          fill={"none"}
           transform="rotate(180 60 60)"
         />
 
@@ -81,6 +87,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
         <polygon
           className={armClass("west")}
           points={CARDINAL_POINTS}
+          fill={"none"}
           transform="rotate(270 60 60)"
         />
 
@@ -88,6 +95,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
         <polygon
           className={armClass("northeast")}
           points={DIAGONAL_POINTS}
+          fill={"none"}
           transform="rotate(45 60 60)"
         />
 
@@ -95,6 +103,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
         <polygon
           className={armClass("southeast")}
           points={DIAGONAL_POINTS}
+          fill={"none"}
           transform="rotate(135 60 60)"
         />
 
@@ -102,6 +111,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
         <polygon
           className={armClass("southwest")}
           points={DIAGONAL_POINTS}
+          fill={"none"}
           transform="rotate(225 60 60)"
         />
 
@@ -109,6 +119,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
         <polygon
           className={armClass("northwest")}
           points={DIAGONAL_POINTS}
+          fill={"none"}
           transform="rotate(315 60 60)"
         />
       </svg>

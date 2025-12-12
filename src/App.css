@@ -2,19 +2,15 @@ html,
 body,
 #root {
   height: 100%;
-  width: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
-  background: #000;
-  color: #00ff00;
-  font-family: "Courier New", monospace;
-  font-size: 14px;
-  text-shadow: 0 0 4px #00aa00;
+  overflow: hidden;
+  color: var(--crt-color);
+    font-family: "Courier New", monospace;
 }
-
 /* Power-on boot animation */
 @keyframes crtBoot {
   0% {
@@ -54,12 +50,12 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 4px 8px;
-  background: #00ff00;
+  background: var(--crt-color);
   /* inverted colors */
   color: #000;
   font-weight: bold;
   font-size: 18px;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--crt-color);
   box-sizing: border-box;
   margin-bottom: 4px;
 }
@@ -79,7 +75,7 @@ body {
 }
 
 .game-room-inner {
-  border: 2px solid #00ff00;
+  border: 2px solid var(--crt-color);
   padding: 6px 8px;
   min-height: 250px;
   background: repeating-linear-gradient(to bottom,
@@ -92,12 +88,14 @@ body {
 .game-room-text {
   white-space: pre-wrap;
   font-size: 18px;
+  color: var(--crt-color)
 }
 
 .game-room-items {
   margin-top: .5rem;
   white-space: pre-wrap;
   font-size: 18px;
+    color: var(--crt-color)
 }
 
 /* === MAIN BOTTOM ROW === */
@@ -121,12 +119,13 @@ body {
 
 .game-log-panel {
   flex: 1;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--crt-color);
   padding: 4px;
   margin-bottom: 4px;
   min-height: 0;
   background: #000;
   font-size: 18px;
+    color: var(--crt-color)
 }
 
 .game-log-inner {
@@ -163,20 +162,22 @@ body {
 .game-footer {
   display: flex;
   align-items: center;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--crt-color);
   padding: 2px 4px;
+    color: var(--crt-color)
 }
 
 .game-prompt {
   margin-right: 8px;
   font-weight: bold;
   font-size: 18px;
+    color: var(--crt-color)
 }
 
 .game-input {
   flex: 1;
   background: #000;
-  color: #00ff00;
+  color: var(--crt-color);
   border: none;
   outline: none;
   font-family: inherit;
@@ -188,7 +189,7 @@ body {
 .game-sidebar {
   flex: 1;
   min-width: 220px;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--crt-color);
   display: flex;
   flex-direction: column;
   background: #000;
@@ -196,16 +197,16 @@ body {
 
 .game-tabs {
   display: flex;
-  border-bottom: 2px solid #00ff00;
+  border-bottom: 2px solid var(--crt-color);
 }
 
 .game-tab {
   flex: 1;
   padding: 4px 6px;
   background: #000;
-  color: #00ff00;
+  color: var(--crt-color);
   border: none;
-  border-right: 1px solid #00ff00;
+  border-right: 1px solid var(--crt-color);
   cursor: pointer;
   text-align: center;
   font-family: inherit;
@@ -217,12 +218,15 @@ body {
 }
 
 .game-tab-active {
-  background: #004400;
+  background: rgb(var(--crt-color-rgb) / 0.15);
+  /* CRT darkened background */
   font-weight: bold;
+  color: var(--crt-color);
+  /* ensure it's readable */
 }
 
 .game-tab:hover {
-  background: #002200;
+  background: rgb(var(--crt-color-rgb) / 0.08);
 }
 
 /* Sidebar content area */
@@ -239,11 +243,11 @@ body {
   /* scanlines */
 }
 
-/* Simple list styling for inventory */
 .game-list {
   list-style: none;
   padding-left: 0;
   margin: 0;
+  color: var(--crt-color);
 }
 
 .game-list li {
@@ -255,7 +259,7 @@ body {
 .game-room-inner:hover,
 .game-log-panel:hover,
 .game-sidebar:hover {
-  box-shadow: 0 0 8px #00ff00;
+  box-shadow: 0 0 8px var(--crt-color);
 }
 
 /* === TERMINAL SCROLLBAR STYLING === */
@@ -267,11 +271,11 @@ body {
 
 ::-webkit-scrollbar-track {
   background: #000;
-  border-left: 1px solid #00ff00;
+  border-left: 1px solid var(--crt-color);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #00ff00;
+  background: var(--crt-color);
   border: 1px solid #000;
 }
 
@@ -285,41 +289,39 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #00ff00 #000;
+  scrollbar-color: var(--crt-color) #000;
 }
 
 .room-compass {
   width: 140px;
   height: 140px;
-  border: 1px solid #00ff66;
+  border: 1px solid var(--crt-color);
   background: #000;
   position: relative;
   padding: 4px;
 }
 
-/* SVG fills the box */
 .room-compass-svg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-/* circle + N label */
 .compass-circle {
   fill: none;
-  stroke: currentColor;
+  stroke: var(--crt-color);
   stroke-width: 1.75;
   opacity: 0.45;
 }
 
 .compass-n-label {
-  fill: currentColor;
+  fill: var(--crt-color);
   font-size: 14px;
   opacity: 0.8;
 }
 
 .compass-arm {
-  fill: currentColor;
+  fill: var(--crt-color);
   opacity: 0.25;
   transition: opacity 0.15s ease-in-out, filter 0.15s;
 }
@@ -332,7 +334,7 @@ body {
 .room-compass-label {
   position: absolute;
   font-size: 14px;
-  color: currentColor;
+  color: var(--crt-color);
   opacity: 0.25;
   transition: opacity 0.15s;
 }
@@ -384,7 +386,7 @@ body {
 .crt-vitals-monitor {
   width: 100%;
   height: 40px;
-  border-bottom: 1px solid var(--crt-green, #00ff00);
+  border-bottom: 1px solid var(--crt-green, var(--crt-color));
   margin-bottom: 0.75rem;
   padding-bottom: 0.25rem;
 }
@@ -392,14 +394,14 @@ body {
 .crt-vitals-wave {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 2px var(--crt-green, #00ff00));
+  filter: drop-shadow(0 0 2px var(--crt-green, var(--crt-color)));
 }
 
 .vitals-wave {
   flex: 1;
   height: 18px;
   overflow: hidden;
-  filter: drop-shadow(0 0 2px var(--crt-green, #00ff00));
+  filter: drop-shadow(0 0 2px var(--crt-green, var(--crt-color)));
 }
 
 .vitals-wave polyline {
@@ -414,22 +416,19 @@ body {
   from {
     transform: translateX(0);
   }
-
   to {
     transform: translateX(-50%);
-    /* show second half of the 2x-wide pattern */
   }
 }
 
 .crt-vitals-monitor-stack {
-  border-bottom: 1px solid var(--crt-green, #00ff00); 
+  border-bottom: 1px solid var(--crt-green, var(--crt-color)); 
 }
 
 .meter-row {
   display: flex;
     align-items: center;
     gap: 0.15rem;
-    /* smaller gap between bar and value */
     margin-bottom: 0.25rem;
     font-family: inherit;
 }
@@ -437,10 +436,12 @@ body {
 .meter-label {
   width: 6rem;
     white-space: nowrap;
+      color: var(--crt-color);
 }
 
 .meter-icon {
   margin-right: 0.25rem;
+    color: var(--crt-color);
 }
 
 .meter-bar {
@@ -449,27 +450,22 @@ body {
   gap: 0.15rem;
   height: 16px;
   align-items: flex-end;
+
 }
 
 .meter-block {
   flex: 1;
   height: 70%;
-  border: 1px solid var(--crt-green, #00ff00);
+  border: 1px solid var(--crt-green, var(--crt-color));
   background: transparent;
-}
-
-.meter-block-active {
-  /* background + glow set inline based on severity color */
 }
 
 .meter-value {
   width: 3.5rem;
-    /* more horizontal room */
     text-align: right;
     font-size: 0.8rem;
-    /* smaller digits */
     white-space: nowrap;
-    /* keep “30.00 mSv” on one line */
+      color: var(--crt-color);
 }
 
 .diagnosis-section {
@@ -482,9 +478,9 @@ body {
   letter-spacing: 2px;
   margin-bottom: 0.5rem;
   padding: 0.25rem 0.5rem;
-  background-color: var(--crt-green, #00ff00);
+  background-color: var(--crt-green, var(--crt-color));
   color: #000;
-  box-shadow: 0 0 8px var(--crt-green, #00ff00);
+  box-shadow: 0 0 8px var(--crt-green, var(--crt-color));
 }
 
 .diagnosis-category {
@@ -495,11 +491,13 @@ body {
   font-weight: bold;
   margin-bottom: 0.25rem;
   font-size: 0.9rem;
+    color: var(--crt-color);
 }
 
 .diagnosis-text {
   margin-left: 1rem;
   line-height: 1.4rem;
+    color: var(--crt-color);
 }
 
 .brain-row {
@@ -514,13 +512,14 @@ body {
   white-space: nowrap;
   display: flex;
   align-items: center;
+    color: var(--crt-color);
 }
 
 .brain-icon {
   width: 1.4rem;
   height: 1rem;
   margin-right: 0.25rem;
-  color: var(--crt-green, #00ff00);
+    color: var(--crt-color);
 }
 
 .brain-state {
@@ -533,7 +532,7 @@ body {
 .brain-wave {
   flex: 1;
   height: 28px;
-  filter: drop-shadow(0 0 3px var(--crt-green, #00ff00));
+  filter: drop-shadow(0 0 3px var(--crt-green, var(--crt-color)));
   overflow: hidden;
 }
 
@@ -609,13 +608,295 @@ body {
 .brain-icon {
   width: 1.2rem;
   height: 0.9rem;
-  color: var(--crt-green, #00ff00);
+  color: var(--crt-green, var(--crt-color));
   filter: drop-shadow(0 0 2px currentColor);
 }
 
 .compass-icon {
   width: 0.9rem;
   height: 0.9rem;
-  color: var(--crt-green, #00ff00);
+  color: var(--crt-green, var(--crt-color));
   filter: drop-shadow(0 0 2px currentColor);
 }
+
+/* Make the whole game fill the viewport and never “bounce” in height */
+.game-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* or 100% of parent if you're nesting */
+  min-height: 0;
+}
+
+/* Header stays auto height */
+.game-header {
+  flex: 0 0 auto;
+}
+
+/* Room panel takes a fixed flex-basis from inline style, not content height */
+.game-room-panel {
+  flex: 0 0 auto;
+  /* basis overridden inline */
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Main row fills the remaining space */
+.game-main-row {
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* Left (log) and right (sidebar) share space based on inline flex-basis */
+.game-left,
+.game-sidebar {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Log panel scrolls inside its area; stays fixed height relative to main row */
+.game-log-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.game-log-inner {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Footer input stays at bottom */
+.game-footer {
+  flex: 0 0 auto;
+}
+
+/* Resize handles */
+.game-resizer-horizontal {
+  flex: 0 0 auto;
+  height: 4px;
+  cursor: row-resize;
+  background: var(--game-border, #333);
+}
+
+.game-resizer-vertical {
+  flex: 0 0 4px;
+  cursor: col-resize;
+  background: var(--game-border, #333);
+}
+
+.game-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+  /* nothing spills outside CRT frame */
+}
+
+/* header is fixed height */
+.game-header {
+  flex: 0 0 auto;
+}
+
+/* room panel: fixed flex height, content scrolls inside */
+.game-room-panel {
+  flex: 0 0 auto;
+  /* basis is set inline from roomHeightRatio */
+  min-height: 0;
+  overflow: hidden;
+  /* outer border never grows, inner scrolls */
+}
+
+.game-room-inner {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* main row: log + sidebar */
+.game-main-row {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* left side (log + prompt) fills remaining width */
+.game-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* log scrolls inside its panel */
+.game-log-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.game-log-inner {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* prompt sticks to the bottom */
+.game-footer {
+  flex: 0 0 auto;
+}
+
+/* sidebar column uses fixed percentage, from inline style */
+.game-sidebar {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* make tab body scroll if needed */
+.game-sidebar-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+    color: var(--crt-color);
+}
+
+.game-resizer-horizontal {
+  flex: 0 0 6px;
+  /* hit area height */
+  cursor: row-resize;
+  background: transparent;
+}
+
+.game-resizer-vertical {
+  flex: 0 0 .1px;
+  /* was 6px */
+  cursor: col-resize;
+  background: transparent;
+  /* absolutely clean */
+  z-index: 2;
+  /* stays draggable */
+}
+
+.game-room-panel {
+  border-bottom: 1px solid var(--game-border, var(--crt-color));
+}
+
+/* put the border here instead */
+.game-room-inner {
+  height: 100%;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--game-border, var(--crt-color));
+}
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-color-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* base swatch */
+.crt-swatch {
+  width: 28px;
+  height: 20px;
+  border: 1px solid #444;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+/* focus for keyboard users */
+.crt-swatch:focus-visible {
+  outline: 2px solid var(--crt-color);
+}
+
+/* selected swatch gets the neon frame / glow */
+.crt-swatch-selected {
+  border-color: var(--crt-color);
+  box-shadow: 0 0 6px var(--crt-color);
+}
+
+.crt-color-header {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--crt-green, var(--crt-color));
+    color: #000;
+    box-shadow: 0 0 8px var(--crt-green, var(--crt-color));
+  }
+
+
+    /* hints.css */
+  
+    .hints-tab-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      outline: none;
+      font-size: 0.9rem;
+    }
+  
+    .hints-breadcrumb {
+      padding: 0.25rem 0.5rem;
+      opacity: 0.7;
+    }
+  
+    .hints-menu {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+  
+    .hints-menu-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+  
+    .hints-menu-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 12rem;
+      overflow-y: auto;
+    }
+  
+    .hints-menu-item {
+      padding: 0.15rem 0.3rem;
+      cursor: pointer;
+    }
+  
+    .hints-menu-item--selected {
+      background-color: rgb(var(--crt-color-rgb) / 0.15);
+      box-shadow: 0 0 6px rgb(var(--crt-color-rgb) / 0.4);
+      border-left: 2px solid var(--crt-color);
+    }
+  
+    .hints-detail {
+      flex: 1;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.5rem;
+      overflow-y: auto;
+    }
+  
+    .hints-detail-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+  
+    .hints-detail-body {
+      white-space: pre-wrap;
+    }
+  
+    .hints-detail-empty {
+      opacity: 0.6;
+    }

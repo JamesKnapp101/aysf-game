@@ -1,9 +1,5 @@
-import type {
-  DoorDefinition,
-  DoorState,
-  GameState,
-  World,
-} from "../world/types";
+import type { DoorDefinition, DoorState } from "./types/doorTypes";
+import type { GameState, World } from "./types/gameTypes";
 
 export function getOpeningSplashLogs(): string[] {
   return [

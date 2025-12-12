@@ -2,30 +2,28 @@ import type { ParsedCommand } from "../parse/parser";
 import {
   getContainerContentsIds,
   getContainerContentsItems,
-  getCurrentRoom,
+  tryPutItemInContainer,
+} from "./selectors/containerSelectors";
+import {
   getDoorById,
   getDoorState,
-  getItemById,
-  getItemsInCurrentRoom,
-  getItemsInInventory,
-  getItemsInRoom,
-  handleInject,
   resolveDoorByNoun,
+} from "./selectors/doorSelectors";
+import { handleInject } from "./selectors/injectionSelectors";
+import {
+  getItemsInInventory,
   resolveItemByNoun,
-  tryPutItemInContainer,
-} from "./selectors";
-import type {
-  DoorDefinition,
-  DoorKind,
-  DoorState,
-  Exit,
-  GameState,
-  Item,
-  ItemOverrideVerb,
-  RoomExit,
-  StatusEffect,
-  TeleportPadDefinition,
-} from "../world/types";
+} from "./selectors/itemSelectors";
+import {
+  getCurrentRoom,
+  getItemsInCurrentRoom,
+  getItemsInRoom,
+} from "./selectors/roomSelectors";
+import type { DoorDefinition, DoorKind, DoorState } from "./types/doorTypes";
+import type { GameState, StatusEffect } from "./types/gameTypes";
+import type { Item, ItemOverrideVerb } from "./types/itemTypes";
+import type { Exit } from "./types/roomTypes";
+import type { TeleportPadDefinition } from "./types/tpadTypes";
 
 // --- Logging ---------------------------------------------------------------
 

@@ -1,12 +1,12 @@
 import React from "react";
-import type { GameState } from "../world/types";
 import {
   describeBodyTemperatureLevel,
   describeCurrentEffects,
   describeRadiationLevel,
   describeSicknessLevel,
   getStatusEffectById,
-} from "./selectors";
+} from "./selectors/statusSelectors";
+import type { GameState } from "./types/gameTypes";
 
 interface StatusTabProps {
   gameState: GameState;
