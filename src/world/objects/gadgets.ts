@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const specialItems: Item[] = [
   // 1. Flashlight ------------------------------------------------------------
@@ -220,7 +220,7 @@ export const specialItems: Item[] = [
   // 10. Radio ---------------------------------------------------------------
   {
     id: "Radio",
-    name: "two-way radio",
+    name: "a two-way radio",
     description:
       "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, and a squat black antenna jutting from the top.",
     initialDescription: "A small hand-held walkie-talkie lies near the corpse.",
@@ -235,9 +235,7 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: true,
     isOn: false,
-    // Inform:
-    // Contact 0, has switchable, class SMALL.
-    // TODO: gate sending/receiving messages on isOn and Contact equivalent.
+    isContagious: true, // held by infected NPC
   },
 
   // 11. Night Vision Goggles -----------------------------------------------

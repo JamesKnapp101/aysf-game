@@ -1,3 +1,9 @@
+import {
+  INITIAL_CONTAINER_CONTENTS,
+  INITIAL_SURFACE_CONTENTS,
+  INITIAL_UNDER_CONTENTS,
+} from "./containerContents";
+
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
 import type { GameState, World } from "./types/gameTypes";
 
@@ -38,12 +44,14 @@ export const createInitialState = (world: World): GameState => {
     doors[ds.id] = ds;
   }
 
+  // Seed all the containers with their starting contents
+
   // Anything defined with location === "INVENTORY" should start in the player's inventory
   const startingInventoryIds = normalizedWorld.items
     .filter((it) => it.location === "INVENTORY")
     .map((it) => it.id);
 
-  return {
+  const initialGameState: GameState = {
     world: normalizedWorld,
     log: getOpeningSplashLogs(),
     score: 0,
@@ -62,7 +70,7 @@ export const createInitialState = (world: World): GameState => {
         oxygen: 100,
         temperature: 98.6,
         brainActivity: 1,
-        theSickness: 0,
+        theSickness: undefined,
       },
       statusEffects: [
         {
@@ -77,13 +85,18 @@ export const createInitialState = (world: World): GameState => {
     },
 
     itemState: {
+      pickedUpByPlayer: {},
       syringe: { loadedCartridgeId: undefined },
-      spentCartridges: {},
       openItems: {},
-      openContainers: {},
+      spentCartridges: {},
       containerContents: {},
+      surfaceContents: {},
+      underContents: {},
+      revealedUnder: {},
     },
   };
+
+  return seedInitialPlacements(initialGameState);
 };
 
 function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {
@@ -92,4 +105,75 @@ function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {
     isOpen: def.initiallyOpen ?? false,
     isLocked: def.initiallyLocked ?? false,
   }));
+}
+
+/** Merge helper: copy existing + append seeds, avoiding duplicates */
+function mergeContents(
+  existing: Record<string, string[]>,
+  seeds: Record<string, string[]>
+): Record<string, string[]> {
+  const next: Record<string, string[]> = { ...existing };
+
+  for (const [hostId, seededIds] of Object.entries(seeds)) {
+    const current = next[hostId] ?? [];
+    next[hostId] = Array.from(new Set([...current, ...seededIds]));
+  }
+
+  return next;
+}
+
+export function seedContainerContents(
+  state: GameState,
+  seeds: Record<string, string[]>
+): GameState {
+  return {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      containerContents: mergeContents(
+        state.itemState.containerContents,
+        seeds
+      ),
+    },
+  };
+}
+
+export function seedSurfaceContents(
+  state: GameState,
+  seeds: Record<string, string[]>
+): GameState {
+  return {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      surfaceContents: mergeContents(state.itemState.surfaceContents, seeds),
+    },
+  };
+}
+
+export function seedUnderContents(
+  state: GameState,
+  seeds: Record<string, string[]>
+): GameState {
+  return {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      underContents: mergeContents(state.itemState.underContents, seeds),
+
+      // under starts unrevealed by default; keep whatever is already there
+      revealedUnder: {
+        ...state.itemState.revealedUnder,
+      },
+    },
+  };
+}
+
+/** Convenience: seed everything once */
+export function seedInitialPlacements(state: GameState): GameState {
+  let next = state;
+  next = seedContainerContents(next, INITIAL_CONTAINER_CONTENTS);
+  next = seedSurfaceContents(next, INITIAL_SURFACE_CONTENTS);
+  next = seedUnderContents(next, INITIAL_UNDER_CONTENTS);
+  return next;
 }

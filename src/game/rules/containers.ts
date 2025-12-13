@@ -66,13 +66,11 @@ export function tryPutItemInContainer(
       return "The syringe is already loaded.";
     }
 
-    const nextInventory = state.player.inventory.filter((id) => id !== item.id);
-
     return {
       ...state,
       player: {
         ...state.player,
-        inventory: nextInventory,
+        inventory: state.player.inventory.filter((id) => id !== item.id),
       },
       itemState: {
         ...state.itemState,
@@ -85,33 +83,29 @@ export function tryPutItemInContainer(
   }
 
   // --- normal container path -----------------------------------------
-  if (container.capacity != null) {
-    const currentContents =
-      state.itemState.containerContents[container.id] ??
-      container.contains ??
-      [];
+  const currentContents = state.itemState.containerContents[container.id] ?? [];
 
-    if (currentContents.length >= container.capacity) {
-      return "There's no more room in that.";
-    }
-
-    const updatedContents = [...currentContents, item.id];
-
-    return {
-      ...state,
-      player: {
-        ...state.player,
-        inventory: state.player.inventory.filter((id) => id !== item.id),
-      },
-      itemState: {
-        ...state.itemState,
-        containerContents: {
-          ...state.itemState.containerContents,
-          [container.id]: updatedContents,
-        },
-      },
-    };
+  if (
+    container.capacity != null &&
+    currentContents.length >= container.capacity
+  ) {
+    return "There's no more room in that.";
   }
 
-  return "You can't seem to put that there.";
+  const updatedContents = [...currentContents, item.id];
+
+  return {
+    ...state,
+    player: {
+      ...state.player,
+      inventory: state.player.inventory.filter((id) => id !== item.id),
+    },
+    itemState: {
+      ...state.itemState,
+      containerContents: {
+        ...state.itemState.containerContents,
+        [container.id]: updatedContents,
+      },
+    },
+  };
 }

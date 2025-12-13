@@ -8,7 +8,7 @@ export const drugItems: Item[] = [
       "A heavy hypodermic syringe with a spring-clamp assembly for holding drug cartridges.",
     initialDescription:
       "Lying amidst the clutter is a large hypodermic syringe.",
-    location: "Dresser", // inside the dresser to start
+    location: "none",
     vocab: ["syringe", "hypodermic", "needle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -19,7 +19,7 @@ export const drugItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
+
     allowedContentsIds: [
       "GroovyCart",
       "RadBGoneCart",
@@ -48,9 +48,9 @@ export const drugItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 8,
-    contains: ["Syringe"],
+    isSurface: true,
+    capacityOn: 4,
   },
-
   {
     id: "GroovyCart",
     name: "green serum cartridge",
@@ -84,7 +84,7 @@ export const drugItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isSyringeCartridge: true,
-    injectionEffectId: "seritroxin",
+    injectionRemoveEffectId: "radiation",
     doses: 1,
   },
   {

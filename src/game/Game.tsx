@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import { parseCommand } from "../parse/parser";
 import { WORLD } from "../world/World";
 import { RoomCompass } from "./Compass";
-import { createInitialState } from "./gameInit";
+import { createInitialState, seedContainerContents } from "./gameInit";
 import { StatusTab } from "./StatusTab";
 import { HintsTab } from "../hints/HintMenu";
 import { allHintsRoot } from "../hints/allHintsRoot";

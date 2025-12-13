@@ -98,11 +98,10 @@ export function resolveItemByNoun(
 export function resolveDoorByNoun(
   state: GameState,
   noun: string
-): { def: DoorDefinition; state: DoorState } | null {
+): { def: DoorDefinition; doorState: DoorState } | null {
   const room = getCurrentRoom(state);
   const lower = noun.toLowerCase();
 
-  // Doors attached to exits from THIS room
   const doorIds = room.exits
     .map((e: Exit) => e.doorId)
     .filter((id): id is string => Boolean(id));
@@ -119,7 +118,7 @@ export function resolveDoorByNoun(
         def.vocab.some((v: string) => v.toLowerCase() === lower));
 
     if (matches) {
-      return { def, state: doorState };
+      return { def, doorState };
     }
   }
 

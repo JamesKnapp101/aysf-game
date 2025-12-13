@@ -1,28 +1,5 @@
-import type { Direction } from "../world/types";
-
-export type Preposition =
-  | "in"
-  | "into"
-  | "on"
-  | "with"
-  | "from"
-  | "at"
-  | "about"
-  | "to";
-
-export type ParsedCommand =
-  | { type: "look" }
-  | { type: "inventory" }
-  | { type: "move"; direction: Direction }
-  | {
-      type: "action";
-      verb: string; // normalized verb: "take", "inject", "open", etc.
-      direct?: string; // first noun phrase
-      preposition?: Preposition;
-      indirect?: string; // second noun phrase
-      raw: string;
-    }
-  | { type: "unknown"; raw: string };
+import type { ParsedCommand, Preposition } from "../game/types/parserTypes";
+import type { Direction } from "../game/types/roomTypes";
 
 const DIR_MAP: Record<string, Direction> = {
   n: "north",

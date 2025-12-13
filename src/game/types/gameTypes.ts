@@ -26,7 +26,7 @@ export interface PlayerVitals {
   oxygen: number; // 0–100 (stub for later)
   temperature: number;
   brainActivity: number; // 1: "normal" 2: "excited" 3: "slowed" 4: "stoned" 5: "possessed"
-  theSickness: number; // Invisible stat, affects diagnosis
+  theSickness?: number; // Invisible stat, affects diagnosis
 }
 
 export type StatusId =

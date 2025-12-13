@@ -1,25 +1,5 @@
 import type { GameState, StatusEffect, StatusId } from "../types/gameTypes";
 
-export function applyStatusEffectToPlayer(
-  state: GameState,
-  effectId: StatusId,
-  turns: number
-): GameState {
-  const newEffect: StatusEffect = {
-    id: effectId,
-    intensity: 1,
-    remainingTurns: turns,
-  };
-
-  return {
-    ...state,
-    player: {
-      ...state.player,
-      statusEffects: [...state.player.statusEffects, newEffect],
-    },
-  };
-}
-
 export function getStatusEffectById(
   state: GameState,
   effectId: string
@@ -30,47 +10,51 @@ export function getStatusEffectById(
 }
 
 export function describeSicknessLevel(state: GameState): string {
-  const s = state.player.vitals.theSickness ?? 0;
+  const s = state.player.vitals?.theSickness;
 
-  if (s < 25) {
+  if (s === undefined || s > 1975) {
     return "You don't seem to have contracted anything.";
   }
-  if (s < 50) {
+  if (s > 1900) {
+    return "You feel a little bit tired, for some reason.";
+  }
+  if (s > 1700) {
     return "Something has you feeling just a little off, some kind of bug, maybe.";
   }
-  if (s < 100) {
+  if (s > 1500) {
     return "You seem to have come down with a case of the sniffles.";
   }
-  if (s < 150) {
+  if (s > 1200) {
     return "You seem to have come down with a cold or something.";
   }
-  if (s < 300) {
+  if (s > 900) {
     return "You seem to have come down with a bad cold or something.";
   }
-  if (s < 500) {
+  if (s > 700) {
     return "You seem to have come down with a severe cold or something.";
   }
-  if (s < 700) {
+  if (s > 500) {
     return "You've come down with some kind of illness that seems to be getting worse.";
   }
-  if (s < 900) {
+  if (s > 300) {
     return "You've come down with some kind of flu-like illness that is getting worse.";
   }
-  if (s < 1200) {
+  if (s > 150) {
     return "You've contracted some kind of flu-like illness. Your condition is getting serious.";
   }
-  if (s < 1500) {
+  if (s > 100) {
     return "You've contracted some kind of very serious illness. Your condition is getting critical.";
   }
-  if (s < 1700) {
+  if (s > 50) {
     return "You've contracted some kind of deadly illness. Without medical attention of some kind, you're going to die.";
   }
-  if (s < 1900) {
+  if (s > 25) {
     return "You've contracted a deadly illness and you are burning up with fever; without medication you won't have long to live.";
   }
-  if (s < 1950) {
+  if (s > 0) {
     return "You've contracted a deadly illness which is entering its final stages; your tongue is swelling and you've developed an itching at the corners of the mouth and eyes.";
   }
+
   return "You've contracted a deadly illness which is entering its final stages...";
 }
 

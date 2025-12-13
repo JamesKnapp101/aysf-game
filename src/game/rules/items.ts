@@ -11,6 +11,8 @@ import {
 import type { GameState } from "../types/gameTypes";
 import type { Item, ItemOverrideVerb } from "../types/itemTypes";
 import { isItemOpen, setItemClosed, setItemOpen } from "./containers";
+import type { RuleResult } from "./result";
+import { addToInventory, removeFromInventory } from "./state";
 
 export function describeActionResult(
   item: Item,
@@ -43,38 +45,28 @@ export function updateItemLocation(
   };
 }
 
-export function takeItem(state: GameState, noun: string): GameState {
+export function tryTakeItem(state: GameState, noun: string): RuleResult {
   const lower = noun.toLowerCase();
 
   // --- 1) Try items on the room floor first --------------------------
   const itemsHere = getItemsInCurrentRoom(state);
 
-  let item = itemsHere.find(
+  const itemOnFloor = itemsHere.find(
     (i) => i.vocab.includes(lower) || i.name.toLowerCase() === lower
   );
 
-  if (item) {
-    if (item.itemCategory === "scenery") {
-      return appendLog(state, "You can’t take that.");
+  if (itemOnFloor) {
+    if (itemOnFloor.itemCategory === "scenery") {
+      return { state, message: "You can’t take that." };
     }
 
-    const withLocation = updateItemLocation(state, item.id, "INVENTORY");
+    let next = updateItemLocation(state, itemOnFloor.id, "INVENTORY");
+    next = addToInventory(next, itemOnFloor.id);
 
-    const next: GameState = {
-      ...withLocation,
-      player: {
-        ...withLocation.player,
-        inventory: withLocation.player.inventory.includes(item.id)
-          ? withLocation.player.inventory
-          : [...withLocation.player.inventory, item.id],
-      },
-    };
-
-    return appendLog(next, "Taken.");
+    return { state: next, message: "Taken." };
   }
 
   // --- 2) Not on floor: check open containers in the room ------------
-
   const room = getCurrentRoom(state);
 
   const containersHere = state.world.items.filter(
@@ -82,7 +74,6 @@ export function takeItem(state: GameState, noun: string): GameState {
   );
 
   for (const container of containersHere) {
-    // Only expose contents if container is open
     if (!isItemOpen(state, container.id)) continue;
 
     const contentsItems = getContainerContentsItems(state, container);
@@ -94,63 +85,50 @@ export function takeItem(state: GameState, noun: string): GameState {
     if (!found) continue;
 
     if (found.itemCategory === "scenery") {
-      return appendLog(state, "You can’t take that.");
+      return { state, message: "You can’t take that." };
     }
 
-    // Seed dynamic contents for this container, then remove the item
+    // Remove from containerContents state
     const seededIds = getContainerContentsIds(state, container);
     const updatedContentsIds = seededIds.filter((id) => id !== found.id);
 
-    const withLocation = updateItemLocation(state, found.id, "INVENTORY");
+    let next = updateItemLocation(state, found.id, "INVENTORY");
+    next = addToInventory(next, found.id);
 
-    const withInventory: GameState = {
-      ...withLocation,
-      player: {
-        ...withLocation.player,
-        inventory: withLocation.player.inventory.includes(found.id)
-          ? withLocation.player.inventory
-          : [...withLocation.player.inventory, found.id],
-      },
-    };
-
-    const withContainerState: GameState = {
-      ...withInventory,
+    next = {
+      ...next,
       itemState: {
-        ...withInventory.itemState,
+        ...next.itemState,
         containerContents: {
-          ...withInventory.itemState.containerContents,
+          ...next.itemState.containerContents,
           [container.id]: updatedContentsIds,
         },
       },
     };
 
-    return appendLog(withContainerState, "Taken.");
+    return { state: next, message: "Taken." };
   }
 
   // --- 3) Nowhere to be found ----------------------------------------
-  return appendLog(state, "You don't see that here.");
+  return { state, message: "You don't see that here." };
 }
 
-export function dropItem(state: GameState, noun: string): GameState {
-  const inv = getItemsInInventory(state);
+export function tryDropItem(state: GameState, noun: string): RuleResult {
+  const invItems = getItemsInInventory(state);
   const lower = noun.toLowerCase();
 
-  const item = inv.find(
+  const item = invItems.find(
     (i) => i.name.toLowerCase() === lower || i.vocab.includes(lower)
   );
-  if (!item) return appendLog(state, "You aren't carrying that.");
 
-  const withLocation = updateItemLocation(state, item.id, state.player.roomId);
+  if (!item) {
+    return { state, message: "You aren't carrying that." };
+  }
 
-  const next: GameState = {
-    ...withLocation,
-    player: {
-      ...withLocation.player,
-      inventory: withLocation.player.inventory.filter((id) => id !== item.id),
-    },
-  };
+  let next = updateItemLocation(state, item.id, state.player.roomId);
+  next = removeFromInventory(next, item.id);
 
-  return appendLog(next, "Dropped.");
+  return { state: next, message: "Dropped." };
 }
 
 export function isItemOpenable(item: Item): boolean {

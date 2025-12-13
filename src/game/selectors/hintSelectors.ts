@@ -4,14 +4,6 @@ import type {
   VisibleEntry,
 } from "../types/hintTypes";
 
-export function createInitialHintState(rootMenu: HintMenuNode): HintUIState {
-  return {
-    currentPath: [rootMenu],
-    selectedIndex: 0,
-    activeHint: undefined,
-  };
-}
-
 export function getVisibleEntries(state: HintUIState): VisibleEntry[] {
   const currentMenu = state.currentPath[state.currentPath.length - 1];
 

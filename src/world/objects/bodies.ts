@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const corpseItems: Item[] = [
   // LEVEL 7 – Splattered corpse in corridor ---------------------------------
@@ -685,7 +685,7 @@ export const corpseItems: Item[] = [
     name: "dead soldier",
     description:
       "The young man wears heavy black clothing woven from reinforced fibers, the kind favored by commandos. Whatever weapon he carried is gone, scavenged by someone else. His face is drained of color, lips a cold blue, and two gory puncture wounds gape at either side of his neck.",
-    initialDescription:
+    sceneryDescription:
       "A young man in military-style garb lies on his back in the middle of the landing, lifeless eyes staring up the stairwell.",
     location: "StairSix",
     vocab: ["dead", "body", "man", "soldier"],

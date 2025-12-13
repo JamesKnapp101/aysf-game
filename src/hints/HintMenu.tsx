@@ -1,9 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  createInitialHintState,
-  getVisibleEntries,
-} from "../game/selectors/hintSelectors";
+import { getVisibleEntries } from "../game/selectors/hintSelectors";
 import type {
   HintMenuNode,
   HintUIState,
@@ -12,6 +9,7 @@ import type {
 import {
   activateByIndex,
   activateSelection,
+  createInitialHintState,
   moveSelection,
 } from "../game/rules/hints";
 

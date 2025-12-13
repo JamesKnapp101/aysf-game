@@ -38,9 +38,7 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
       .map((item) => item.sceneryDescription?.trim())
       .filter(Boolean)
       .join("\n\n");
-    if (sceneryText) {
-      parts.push(sceneryText);
-    }
+    if (sceneryText) parts.push(sceneryText);
   }
 
   // 3) Door descriptions
@@ -49,10 +47,7 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
       .map((door) => getDoorDescriptionForRoom(door, roomId))
       .filter((t): t is string => Boolean(t && t.trim()))
       .join("\n\n");
-
-    if (doorText) {
-      parts.push(doorText);
-    }
+    if (doorText) parts.push(doorText);
   }
 
   // 4) Open containers + their contents (based on deduped itemsHere)
@@ -77,9 +72,26 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
     parts.push(containerLines.join(" "));
   }
 
-  // 5) Non-scenery items list (stuff on the floor / not scenery)
-  if (nonSceneryItems.length > 0) {
-    const names = nonSceneryItems.map((item) => item.name).join(", ");
+  // 5) Initial descriptions for “fresh” items in the room
+  const seen = state.itemState.pickedUpByPlayer ?? {};
+  const freshItems = nonSceneryItems.filter(
+    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id]
+  );
+
+  if (freshItems.length > 0) {
+    const initialText = freshItems
+      .map((it) => it.initialDescription!.trim())
+      .join("\n\n");
+    parts.push(initialText);
+  }
+
+  // 6) Non-scenery items list (excluding items using initialDescription right now)
+  const listItems = nonSceneryItems.filter(
+    (it) => !freshItems.some((f) => f.id === it.id)
+  );
+
+  if (listItems.length > 0) {
+    const names = listItems.map((item) => item.name).join(", ");
     parts.push(`You can also see ${names}.`);
   }
 

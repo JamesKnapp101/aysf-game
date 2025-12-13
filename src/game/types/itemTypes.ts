@@ -1,4 +1,5 @@
 import type { GameState, StatusId, SyringeState } from "./gameTypes";
+import type { ItemId } from "./ids";
 
 export type ItemClass = "solid" | "liquid" | "gas";
 export type ItemCategory = "scenery" | "collectable" | "fluid";
@@ -25,10 +26,13 @@ export interface Item {
   clothingSlot?: clothingSlots;
   isReadable: boolean;
   readableText?: string;
-  isContainer: boolean;
   isOpenable?: boolean;
   capacity?: number;
-  contains?: string[];
+  isContainer: boolean; // IN
+  isSurface?: boolean; // ON (transmitter pad, table, shelf, etc.)
+  canHideUnder?: boolean; // UNDER (rug, mat, pile of trash)
+  capacityIn?: number;
+  capacityOn?: number;
   doses?: number;
   sceneryDescription?: string;
   hasEffect?: (state: GameState, item: Item) => GameState;
@@ -46,6 +50,7 @@ export interface Item {
   isInjectable?: boolean;
   /** Optional effect key applied when this item is injected. */
   injectionEffectId?: StatusId;
+  injectionRemoveEffectId?: StatusId;
   isSyringeCartridge?: boolean;
 }
 
@@ -85,13 +90,42 @@ export type ItemOverrideVerb =
 export type ItemOverrides = Partial<Record<ItemOverrideVerb, string>>;
 
 export interface ItemState {
-  // Syringe-specific state
-  syringe: SyringeState; // was: top-level syringe
+  pickedUpByPlayer: Record<string, boolean>;
+  // --- Syringe-specific state ----------------------------------------
+  syringe: SyringeState;
 
-  // Dynamic bits keyed by item id
-  openItems: Record<string, boolean>; // was: top-level openItems
-  spentCartridges: Record<string, boolean>; // was: top-level spentCartridges
+  // --- Open / closed tracking ----------------------------------------
+  openItems: Record<ItemId, boolean>;
 
-  openContainers: Record<string, boolean>;
-  containerContents: Record<string, string[]>;
+  // --- Consumables ---------------------------------------------------
+  spentCartridges: Record<ItemId, boolean>;
+
+  // --- Placement & containment --------------------------------------
+
+  /**
+   * Items placed INSIDE other items (containers)
+   * key: container item id
+   * value: item ids contained within
+   */
+  containerContents: Record<ItemId, ItemId[]>;
+
+  /**
+   * Items placed ON other items (surfaces, pads, tables)
+   * key: surface item id
+   * value: item ids resting on top
+   */
+  surfaceContents: Record<ItemId, ItemId[]>;
+
+  /**
+   * Items hidden UNDER other items (rugs, mats, debris)
+   * key: covering item id
+   * value: item ids hidden underneath
+   */
+  underContents: Record<ItemId, ItemId[]>;
+
+  /**
+   * Whether UNDER contents have been revealed for a given item
+   * (e.g. rug lifted, mat moved)
+   */
+  revealedUnder: Record<ItemId, boolean>;
 }

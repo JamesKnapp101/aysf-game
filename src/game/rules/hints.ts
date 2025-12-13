@@ -1,5 +1,13 @@
 import { getVisibleEntries } from "../selectors/hintSelectors";
-import type { HintUIState } from "../types/hintTypes";
+import type { HintMenuNode, HintUIState } from "../types/hintTypes";
+
+export function createInitialHintState(rootMenu: HintMenuNode): HintUIState {
+  return {
+    currentPath: [rootMenu],
+    selectedIndex: 0,
+    activeHint: undefined,
+  };
+}
 
 export function moveSelection(state: HintUIState, delta: 1 | -1): HintUIState {
   const entries = getVisibleEntries(state);

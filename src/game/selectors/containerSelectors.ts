@@ -1,4 +1,5 @@
 import type { GameState } from "../types/gameTypes";
+import type { ItemId } from "../types/ids";
 import type { Item } from "../types/itemTypes";
 import { getItemById } from "./itemSelectors";
 
@@ -9,25 +10,8 @@ export function isSerumCartridge(item: Item): boolean {
 export function getContainerContentsIds(
   state: GameState,
   container: Item
-): string[] {
-  // 1) If we’ve already got dynamic contents, use that as source of truth
-  const fromState = state.itemState.containerContents[container.id];
-  if (fromState) {
-    return fromState;
-  }
-
-  // 2) Otherwise, seed from:
-  //    - items whose location === container.id
-  //    - static container.contains (if you use it)
-  const fromLocation = state.world.items
-    .filter((it) => it.location === container.id)
-    .map((it) => it.id);
-
-  const fromStatic = container.contains ?? [];
-
-  const merged = Array.from(new Set([...fromLocation, ...fromStatic]));
-
-  return merged;
+): ItemId[] {
+  return state.itemState.containerContents[container.id] ?? [];
 }
 
 export function getContainerContentsItems(
