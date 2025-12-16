@@ -15,14 +15,12 @@ export function doClose(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "Close what?" };
   }
 
-  // 1) Door in current room?
   const doorResult = resolveDoorByNoun(state, direct);
   if (doorResult) {
     const { def, doorState } = doorResult;
     return tryCloseDoor(state, def, doorState);
   }
 
-  // 2) Otherwise item in scope
   const item = resolveItemByNoun(state, direct);
   if (!item) {
     return { state, message: "You don't see that here." };

@@ -14,8 +14,6 @@ export function applyInjectionEffect(
     return { state, message: "Nothing happens." };
   }
 
-  // TODO: wire into your status effect system for non-player targets
-
   return {
     state,
     message: `You inject the ${target.name.toLowerCase()}, but nothing seems to happen.`,
@@ -79,7 +77,7 @@ export function applyInjectionEffectToPlayer(
   cartridgeEffectId: StatusId,
   turns: number
 ): RuleResult {
-  const next = applyStatusEffectToPlayer(state, cartridgeEffectId, turns);
+  const next = applyStatusEffectToPlayer(state, cartridgeEffectId, 1, turns);
   const message = buildPlayerInjectionMessage(state, cartridgeEffectId);
   return { state: next, message };
 }

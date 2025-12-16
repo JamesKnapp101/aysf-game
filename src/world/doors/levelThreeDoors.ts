@@ -1,4 +1,4 @@
-import type { DoorDefinition } from "../types";
+import type { DoorDefinition } from "../../game/types/doorTypes";
 
 export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
   // LQ 3A
@@ -200,11 +200,11 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     vocab: ["west door", "door 3ew"],
     connects: {
       roomAId: "LevelThreeCorridorFive",
-      roomBId: "LevelThreeCorridorFive",
+      roomBId: "LivingQuartersFiveWest",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
-    initiallyLocked: true,
+    initiallyLocked: false,
   },
   {
     id: "FiveEastBDoor",
@@ -221,6 +221,21 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     initiallyOpen: false,
     initiallyLocked: false,
   },
+  {
+    id: "FiveWestBDoor",
+    name: "bathroom door",
+    descriptionFromA: "To the south is a wooden door.",
+    descriptionFromB: "The bathroom door is to the north.",
+    kind: "standard",
+    vocab: ["bathroom door"],
+    connects: {
+      roomAId: "LivingQuartersFiveWest",
+      roomBId: "FiveWestBath",
+    },
+    directions: { fromA: "south", fromB: "north" },
+    initiallyOpen: false,
+    initiallyLocked: false,
+  },
   // LQ 3F
   {
     id: "DOOR3FE",
@@ -232,11 +247,11 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     vocab: ["east door", "door 3fe"],
     connects: {
       roomAId: "LevelThreeCorridorSix",
-      roomBId: "LevelThreeCorridorSix",
+      roomBId: "LivingQuartersSixEast",
     },
     directions: { fromA: "east", fromB: "west" },
     initiallyOpen: false,
-    initiallyLocked: true,
+    initiallyLocked: false,
   },
   {
     id: "SixWestBDoor",
@@ -254,6 +269,21 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     initiallyLocked: false,
   },
   {
+    id: "SixEastBDoor",
+    name: "bathroom door",
+    descriptionFromA: "To the south is a wooden door.",
+    descriptionFromB: "The bathroom door is to the north.",
+    kind: "standard",
+    vocab: ["bathroom door"],
+    connects: {
+      roomAId: "LivingQuartersSixEast",
+      roomBId: "SixEastBath",
+    },
+    directions: { fromA: "south", fromB: "north" },
+    initiallyOpen: true,
+    initiallyLocked: false,
+  },
+  {
     id: "DOOR3FW",
     name: "living quarters door 3FW",
     descriptionFromA:
@@ -262,28 +292,11 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     vocab: ["west door", "door 3fw"],
     connects: {
       roomAId: "LevelThreeCorridorSix",
-      roomBId: "LevelThreeCorridorSix",
+      roomBId: "LivingQuartersSixWest",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
-    initiallyLocked: true,
-  },
-  // LQ 3G
-  {
-    id: "DOOR3FE",
-    name: "living quarters door 3GW",
-    descriptionFromA:
-      "To the west is a door affixed with a neat black plastic label indicating '3GW'. A strip of yellow and black tape has been stretched across the western door.",
-    descriptionFromB: "To the east is the unit's front door.",
-    kind: "standard",
-    vocab: ["east door", "door 3fe"],
-    connects: {
-      roomAId: "LevelThreeCorridorSeven",
-      roomBId: "LivingQuartersSevenWest",
-    },
-    directions: { fromA: "east", fromB: "west" },
-    initiallyOpen: false,
-    initiallyLocked: true,
+    initiallyLocked: false,
   },
   {
     id: "SevenWestBDoor",

@@ -14,14 +14,10 @@ export function appendLog(state: GameState, text: string): GameState {
 export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   const room = getCurrentRoom(state);
 
-  // --- Free commands (no turn cost) -----------------------------------
-
   if (cmd.type === "look") {
     const desc = buildRoomDescription(state, state.player.roomId);
     return appendLog(state, desc);
   }
-
-  // --- Turn-consuming commands ---------------------------------------
 
   let nextState = state;
   let message = "I don't understand that.";
@@ -33,7 +29,6 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         message = "You can't go that way.";
         break;
       }
-
       let destinationRoomId: string | undefined;
       let moveMessage = "";
 
@@ -61,10 +56,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
         if (gateMsg) moveMessage += gateMsg;
 
-        destinationRoomId = resolveDoorDestination(
-          doorDef,
-          state.player.roomId
-        );
+        destinationRoomId = resolveDoorDestination(doorDef, room.id);
       } else if (exit.toRoomId) {
         destinationRoomId = exit.toRoomId;
       }
@@ -81,14 +73,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
           roomId: destinationRoomId,
         },
       };
-
-      //   moveMessage +=
-      //     moveMessage === ""
-      //       ? `You go ${cmd.direction}.`
-      //       : `\nYou go ${cmd.direction}.`;
-
-      //   message = moveMessage;
-      message = ""; // suppress redundant movement message
+      message = "";
       break;
     }
 

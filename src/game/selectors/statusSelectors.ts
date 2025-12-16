@@ -1,4 +1,11 @@
+import { PAIN_STATUS_MESSAGES } from "../text/messageMaps";
 import type { GameState, StatusEffect, StatusId } from "../types/gameTypes";
+
+export function getActiveStatusEffectIds(state: GameState): string[] {
+  return state.player.statusEffects.map(
+    (statusEffect: StatusEffect) => statusEffect.id
+  );
+}
 
 export function getStatusEffectById(
   state: GameState,
@@ -7,6 +14,23 @@ export function getStatusEffectById(
   return state.player.statusEffects.filter(
     (status: StatusEffect) => status.id === effectId
   );
+}
+
+export function getRadiationIntensity(state: GameState): number {
+  const re =
+    state.player.statusEffects.filter((status: StatusEffect) => {
+      return status.id === "radiation";
+    }) ?? [];
+  if (re.length === 0) {
+    return 0;
+  }
+
+  const r = re[0];
+  return r.intensity;
+}
+
+export function getPainStatusMessage(remainingTurns: number): string | null {
+  return PAIN_STATUS_MESSAGES[remainingTurns] ?? null;
 }
 
 export function describeSicknessLevel(state: GameState): string {
@@ -152,7 +176,7 @@ export function describeCurrentEffects(state: GameState): string {
         break;
       case "trixophine":
         effectsMsg +=
-          "You are fibbity FYING on some shit and it has got you rig-rig-riggety WRECKED! Colors are talking to you, sounds smell like tastes, the whole nine yards.\n";
+          "Whatever was in that green serum has you fibbity FYING and rig-rig-riggety WRECKED! Colors are talking to you, sounds smell like tastes, the whole nine yards.\n";
         break;
       case "vanitrax":
         effectsMsg += "You are on vanitrax.\n";
@@ -166,9 +190,13 @@ export function describeCurrentEffects(state: GameState): string {
       case "xantophol":
         effectsMsg += "You are on xantophol.\n";
         break;
+      case "regenerationWoozies":
+        effectsMsg +=
+          "You feel a little discombobulated, with minor little aches and pains. Muscle ache? Gas? It doesn't seem serious.\n";
+        break;
       default:
         break;
     }
   }
-  return effectsMsg;
+  return effectsMsg === "" ? "None." : effectsMsg;
 }

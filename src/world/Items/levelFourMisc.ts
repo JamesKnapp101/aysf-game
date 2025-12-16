@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const levelFourItems: Item[] = [
   {
@@ -204,7 +204,6 @@ export const levelFourItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
   },
   {
     id: "CylindricalOpeningTwo",
@@ -224,7 +223,6 @@ export const levelFourItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
   },
   {
     id: "BayOne",
@@ -244,7 +242,7 @@ export const levelFourItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 1,
-    contains: [],
+
     overrides: {
       insert:
         "Whatever you’re trying to load doesn’t seem to seat correctly in the bay. The opening looks keyed to a very specific canister.",
@@ -271,7 +269,7 @@ export const levelFourItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 1,
-    contains: [],
+
     overrides: {
       insert:
         "The canister grinds awkwardly and refuses to sit in place. This bay is keyed to something else.",
@@ -500,7 +498,6 @@ export const levelFourItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 2,
-    contains: [],
   },
   {
     id: "Transformers",
@@ -731,7 +728,7 @@ export const levelFourItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
+
     overrides: {
       insert:
         "The large key slides into the receptacle with a heavy, mechanical click that suggests you just did something expensive.",

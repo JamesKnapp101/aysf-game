@@ -5,8 +5,8 @@ import {
   describeRadiationLevel,
   describeSicknessLevel,
   getStatusEffectById,
-} from "./selectors/statusSelectors";
-import type { GameState } from "./types/gameTypes";
+} from "../selectors/statusSelectors";
+import type { GameState } from "../types/gameTypes";
 
 interface StatusTabProps {
   gameState: GameState;
@@ -15,7 +15,6 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
   return (
     <div>
       <div className="crt-vitals-monitor-stack">
-        {/* Health 0–100, more is better */}
         <MeterRow
           label="Health"
           icon="♥"
@@ -25,7 +24,6 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
           max={100}
           goodWhenHigh={true}
         />
-        {/* Oxygen 0–100, more is better */}
         <MeterRow
           label="O₂"
           icon="O₂"
@@ -35,11 +33,7 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
           max={100}
           goodWhenHigh={true}
         />
-
-        {/* Temperature: centered at 98.6° */}
         <TempRow value={gameState.player.vitals.temperature} />
-
-        {/* Radiation 0–100 mSv, LESS is better */}
         <MeterRow
           label="Rads"
           icon="☢"
@@ -53,9 +47,8 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
           max={100}
           goodWhenHigh={false}
         />
-        {/* Brain 0–100/200, more = more activity */}
+        {/* Brain activity */}
         {(() => {
-          // however you want to store it; example:
           const brainLevel = (gameState.player.vitals.brainActivity ?? 1) as
             | 1
             | 2
@@ -172,7 +165,6 @@ const TempRow: React.FC<TempRowProps> = ({ value }) => {
   const clamped = Math.max(TEMP_MIN, Math.min(TEMP_MAX, value));
   const pct = (clamped - TEMP_MIN) / (TEMP_MAX - TEMP_MIN); // 0..1
 
-  // How many blocks to light (always at least 1 for a valid temp)
   let filled = Math.round(pct * NUM_BLOCKS);
   if (filled === 0 && !Number.isNaN(pct)) {
     filled = 1;

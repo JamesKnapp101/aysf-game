@@ -4,29 +4,23 @@ import type { Room } from "./roomTypes";
 import type { TeleportPadDefinition } from "./tpadTypes";
 
 export interface GameState {
-  // Static world definition (rooms, items, doors, etc.)
   world: World;
-
-  // Meta / progression
-  moves: number; // was: moves
-  score: number; // was: score
-  rating: number; // was: rating
-
-  // Output log for the UI
+  moves: number;
+  score: number;
+  rating: number;
   log: string[];
-
-  // Dynamic slices
   player: PlayerState;
   worldState: WorldState;
   itemState: ItemState;
 }
 
 export interface PlayerVitals {
-  health: number; // 0–100
-  oxygen: number; // 0–100 (stub for later)
+  health: number;
+  oxygen: number;
   temperature: number;
-  brainActivity: number; // 1: "normal" 2: "excited" 3: "slowed" 4: "stoned" 5: "possessed"
-  theSickness?: number; // Invisible stat, affects diagnosis
+  brainActivity: number;
+  drunkenness?: number;
+  theSickness?: number;
 }
 
 export type StatusId =
@@ -44,32 +38,27 @@ export type StatusId =
   | "pentatrosin"
   | "innoculant"
   | "xantophol"
+  | "regenerationWoozies"
+  | "possessed"
   | "dreaming";
 
 export interface StatusEffect {
   id: StatusId;
-  intensity: number; // 1–3 or whatever you like
-  remainingTurns?: number; // optional: undefined = indefinite
-  source?: string; // item id, event id, etc.
+  intensity: number;
+  remainingTurns?: number;
+  source?: string;
 }
 
 export interface PlayerMemories {
-  memoryScore: number; // replaces top-level `memory`
-  revealedFlags: Set<string>; // e.g. "knowsName", "remembersKiraParty"
+  memoryScore: number;
+  revealedFlags: Set<string>;
 }
 
 export interface PlayerState {
-  // Where the player is
-  roomId: string; // was: playerRoomId
-
-  // Inventory is just item ids you already use
-  inventory: string[]; // was: top-level inventory
-
-  // Core condition
+  roomId: string;
+  inventory: string[];
   vitals: PlayerVitals;
   statusEffects: StatusEffect[];
-
-  // Narrative progress
   memories: PlayerMemories;
 }
 
@@ -86,7 +75,6 @@ export interface World {
   teleportPads: TeleportPadDefinition[];
 }
 
-/** A chunk of world data (one level, one deck, etc.) */
 export interface WorldChunk {
   rooms: Room[];
   items: Item[];
@@ -98,19 +86,14 @@ export interface SyringeState {
 }
 
 export interface WorldState {
-  // Doors keyed by door id instead of an array
-  doors: Record<string, DoorState>; // was: doorStates: DoorState[]
-
-  // Threat timers, hazard countdowns, etc. (stubbed for now)
+  doors: Record<string, DoorState>;
   threatTimers?: {
     engineMeltdown?: Countdown;
     reactorOverload?: Countdown;
     hullBreach?: Countdown;
   };
-
-  // Global environmental conditions (easy extension point)
   globalConditions?: {
     shipPressure: "normal" | "low" | "vacuum";
-    radiationLevel: number; // 0–100
+    radiationLevel: number;
   };
 }

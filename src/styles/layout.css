@@ -1,0 +1,60 @@
+.game-root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    min-height: 0;
+    overflow: hidden;
+    /* nothing spills outside CRT frame */
+    background: #000;
+    padding: 4px 8px;
+    box-sizing: border-box;
+    animation: crtBoot 400ms ease-out;
+}
+
+/* Header stays auto height */
+.game-header {
+    flex: 0 0 auto;
+}
+
+/* Main row fills remaining space */
+.game-main-row {
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+    gap: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Left and right columns */
+.game-left,
+.game-sidebar {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* LEFT: log + input */
+.game-left {
+display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* RIGHT: sidebar */
+.game-sidebar {
+    flex: 1;
+}
+
+.game-resizer-vertical {
+    flex: 0 0 6px;
+    cursor: col-resize;
+    background: transparent;
+}
+
+.game-resizer-horizontal {
+    flex: 0 0 6px;
+    cursor: row-resize;
+    background: transparent;
+}

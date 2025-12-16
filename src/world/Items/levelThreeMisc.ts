@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const levelThreeItems: Item[] = [
   {
@@ -183,23 +183,6 @@ export const levelThreeItems: Item[] = [
     sceneryDescription:
       "Someone customized this unit—there’s a faint engraving around the bezel and a tiny sticker tucked under the clear shell near the base. The keypad glows with a soft blue tone instead of the usual white, giving it a quietly upgraded feel.",
     location: "FourEastBed",
-    vocab: ["phone", "handset", "headset"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PHONE5EBed",
-    name: "phone",
-    description:
-      "A slightly older handset, its plastic yellowed just enough to betray the model year. The touch contacts still respond with crisp little flashes of light.",
-    sceneryDescription:
-      "The cord at the back of the cradle has been twisted and re-twisted until it holds a permanent spiral kink. A couple of the touch pads are more worn than others, the numbers smoothed by a lifetime of dialing the same few calls.",
-    location: "FiveEastBed",
     vocab: ["phone", "handset", "headset"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -576,57 +559,6 @@ export const levelThreeItems: Item[] = [
       "Dana\n",
   },
   {
-    id: "BLANKIE",
-    name: "blanket",
-    description:
-      "A flannel blanket clutched tightly to the girl’s chest, bunched up in her fists as if it’s the only thing anchoring her.",
-    sceneryDescription:
-      "The blanket has that over-washed softness that comes from years of use. Faded patterns ghost along the fabric, almost worn away by time and comfort. It’s less an object and more a personal force field that just happens to be made of cloth.",
-    location: "LivingQuartersFiveEast",
-    vocab: ["flannel", "blanket"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 2,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "CARPET",
-    name: "carpet",
-    description:
-      "The carpet is a soft, light cream color, the fibers clean and plush underfoot—except where a series of dark boot prints break the perfection.",
-    sceneryDescription:
-      "The pile has been brushed in one direction to a uniform sheen, the kind of fastidious upkeep that doesn’t survive toddlers or reality. Dark boot tracks interrupt the neatness at odd intervals, meandering from door to door like someone pacing with bad news.",
-    location: "LivingQuartersFiveEast",
-    vocab: ["cream", "colored", "carpet"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 20,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "BOOTTRACKS",
-    name: "boot tracks",
-    description:
-      "Heavy boot tracks cross the carpet, several pairs at least. They enter from the west, fan out toward the southern door and eastern doorway, then converge and leave the way they came.",
-    sceneryDescription:
-      "The pattern of the prints tells a whole story without needing faces: multiple people, moving with purpose, checking doors and exits before regrouping. The treads are sharp and military, the kind you wear when you expect the floor to fight back.",
-    location: "LivingQuartersFiveEast",
-    vocab: ["boot", "tracks", "footprints", "prints"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
     id: "KibbleBOX",
     name: "box of cat kibbles",
     description:
@@ -648,7 +580,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 10,
-    contains: [],
+
     doses: 25,
   },
   {
@@ -669,64 +601,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 5,
-    contains: [],
-  },
-  {
-    id: "DROPSOBLOOD",
-    name: "drops of blood",
-    description:
-      "Three small drops of blood mark the otherwise immaculate bathroom floor, bright against the sterile surface.",
-    sceneryDescription:
-      "The droplets are spaced irregularly, like whoever left them was moving slowly or unsteadily. They’ve dried at the edges but still hold a dark, tacky center. In a bathroom this clean, their continued presence feels deliberate—either someone missed them, or someone wanted them left.",
-    location: "SixWestBath",
-    vocab: ["drops", "blood"],
-    itemClass: "liquid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "coolprint",
-    name: "print",
-    description:
-      "A framed print on the wall, dominated by stylized lettering that spells out the name of a band: REPORT TO SKINNY.",
-    sceneryDescription:
-      "Bold, slashed fonts and aggressive color choices fight for dominance in the design, the kind of aesthetic that promises tinnitus and questionable life choices. The band name, REPORT TO SKINNY, is wrapped in abstract shapes that might be instruments, or weapons, or both.",
-    location: "SixWestBed",
-    vocab: ["large", "print", "poster"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 2,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "MAG",
-    name: "pornographic magazine",
-    description:
-      "A glossy magazine titled ~Sex Object~, currently on its latest issue. The cover features a genetically enhanced model in a pose designed by a focus group, equal parts provocative and impossible.",
-    sceneryDescription:
-      "The cover stock gleams under the light, colors turned up just past believable. The model’s features have that slightly unreal symmetry you only get from serious gene-editing or serious photo manipulation. It’s the sort of publication that insists it’s harmless while quietly rewiring your definition of normal.",
-    location: "UNKNOWN",
-    vocab: ["magazine", "sex", "object", "porn", "pornographic"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    isContainer: false,
-    readableText:
-      "SEX OBJECT — Issue 47\n" +
-      "Feature articles include:\n" +
-      '• "Body By Patent: The New Aesthetics of Gene-Sculpted Desire"\n' +
-      '• "Zero-G Positions (Your Legal Counsel Hates #5)"\n' +
-      '• "Confessions of a Cloned Influencer"\n',
   },
   {
     id: "DRUGTIN",
@@ -746,7 +620,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 3,
-    contains: [],
   },
   {
     id: "nylons",
@@ -873,7 +746,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 20,
-    contains: [],
   },
   {
     id: "portholeSpa",
@@ -958,10 +830,9 @@ export const levelThreeItems: Item[] = [
     itemSize: 6,
     isWearable: false,
     isReadable: false,
-    isContainer: true, // enterable
+    isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
   },
   {
     id: "massagecheckin",
@@ -1003,7 +874,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 4,
-    contains: [],
   },
   {
     id: "HubPass",
@@ -1117,10 +987,9 @@ export const levelThreeItems: Item[] = [
     itemSize: 5,
     isWearable: false,
     isReadable: false,
-    isContainer: true, // enterable
+    isContainer: true,
     isOpenable: false,
     capacity: 2,
-    contains: [],
   },
   {
     id: "DistMarquee",
@@ -1155,10 +1024,9 @@ export const levelThreeItems: Item[] = [
     itemSize: 5,
     isWearable: false,
     isReadable: false,
-    isContainer: true, // enterable, if you really want to sit next to her
+    isContainer: true,
     isOpenable: false,
     capacity: 2,
-    contains: [],
   },
   {
     id: "note",
@@ -1214,7 +1082,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 2,
-    contains: [],
   },
   {
     id: "TREE",
@@ -1302,7 +1169,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 2,
-    contains: [],
   },
   {
     id: "NutCache",
@@ -1532,10 +1398,10 @@ export const levelThreeItems: Item[] = [
     itemSize: 8,
     isWearable: false,
     isReadable: false,
-    isContainer: true, // enterable seating
+    isContainer: true,
     isOpenable: false,
     capacity: 6,
-    contains: [],
+
     overrides: {
       siton:
         "You settle into one of the wrought-iron chairs. It creaks slightly, but otherwise pretends nothing’s wrong.",
@@ -1779,7 +1645,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
+
     overrides: {
       smell:
         "It still smells faintly of red wine—oak, fruit, and just enough alcohol to make bad decisions seem reasonable.",
@@ -1995,7 +1861,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
+
     overrides: {
       lookunder:
         "You lean down and peer under the stall. The boots are attached to a body that is very much done with this whole experience.",
@@ -2063,7 +1929,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 4,
-    contains: [],
+
     overrides: {
       open: "You ease the handbag open, half-expecting something to leap out. It doesn’t—but whatever’s inside has its own story.",
     },
@@ -2086,7 +1952,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
+
     overrides: {
       open: "You could force the stall open if you wanted. The real question is whether you want the mental image that comes with it.",
     },
@@ -2263,7 +2129,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 10,
-    contains: [],
   },
   {
     id: "BrokenLamp",
@@ -2468,10 +2333,9 @@ export const levelThreeItems: Item[] = [
     itemSize: 3,
     isWearable: false,
     isReadable: false,
-    isContainer: true, // stand "in" the scale
+    isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
   },
   {
     id: "MainMedicalBlood",
@@ -2660,7 +2524,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
   },
   {
     id: "ORBlanket",
@@ -2688,16 +2551,16 @@ export const levelThreeItems: Item[] = [
       "The blood bag hangs limply, its translucent sides bulging slightly under the weight of the blood inside. Tiny air bubbles cling to the interior, drifting lazily whenever the bag shifts. The tubing dangles from the bottom like a vein cut loose from a body.",
     location: "PatientCareOne",
     vocab: ["blood", "bag", "bloodbag", "transfusion"],
-    itemClass: "solid", // the bag itself is solid; blood is separate
+    itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 2,
     itemSize: 2,
     isWearable: false,
     isReadable: false,
     isContainer: true,
-    isOpenable: false, // you don't "open" it in the usual sense
+    isOpenable: false,
     capacity: 1,
-    contains: ["BloodBagBlood"],
+    //contains: ["BloodBagBlood"],
     overrides: {
       smell:
         "You bring the bag closer and immediately regret it. The scent is a mix of iron and antiseptic, like a hospital hallway after a bad night.",
@@ -2713,7 +2576,7 @@ export const levelThreeItems: Item[] = [
       "A quantity of dark, thick blood contained inside the plastic bag. It shifts sluggishly when the bag is moved, leaving slow streaks along the inner surface.",
     sceneryDescription:
       "Through the plastic, the blood looks almost black, with only the barest suggestion of red where the light catches the edges. It clings to the sides in slow, heavy trails before sliding back down to rejoin the rest of the pool.",
-    location: "BloodBag", // treated as inside the BloodBag container
+    location: "BloodBag",
     vocab: ["blood", "bagged", "red", "fluid"],
     itemClass: "liquid",
     itemCategory: "fluid",
@@ -2748,7 +2611,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 50,
-    contains: [],
+
     overrides: {
       take: "The tank is bolted into the deck and weighs more than your entire body. You’re not going anywhere with it.",
       enter:
@@ -2792,7 +2655,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 10,
-    contains: ["granules", "BirdLabel"],
+    //contains: ["granules", "BirdLabel"],
     overrides: {
       take: "You try to lift the cage and get about an inch off the ground before your spine files a formal complaint.",
       enter:
@@ -2853,7 +2716,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 10,
-    contains: ["SpiderLabel"],
+    //contains: ["SpiderLabel"],
     overrides: {
       open: "You nudge the hanging hatch and it swings wider with a creak, the remaining hinge protesting but holding—for now.",
       take: "The terrarium is heavy and awkward, and the web of fractures suggests carrying it around would end badly for both of you.",
@@ -2937,7 +2800,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 10,
-    contains: ["Jar"],
+    //contains: ["Jar"],
   },
   {
     id: "Jar",
@@ -2957,7 +2820,7 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false, // sealed; you don't casually pop it open
     capacity: 3,
-    contains: ["Fluid", "VampireTooth"],
+    //contains: ["Fluid", "VampireTooth"],
     providesLight: true,
     overrides: {
       open: "The lid is sealed tight, with wiring and seals you’re not eager to tamper with in a room full of sharp instruments.",

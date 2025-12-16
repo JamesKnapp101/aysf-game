@@ -1,0 +1,280 @@
+/* Power-on boot animation */
+@keyframes crtBoot {
+    0% {
+        opacity: 0;
+        transform: scaleY(0.8);
+        filter: brightness(2);
+    }
+
+    60% {
+        opacity: 1;
+        transform: scaleY(1.02);
+        filter: brightness(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+        filter: brightness(1);
+    }
+}
+
+/* Fade-in for new lines */
+@keyframes lineAppear {
+    from {
+        opacity: 0;
+        transform: translateY(2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes crt-wave-shift {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Single scroll animation name; duration comes from inline style */
+@keyframes brain-wave-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Optional wobble */
+@keyframes drunk-wobble {
+
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    25% {
+        transform: translate(0.6px, -0.4px) rotate(0.15deg);
+    }
+
+    50% {
+        transform: translate(-0.4px, 0.6px) rotate(-0.12deg);
+    }
+
+    75% {
+        transform: translate(0.3px, 0.2px) rotate(0.08deg);
+    }
+}
+
+/* TRIXOPHINE */
+@keyframes trixo-hue {
+    0% {
+        filter: saturate(1.8) contrast(1.15) brightness(1.05) hue-rotate(0deg);
+    }
+
+    100% {
+        filter: saturate(1.8) contrast(1.15) brightness(1.05) hue-rotate(360deg);
+    }
+}
+
+@keyframes trixo-swirls {
+    0% {
+        transform: translate(-1.5%, -1%) scale(1.05) rotate(0deg);
+        filter: blur(10px);
+    }
+
+    50% {
+        transform: translate(1.2%, 1.4%) scale(1.08) rotate(8deg);
+        filter: blur(14px);
+    }
+
+    100% {
+        transform: translate(-1.5%, -1%) scale(1.05) rotate(0deg);
+        filter: blur(10px);
+    }
+}
+
+@keyframes trixo-drift {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    10% {
+        transform: translate(0.6px, -0.4px);
+    }
+
+    20% {
+        transform: translate(-0.5px, 0.7px);
+    }
+
+    35% {
+        transform: translate(0.4px, 0.2px);
+    }
+
+    50% {
+        transform: translate(-0.7px, -0.3px);
+    }
+
+    65% {
+        transform: translate(0.3px, 0.6px);
+    }
+
+    80% {
+        transform: translate(-0.2px, -0.5px);
+    }
+
+    90% {
+        transform: translate(0.5px, 0.1px);
+    }
+}
+
+/* RADIATION */
+@keyframes rad-shimmer {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    20% {
+        transform: translate(calc(var(--rad, 0) * 0.8px),
+                calc(var(--rad, 0) * -0.4px));
+    }
+
+    40% {
+        transform: translate(calc(var(--rad, 0) * -0.6px),
+                calc(var(--rad, 0) * 0.6px));
+    }
+
+    60% {
+        transform: translate(calc(var(--rad, 0) * 0.9px),
+                calc(var(--rad, 0) * 0.4px));
+    }
+
+    80% {
+        transform: translate(calc(var(--rad, 0) * -0.4px),
+                calc(var(--rad, 0) * -0.8px));
+    }
+}
+
+@keyframes rad-speckle {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(0.2px, -0.2px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+/* POSSESSED */
+@keyframes poss-fog {
+
+    0%,
+    100% {
+        transform: scale(1.02) translate(0, 0);
+        opacity: 0.58;
+    }
+
+    50% {
+        transform: scale(1.07) translate(1px, -1px);
+        opacity: 0.74;
+    }
+}
+
+@keyframes poss-exposure {
+    0% {
+        opacity: 1;
+    }
+
+    13% {
+        opacity: 0.98;
+    }
+
+    14% {
+        opacity: 0.9;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    41% {
+        opacity: 0.97;
+    }
+
+    42% {
+        opacity: 0.88;
+    }
+
+    43% {
+        opacity: 1;
+    }
+
+    77% {
+        opacity: 0.96;
+    }
+
+    78% {
+        opacity: 0.86;
+    }
+
+    79% {
+        opacity: 1;
+    }
+}
+
+/* Brain “flicker” */
+@keyframes brain-wave-flicker {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 0.95;
+    }
+}
+
+@keyframes drunk-wobble {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    25% {
+        transform:
+            translate(calc(var(--drunk) * 2px),
+                calc(var(--drunk) * -1px)) rotate(calc(var(--drunk) * 0.6deg));
+    }
+
+    50% {
+        transform:
+            translate(calc(var(--drunk) * -3px),
+                calc(var(--drunk) * 2px)) rotate(calc(var(--drunk) * -0.8deg));
+    }
+
+    75% {
+        transform:
+            translate(calc(var(--drunk) * 2px),
+                calc(var(--drunk) * 1px)) rotate(calc(var(--drunk) * 0.5deg));
+    }
+
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+}

@@ -1,3 +1,4 @@
+import type { World, WorldChunk } from "../game/types/gameTypes";
 import { LEVEL_FIVE } from "./maps/LevelFive";
 import { LEVEL_FOUR } from "./maps/LevelFour";
 import { LEVEL_ONE } from "./maps/LevelOne";
@@ -6,7 +7,6 @@ import { LEVEL_SIX } from "./maps/LevelSix";
 import { LEVEL_THREE } from "./maps/LevelThree";
 import { LEVEL_TWO } from "./maps/LevelTwo";
 import { STAIRWELL } from "./maps/Stairwell";
-import type { World, WorldChunk } from "./types";
 
 function mergeWorldChunks(...chunks: WorldChunk[]): World {
   return {

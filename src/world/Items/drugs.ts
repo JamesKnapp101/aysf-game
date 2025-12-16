@@ -31,27 +31,6 @@ export const drugItems: Item[] = [
     ],
   },
   {
-    id: "Dresser",
-    name: "dresser",
-    description:
-      "A scarred wooden dresser with several misaligned drawers and a faint chemical smell.",
-    sceneryDescription:
-      "Against the wall sits a battered wooden dresser, its drawers slightly ajar as if searched in a hurry.",
-    location: "LivingQuartersFiveEast",
-    vocab: ["dresser", "drawers", "bureau"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 100,
-    itemSize: 20,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: true,
-    capacity: 8,
-    isSurface: true,
-    capacityOn: 4,
-  },
-  {
     id: "GroovyCart",
     name: "green serum cartridge",
     description:
@@ -105,7 +84,6 @@ export const drugItems: Item[] = [
     isContainer: false,
     isSyringeCartridge: true,
     doses: 5,
-    // TODO: handle syringe-related logic later
   },
   {
     id: "NANOCart",

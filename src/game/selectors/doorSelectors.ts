@@ -14,7 +14,6 @@ export function getDoorState(
   state: GameState,
   id: string
 ): DoorState | undefined {
-  // worldState.doors is treated as a map: Record<string, DoorState>
   return state.worldState.doors[id];
 }
 

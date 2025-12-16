@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const levelOneItems: Item[] = [
   {
@@ -500,7 +500,7 @@ export const levelOneItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
+
     overrides: {
       take: "You work the holster free from the dead man’s belt. He doesn’t complain.",
     },
@@ -540,7 +540,6 @@ export const levelOneItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 5,
-    contains: [],
   },
   {
     id: "DeskScreen",
@@ -611,7 +610,6 @@ export const levelOneItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
   },
   {
     id: "Terrarium",
@@ -631,7 +629,7 @@ export const levelOneItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 5,
-    contains: ["Spiders"],
+    //contains: ["Spiders"],
     overrides: {
       open: "You don’t see any obvious way to open the terrarium. Which is probably the first good news you’ve had all day.",
     },
@@ -675,7 +673,6 @@ export const levelOneItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 10,
-    contains: [],
   },
   {
     id: "WarRoomChairs",

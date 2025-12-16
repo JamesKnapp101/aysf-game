@@ -1,5 +1,5 @@
-import { levelSevenItems } from "../objects/levelSevenMisc";
-import type { WorldChunk } from "../types";
+import type { WorldChunk } from "../../game/types/gameTypes";
+import { levelSevenItems } from "../Items/levelSevenMisc";
 
 export const LEVEL_SEVEN: WorldChunk = {
   items: [...levelSevenItems],

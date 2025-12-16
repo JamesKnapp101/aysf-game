@@ -23,14 +23,10 @@ export function tryPut(
     return { state, message: "You don't see that here." };
   }
 
-  // Disallow nonsense
   if (itemId === hostId) {
     return { state, message: "That doesn't make sense." };
   }
 
-  // ------------------------------------------------------------
-  // IN / INTO → delegate to your existing function
-  // ------------------------------------------------------------
   if (preposition === "in" || preposition === "into") {
     const result = tryPutItemInContainer(state, itemId, hostId);
 
@@ -41,19 +37,13 @@ export function tryPut(
     return { state: result, message: "Done." };
   }
 
-  // ------------------------------------------------------------
-  // ON → surface placement (new behavior)
-  // ------------------------------------------------------------
   if (preposition === "on") {
     if (!host.isSurface) {
       return { state, message: "You can't put things on that." };
     }
 
-    // remove from inventory
     const nextInventory = state.player.inventory.filter((id) => id !== itemId);
-
     const current = state.itemState.surfaceContents?.[hostId] ?? [];
-
     const updated = current.includes(itemId) ? current : [...current, itemId];
 
     const next: GameState = {
@@ -79,7 +69,5 @@ export function tryPut(
 
     return { state: next, message: "Done." };
   }
-
-  // Fallback (should never hit)
   return { state, message: "You can't seem to put that there." };
 }

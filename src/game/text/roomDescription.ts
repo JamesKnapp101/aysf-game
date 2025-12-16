@@ -12,7 +12,6 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
   const room = state.world.rooms.find((room) => room.id === roomId);
   if (!room) return "You are nowhere. (Bug: room not found.)";
 
-  // 0) Items in room, deduped by id
   const rawItemsHere = getItemsInRoom(state, roomId);
   const itemsHere = Array.from(
     new Map(rawItemsHere.map((it) => [it.id, it])).values()
@@ -29,10 +28,8 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
 
   const parts: string[] = [];
 
-  // 1) Base room description
   parts.push(`${room.description.trim()}`);
 
-  // 2) Scenery item descriptions
   if (sceneryItems.length > 0) {
     const sceneryText = sceneryItems
       .map((item) => item.sceneryDescription?.trim())
@@ -41,7 +38,6 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
     if (sceneryText) parts.push(sceneryText);
   }
 
-  // 3) Door descriptions
   if (doorsHere.length > 0) {
     const doorText = doorsHere
       .map((door) => getDoorDescriptionForRoom(door, roomId))
@@ -50,7 +46,6 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
     if (doorText) parts.push(doorText);
   }
 
-  // 4) Open containers + their contents (based on deduped itemsHere)
   const containersHere = itemsHere.filter((item) => item.isContainer);
   const containerLines: string[] = [];
 
@@ -72,7 +67,6 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
     parts.push(containerLines.join(" "));
   }
 
-  // 5) Initial descriptions for “fresh” items in the room
   const seen = state.itemState.pickedUpByPlayer ?? {};
   const freshItems = nonSceneryItems.filter(
     (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id]
@@ -85,7 +79,6 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
     parts.push(initialText);
   }
 
-  // 6) Non-scenery items list (excluding items using initialDescription right now)
   const listItems = nonSceneryItems.filter(
     (it) => !freshItems.some((f) => f.id === it.id)
   );

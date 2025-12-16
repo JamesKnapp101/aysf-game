@@ -1,6 +1,6 @@
+import type { WorldChunk } from "../../game/types/gameTypes";
 import { levelTwoDoors } from "../doors/levelTwoDoors";
-import { levelTwoItems } from "../objects/levelTwoMisc";
-import type { WorldChunk } from "../types";
+import { levelTwoItems } from "../Items/levelTwoMisc";
 
 export const LEVEL_TWO: WorldChunk = {
   items: [...levelTwoItems],
@@ -45,7 +45,6 @@ export const LEVEL_TWO: WorldChunk = {
         { direction: "north", toRoomId: "LevelTwoBurnedArea" },
         { direction: "south", toRoomId: "LevelTwoCorridorFour" },
         { direction: "west", toRoomId: "LevelTwoCorridorJunction" },
-        // east door doesn't respond
       ],
     },
     {
@@ -67,7 +66,6 @@ export const LEVEL_TWO: WorldChunk = {
         { direction: "north", toRoomId: "LevelTwoCorridorFive" },
         { direction: "south", toRoomId: "LevelTwoCorridorThree" },
         { direction: "west", toRoomId: "LevelTwoBurnedQuartersFour" },
-        // east door doesn't respond
       ],
     },
     {
@@ -79,7 +77,6 @@ export const LEVEL_TWO: WorldChunk = {
         { direction: "north", toRoomId: "LevelTwoCorridorFour" },
         { direction: "south", toRoomId: "LevelTwoCorridorTwo" },
         { direction: "west", toRoomId: "LevelTwoBurnedQuartersThree" },
-        // east door doesn't respond
       ],
     },
     {
@@ -90,7 +87,6 @@ export const LEVEL_TWO: WorldChunk = {
       exits: [
         { direction: "north", toRoomId: "LevelTwoCorridorThree" },
         { direction: "south", toRoomId: "LevelTwoCorridorOne" },
-        // east and west doors don't respond
       ],
     },
     {
@@ -100,7 +96,6 @@ export const LEVEL_TWO: WorldChunk = {
         "This is the main corridor for accessing the Level Two living quarters, or what's left of them. The entire hallway is covered in black soot, although it's a little less sooty down at this end. There are still no lights, though, and the burned stench still pervades the place. To the west is a door that has been partially charred. You can see a plastic label on it where you can make out '2AW'. There is a door on the east wall as well, with a label indicating '2AE'.",
       exits: [
         { direction: "north", toRoomId: "LevelTwoCorridorTwo" },
-        // west door doesn't respond
         { direction: "east", doorId: "DOOR2AE" },
       ],
     },

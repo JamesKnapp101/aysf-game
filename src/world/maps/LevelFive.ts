@@ -1,6 +1,6 @@
+import type { WorldChunk } from "../../game/types/gameTypes";
 import { levelFiveDoors } from "../doors/levelFiveDoors";
-import { levelFiveItems } from "../objects/levelFiveMisc";
-import type { WorldChunk } from "../types";
+import { levelFiveItems } from "../Items/levelFiveMisc";
 
 export const LEVEL_FIVE: WorldChunk = {
   items: [...levelFiveItems],

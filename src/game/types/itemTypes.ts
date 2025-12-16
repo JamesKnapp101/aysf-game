@@ -1,4 +1,9 @@
-import type { GameState, StatusId, SyringeState } from "./gameTypes";
+import type {
+  GameState,
+  StatusEffect,
+  StatusId,
+  SyringeState,
+} from "./gameTypes";
 import type { ItemId } from "./ids";
 
 export type ItemClass = "solid" | "liquid" | "gas";
@@ -28,27 +33,27 @@ export interface Item {
   readableText?: string;
   isOpenable?: boolean;
   capacity?: number;
-  isContainer: boolean; // IN
-  isSurface?: boolean; // ON (transmitter pad, table, shelf, etc.)
-  canHideUnder?: boolean; // UNDER (rug, mat, pile of trash)
+  isContainer: boolean;
+  isSurface?: boolean;
+  canHideUnder?: boolean;
   capacityIn?: number;
   capacityOn?: number;
   doses?: number;
   sceneryDescription?: string;
   hasEffect?: (state: GameState, item: Item) => GameState;
+  meta?: Record<string, any>;
   isSwitchable?: boolean;
+  isSearchable?: boolean;
   isOn?: boolean;
   remainingCharge?: number;
   providesLight?: boolean;
   overrides?: ItemOverrides;
   isContagious?: boolean;
   isRadioactive?: boolean;
-  isEdible?: boolean;
-  /** Can only accept these item IDs (used for syringe). */
+  isConsumable?: boolean;
+  isUseable?: boolean;
   allowedContentsIds?: string[];
-  /** True if this item can be injected with the syringe. */
   isInjectable?: boolean;
-  /** Optional effect key applied when this item is injected. */
   injectionEffectId?: StatusId;
   injectionRemoveEffectId?: StatusId;
   isSyringeCartridge?: boolean;
@@ -91,41 +96,31 @@ export type ItemOverrides = Partial<Record<ItemOverrideVerb, string>>;
 
 export interface ItemState {
   pickedUpByPlayer: Record<string, boolean>;
-  // --- Syringe-specific state ----------------------------------------
   syringe: SyringeState;
-
-  // --- Open / closed tracking ----------------------------------------
   openItems: Record<ItemId, boolean>;
-
-  // --- Consumables ---------------------------------------------------
   spentCartridges: Record<ItemId, boolean>;
-
-  // --- Placement & containment --------------------------------------
-
-  /**
-   * Items placed INSIDE other items (containers)
-   * key: container item id
-   * value: item ids contained within
-   */
   containerContents: Record<ItemId, ItemId[]>;
-
-  /**
-   * Items placed ON other items (surfaces, pads, tables)
-   * key: surface item id
-   * value: item ids resting on top
-   */
   surfaceContents: Record<ItemId, ItemId[]>;
-
-  /**
-   * Items hidden UNDER other items (rugs, mats, debris)
-   * key: covering item id
-   * value: item ids hidden underneath
-   */
   underContents: Record<ItemId, ItemId[]>;
-
-  /**
-   * Whether UNDER contents have been revealed for a given item
-   * (e.g. rug lifted, mat moved)
-   */
   revealedUnder: Record<ItemId, boolean>;
+  searchableContents: Record<ItemId, ItemId[]>;
 }
+
+type ConsumableEffect =
+  | {
+      type: "status";
+      id: StatusEffect;
+      intensity?: number;
+      duration?: number;
+    }
+  | { type: "heal"; amount: number }
+  | { type: "damage"; amount: number }
+  | { type: "message"; text: string };
+
+export type ConsumableMeta = {
+  consumable?: {
+    kind: "drink" | "food" | "drug";
+    perDose?: ConsumableEffect[];
+    onEmpty?: ConsumableEffect[];
+  };
+};

@@ -1,5 +1,5 @@
 import React from "react";
-import type { CompassProps, Direction } from "./types/roomTypes";
+import type { CompassProps, Direction } from "../types/roomTypes";
 
 export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
   const active = new Set(exits.map((d) => d.toLowerCase()));

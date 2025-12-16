@@ -7,6 +7,7 @@ import { doPut } from "./put";
 import { doRead } from "./read";
 import { doExamine } from "./examine";
 import { doInject } from "./inject";
+import { doDrink } from "./drink";
 
 export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   open: doOpen,
@@ -17,4 +18,5 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   read: doRead,
   examine: doExamine,
   inject: doInject,
+  drink: doDrink,
 };

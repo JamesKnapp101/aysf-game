@@ -4,11 +4,8 @@ import {
   buildPlayerInjectionMessage,
 } from "../rules/injection";
 import type { RuleResult } from "../rules/result";
-
-// This probably should come from selectors, but keep your path if that's where it lives.
 import { resolveItemInScopeByNoun } from "../rules/scope";
 import { removeStatusEffectFromPlayer } from "../rules/status";
-
 import { getItemById } from "../selectors/itemSelectors";
 import type { ActionResult } from "../types/actionsTypes";
 import type { GameState, StatusId } from "../types/gameTypes";
@@ -66,7 +63,6 @@ export function doInject(state: GameState, cmd: ParsedCommand): ActionResult {
     const injectionRemoveEffectId = (doseItem?.injectionRemoveEffectId ??
       "none") as StatusId | "none";
 
-    // Choose one behavior. (Apply wins if both are set.)
     const result: RuleResult =
       injectionEffectId !== "none"
         ? applyInjectionEffectToPlayer(
@@ -78,7 +74,6 @@ export function doInject(state: GameState, cmd: ParsedCommand): ActionResult {
         ? removeInjectionEffectFromPlayer(state, injectionRemoveEffectId)
         : { state, message: "You inject yourself. Nothing seems to happen." };
 
-    // Spend cartridge
     const next: GameState = {
       ...result.state,
       itemState: {
@@ -108,7 +103,6 @@ export function doInject(state: GameState, cmd: ParsedCommand): ActionResult {
 
   const result = applyInjectionEffect(state, targetItem, loadedId);
 
-  // Spend cartridge
   const next: GameState = {
     ...result.state,
     itemState: {
@@ -129,7 +123,6 @@ export function removeInjectionEffectFromPlayer(
 ): RuleResult {
   const next = removeStatusEffectFromPlayer(state, effectId);
   const message = buildPlayerInjectionMessage(state, effectId);
-  // If nothing changed, say so
   const removed = next !== state;
 
   return {

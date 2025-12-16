@@ -16,11 +16,10 @@ export interface CompassProps {
   exits: Direction[];
 }
 
-// world types
 export interface RoomExit {
   direction: Direction;
   toRoomId: string;
-  doorId?: string; // <-- if present, movement is gated by this door
+  doorId?: string;
 }
 
 export interface Exit {

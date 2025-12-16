@@ -17,12 +17,10 @@ export function getCurrentRoomExits(state: GameState): Direction[] {
   return room.exits?.map((exit) => exit.direction) ?? [];
 }
 
-// Generic: items in an arbitrary room
 export function getItemsInRoom(state: GameState, roomId: string): Item[] {
   return state.world.items.filter((it) => it.location === roomId);
 }
 
-// Items in *current* room
 export function getItemsInCurrentRoom(state: GameState): Item[] {
   const room = getCurrentRoom(state);
   return getItemsInRoom(state, room.id);

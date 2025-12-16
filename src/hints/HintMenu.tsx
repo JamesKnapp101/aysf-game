@@ -22,7 +22,6 @@ export const HintsTab: React.FC<HintsTabProps> = ({ rootMenu }) => {
     createInitialHintState(rootMenu)
   );
 
-  // Reset state when we switch to a different hint tree (e.g., new level)
   useEffect(() => {
     setState(createInitialHintState(rootMenu));
   }, [rootMenu.id]);
@@ -34,7 +33,6 @@ export const HintsTab: React.FC<HintsTabProps> = ({ rootMenu }) => {
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Optional: auto-focus the tab when mounted so arrow keys work immediately
   useEffect(() => {
     containerRef.current?.focus();
   }, []);
@@ -53,10 +51,8 @@ export const HintsTab: React.FC<HintsTabProps> = ({ rootMenu }) => {
       setState((prev) => activateSelection(prev));
     } else if (e.key === "Escape") {
       e.preventDefault();
-      // Treat Escape as "Back" if possible
       setState((prev) => {
         if (prev.currentPath.length <= 1) return prev;
-        // simulate selecting the Back entry (last index)
         const entries = getVisibleEntries(prev);
         const backIndex = entries.length - 1;
         const hasBack = entries[backIndex]?.type === "back";
@@ -74,11 +70,9 @@ export const HintsTab: React.FC<HintsTabProps> = ({ rootMenu }) => {
       onKeyDown={handleKeyDown}
       className="hints-tab-container"
     >
-      {/* Breadcrumb / path */}
       <div className="hints-breadcrumb">
         <p className="crt-color-header">{currentMenu.title}</p>
       </div>
-      {/* Menu list */}
       <div className="hints-menu">
         <ul className="hints-menu-list">
           {entries.map((entry, idx) => {
@@ -106,7 +100,6 @@ export const HintsTab: React.FC<HintsTabProps> = ({ rootMenu }) => {
           })}
         </ul>
       </div>
-      {/* Active hint content */}
       <div className="hints-detail">
         {state.activeHint ? (
           <>

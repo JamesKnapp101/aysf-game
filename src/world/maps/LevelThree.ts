@@ -1,14 +1,37 @@
+import type { WorldChunk } from "../../game/types/gameTypes";
 import {
   levelThreeHubDoors,
   levelThreeLivingQuartersDoors,
   levelThreeMedicalAndSpaDoors,
 } from "../doors/levelThreeDoors";
-import { drugItems } from "../objects/drugs";
-import { levelThreeItems } from "../objects/levelThreeMisc";
-import type { WorldChunk } from "../types";
+import { drugItems } from "../Items/drugs";
+import {
+  LivingQuartersFiveEastItems,
+  LivingQuartersFiveEastRooms,
+} from "./levelThree/levelThreeLQFiveEast";
+import {
+  LivingQuartersFiveWestItems,
+  LivingQuartersFiveWestRooms,
+} from "./levelThree/levelThreeLQFiveWest";
+import { levelThreeItems } from "../Items/levelThreeMisc";
+import {
+  LivingQuartersSixEastItems,
+  LivingQuartersSixEastRooms,
+} from "./levelThree/levelThreeLQSixEast";
+import {
+  LivingQuartersSixWestItems,
+  LivingQuartersSixWestRooms,
+} from "./levelThree/levelThreeLQSixWest";
 
 export const LEVEL_THREE: WorldChunk = {
-  items: [...drugItems, ...levelThreeItems],
+  items: [
+    ...drugItems,
+    ...levelThreeItems,
+    ...LivingQuartersFiveEastItems,
+    ...LivingQuartersFiveWestItems,
+    ...LivingQuartersSixEastItems,
+    ...LivingQuartersSixWestItems,
+  ],
   doors: [
     ...levelThreeLivingQuartersDoors,
     ...levelThreeHubDoors,
@@ -16,6 +39,10 @@ export const LEVEL_THREE: WorldChunk = {
   ],
   teleportPads: [],
   rooms: [
+    ...LivingQuartersFiveEastRooms,
+    ...LivingQuartersFiveWestRooms,
+    ...LivingQuartersSixEastRooms,
+    ...LivingQuartersSixWestRooms,
     {
       id: "LevelThreeCorridorOne",
       name: "Level Three Corridor One",
@@ -220,54 +247,6 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Four East Bedroom",
       description: `This bedroom is dominated by a huge king-sized bed, piled with a comforter and a ton of pillows. There is a spot in the middle of the bed where a lot of cat hair has accumulated. Flanking the bed on one side is a dresser, and there is an end table with a brass lamp on the other side. Resting on the end table is a flat, compact messaging system with an integrated headset.`,
       exits: [{ direction: "west", toRoomId: "LivingQuartersFourEast" }],
-    },
-
-    // LIVING QUARTERS FIVE EAST
-    {
-      id: "LivingQuartersFiveEast",
-      name: "Living Room",
-      description: `This is a modest but tasteful living room, with a sofa and loveseat combination situated around an entertainment center. There is an endtable next to the loveseat wich supports a lamp designed to look like a Japanese paper lantern. The room is dimly lit, with eerie shadows playing across the walls and ceiling. The carpet is a light cream color, and there seem to be footprints covering it here and there. There is a doorway leading east, a wooden door to the south, and another, heavier looking door to the west.`,
-      exits: [
-        { direction: "west", toRoomId: "LevelThreeCorridorFive" },
-        { direction: "south", doorId: "FiveEastBDoor" },
-        { direction: "east", toRoomId: "FiveEastBed" },
-      ],
-    },
-    {
-      id: "FiveEastBath",
-      name: "Bathroom",
-      description: `This is a small bathroom, equipped with a stand-alone shower, a sink, and a washlet. Mounted on the wall above the sink is a mirror. The bathroom looks spotless and functional. A door leads back out to the north.`,
-      exits: [{ direction: "north", doorId: "FiveEastBDoor" }],
-    },
-    {
-      id: "FiveEastBed",
-      name: "Bedroom",
-      description: `This is a bedroom where a double bed dominates the room. The bed is made and has not been disturbed. Next to the bed is an end table with another Japanese style lamp. Against the south wall is a dresser, and to the north is a closet door. Resting on the end table is a flat, compact messaging system with an integrated headset. A doorway leads back into the Living Area to the west.`,
-      exits: [{ direction: "west", toRoomId: "LivingQuartersFiveEast" }],
-    },
-
-    // LIVING QUARTERS SIX WEST
-    {
-      id: "LivingQuartersSixWest",
-      name: "Living Quarters Six West",
-      description: `This set of quarters are clean and rather elegant; There is a slick-looking entertainment center with a pristine white sofa and loveseat positioned near it. A wooden end-table rests near the sofa. A door leads south, and a doorway leads into the bedroom area to the west.`,
-      exits: [
-        { direction: "east", toRoomId: "LevelThreeCorridorSix" },
-        { direction: "south", doorId: "SixWestBDoor" },
-        { direction: "west", toRoomId: "SixWestBed" },
-      ],
-    },
-    {
-      id: "SixWestBath",
-      name: "Six West Bathroom",
-      description: `This is a well-kept bathroom, with a sparkling porcelin sink, toilet and shower. Mounted over the sink is a rectangular mirror with beveled edges. There are three bright red drops of what look like blood in the sink. A door leads back out to the north.`,
-      exits: [{ direction: "north", doorId: "SixWestBDoor" }],
-    },
-    {
-      id: "SixWestBed",
-      name: "Six West Bedroom",
-      description: `This room is immaculately kept; the double bed is fastidiously made and everything is arranged with an almost mathematical precision. Flanking the bed is a dresser and an end table which are both perfectly arranged with no sign of dust. Over the bed hangs a large print, maybe five feet by four feet, of a grim, black, faceless marionnete puppet carrying a lit matchstick being made to set fire to a large, cringing spider. Above the scene is the stylized name 'Report To Skinny' and below it the single-word title 'Nature'. To the north is a closet door and east is a doorway leading back to the main living quarters. Resting on the end table is a flat, compact messaging system with an integrated headset. A doorway leads east, back out to the Living Area.`,
-      exits: [{ direction: "east", toRoomId: "LivingQuartersSixWest" }],
     },
 
     // LIVING QUARTERS SEVEN WEST

@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const levelTwoItems: Item[] = [
   {
@@ -115,7 +115,7 @@ export const levelTwoItems: Item[] = [
     itemSize: 6,
     isWearable: false,
     isReadable: false,
-    isContainer: false, // if you later want to open that bottom drawer, flip this
+    isContainer: false,
     doses: 0,
     isSwitchable: false,
     isOn: false,
@@ -260,7 +260,7 @@ export const levelTwoItems: Item[] = [
     doses: 0,
     isSwitchable: false,
     isOn: false,
-    providesLight: false, // could flip to true if you want the blue glow to matter mechanically
+    providesLight: false,
     isContagious: false,
     isRadioactive: false,
   },
@@ -279,7 +279,7 @@ export const levelTwoItems: Item[] = [
     itemSize: 7,
     isWearable: false,
     isReadable: false,
-    isContainer: false, // you’re treating supporter-ness elsewhere
+    isContainer: false,
     doses: 0,
     isSwitchable: false,
     isOn: false,
@@ -348,7 +348,7 @@ export const levelTwoItems: Item[] = [
     itemSize: 5,
     isWearable: false,
     isReadable: false,
-    isContainer: false, // supporter handled in room logic
+    isContainer: false,
     doses: 0,
     isSwitchable: false,
     isOn: false,
@@ -359,7 +359,7 @@ export const levelTwoItems: Item[] = [
   {
     id: "edsNecklace",
     name: "thin necklace",
-    location: "INVENTORY", // adjust if it should be in-world somewhere
+    location: "INVENTORY",
     vocab: ["thin", "necklace"],
     description:
       "A delicate-looking silver necklace that clearly isn’t just silver. The chain survived the flames without even warping, ending in a pendant shaped like a star cradling two intertwined hearts.",
@@ -468,7 +468,7 @@ export const levelTwoItems: Item[] = [
     itemSize: 4,
     isWearable: false,
     isReadable: false,
-    isContainer: false, // supporter-style usage handled elsewhere
+    isContainer: false,
     doses: 0,
     isSwitchable: false,
     isOn: false,
@@ -514,7 +514,7 @@ export const levelTwoItems: Item[] = [
     itemSize: 4,
     isWearable: false,
     isReadable: false,
-    isContainer: false, // enterable handled in room logic
+    isContainer: false,
     doses: 0,
     isSwitchable: false,
     isOn: false,
@@ -571,13 +571,13 @@ export const levelTwoItems: Item[] = [
     isSwitchable: false,
     isOn: false,
     providesLight: false,
-    isContagious: false, // unless you decide this is how the infection spreads…
+    isContagious: false,
     isRadioactive: false,
   },
   {
     id: "roomAsh",
     name: "ash and soot",
-    location: "LevelTwoBurnedQuartersFour", // you can duplicate this per-room if you want separate instances
+    location: "LevelTwoBurnedQuartersFour",
     vocab: ["ash", "ashes", "soot"],
     description:
       "Everything here is filmed in a fine layer of ash and soot, softening edges and blurring details into the same dead gray.",
@@ -704,7 +704,7 @@ export const levelTwoItems: Item[] = [
     isSwitchable: false,
     isOn: false,
     providesLight: false,
-    isContagious: true, // if you want the gas to be dangerous systemically
+    isContagious: true,
     isRadioactive: false,
   },
   {
@@ -722,7 +722,7 @@ export const levelTwoItems: Item[] = [
     itemSize: 8,
     isWearable: false,
     isReadable: false,
-    isContainer: false, // treating this as a supporter, not a container
+    isContainer: false,
     doses: 0,
     overrides: {
       get: "You rest your hand on the rack, then think better of trying to reorganize the armory. If there’s any security still running, this is the kind of thing it might notice.",
@@ -748,7 +748,7 @@ export const levelTwoItems: Item[] = [
     itemSize: 7,
     isWearable: false,
     isReadable: false,
-    isContainer: false, // again, treating as supporter
+    isContainer: false,
     doses: 0,
     isSwitchable: false,
     isOn: false,
@@ -772,7 +772,7 @@ export const levelTwoItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    doses: 0, // if you want to treat rounds as doses
+    doses: 0,
     overrides: {
       take: "You slide the clip free from the rack. Somewhere nearby, a system you can’t see notes the change and quietly updates its threat assessment.",
     },

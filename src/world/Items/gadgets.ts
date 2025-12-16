@@ -13,17 +13,12 @@ export const specialItems: Item[] = [
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 3,
-    itemSize: 3, // medium-ish; adjust if you have a stricter scale
+    itemSize: 3,
     isWearable: false,
     isReadable: false,
-    isContainer: false, // original allowed container/openable; you can flip this if you support battery objects later
+    isContainer: false,
     isSwitchable: true,
     isOn: false,
-    // Inform had:
-    // when_off: "There is a halogen flashlight lying nearby."
-    // when_on:  "There is a halogen flashlight lying nearby, casting a beam..."
-    // battery_in, power_remaining, turns_on, gravity, class MEDIUM
-    // TODO: use isOn + power_remaining equivalent if you reintroduce battery logic.
   },
 
   // 2. PLT (portable library terminal) --------------------------------------
@@ -41,12 +36,10 @@ export const specialItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
-    isReadable: false, // interaction will be via custom commands, not generic READ
+    isReadable: false,
     isContainer: false,
     isSwitchable: true,
     isOn: false,
-    // Inform: isConnected 0, has switchable animate.
-    // TODO: gate PLT query commands on isOn and isConnected equivalent.
   },
 
   // 3. EMP capsule -----------------------------------------------------------
@@ -66,8 +59,6 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: false,
     isOn: false,
-    // Inform: charged 1, countdown 5.
-    // TODO: implement arming / countdown / effect logic as needed.
   },
 
   // 4. DNA Reader ------------------------------------------------------------
@@ -89,8 +80,6 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: false,
     isOn: false,
-    // Inform: inert 0.
-    // TODO: add a custom "scan" / "sample" command if you want puzzle use.
   },
 
   // 5. Scalpel ---------------------------------------------------------------
@@ -112,8 +101,6 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: true,
     isOn: false,
-    // Inform: inert 0, class SMALL.
-    // TODO: use as a cutting tool in puzzles if needed.
   },
 
   // 6. Cooler ----------------------------------------------------------------
@@ -133,11 +120,7 @@ export const specialItems: Item[] = [
     isReadable: false,
     isContainer: true,
     isSwitchable: false,
-    isOn: true, // starts cold; interpret temp=2 as 'on' if you care
-    // Inform:
-    // off 0, cool 0, cold 1, freezing 0, temp 2, inert 0, can_hold 40,
-    // first_freezified 0, size 20, has container openable, class MEDIUM.
-    // TODO: if you implement temperature puzzles, map temp/freezing states into GameState.
+    isOn: true,
   },
 
   // 7. Thermometer -----------------------------------------------------------
@@ -158,9 +141,6 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: false,
     isOn: false,
-    // Inform:
-    // before: Use -> TakeTemp(); Taste -> <<Use self>>;
-    // TODO: implement a USE command that routes to a TakeTemp-equivalent behavior.
   },
 
   // 8. Bomb chamber headset (blue) ------------------------------------------
@@ -179,15 +159,8 @@ export const specialItems: Item[] = [
     isWearable: true,
     isReadable: false,
     isContainer: false,
-    isSwitchable: false, // powered, but not explicitly switchable in Inform
+    isSwitchable: false,
     isOn: true,
-    // Inform:
-    // has clothing scenery, isOn 1
-    // before:
-    //   Take: custom text, clears scenery.
-    //   Listen: if worn, passive; otherwise twoWay();
-    //   Wear: if tactHeadSet worn -> feedback whine.
-    // TODO: implement two-way comms + feedback interaction when both headsets are worn.
   },
 
   // 9. Tactical headset (black) ---------------------------------------------
@@ -208,13 +181,6 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: false,
     isOn: true,
-    // Inform:
-    // has clothing scenery, isOn 1
-    // before:
-    //   Take: custom text, clears scenery.
-    //   Listen: same as bombHeadSet.
-    //   Wear: handles pairing / feedback with bombHeadSet.
-    // TODO: mirror comms behavior here; keep worn state in GameState.
   },
 
   // 10. Radio ---------------------------------------------------------------
@@ -255,11 +221,7 @@ export const specialItems: Item[] = [
     isWearable: true,
     isReadable: false,
     isContainer: false,
-    isSwitchable: false, // modes rather than simple on/off
+    isSwitchable: false,
     isOn: false,
-    // Inform:
-    // nv 1, xray 0, magnify 0, on_twin 1, has clothing.
-    // description varied based on nv/xray/magnify.
-    // TODO: store mode state in GameState and customize vision / descriptions accordingly.
   },
 ];

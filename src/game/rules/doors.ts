@@ -4,15 +4,14 @@ import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
 import type { Exit } from "../types/roomTypes";
 
-// Movement only needs to know “if I’m in A, what’s on the other side?”
 export function resolveDoorDestination(
   doorDef: DoorDefinition,
   fromRoomId: string
 ): string | undefined {
   const { roomAId, roomBId } = doorDef.connects;
 
-  if (fromRoomId === roomAId) return roomBId;
-  if (fromRoomId === roomBId) return roomAId;
+  if (fromRoomId.trim() === roomAId.trim()) return roomBId;
+  if (fromRoomId.trim() === roomBId.trim()) return roomAId;
 
   return undefined;
 }
@@ -25,18 +24,15 @@ export function canMoveThroughExit(
   direction?: string
 ): { allowed: boolean; message?: string } {
   if (!doorDef) {
-    // No door associated with this exit: free to move
     return { allowed: true };
   }
 
   const kind: DoorKind = doorDef.kind ?? "normal";
 
-  // --- Badge-locked automatic doors ---
   if (kind === "badgeScanner") {
     const badgeId = doorDef.badgeItemId;
 
     if (!badgeId || doorDef.checkBadgeOnDir !== direction) {
-      // Misconfigured door; fail open rather than soft-locking the game
       return { allowed: true };
     }
     const inventoryItems = getItemsInInventory(state);
@@ -50,19 +46,13 @@ export function canMoveThroughExit(
       };
     }
 
-    // Player has the badge: door silently opens and allows passage.
-    // We ignore doorState.isOpen/isLocked for these.
     return {
       allowed: true,
       message:
         "The badge scanner flashes a barely visible laser that flickers over you. It seems to find what it was looking for and emits a satisfied chirp, then the door opens with a hydraulic sigh as you pass through.",
     };
   }
-
-  // --- Normal doors and anything else fall through to existing logic ---
-
   if (!doorState) {
-    // No state tracked, treat as open/passable
     return { allowed: true };
   }
 
@@ -103,7 +93,6 @@ export function tryOpenDoor(
   doorDef: DoorDefinition,
   doorState: DoorState
 ): { state: GameState; message: string } {
-  // already open
   if (doorState.isOpen) {
     return { state, message: "The door is already open." };
   }
@@ -166,8 +155,6 @@ export function tryOpenDoor(
         return { state, message: "It's locked." };
     }
   }
-
-  // if we get here, it was unlocked or we just unlocked it
   nextDoorState.isOpen = true;
   nextState = upsertDoorState(nextState, nextDoorState);
 

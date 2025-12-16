@@ -13,6 +13,7 @@ import type { Item, ItemOverrideVerb } from "../types/itemTypes";
 import { isItemOpen, setItemClosed, setItemOpen } from "./containers";
 import type { RuleResult } from "./result";
 import { addToInventory, removeFromInventory } from "./state";
+import { applyStatusEffectToPlayer } from "./status";
 
 export function describeActionResult(
   item: Item,
@@ -47,10 +48,7 @@ export function updateItemLocation(
 
 export function tryTakeItem(state: GameState, noun: string): RuleResult {
   const lower = noun.toLowerCase();
-
-  // --- 1) Try items on the room floor first --------------------------
   const itemsHere = getItemsInCurrentRoom(state);
-
   const itemOnFloor = itemsHere.find(
     (i) => i.vocab.includes(lower) || i.name.toLowerCase() === lower
   );
@@ -66,9 +64,7 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     return { state: next, message: "Taken." };
   }
 
-  // --- 2) Not on floor: check open containers in the room ------------
   const room = getCurrentRoom(state);
-
   const containersHere = state.world.items.filter(
     (i) => i.isContainer && i.location === room.id
   );
@@ -77,7 +73,6 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     if (!isItemOpen(state, container.id)) continue;
 
     const contentsItems = getContainerContentsItems(state, container);
-
     const found = contentsItems.find(
       (i) => i.vocab.includes(lower) || i.name.toLowerCase() === lower
     );
@@ -88,7 +83,6 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
       return { state, message: "You can’t take that." };
     }
 
-    // Remove from containerContents state
     const seededIds = getContainerContentsIds(state, container);
     const updatedContentsIds = seededIds.filter((id) => id !== found.id);
 
@@ -108,8 +102,6 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
 
     return { state: next, message: "Taken." };
   }
-
-  // --- 3) Nowhere to be found ----------------------------------------
   return { state, message: "You don't see that here." };
 }
 
@@ -132,8 +124,6 @@ export function tryDropItem(state: GameState, noun: string): RuleResult {
 }
 
 export function isItemOpenable(item: Item): boolean {
-  // For now, treat containers as openable.
-  // If you later add item.isOpenable, use that instead or in addition.
   return !!item.isContainer;
 }
 
@@ -141,23 +131,16 @@ export function tryOpenItem(
   state: GameState,
   item: Item
 ): { state: GameState; message: string } {
-  // 1. Validate openable
   if (!isItemOpenable(item)) {
     return { state, message: "You can't open that." };
   }
-
-  // 2. Already open?
   if (isItemOpen(state, item.id)) {
     return { state, message: "It's already open." };
   }
-
-  // 3. Open the container
   let next = setItemOpen(state, item.id, true);
 
-  // 4. Determine contents *after* opening
-  const contents = getContainerContentsItems(next, item); // <- uses selector you already have
+  const contents = getContainerContentsItems(next, item);
 
-  // 5. Build reveal message
   const baseMsg = item.overrides?.open ?? "You open the " + item.name;
 
   let revealMsg = "";
@@ -185,17 +168,14 @@ export function tryCloseItem(
   state: GameState,
   item: Item
 ): { state: GameState; message: string } {
-  // 1. Validate openable
   if (!isItemOpenable(item)) {
     return { state, message: "You can't close that." };
   }
 
-  // 2. Already closed?
   if (!isItemOpen(state, item.id)) {
     return { state, message: "It's already closed." };
   }
 
-  // 3. Close the container
   let next = setItemClosed(state, item.id, true);
 
   const msg = item.overrides?.open ?? "You close the " + item.name;
@@ -203,5 +183,71 @@ export function tryCloseItem(
   return {
     state: next,
     message: msg + ".",
+  };
+}
+
+export function isItemConsumable(item: Item): boolean {
+  return !!item.meta?.consumable;
+}
+
+function setItemDoses(
+  state: GameState,
+  itemId: string,
+  doses: number
+): GameState {
+  return {
+    ...state,
+    world: {
+      ...state.world,
+      items: state.world.items.map((it) =>
+        it.id === itemId ? { ...it, doses } : it
+      ),
+    },
+  };
+}
+
+export function tryDrinkItem(
+  state: GameState,
+  item: Item
+): { state: GameState; message: string } {
+  if (!isItemConsumable(item)) {
+    return { state, message: "You can't drink that." };
+  }
+
+  const doses = item.doses ?? 0;
+  if (doses <= 0) {
+    const msg =
+      item.meta?.consumable?.onEmpty
+        ?.map((eff: { type: string; text: any }) =>
+          eff.type === "message" ? String(eff.text) : ""
+        )
+        .filter(Boolean)
+        .join(" ") || "It's empty.";
+    return { state, message: msg };
+  }
+
+  let next = state;
+  let baseMsg = "";
+
+  const perDoseEffects = item.meta?.consumable?.perDose || [];
+  for (const effect of perDoseEffects) {
+    if (effect.type === "status") {
+      next = applyStatusEffectToPlayer(
+        next,
+        effect.id,
+        effect.intensity ?? 0,
+        effect.duration ?? 0
+      );
+    } else if (effect.type === "message") {
+      baseMsg += String(effect.text);
+    }
+  }
+
+  const newDoses = Math.max(0, doses - 1);
+  next = setItemDoses(next, item.id, newDoses);
+
+  return {
+    state: next,
+    message: baseMsg || "You take a drink.",
   };
 }

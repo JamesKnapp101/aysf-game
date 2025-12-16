@@ -1,0 +1,162 @@
+/* ---------- DRUNK ---------- */
+
+.game-root[data-status~="drunk"] .game-main-row,
+.game-root[data-status~="drunk"] .game-room-panel {
+    filter: blur(calc(0.4px + (var(--drunk) * 1.6px)));
+}
+
+.game-root[data-status~="drunk"] .game-main-row {
+    animation: drunk-wobble calc(3.2s - (var(--drunk) * 1.6s)) ease-in-out infinite;
+}
+
+.game-root[data-status~="drunk"][style*="--drunk: 0.8"] {
+    filter: saturate(0.85) brightness(0.95);
+}
+/* ---------- TRIXOPHINE ---------- */
+
+.game-root[data-status~="trixophine"] .game-room-panel,
+.game-root[data-status~="trixophine"] .game-main-row {
+    position: relative;
+    will-change: transform, filter;
+    animation: trixo-drift 6s ease-in-out infinite, trixo-hue 10s linear infinite;
+    filter: saturate(1.8) contrast(1.15) brightness(1.05) hue-rotate(0deg);
+    text-shadow: 0.6px 0 rgba(255, 0, 120, 0.55),
+        -0.6px 0 rgba(0, 200, 255, 0.45);
+}
+
+.game-root[data-status~="trixophine"] .game-room-panel::before,
+.game-root[data-status~="trixophine"] .game-main-row::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    mix-blend-mode: screen;
+    background: radial-gradient(circle at 20% 30%, rgba(255, 0, 180, 0.9), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.9), transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(255, 255, 0, 0.9), transparent 55%),
+        radial-gradient(circle at 30% 75%, rgba(120, 0, 255, 0.9), transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(0, 255, 120, 0.8), transparent 60%);
+    animation: trixo-swirls 12s ease-in-out infinite;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .game-root[data-status~="trixophine"] .game-room-panel,
+    .game-root[data-status~="trixophine"] .game-main-row,
+    .game-root[data-status~="trixophine"] .game-room-panel::before,
+    .game-root[data-status~="trixophine"] .game-main-row::before {
+        animation: none !important;
+    }
+}
+
+/* ---------- RADIATION (intensity-scaled via --rad in [0..1]) ---------- */
+
+.game-root[data-status~="radiation"] .game-header,
+.game-root[data-status~="radiation"] .game-room-panel,
+.game-root[data-status~="radiation"] .game-main-row {
+    position: relative;
+    will-change: transform, filter;
+
+    filter: saturate(calc(1.05 + var(--rad, 0) * 0.55)) contrast(calc(1.1 + var(--rad, 0) * 0.25)) brightness(calc(1 + var(--rad, 0) * 0.1)) hue-rotate(48deg) blur(calc(var(--rad, 0) * 0.35px));
+
+    animation: rad-shimmer 4.2s ease-in-out infinite;
+}
+
+.game-root[data-status~="radiation"] .game-room-panel::before,
+.game-root[data-status~="radiation"] .game-main-row::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background: repeating-linear-gradient(to bottom,
+            rgba(255, 255, 0, 0.08),
+            rgba(255, 255, 0, 0.08) 1px,
+            rgba(0, 0, 0, 0) 3px,
+            rgba(0, 0, 0, 0) 7px),
+        radial-gradient(circle at 50% 45%, rgba(255, 255, 0, 0.1), transparent 60%),
+        radial-gradient(circle at 30% 80%, rgba(0, 255, 120, 0.1), transparent 55%);
+    mix-blend-mode: screen;
+
+    opacity: calc(0.2 + var(--rad, 0) * 0.55);
+}
+
+.game-root[data-status~="radiation"] .game-room-panel::after,
+.game-root[data-status~="radiation"] .game-main-row::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background: radial-gradient(circle, rgba(255, 255, 0, 0.35) 0 1px, transparent 2px) 0 0 / 22px 22px,
+        radial-gradient(circle, rgba(0, 255, 120, 0.28) 0 1px, transparent 2px) 7px 9px / 27px 27px,
+        radial-gradient(circle, rgba(255, 255, 255, 0.12) 0 1px, transparent 2px) 13px 5px / 31px 31px;
+
+    mix-blend-mode: color-dodge;
+    opacity: calc(0.06 + var(--rad, 0) * 0.26);
+    animation: rad-speckle 0.9s steps(2, end) infinite;
+    filter: blur(calc(0.1px + var(--rad, 0) * 0.35px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .game-root[data-status~="radiation"] .game-header,
+    .game-root[data-status~="radiation"] .game-room-panel,
+    .game-root[data-status~="radiation"] .game-main-row,
+    .game-root[data-status~="radiation"] .game-room-panel::after,
+    .game-root[data-status~="radiation"] .game-main-row::after {
+        animation: none !important;
+    }
+}
+
+/* ---------- POSSESSED (more washed-out): bleak, ghostly, faded ---------- */
+
+.game-root[data-status~="possessed"] .game-header,
+.game-root[data-status~="possessed"] .game-room-panel,
+.game-root[data-status~="possessed"] .game-main-row {
+    position: relative;
+    will-change: filter, opacity;
+
+    filter: saturate(0.18) contrast(0.92) brightness(0.98) hue-rotate(-35deg) blur(0.35px);
+
+    animation: poss-exposure 10s steps(1, end) infinite;
+}
+
+.game-root[data-status~="possessed"] .game-room-panel::before,
+.game-root[data-status~="possessed"] .game-main-row::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background: radial-gradient(ellipse at center,
+            rgba(255, 255, 255, 0.03),
+            rgba(0, 0, 0, 0.78) 72%),
+        radial-gradient(circle at 35% 30%, rgba(210, 235, 255, 0.12), transparent 55%),
+        radial-gradient(circle at 70% 75%, rgba(210, 235, 255, 0.1), transparent 60%);
+
+    mix-blend-mode: screen;
+    opacity: 0.62;
+    filter: blur(16px);
+    animation: poss-fog 7s ease-in-out infinite;
+    will-change: transform, opacity, filter;
+}
+
+.game-root[data-status~="possessed"] .game-room-panel,
+.game-root[data-status~="possessed"] .game-main-row {
+    text-shadow: 0 0 14px rgba(190, 230, 255, 0.18),
+        2px 0 rgba(0, 0, 0, 0.45), -2px 0 rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .game-root[data-status~="possessed"] .game-header,
+    .game-root[data-status~="possessed"] .game-room-panel,
+    .game-root[data-status~="possessed"] .game-main-row,
+    .game-root[data-status~="possessed"] .game-room-panel::before,
+    .game-root[data-status~="possessed"] .game-main-row::before {
+        animation: none !important;
+    }
+}

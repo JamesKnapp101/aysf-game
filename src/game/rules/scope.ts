@@ -67,20 +67,17 @@ export function resolveItemByNoun(
     return it.location === room.id || state.player.inventory.includes(it.id);
   });
 
-  // 1) Exact id match
   const exactId = itemsInScope.find(
     (it) => normalize(it.id) === normalize(noun)
   );
   if (exactId) return exactId;
 
-  // 2) Match by name: all tokens appear in item.name
   const byName = itemsInScope.find((it) => {
     const nameTokens = new Set(tokenize(it.name));
     return tokens.every((t) => nameTokens.has(t));
   });
   if (byName) return byName;
 
-  // 3) Match by vocab: all tokens appear in item.vocab
   const byVocab = itemsInScope.find((it) => {
     if (!it.vocab?.length) return false;
     const vocabTokens = new Set(it.vocab.map((v: string) => normalize(v)));

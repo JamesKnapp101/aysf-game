@@ -1,0 +1,22 @@
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    background: var(--crt-color);
+    color: #000;
+    /* inverted colors */
+    font-weight: bold;
+    font-size: 18px;
+    border: 2px solid var(--crt-color);
+    box-sizing: border-box;
+    margin-bottom: 4px;
+}
+
+.game-header-location {
+    font-weight: bold;
+}
+
+.game-header-stats span {
+    margin-left: 16px;
+}

@@ -31,7 +31,6 @@ export function activateSelection(state: HintUIState): HintUIState {
   if (!current) return state;
 
   if (current.type === "back") {
-    // Pop one menu from the stack
     if (state.currentPath.length <= 1) return state;
 
     const newPath = state.currentPath.slice(0, -1);
@@ -45,7 +44,6 @@ export function activateSelection(state: HintUIState): HintUIState {
 
   const node = current.node!;
   if (node.kind === "menu") {
-    // Drill into submenu
     return {
       ...state,
       currentPath: [...state.currentPath, node],
@@ -53,15 +51,11 @@ export function activateSelection(state: HintUIState): HintUIState {
       activeHint: undefined,
     };
   }
-
-  // Leaf node: show hint text
   return {
     ...state,
     activeHint: node,
   };
 }
-
-// For clicking a specific entry index (mouse support)
 export function activateByIndex(
   state: HintUIState,
   index: number

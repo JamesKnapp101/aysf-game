@@ -151,7 +151,6 @@ export const corpseItems: Item[] = [
     description:
       "The science officer lies where they collapsed at their station. For a moment the shadows around their features play tricks on your eyes, but it’s just another corpse in a dead room.",
     initialDescription: undefined,
-    // no scenery flag, so no sceneryDescription
     location: "BridgeScience",
     vocab: ["dead", "body", "science", "officer", "corpse"],
     itemClass: "solid",
@@ -284,23 +283,6 @@ export const corpseItems: Item[] = [
   },
 
   // LEVEL 3 – Living quarters / spa / etc. ----------------------------------
-  {
-    id: "AlicesDaughter",
-    name: "little girl's body",
-    description:
-      "The girl lies completely still, her body cold. Red speckling rims the corners of her mouth and eyes, marring an otherwise pretty face framed in curly brown hair. She is in pajamas, wrapped in a flannel blanket, small hands still clutching the edge to her chest.",
-    initialDescription: undefined,
-    location: "LivingQuartersFiveEast",
-    vocab: ["little", "girl", "body", "corpse"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 40,
-    itemSize: 5,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
 
   {
     id: "sevenwestcorpse",

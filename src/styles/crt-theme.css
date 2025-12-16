@@ -1,0 +1,6 @@
+
+.game-room-inner:hover,
+.game-log-panel:hover,
+.game-sidebar:hover {
+    box-shadow: 0 0 8px var(--crt-color);
+}

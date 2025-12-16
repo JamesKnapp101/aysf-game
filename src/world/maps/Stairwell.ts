@@ -1,10 +1,10 @@
+import type { WorldChunk } from "../../game/types/gameTypes";
 import { badgeScannerDoors } from "../doors/badgeScannerDoors";
 import { stairwellDoors } from "../doors/stairwellDoors";
-import { badgeItems } from "../objects/badges";
-import { corpseItems } from "../objects/bodies";
-import { drugItems } from "../objects/drugs";
-import { specialItems } from "../objects/gadgets";
-import type { WorldChunk } from "../types";
+import { badgeItems } from "../Items/badges";
+import { corpseItems } from "../Items/bodies";
+import { drugItems } from "../Items/drugs";
+import { specialItems } from "../Items/gadgets";
 
 export const STAIRWELL: WorldChunk = {
   items: [...badgeItems, ...corpseItems, ...drugItems, ...specialItems],
@@ -70,8 +70,6 @@ export const STAIRWELL: WorldChunk = {
       name: "Stairs Level Six",
       description:
         "This is the stair landing for Level Six. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the word 'STORAGE' printed on it and mounted over it is a plastic sign labeled '6'. The stairs, flanked by a metal railing, continue up and down, where what looks like blood is spattered across some of the steps.",
-      // The original had a before-rule blocking if InnerDoor & OuterDoor are open.
-      // That logic can be handled elsewhere; here we just wire the exits.
       exits: [
         { direction: "up", toRoomId: "StairFive" },
         { direction: "down", toRoomId: "StairSeven" },
@@ -107,7 +105,6 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "east", doorId: "BridgeStairDoors" },
         { direction: "west", toRoomId: "LevelOneCorridorOne" },
-        // north is blocked elevator doors in the original
       ],
     },
     {
@@ -115,10 +112,7 @@ export const STAIRWELL: WorldChunk = {
       name: "Destroyed Corridor",
       description:
         "This area has been almost completely destroyed; almost as soon as you enter you are confronted with a wall of twisted debris which blocks all further progress west, and what remains of the corridor has been completely burned, the walls, floor, and ceiling black with soot. You can just make out one corner of a set of elevator doors, visible at the edge of the debris where they've twisted off their track. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
-      exits: [
-        { direction: "east", doorId: "StairDoorTwo" },
-        // west is blocked by debris
-      ],
+      exits: [{ direction: "east", doorId: "StairDoorTwo" }],
     },
     {
       id: "LevelTwoStairAccess",
@@ -139,7 +133,6 @@ export const STAIRWELL: WorldChunk = {
         { direction: "east", doorId: "StairDoorThree" },
         { direction: "west", toRoomId: "LevelThreeCorridorSeven" },
         { direction: "south", toRoomId: "TPADTerminal" },
-        // north: elevator doors closed
       ],
     },
     {
@@ -157,7 +150,6 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "east", doorId: "StairDoorFour" },
         { direction: "west", toRoomId: "LevelFourCorridorTwo" },
-        // north: elevator doors closed
       ],
     },
     {
@@ -179,7 +171,6 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "east", doorId: "StairDoorSix" },
         { direction: "west", toRoomId: "LevelSixCorridorBend" },
-        // north: elevator doors closed
       ],
     },
     {
@@ -190,7 +181,6 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "east", doorId: "CryoStairDoors" },
         { direction: "west", toRoomId: "LevelSevenCorridorBend" },
-        // north: elevator doors closed
       ],
     },
 
@@ -203,7 +193,7 @@ export const STAIRWELL: WorldChunk = {
         "This is an elevator shaft which continues into darkness above you. Currently, you are standing on top of the elevator car which is stuck at this floor. Stenciled in paint on the west wall is a large yellow number '5'. On the north wall are a series of metal rungs which extend upward, into the darkness. There is an emergency access panel at your feet which leads into the elevator car.",
       exits: [
         { direction: "up", toRoomId: "ShaftFour" },
-        { direction: "down", toRoomId: "Elevator" }, // simplified: panel leads directly to the car
+        { direction: "down", toRoomId: "Elevator" },
       ],
     },
     {
@@ -212,7 +202,7 @@ export const STAIRWELL: WorldChunk = {
       description:
         "This is the interior of a passenger elevator. There is a panel of buttons, all dark, to the left of a set of elevator doors which hang open to the south. Above you, in the rear left corner of the elevator is a small access panel.",
       exits: [
-        { direction: "up", toRoomId: "ShaftFive" }, // via access panel
+        { direction: "up", toRoomId: "ShaftFive" },
         { direction: "south", toRoomId: "LevelFiveStairAccess" },
       ],
     },
@@ -224,7 +214,6 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "up", toRoomId: "ShaftThree" },
         { direction: "down", toRoomId: "ShaftFive" },
-        // south: doors stuck shut
       ],
     },
     {
@@ -235,7 +224,6 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "up", toRoomId: "ShaftTwo" },
         { direction: "down", toRoomId: "ShaftFour" },
-        // south: doors stuck shut
       ],
     },
     {
@@ -254,10 +242,7 @@ export const STAIRWELL: WorldChunk = {
       name: "Elevator Shaft Level One",
       description:
         "You have reached the top of the elevator shaft which continues into darkness below you. Stenciled in paint on the west wall is a large yellow number '1'. There are a pair of elevator doors on the south wall which are closed, and behind them on the north wall are a series of metal rungs which you are currently clinging to. These form a ladder leading downward.",
-      exits: [
-        { direction: "down", toRoomId: "ShaftTwo" },
-        // south: doors stuck shut
-      ],
+      exits: [{ direction: "down", toRoomId: "ShaftTwo" }],
     },
   ],
 };

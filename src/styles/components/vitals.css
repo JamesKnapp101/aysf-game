@@ -1,0 +1,172 @@
+.crt-vitals-monitor {
+    width: 100%;
+    height: 40px;
+    border-bottom: 1px solid var(--crt-green, var(--crt-color));
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+}
+
+.crt-vitals-wave {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 2px var(--crt-green, var(--crt-color)));
+}
+
+.vitals-wave {
+    flex: 1;
+    height: 18px;
+    overflow: hidden;
+    filter: drop-shadow(0 0 2px var(--crt-green, var(--crt-color)));
+}
+
+.vitals-wave polyline {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation-name: crt-wave-shift;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.crt-vitals-monitor-stack {
+    border-bottom: 1px solid var(--crt-green, var(--crt-color));
+}
+
+.meter-row {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    margin-bottom: 0.25rem;
+    font-family: inherit;
+}
+
+.meter-label {
+    width: 6rem;
+    white-space: nowrap;
+    color: var(--crt-color);
+}
+
+.meter-icon {
+    margin-right: 0.25rem;
+    color: var(--crt-color);
+}
+
+.meter-bar {
+    flex: 1;
+    display: flex;
+    gap: 0.15rem;
+    height: 16px;
+    align-items: flex-end;
+}
+
+.meter-block {
+    flex: 1;
+    height: 70%;
+    border: 1px solid var(--crt-green, var(--crt-color));
+    background: transparent;
+}
+
+.meter-value {
+    width: 3.5rem;
+    text-align: right;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    color: var(--crt-color);
+}
+
+.diagnosis-section {
+    padding: 0.5rem 0.25rem;
+}
+
+.diagnosis-header {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--crt-green, var(--crt-color));
+    color: #000;
+    box-shadow: 0 0 8px var(--crt-green, var(--crt-color));
+}
+
+.diagnosis-category {
+    margin-bottom: 0.75rem;
+}
+
+.diagnosis-title {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--crt-color);
+}
+
+.diagnosis-text {
+    margin-left: 1rem;
+    line-height: 1.4rem;
+    color: var(--crt-color);
+}
+
+.brain-row {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.4rem;
+}
+
+.brain-label {
+    width: 6rem;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    color: var(--crt-color);
+}
+
+.brain-icon {
+    width: 1.2rem;
+    height: 0.9rem;
+    margin-right: 0.25rem;
+    color: var(--crt-green, var(--crt-color));
+    filter: drop-shadow(0 0 2px currentColor);
+}
+
+.brain-state {
+    width: 4rem;
+    text-align: right;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.brain-wave {
+    flex: 1;
+    height: 28px;
+    overflow: hidden;
+    filter: drop-shadow(0 0 3px var(--crt-green, var(--crt-color)));
+}
+
+.brain-wave polyline {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* Brain wave presets */
+.brain-row.normal .brain-wave polyline {
+    animation: brain-wave-scroll 12s linear infinite;
+}
+
+.brain-row.excited .brain-wave polyline {
+    animation: brain-wave-scroll 2s linear infinite;
+}
+
+.brain-row.slowed .brain-wave polyline {
+    animation: brain-wave-scroll 24s linear infinite;
+}
+
+.brain-row.stoned .brain-wave polyline {
+    animation: brain-wave-scroll 12s linear infinite;
+}
+
+/* Possessed: creepy flicker */
+.brain-row.possessed .brain-wave polyline {
+    opacity: 0.7;
+    animation: brain-wave-scroll 8s linear infinite,
+        brain-wave-flicker 0.4s steps(2) infinite;
+}

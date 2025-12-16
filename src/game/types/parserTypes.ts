@@ -16,10 +16,10 @@ export type ParsedCommand =
   | { type: "move"; direction: Direction }
   | {
       type: "action";
-      verb: string; // normalized verb: "take", "inject", "open", etc.
-      direct?: string; // first noun phrase
+      verb: string;
+      direct?: string;
       preposition?: Preposition;
-      indirect?: string; // second noun phrase
+      indirect?: string;
       raw: string;
     }
   | { type: "unknown"; raw: string };

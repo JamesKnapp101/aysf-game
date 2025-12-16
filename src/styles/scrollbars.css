@@ -1,0 +1,24 @@
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+    border-left: 1px solid var(--crt-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--crt-color);
+    border: 1px solid #000;
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--crt-color-rgb) / 0.95);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--crt-color) #000;
+}

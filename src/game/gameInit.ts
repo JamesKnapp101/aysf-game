@@ -27,7 +27,6 @@ export function getOpeningSplashLogs(): string[] {
 }
 
 export const createInitialState = (world: World): GameState => {
-  // Normalize / dedupe items by id in case any world-building merged them twice
   const uniqueItems = Array.from(
     new Map(world.items.map((it) => [it.id, it])).values()
   );
@@ -45,7 +44,6 @@ export const createInitialState = (world: World): GameState => {
   }
 
   // Seed all the containers with their starting contents
-
   // Anything defined with location === "INVENTORY" should start in the player's inventory
   const startingInventoryIds = normalizedWorld.items
     .filter((it) => it.location === "INVENTORY")
@@ -57,7 +55,6 @@ export const createInitialState = (world: World): GameState => {
     score: 0,
     rating: 0,
     moves: 0,
-
     player: {
       roomId: "LivingQuartersFiveEast",
       inventory: startingInventoryIds,
@@ -74,16 +71,15 @@ export const createInitialState = (world: World): GameState => {
       },
       statusEffects: [
         {
-          id: "radiation",
-          intensity: 57,
+          id: "regenerationWoozies",
+          intensity: 1,
+          remainingTurns: 18,
         },
       ],
     },
-
     worldState: {
       doors,
     },
-
     itemState: {
       pickedUpByPlayer: {},
       syringe: { loadedCartridgeId: undefined },
@@ -93,9 +89,9 @@ export const createInitialState = (world: World): GameState => {
       surfaceContents: {},
       underContents: {},
       revealedUnder: {},
+      searchableContents: {},
     },
   };
-
   return seedInitialPlacements(initialGameState);
 };
 
@@ -107,7 +103,6 @@ function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {
   }));
 }
 
-/** Merge helper: copy existing + append seeds, avoiding duplicates */
 function mergeContents(
   existing: Record<string, string[]>,
   seeds: Record<string, string[]>
@@ -160,8 +155,6 @@ export function seedUnderContents(
     itemState: {
       ...state.itemState,
       underContents: mergeContents(state.itemState.underContents, seeds),
-
-      // under starts unrevealed by default; keep whatever is already there
       revealedUnder: {
         ...state.itemState.revealedUnder,
       },
@@ -169,7 +162,6 @@ export function seedUnderContents(
   };
 }
 
-/** Convenience: seed everything once */
 export function seedInitialPlacements(state: GameState): GameState {
   let next = state;
   next = seedContainerContents(next, INITIAL_CONTAINER_CONTENTS);

@@ -1,16 +1,26 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { parseCommand } from "../parse/parser";
 import { WORLD } from "../world/World";
-import { RoomCompass } from "./Compass";
-import { createInitialState, seedContainerContents } from "./gameInit";
-import { StatusTab } from "./StatusTab";
+import { createInitialState } from "./gameInit";
+import { StatusTab } from "./components/StatusTab";
 import { HintsTab } from "../hints/HintMenu";
 import { allHintsRoot } from "../hints/allHintsRoot";
 import { getCurrentRoom, getCurrentRoomExits } from "./selectors/roomSelectors";
 import { getItemsInInventory } from "./selectors/itemSelectors";
-import type { GameState } from "./types/gameTypes";
+import type { GameState, StatusEffect } from "./types/gameTypes";
 import { handleCommand } from "./engine/handleCommand";
 import { buildRoomDescription } from "./text/roomDescription";
+import {
+  getActiveStatusEffectIds,
+  getRadiationIntensity,
+} from "./selectors/statusSelectors";
+import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 
 type Action = { type: "command"; input: string };
 
@@ -52,7 +62,6 @@ function loadInitialCrtColor(): string {
 function applyCRTColor(colorHex: string) {
   const root = document.documentElement;
 
-  // Set the main color
   root.style.setProperty("--crt-color", colorHex);
 
   // Convert hex → RGB for rgba() use
@@ -64,8 +73,8 @@ function applyCRTColor(colorHex: string) {
 }
 
 type LayoutPrefs = {
-  roomHeightRatio: number; // 0–1 of total game height
-  sidebarWidthRatio: number; // 0–1 of total game width
+  roomHeightRatio: number;
+  sidebarWidthRatio: number;
 };
 
 const LAYOUT_STORAGE_KEY = "aysf-layout-v1";
@@ -101,11 +110,10 @@ export const Game: React.FC = () => {
   >("inventory");
   const [layout, setLayout] = useState<LayoutPrefs>(() => loadLayoutPrefs());
   const [crtColor, setCrtColor] = useState<string>(() => loadInitialCrtColor());
-
+  const activeEffects = getActiveStatusEffectIds(state); // e.g. ["drunk","trixophine"]
   const logRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
-
   const currentRoom = getCurrentRoom(state);
   const inventoryItems = getItemsInInventory(state);
   const exits = getCurrentRoomExits(state);
@@ -123,7 +131,7 @@ export const Game: React.FC = () => {
   useEffect(() => {
     const el = logRef.current;
     if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    el.scrollTop = el.scrollHeight;
   }, [state.log]);
 
   // persist layout
@@ -182,6 +190,34 @@ export const Game: React.FC = () => {
     window.addEventListener("mouseup", onMouseUp);
   };
 
+  const shouldStickToBottomRef = useRef(true);
+
+  useEffect(() => {
+    const el = logRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const threshold = 32;
+      const distanceFromBottom =
+        el.scrollHeight - el.scrollTop - el.clientHeight;
+      shouldStickToBottomRef.current = distanceFromBottom < threshold;
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useLayoutEffect(() => {
+    const el = logRef.current;
+    if (!el) return;
+    if (!shouldStickToBottomRef.current) return;
+
+    // For logs, I actually prefer instant (no seasick smooth scrolling)
+    el.scrollTop = el.scrollHeight;
+  }, [state.log]);
+
   // -------- vertical resize: log vs sidebar ---------------------------------
   const handleStartResizeVertical = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -220,11 +256,30 @@ export const Game: React.FC = () => {
   const roomPanelFlexBasis = `${layout.roomHeightRatio * 100}%`;
   const sidebarWidthPercent = layout.sidebarWidthRatio * 100;
 
+  const rad = getRadiationIntensity(state);
+
+  const rad01 = Math.max(0, Math.min(1, rad / 100));
+
+  const isDrunk = state.player.statusEffects.find(
+    (eff: StatusEffect) => eff.id === "drunk"
+  );
+
+  console.log("Status effects: ", state.player.statusEffects);
+  console.log("--drunk should be ", String(isDrunk?.intensity ?? 0 * 0.1));
+
   return (
     <div
       ref={rootRef}
       className="game-root"
-      style={{ "--crt-color": crtColor } as React.CSSProperties}
+      style={
+        {
+          "--crt-color": crtColor,
+          "--rad": String(rad01),
+          "--drunk": String((isDrunk?.intensity ?? 0) / 100),
+        } as React.CSSProperties
+      }
+      data-status={activeEffects.join(" ")}
+      data-drunkenness={isDrunk?.intensity ?? 0}
       onClick={() => {
         inputRef.current?.focus();
       }}
@@ -243,20 +298,12 @@ export const Game: React.FC = () => {
       </div>
 
       {/* ROOM DESCRIPTION */}
-      <div
-        className="game-room-panel"
-        style={{ flex: `0 0 ${roomPanelFlexBasis}`, minHeight: 0 }}
-      >
-        <div
-          className="game-room-inner"
-          onClick={() => inputRef.current?.focus()}
-        >
-          <div className="room-compass-float">
-            <RoomCompass exits={exits} />
-          </div>
-          <div className="game-room-text">{desc}</div>
-        </div>
-      </div>
+      <RoomDescriptionPanel
+        desc={desc}
+        exits={exits}
+        roomPanelFlexBasis={roomPanelFlexBasis}
+        inputRef={inputRef}
+      />
 
       {/* horizontal resizer - between room and main row */}
       <div

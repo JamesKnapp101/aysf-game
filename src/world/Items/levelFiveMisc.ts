@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const levelFiveItems: Item[] = [
   {
@@ -108,7 +108,7 @@ export const levelFiveItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
+
     providesLight: false,
     isEdible: false,
   },
@@ -129,8 +129,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: false,
-    isEdible: false,
-    // Game logic for keyed_on / power_activated is assumed to live elsewhere.
   },
   {
     id: "Vomit",
@@ -149,7 +147,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
     isEdible: false,
     overrides: {
       eat: "You briefly imagine scooping some up. Your stomach responds by threatening to invert itself out of pure self-defense.",
@@ -483,7 +480,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    hasDose: false,
     isEdible: false,
   },
   {
@@ -506,7 +502,7 @@ export const levelFiveItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 1,
-    contains: ["SingularityBomb"],
+    //contains: ["SingularityBomb"],
     isEdible: false,
     overrides: {
       open: "The crate is already open; whatever protection it once offered has long since been surrendered.",
@@ -551,7 +547,7 @@ export const levelFiveItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-    contains: [],
+
     isEdible: false,
   },
   {
@@ -1223,7 +1219,7 @@ export const levelFiveItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 5,
-    contains: [],
+
     isEdible: false,
   },
   {
@@ -1246,7 +1242,7 @@ export const levelFiveItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 2,
-    contains: [],
+
     providesLight: true,
     isEdible: false,
   },

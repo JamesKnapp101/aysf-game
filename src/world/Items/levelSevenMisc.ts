@@ -1,4 +1,4 @@
-import type { Item } from "../types";
+import type { Item } from "../../game/types/itemTypes";
 
 export const levelSevenItems: Item[] = [
   {
@@ -20,7 +20,7 @@ export const levelSevenItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
+
     overrides: {
       examine:
         "The disk is perfectly smooth, perfectly white, and utterly indifferent to your presence.",
@@ -45,7 +45,7 @@ export const levelSevenItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isOpenable: true,
-    isEdible: false,
+
     overrides: {
       open: "You search for latches or handles, but the chambers appear sealed—no obvious way to open them without the proper tools or codes.",
       take: "They’re bolted into the lab’s structure and weigh more than you and your conscience combined.",
@@ -67,7 +67,7 @@ export const levelSevenItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "The eyeballs are sealed behind the chamber glass. Honestly, that’s probably for the best.",
       touch:
@@ -90,7 +90,7 @@ export const levelSevenItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "The hands are locked behind the chamber glass, out of reach and exactly where they should stay.",
       touch:
@@ -113,7 +113,7 @@ export const levelSevenItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "The hearts sit behind reinforced glass, untouchable and somehow still oppressive.",
       touch:
@@ -136,7 +136,7 @@ export const levelSevenItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "They’re larger and heavier than you are, and bolted to the wall for good measure.",
       attack:
@@ -162,7 +162,6 @@ export const levelSevenItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "LabInstruments",
@@ -180,7 +179,7 @@ export const levelSevenItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "The instruments are sealed inside the individual chambers. Someone decided you shouldn’t play with them, and—for once—you agree.",
     },
@@ -201,7 +200,6 @@ export const levelSevenItems: Item[] = [
     isWearable: false, // you don't wear them, you use them attached
     isReadable: false,
     isContainer: false,
-    isEdible: false,
     overrides: {
       take: "The gloves are fixed into the chamber ports; they’re not going anywhere without heavy tools and a worse idea.",
       use: "You slide your hands into the black gloves. The rubber clings uncomfortably as the world narrows to whatever’s waiting inside the chamber.",
@@ -224,7 +222,7 @@ export const levelSevenItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isOpenable: true,
-    isEdible: false,
+
     overrides: {
       take: "They’re mounted into the ship itself. If they move at all, it’ll be because a system you don’t control decided they should.",
       open: "You run your hands along the seams, but there’s no visible latch or release. If there’s a way to open these, it’s encoded somewhere you can’t see.",
@@ -249,7 +247,6 @@ export const levelSevenItems: Item[] = [
     isReadable: true,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
   },
   {
     id: "GridWhiteIND",
@@ -259,7 +256,7 @@ export const levelSevenItems: Item[] = [
     initialDescription: "A circular disk is glowing with a flat, white light.",
     sceneryDescription:
       "A white indicator disk glows calmly, washing nearby surfaces in a sterile halo.",
-    location: "Stasis", // adjust to correct room id if needed
+    location: "Stasis",
     vocab: ["glow", "indicator", "light", "disk"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -269,7 +266,6 @@ export const levelSevenItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
     overrides: {
       examine:
         "The light doesn’t flicker, doesn’t dim, doesn’t acknowledge you at all. It’s like staring into the concept of ‘OK’ with no idea what that actually means.",
@@ -301,8 +297,8 @@ export const levelSevenItems: Item[] = [
     clothingSlot: "full",
     isReadable: false,
     isContainer: false,
-    remainingCharge: 350, // treating this as oxygen reserve
-    isEdible: false,
+    remainingCharge: 350,
+
     overrides: {
       take: "You haul the cold suit upright. It’s heavier than it looks, dense with insulation, tanks, and whatever passes for safety on this ship.",
       wear: "You climb into the cold suit and pull the helmet into place. The neck seal locks with a soft click, followed by a low hiss as the oxygen system spins up and the suit pressurizes around you.",
@@ -331,7 +327,7 @@ export const levelSevenItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       use: "You peel back a strip of tape. The rip is loud in the quiet lab, and the adhesive smell is harsh and reassuringly mundane.",
       examine:
