@@ -110,7 +110,7 @@ export const specialItems: Item[] = [
     description:
       "A red-and-white plastic cooler with a folding handle on top and a dial on the front to control the internal temperature.",
     initialDescription: "A red-and-white plastic cooler rests in the corner.",
-    location: "Kitchen",
+    location: "LivingQuartersFiveEast", // "Kitchen",
     vocab: ["cooler", "icebox"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -120,7 +120,28 @@ export const specialItems: Item[] = [
     isReadable: false,
     isContainer: true,
     isSwitchable: false,
+    isSettable: true,
     isOn: true,
+    meta: {
+      settable: {
+        off: {
+          type: "message",
+          text: "You set the cooler to 'off,' and it emits a soft hiss.",
+        },
+        cool: {
+          type: "message",
+          text: "You set the cooler to 'cool,' and it emits a low electronic tone.",
+        },
+        cold: {
+          type: "message",
+          text: "You set the cooler to 'cold,' and it emits a moderate electronic tone.",
+        },
+        freeze: {
+          type: "message",
+          text: "You set the cooler to 'freeze' and it emits a high-pitched electronic tone.",
+        },
+      },
+    },
   },
 
   // 7. Thermometer -----------------------------------------------------------

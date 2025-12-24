@@ -25,6 +25,11 @@ export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
 
   return {
     state,
-    message: `You read the ${item.name}...\n\n    "${text}"`,
+    overlay: {
+      kind: "reader",
+      title: item.name ?? "Read",
+      body: text,
+      sourceItemId: item.id,
+    },
   };
 }

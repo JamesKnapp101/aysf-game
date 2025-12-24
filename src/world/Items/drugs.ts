@@ -35,7 +35,7 @@ export const drugItems: Item[] = [
     name: "green serum cartridge",
     description:
       "A translucent cartridge filled with green serum, labeled ‘TRIXOPHINE’.",
-    location: "INVENTORY", //"DRUGTIN",
+    location: "DRUGTIN",
     vocab: ["green", "serum", "cartridge", "trixophine"],
     itemClass: "liquid",
     itemCategory: "fluid",

@@ -1,3 +1,7 @@
+import {
+  describeActionResult,
+  describeScotchBottle,
+} from "../../../game/rules/items";
 import type { Item } from "../../../game/types/itemTypes";
 import { createLivingQuarter } from "../../maps/livingQuartersTemplate";
 
@@ -56,7 +60,10 @@ The glass is clear, the contents dark.`,
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    doses: 5,
+    doses: 17,
+    overrides: {
+      examine: (state: any) => describeScotchBottle(state.item),
+    },
     meta: {
       consumable: {
         kind: "drink",

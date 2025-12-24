@@ -104,3 +104,45 @@
     color: #000;
     box-shadow: 0 0 8px var(--crt-green, var(--crt-color));
 }
+
+/* Drop this near your sidebar styles */
+.inv-tree-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.inv-tree-item {
+    margin-left: 1.5rem;
+    /* matches your current indentation */
+    margin-bottom: 6px;
+}
+
+.inv-tree-row {
+    line-height: 1.3;
+}
+
+.inv-tree-contents {
+    margin: 0.25rem 0 0;
+    padding-left: 2.25rem;
+    /* indent children under container */
+    list-style: none;
+}
+
+.inv-tree-child {
+    display: flex;
+    align-items: baseline;
+}
+
+.inv-tree-glyph {
+    display: inline-block;
+    min-width: 2.25rem;
+    /* keeps names aligned even if you switch glyphs later */
+    white-space: pre;
+    opacity: 0.95;
+    /* optional */
+}
+
+.inv-tree-child-name {
+    white-space: pre-wrap;
+}

@@ -20,7 +20,6 @@ export const levelSixItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isOpenable: false,
-    isEdible: false,
   },
   {
     id: "CannisterTwo",
@@ -41,7 +40,6 @@ export const levelSixItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isOpenable: false,
-    isEdible: false,
   },
   {
     id: "AirlockPanel",
@@ -60,7 +58,7 @@ export const levelSixItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isOpenable: false,
-    isEdible: false,
+
     overrides: {
       push: "You press your palm against the panel. It’s warm, but unmoved.",
       use: "The panel offers no obvious interface. It simply glows, like a warning light that thinks it’s smarter than you.",
@@ -83,7 +81,7 @@ export const levelSixItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: false,
-    isEdible: false,
+
     overrides: {
       move: "You thrash your arms and legs, but in hard vacuum there’s nothing to push against. Space doesn’t care how badly you want to be somewhere else.",
       drop: "Letting go of anything out here is essentially setting it free. It won’t fall—it’ll just keep going, the way everything does once it slips loose.",
@@ -105,7 +103,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "From out here, the ship is a shrinking silhouette against the stars. You’re not taking it; it’s taking you, piece by piece, and leaving you behind.",
     },
@@ -141,7 +139,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You make a few clumsy grabs at the drifting trash. Most of it is out of reach, and all of it is beneath even your current standards.",
     },
@@ -177,7 +175,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You snag a drifting washer and immediately lose it again. There’s nothing here worth the effort.",
     },
@@ -213,7 +211,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You reach toward the junk cloud, but most of it just drifts away from your fingers, impossibly disinterested.",
     },
@@ -249,7 +247,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You could chase loose junk around in zero-g all day. You’ve already survived worse humiliations, but you pass.",
     },
@@ -272,7 +270,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You reach out and carefully pluck the spinning key from the air, feeling its weight settle uncomfortably in your hand.",
     },
@@ -294,7 +292,7 @@ export const levelSixItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: false,
-    isEdible: false,
+
     overrides: {
       take: "You stretch upward, but it’s far, far above you—easily sixty feet in the air. All you can do is watch it flash.",
     },
@@ -316,7 +314,7 @@ export const levelSixItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: false,
-    isEdible: false,
+
     overrides: {
       take: "You edge toward the very limit of safety and reach, but it’s still a good forty feet out of reach. Physics is not on your side.",
     },
@@ -338,7 +336,7 @@ export const levelSixItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isOpenable: true,
-    isEdible: false,
+
     overrides: {
       open: "You brace yourself and push. The door doesn’t flinch. This is a cargo seal, not a suggestion.",
       enter:
@@ -364,7 +362,7 @@ export const levelSixItems: Item[] = [
     isContainer: false,
     isSwitchable: true,
     isOn: false,
-    isEdible: false,
+
     overrides: {
       switch:
         "You look for a switch or manual override. There isn’t one. If these lights wake up, it’ll be because the ship decides you’re in trouble.",
@@ -387,7 +385,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You plant your hands against the load and push. It doesn’t move. You’d need machinery, or a death wish, or both.",
       push: "The pallet stack barely creaks under the strain. These aren’t meant to be budged by hand.",
@@ -415,7 +413,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You might be able to tug a single crate free, if you didn’t mind the rest collapsing onto you like a very practical funeral.",
       push: "You give the stack a testing shove. It groans ominously, then settles back into place. You decide not to press your luck.",
@@ -443,7 +441,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You tug at a crate and feel the whole stack whisper against itself. Whatever’s under there isn’t worth dying for.",
       push: "The pallets shift a fraction of an inch and then lock again, like the ship itself is holding them in place.",
@@ -471,7 +469,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You consider trying to free a crate and picture the stack following it down onto your spine. You reconsider.",
       push: "You give the leaning stack the smallest nudge. It creaks like an old shipboard ghost and decides—for now—to stay put.",
@@ -499,7 +497,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "Up here, anything you move could destabilize the whole stack. It’s already not thrilled you’re standing on it.",
       push: "The safest thing you can do on top of a wobbly cargo stack is not shove things around. You decide, for once, to be safe.",
@@ -527,7 +525,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You could try dragging a crate out of line, but there’s nowhere safe to stand while you do it.",
       push: "You give a cautious shove with your boot; the stack responds with a wobble you really don’t like.",
@@ -555,7 +553,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "Up here, every crate is load-bearing. Removing one would be impressive, suicidal, or both.",
       push: "You test the top layer with your boot; it shifts just enough to confirm that you should stop doing that.",
@@ -583,7 +581,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "Any serious attempt to rearrange things up here is how you get your name attached to a safety bulletin.",
       push: "You shift one crate a fraction and feel the whole island breathe under you. That’s enough experimenting.",
@@ -611,7 +609,7 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       examine:
         "You move closer and peer into the murk, but the dark just thickens, turning shapes into suggestions and suggestions into nothing.",

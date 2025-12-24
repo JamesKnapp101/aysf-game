@@ -601,6 +601,11 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 5,
+    meta: {
+      container: {
+        holds: ["solid", "liquid"],
+      },
+    },
   },
   {
     id: "DRUGTIN",
@@ -609,7 +614,7 @@ export const levelThreeItems: Item[] = [
       "A small, silvery tin box, smooth-sided with a hinged lid. Fingerprints have dulled the shine in irregular patches.",
     sceneryDescription:
       "The box has that particular rattle that says there’s something small and important inside. The lid is scuffed around the edge where nails and tools have pried it open more times than the manufacturer intended.",
-    location: "SixWestCloset",
+    location: "", //"SixWestCloset",
     vocab: ["small", "tin", "box"],
     itemClass: "solid",
     itemCategory: "collectable",

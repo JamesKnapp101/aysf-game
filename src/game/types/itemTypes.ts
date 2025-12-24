@@ -43,6 +43,7 @@ export interface Item {
   hasEffect?: (state: GameState, item: Item) => GameState;
   meta?: Record<string, any>;
   isSwitchable?: boolean;
+  isSettable?: boolean;
   isSearchable?: boolean;
   isOn?: boolean;
   remainingCharge?: number;
@@ -92,7 +93,15 @@ export type ItemOverrideVerb =
   | "move"
   | "examine";
 
-export type ItemOverrides = Partial<Record<ItemOverrideVerb, string>>;
+export type ItemOverrides = Partial<Record<ItemOverrideVerb, any>>;
+
+export type CoolerMode = "off" | "cool" | "cold" | "freeze";
+
+export type ItemSettings =
+  | { kind: "cooler"; mode: CoolerMode }
+  | { kind: "safe"; dials: number[] } // e.g. [3, 7, 1, 9]
+  | { kind: "transmitter"; code: string }; // current entry "120045"
+// add more as needed
 
 export interface ItemState {
   pickedUpByPlayer: Record<string, boolean>;
@@ -104,6 +113,7 @@ export interface ItemState {
   underContents: Record<ItemId, ItemId[]>;
   revealedUnder: Record<ItemId, boolean>;
   searchableContents: Record<ItemId, ItemId[]>;
+  itemSettings: Partial<Record<ItemId, ItemSettings>>;
 }
 
 type ConsumableEffect =

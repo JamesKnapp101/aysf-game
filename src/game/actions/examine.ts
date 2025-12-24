@@ -1,6 +1,8 @@
 import { resolveItemByNoun } from "../rules/scope";
+import { getItemById } from "../selectors/itemSelectors";
 import type { ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
+import type { Item } from "../types/itemTypes";
 import type { ParsedCommand } from "../types/parserTypes";
 
 export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
@@ -18,6 +20,42 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "You don't see that here." };
   }
 
-  const desc = item.description?.trim() || "You see nothing special.";
-  return { state, message: desc };
+  let itemDesc = item.description?.trim() || "You see nothing special.";
+  if (item.isContainer && state.itemState.openItems[item.id]) {
+    const containerContents = state.itemState.containerContents[item.id];
+    let containerItems: Item[] = [];
+    for (const itemId of containerContents) {
+      const containerItem = getItemById(state, itemId);
+      if (containerItem) containerItems.push(containerItem);
+    }
+    const containerNames = containerItems.map((ci: Item) => ci.name).join(", ");
+    itemDesc += ` Inside the ${item.name} you see ${containerNames}.`;
+  }
+
+  const fallback = item.description?.trim() || "You see nothing special.";
+  const ex = item.overrides?.examine;
+
+  if (!ex) {
+    return { state, message: itemDesc };
+  }
+
+  // String override
+  if (typeof ex === "string") {
+    const msg = ex.trim() || itemDesc;
+    return { state, message: msg };
+  }
+
+  // Function override: can return string OR ActionResult
+  const out = ex({ item, state });
+
+  if (typeof out === "string") {
+    const msg = out.trim() || itemDesc;
+    return { state, message: msg };
+  }
+
+  // ActionResult override
+  return {
+    state: out.state ?? state,
+    message: (out.message ?? itemDesc).trim() || itemDesc,
+  };
 }

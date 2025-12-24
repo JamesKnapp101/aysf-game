@@ -2,6 +2,7 @@ import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";
 import { getCurrentRoom } from "../selectors/roomSelectors";
+import { useUIOverlayStore } from "../store/store";
 import { buildRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
 import type { ParsedCommand } from "../types/parserTypes";
@@ -12,6 +13,8 @@ export function appendLog(state: GameState, text: string): GameState {
 }
 
 export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
+  const { openOverlay } = useUIOverlayStore.getState();
+
   const room = getCurrentRoom(state);
 
   if (cmd.type === "look") {
@@ -88,7 +91,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
       const result = handler(state, cmd);
       nextState = result.state;
-      message = result.message;
+      message = result.message ?? "";
+      if (result.overlay) {
+        openOverlay(result.overlay as any);
+      }
       break;
     }
 

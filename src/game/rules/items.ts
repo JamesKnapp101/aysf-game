@@ -66,7 +66,9 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
 
   const room = getCurrentRoom(state);
   const containersHere = state.world.items.filter(
-    (i) => i.isContainer && i.location === room.id
+    (i) =>
+      i.isContainer &&
+      (i.location === room.id || state.player.inventory.includes(i.id))
   );
 
   for (const container of containersHere) {
@@ -250,4 +252,94 @@ export function tryDrinkItem(
     state: next,
     message: baseMsg || "You take a drink.",
   };
+}
+
+export function tryEatItem(
+  state: GameState,
+  item: Item
+): { state: GameState; message: string } {
+  if (!isItemConsumable(item)) {
+    return { state, message: "You can't eat that." };
+  }
+
+  const doses = item.doses ?? 0;
+  if (doses <= 0) {
+    const msg =
+      item.meta?.consumable?.onEmpty
+        ?.map((eff: { type: string; text: any }) =>
+          eff.type === "message" ? String(eff.text) : ""
+        )
+        .filter(Boolean)
+        .join(" ") || `That's the last of the ${item.name}`;
+    return { state, message: msg };
+  }
+
+  let next = state;
+  let baseMsg = "";
+
+  const perDoseEffects = item.meta?.consumable?.perDose || [];
+  for (const effect of perDoseEffects) {
+    if (effect.type === "status") {
+      next = applyStatusEffectToPlayer(
+        next,
+        effect.id,
+        effect.intensity ?? 0,
+        effect.duration ?? 0
+      );
+    } else if (effect.type === "message") {
+      baseMsg += String(effect.text);
+    }
+  }
+
+  const newDoses = Math.max(0, doses - 1);
+  next = setItemDoses(next, item.id, newDoses);
+
+  return {
+    state: next,
+    message: baseMsg || "You take a bite.",
+  };
+}
+
+export function describeScotchBottle(item: Item): string {
+  const doses = item.doses ?? 0;
+
+  if (doses === 17) {
+    return `
+A tall bottle with a clean label and an unbroken seal.
+The glass is clear, the contents dark and untouched.
+`;
+  }
+
+  if (doses > 12) {
+    return `
+The bottle has been opened.
+Most of the scotch is still there, sloshing darkly inside.
+`;
+  }
+
+  if (doses > 6) {
+    return `
+The bottle is noticeably lighter now.
+The label is smudged, and the liquid sits below the midpoint.
+`;
+  }
+
+  if (doses > 1) {
+    return `
+Only a few fingers of scotch remain.
+You’d have to tip the bottle to get a proper drink.
+`;
+  }
+
+  if (doses === 1) {
+    return `
+Just a swallow left at the bottom of the bottle.
+The glass smells sharply of alcohol.
+`;
+  }
+
+  return `
+An empty bottle.
+It smells faintly of scotch.
+`;
 }

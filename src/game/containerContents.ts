@@ -1,5 +1,7 @@
 export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
-  Dresser: ["Syringe"],
+  FiveEastDresser: ["Syringe"],
+  DRUGTIN: ["GroovyCart"],
+  SixWestCloset: ["DRUGTIN"],
   SixWestWetBar: ["SixWestBourbon", "SixWestScotch", "SixWestBeer"],
   SixWestWineRack: ["SixWestWine1", "SixWestWine2", "SixWestWine3"],
 };

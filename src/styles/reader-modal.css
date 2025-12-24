@@ -1,0 +1,31 @@
+.reader-scroll {
+    height: 90%;
+    overflow: auto;
+    padding: 10px;
+    border: 1px solid color-mix(in srgb, var(--crt-color) 35%, transparent);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.55);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.65);
+    outline: none;
+}
+
+.reader-text {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.35;
+    font-family: "Courier New", monospace;
+    text-shadow: 0 0 6px color-mix(in srgb, var(--crt-color) 35%, transparent);
+}
+
+.reader-footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    opacity: 0.85;
+}
+
+.reader-hint {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+}

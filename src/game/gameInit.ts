@@ -90,6 +90,9 @@ export const createInitialState = (world: World): GameState => {
       underContents: {},
       revealedUnder: {},
       searchableContents: {},
+      itemSettings: {
+        Cooler: { kind: "cooler", mode: "off" },
+      },
     },
   };
   return seedInitialPlacements(initialGameState);

@@ -19,7 +19,7 @@ export const levelFiveItems: Item[] = [
     isContainer: false,
     hasEffect: undefined,
     providesLight: false,
-    isEdible: false,
+
     overrides: {
       open: "You wedge your fingers into the gap and strain until your joints scream. The doors barely shudder. Whatever forced them shut did a better job than you ever will bare-handed.",
       enter:
@@ -44,7 +44,7 @@ export const levelFiveItems: Item[] = [
     isContainer: false,
     hasEffect: undefined,
     providesLight: false,
-    isEdible: false,
+
     overrides: {
       open: "You brace yourself and try to pry the doors wider, but the metal doesn’t care. The gap stays exactly as narrow and unfriendly as before.",
       enter:
@@ -68,7 +68,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
   },
   {
     id: "EngineRoomPanel",
@@ -88,7 +87,6 @@ export const levelFiveItems: Item[] = [
     isContainer: false,
     providesLight: true,
     isRadioactive: true,
-    isEdible: false,
   },
   {
     id: "EngineRoomKeyhole",
@@ -110,7 +108,6 @@ export const levelFiveItems: Item[] = [
     capacity: 1,
 
     providesLight: false,
-    isEdible: false,
   },
   {
     id: "EngineRoomButton",
@@ -147,7 +144,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       eat: "You briefly imagine scooping some up. Your stomach responds by threatening to invert itself out of pure self-defense.",
       take: "Collecting samples is for people with gloves, tools, and a lab. You have none of those things, and even less inclination.",
@@ -173,7 +170,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
   },
   {
     id: "DuctBrownIND",
@@ -193,7 +189,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
   },
   {
     id: "AccessPORT",
@@ -211,7 +206,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       enter:
         "You step toward the access port, lining yourself up with the darkness below. If you go down, you’d better be very sure you know the way back up.",
@@ -233,7 +228,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You try to pry the keypad free, but the adhesive holds fast. Someone really didn’t want this going anywhere.",
     },
@@ -254,7 +249,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You dig at the epoxy with your nails. It doesn’t even flake. Whatever this stuff is, it was meant to outlive the ship.",
       cut: "You scrape and gouge at the epoxy. Your tool barely scuffs the surface. It feels like trying to scratch concrete with a spoon.",
@@ -276,7 +271,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       take: "You tug on the cables. They bite back, anchored somewhere deep in the ship’s guts.",
       cut: "You hesitate. Severing random live cables in a confined metal tunnel feels like the kind of decision that makes you a short, tragic footnote in an accident report.",
@@ -299,7 +294,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "LADDER_MaintenanceDuctThree",
@@ -317,7 +311,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       climb:
         "You grab the ladder, its rungs cold and slightly slick, and start moving into the dark below.",
@@ -339,7 +333,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       climb:
         "You wrap your hands around the cold rungs and begin the climb toward the dome, each step echoing too loudly in the hollow chamber.",
@@ -361,7 +355,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "OWindow",
@@ -380,7 +373,7 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isRadioactive: true,
-    isEdible: false,
+
     overrides: {
       search:
         "You press closer to the window, trying to see past the glare. Beyond the blood-streaked glass, a bright white column burns steadily in the core, impossible to look at directly.",
@@ -405,7 +398,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isRadioactive: true,
-    isEdible: false,
   },
   {
     id: "SplashOBlood",
@@ -423,7 +415,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "MainComputerArray",
@@ -457,7 +448,7 @@ export const levelFiveItems: Item[] = [
     isSwitchable: true,
     isOn: false,
     providesLight: true,
-    isEdible: false,
+
     overrides: {
       use: "You rest your hands on the controls, waiting for familiarity to kick in. It doesn’t. If you ever knew how to operate this thing, the knowledge is gone with the rest of your missing memories.",
       switch:
@@ -480,7 +471,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "Crate",
@@ -503,7 +493,7 @@ export const levelFiveItems: Item[] = [
     isOpenable: true,
     capacity: 1,
     //contains: ["SingularityBomb"],
-    isEdible: false,
+
     overrides: {
       open: "The crate is already open; whatever protection it once offered has long since been surrendered.",
       close:
@@ -527,7 +517,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
   },
   {
     id: "SBOMBSocket",
@@ -547,8 +536,6 @@ export const levelFiveItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-
-    isEdible: false,
   },
   {
     id: "BombLCD",
@@ -567,7 +554,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
   },
   {
     id: "BombPanel",
@@ -585,7 +571,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       open: "The panel is already off, and the bomb is already naked enough for your liking.",
       close:
@@ -608,7 +594,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       cut: "You’ll need to pick a specific wire. The bomb doesn’t do ‘close enough’.",
     },
@@ -627,7 +613,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "MAROONWire",
@@ -643,7 +628,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "PURPLEWire",
@@ -659,7 +643,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "MAUVEWire",
@@ -675,7 +658,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "LILACWire",
@@ -691,7 +673,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "BROWNWire",
@@ -707,7 +688,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "UMBERWire",
@@ -723,7 +703,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "BSIENNAWire",
@@ -739,7 +718,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "CRIMSONWire",
@@ -755,7 +733,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "BLUEWire",
@@ -771,7 +748,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "AZUREWire",
@@ -787,7 +763,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "CYANWire",
@@ -803,7 +778,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "WHITEWire",
@@ -819,7 +793,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "YELLOWWire",
@@ -835,7 +808,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "TANWire",
@@ -851,7 +823,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "GREYWire",
@@ -867,7 +838,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "GREENWire",
@@ -883,7 +853,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "CHARTRUSEWire",
@@ -899,7 +868,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "PLUMWire",
@@ -915,7 +883,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "ORANGEWire",
@@ -931,7 +898,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "PINKWire",
@@ -947,7 +913,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "BLACKWire",
@@ -963,7 +928,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "KHAKIWire",
@@ -979,7 +943,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "MAIZEWire",
@@ -995,7 +958,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "SALMONWire",
@@ -1011,7 +973,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "SILVERWire",
@@ -1027,7 +988,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "GOLDWire",
@@ -1043,7 +1003,6 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "WedgedDOOR",
@@ -1062,7 +1021,7 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isOpenable: true,
-    isEdible: false,
+
     overrides: {
       open: "You lean into the seam and shove until your muscles tremble. The doors don’t even pretend to care.",
       close:
@@ -1087,7 +1046,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       enter:
         "You move toward the shuttle’s access point, the hull looming over you like a closed fist.",
@@ -1109,7 +1068,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       touch:
         "You press your thumb to the pad. An electronic buzz sounds, followed by a smooth, disinterested voice noting that the shuttle is assigned to Commander Warren Otts—and that you are not him.",
@@ -1133,7 +1092,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isContagious: true,
-    isEdible: false,
   },
   {
     id: "CoordFinder",
@@ -1153,7 +1111,6 @@ export const levelFiveItems: Item[] = [
     readableText:
       "The device displays a constantly shifting sequence of red numbers—coordinates, if the accompanying tech jargon in your memory is to be trusted. Unfortunately, the meaning behind them remains frustratingly opaque. All you know is that wherever you are, the CoordFinder knows too, and it’s quietly keeping score.",
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "SeatCushion",
@@ -1171,7 +1128,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       lift: "You hook your fingers under the cushion and heave it up, revealing a storage compartment hidden beneath the seat.",
       lower:
@@ -1194,7 +1151,7 @@ export const levelFiveItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    isEdible: false,
+
     overrides: {
       lift: "You grab the tab and pull, raising the seat cushion.",
       pull: "You yank the nylon tag, and the cushion comes up with it.",
@@ -1219,8 +1176,6 @@ export const levelFiveItems: Item[] = [
     isContainer: true,
     isOpenable: true,
     capacity: 5,
-
-    isEdible: false,
   },
   {
     id: "MatterTransmitter",
@@ -1244,7 +1199,6 @@ export const levelFiveItems: Item[] = [
     capacity: 2,
 
     providesLight: true,
-    isEdible: false,
   },
   {
     id: "MTManual",
@@ -1279,7 +1233,6 @@ export const levelFiveItems: Item[] = [
       "The manual strongly recommends testing new coordinates with objects “of little value” before sending anything or anyone you’d miss. It also notes that outgoing transmissions take priority over incoming ones: if there’s an object on the plate and another one waiting at the destination, the thing on the plate goes first. The plate must be clear to accept incoming matter.\n\n" +
       "The last line in the section is underlined three times: “Happy transmitting!” It doesn’t feel especially sincere.",
     isContainer: false,
-    isEdible: false,
   },
   {
     id: "TransmitterReadOut",
@@ -1298,7 +1251,6 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
   },
   {
     id: "MatterTransmitterButton",
@@ -1317,7 +1269,7 @@ export const levelFiveItems: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-    isEdible: false,
+
     overrides: {
       push: "You rest your finger on the green contact. For a heartbeat, nothing happens. Then deep inside the mechanism, something spools up with a rising electronic whine.",
     },
