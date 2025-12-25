@@ -1,6 +1,7 @@
 import type { Direction } from "./roomTypes";
 
 export type DoorKind =
+  | "blocked"
   | "standard"
   | "keyed"
   | "badgeScanner"
@@ -31,6 +32,7 @@ export interface DoorDefinition {
   scriptId?: string;
   openVerb?: string;
   closeVerb?: string;
+  blockMsg?: string;
 }
 
 export interface DoorState {

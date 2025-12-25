@@ -15,13 +15,19 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "Examine what?" };
   }
 
-  const item = resolveItemByNoun(state, direct);
+  const item =
+    direct !== "water"
+      ? resolveItemByNoun(state, direct)
+      : getItemById(state, "water");
   if (!item) {
     return { state, message: "You don't see that here." };
   }
 
   let itemDesc = item.description?.trim() || "You see nothing special.";
-  if (item.isContainer && state.itemState.openItems[item.id]) {
+  if (item.isContainer && state.itemState.containerFilled[item.id]) {
+    const containerContents = state.itemState.containerFilled[item.id];
+    itemDesc += ` The ${item.name} is filled with ${containerContents}`;
+  } else if (item.isContainer && state.itemState.openItems[item.id]) {
     const containerContents = state.itemState.containerContents[item.id];
     let containerItems: Item[] = [];
     for (const itemId of containerContents) {
@@ -32,7 +38,6 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     itemDesc += ` Inside the ${item.name} you see ${containerNames}.`;
   }
 
-  const fallback = item.description?.trim() || "You see nothing special.";
   const ex = item.overrides?.examine;
 
   if (!ex) {
@@ -51,6 +56,19 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   if (typeof out === "string") {
     const msg = out.trim() || itemDesc;
     return { state, message: msg };
+  }
+
+  if (item.id === "Cooler") {
+    const coolerSetting = state.itemState.itemSettings["Cooler"];
+    const mode =
+      coolerSetting && coolerSetting.kind === "cooler"
+        ? coolerSetting.mode
+        : "off";
+
+    return {
+      state,
+      overlay: { kind: "cooler", mode },
+    };
   }
 
   // ActionResult override

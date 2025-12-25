@@ -109,11 +109,13 @@ export interface ItemState {
   openItems: Record<ItemId, boolean>;
   spentCartridges: Record<ItemId, boolean>;
   containerContents: Record<ItemId, ItemId[]>;
+  containerFilled: Record<ItemId, ItemId[]>;
   surfaceContents: Record<ItemId, ItemId[]>;
   underContents: Record<ItemId, ItemId[]>;
   revealedUnder: Record<ItemId, boolean>;
   searchableContents: Record<ItemId, ItemId[]>;
   itemSettings: Partial<Record<ItemId, ItemSettings>>;
+  frozenItems: Record<ItemId, boolean>;
 }
 
 type ConsumableEffect =

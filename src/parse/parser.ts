@@ -62,6 +62,7 @@ const PREPOSITIONS: Preposition[] = [
   "at",
   "about",
   "to",
+  "over",
 ];
 
 export function parseCommand(rawInput: string): ParsedCommand {

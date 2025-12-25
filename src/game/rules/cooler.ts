@@ -1,6 +1,9 @@
+import { getItemById } from "../selectors/itemSelectors";
 import type { ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
+import { setItemFrozen } from "./liquids";
+import { resolveItemInScopeByNoun } from "./scope";
 
 type SettableMessage = { type: "message"; text: string };
 
@@ -54,7 +57,23 @@ export function handleSetCoolerMode(
   state: GameState,
   mode: CoolerMode
 ): ActionResult {
-  const nextState = setCoolerModeInState(state, mode);
+  let next = state;
+  next = setCoolerModeInState(state, mode);
+  const coolerContents = next.itemState.containerContents["Cooler"];
+  for (const content of coolerContents) {
+    if (state.itemState.containerFilled[content]) {
+      const containerLiquid = state.itemState.containerFilled[content];
+      if (mode === "freeze") {
+        if (containerLiquid?.[0] === "water") {
+          const item = getItemById(next, "water");
+          if (!item) {
+            return { state, message: `I see no water here.` };
+          }
+          next = setItemFrozen(state, item);
+        }
+      }
+    }
+  }
 
   const msg = {
     off: "You set the cooler to 'off,' and it emits a soft hiss.",
@@ -64,5 +83,5 @@ export function handleSetCoolerMode(
       "You set the cooler to 'freeze' and it emits a high-pitched electronic tone.",
   }[mode];
 
-  return { state: nextState, message: msg };
+  return { state: next, message: msg };
 }

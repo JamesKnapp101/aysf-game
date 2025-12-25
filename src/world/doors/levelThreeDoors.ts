@@ -1,6 +1,24 @@
 import type { DoorDefinition } from "../../game/types/doorTypes";
 
 export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
+  // CUBBY 'DOOR'
+  {
+    id: "CubbySqueeze",
+    name: "Narrow opening",
+    descriptionFromA: "",
+    descriptionFromB: "You can't physically reach the Cubby.",
+    kind: "blocked",
+    vocab: ["narrow opening"],
+    connects: {
+      roomAId: "LevelThreeCorridorSeven",
+      roomBId: "LevelThreeCubby",
+    },
+    directions: { fromA: "north", fromB: "south" },
+    initiallyOpen: false,
+    initiallyLocked: true,
+    blockMsg:
+      "There's no way you'll be able to squeeze through that tiny opening.",
+  },
   // LQ 3A
   {
     id: "DOOR3AE",

@@ -86,6 +86,7 @@ export const createInitialState = (world: World): GameState => {
       openItems: {},
       spentCartridges: {},
       containerContents: {},
+      containerFilled: {},
       surfaceContents: {},
       underContents: {},
       revealedUnder: {},
@@ -93,6 +94,7 @@ export const createInitialState = (world: World): GameState => {
       itemSettings: {
         Cooler: { kind: "cooler", mode: "off" },
       },
+      frozenItems: {},
     },
   };
   return seedInitialPlacements(initialGameState);

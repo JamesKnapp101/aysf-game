@@ -9,9 +9,10 @@ export function doTake(state: GameState, cmd: ParsedCommand): ActionResult {
   }
 
   const direct = cmd.direct?.trim();
+  const indirect = cmd.indirect?.trim() ?? "";
   if (!direct) {
     return { state, message: "Take what?" };
   }
 
-  return tryTakeItem(state, direct);
+  return tryTakeItem(state, direct, indirect);
 }

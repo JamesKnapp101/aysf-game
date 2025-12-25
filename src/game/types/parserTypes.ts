@@ -8,6 +8,7 @@ export type Preposition =
   | "from"
   | "at"
   | "about"
+  | "over"
   | "to";
 
 export type ParsedCommand =

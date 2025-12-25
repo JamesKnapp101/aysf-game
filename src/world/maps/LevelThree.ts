@@ -22,9 +22,11 @@ import {
   LivingQuartersSixWestItems,
   LivingQuartersSixWestRooms,
 } from "./levelThree/levelThreeLQSixWest";
+import { generalItems } from "../Items/general";
 
 export const LEVEL_THREE: WorldChunk = {
   items: [
+    ...generalItems,
     ...drugItems,
     ...levelThreeItems,
     ...LivingQuartersFiveEastItems,
@@ -115,7 +117,7 @@ export const LEVEL_THREE: WorldChunk = {
       exits: [
         { direction: "south", toRoomId: "LevelThreeCorridorSix" },
         { direction: "west", doorId: "DOOR3GW" },
-        { direction: "north", toRoomId: "LevelThreeCubby" },
+        { direction: "north", doorId: "CubbySqueeze" },
         { direction: "east", toRoomId: "LevelThreeStairAccess" },
       ],
     },

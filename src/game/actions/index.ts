@@ -9,6 +9,9 @@ import { doExamine } from "./examine";
 import { doInject } from "./inject";
 import { doDrink } from "./drink";
 import { doSet } from "./set";
+import { doEmpty } from "./empty";
+import { doFill } from "./fill";
+import { doPour } from "./pour";
 
 export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   open: doOpen,
@@ -21,4 +24,7 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   inject: doInject,
   drink: doDrink,
   set: doSet,
+  empty: doEmpty,
+  fill: doFill,
+  pour: doPour,
 };

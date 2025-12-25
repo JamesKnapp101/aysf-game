@@ -25,7 +25,7 @@ export function buildPlayerInjectionMessage(
   cartridgeEffectId: StatusId
 ): string {
   let injectionMessage =
-    "You grit your teeth and plunge the needle into your arm, slowly depressing the plunger.  As the serum floods through your bloodstream, ";
+    "You grit your teeth and plunge the needle into your arm, slowly depressing the plunger. As the serum floods through your bloodstream, ";
 
   switch (cartridgeEffectId) {
     case "trixophine":
@@ -35,7 +35,7 @@ export function buildPlayerInjectionMessage(
 
     case "vanitrax":
       injectionMessage +=
-        "you feel a bitter taste fill your mouth...a second later, a wave of fatigue slams into you.  Your legs buckle, and your vision gets a little blurry.  You take a step forward, but your body feels like it's turned to rubber; you take a few shambling steps forward and just manage to lower yourself face down onto the floor before you fall fast asleep...";
+        "you feel a bitter taste fill your mouth...a second later, a wave of fatigue slams into you. Your legs buckle, and your vision gets a little blurry. You take a step forward, but your body feels like it's turned to rubber; you take a few shambling steps forward and just manage to lower yourself face down onto the floor before you fall fast asleep...";
       break;
 
     case "seritroxin":
@@ -56,7 +56,7 @@ export function buildPlayerInjectionMessage(
 
     case "xantophol":
       injectionMessage +=
-        "you feel a slight fuzziness which passes in a few seconds.  Otherwise, you don't feel any effects at all.";
+        "you feel a slight fuzziness which passes in a few seconds. Otherwise, you don't feel any effects at all.";
       break;
 
     case "innoculant":

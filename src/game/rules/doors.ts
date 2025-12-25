@@ -29,6 +29,13 @@ export function canMoveThroughExit(
 
   const kind: DoorKind = doorDef.kind ?? "normal";
 
+  if (kind === "blocked") {
+    return {
+      allowed: false,
+      message: doorDef?.blockMsg ?? `You can't get through`,
+    };
+  }
+
   if (kind === "badgeScanner") {
     const badgeId = doorDef.badgeItemId;
 

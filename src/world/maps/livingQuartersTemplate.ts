@@ -371,6 +371,11 @@ export function createWashlet(args: {
     isWearable: false,
     isReadable: false,
     isContainer: true,
+    meta: {
+      watersource: {
+        onTake: "You scoop some of the stagnant water from the washlet bowl",
+      },
+    },
   };
 }
 

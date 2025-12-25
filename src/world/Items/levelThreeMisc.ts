@@ -552,10 +552,10 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
     readableText:
       "Only the bottom portion is legible...\n\n" +
-      "...anyway.  It's not that I don't love you.  You know I do.\n" +
+      "...anyway. It's not that I don't love you. You know I do.\n" +
       "If it means anything now, I'm really sorry I did what I did,\n" +
       "I was just angry...I didn't mean it, I swear, and I'm sorry\n" +
-      "it all went wrong.  Meet me later upstairs, we should talk.\n\n" +
+      "it all went wrong. Meet me later upstairs, we should talk.\n\n" +
       "Dana\n",
   },
   {
@@ -607,6 +607,30 @@ export const levelThreeItems: Item[] = [
       },
     },
   },
+
+  {
+    id: "URN",
+    name: "urn",
+    description: "A big old test urn.",
+    sceneryDescription: "A ceramic urn sits in one corner.",
+    location: "LivingQuartersOneEast",
+    vocab: ["urn"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 4,
+    itemSize: 3,
+    isWearable: false,
+    isReadable: false,
+    isContainer: true,
+    isOpenable: false,
+    capacity: 5,
+    meta: {
+      container: {
+        holds: ["solid", "liquid"],
+      },
+    },
+  },
+
   {
     id: "DRUGTIN",
     name: "small tin box",

@@ -2,6 +2,7 @@ import React from "react";
 import type { GameState } from "../types/gameTypes"; // adjust path
 import type { Item } from "../types/itemTypes"; // adjust path
 import { getItemById } from "../selectors/itemSelectors";
+import { resolveItemByNoun } from "../rules/scope";
 
 type InventoryTreeProps = {
   state: GameState;
@@ -24,7 +25,30 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
 
   const getItemName = (id: string) => {
     const it = getItemById(state, id);
-    return it?.name ?? id;
+    //    const filledWithRaw = state.itemState.containerFilled[id];
+    // const filledWith =
+    //   it?.meta?.water?.temperature === "frozen"
+    //     ? it?.meta?.water?.frozenName
+    //     : state.itemState.containerFilled[id];
+
+    // const filledWith = state.itemState.frozenItems[id]
+    //   ? it?.meta?.liquid?.frozenName
+    //   : state.itemState.containerFilled[id];
+
+    let filledWith = state.itemState.containerFilled[id]?.[0];
+    if (filledWith) {
+      const liquidItem = getItemById(state, filledWith);
+      if (state.itemState.frozenItems[filledWith]) {
+        filledWith =
+          liquidItem?.meta?.liquid?.frozenName ??
+          state.itemState.containerFilled[id]?.[0];
+      }
+    }
+    let name = it?.name ?? "";
+    const itemName = (name += !filledWith
+      ? ""
+      : `, which is filled with ${filledWith}`);
+    return itemName ?? id;
   };
 
   const getContents = (containerId: string): string[] => {
@@ -46,10 +70,22 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
           <ul className="game-list inv-tree-list">
             {inventoryItems.map((item) => {
               const contents = item.isContainer ? getContents(item.id) : [];
-
+              let filledWith = state.itemState.containerFilled[item.id]?.[0];
+              if (filledWith) {
+                const liquidItem = getItemById(state, filledWith);
+                if (state.itemState.frozenItems[filledWith]) {
+                  filledWith =
+                    liquidItem?.meta?.liquid?.frozenName ??
+                    state.itemState.containerFilled[item.id]?.[0];
+                }
+              }
               return (
                 <li className="inv-tree-item" key={item.id}>
-                  <div className="inv-tree-row">{item.name}</div>
+                  <div className="inv-tree-row">
+                    {state.itemState.containerFilled[item.id]
+                      ? `${item.name} (filled with ${filledWith})`
+                      : item.name}
+                  </div>
 
                   {contents.length > 0 && (
                     <ul className="inv-tree-contents">
