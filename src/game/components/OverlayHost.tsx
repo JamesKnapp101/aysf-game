@@ -1,6 +1,7 @@
 import { useUIOverlayStore } from "../store/store";
 import type { CoolerMode } from "../types/itemTypes";
 import { CoolerModal } from "./CoolerModal";
+import { MessageMachineModal } from "./MessageMachineModal";
 import { ReaderModal } from "./ReaderModal";
 
 type RunAction = (verb: string, args?: Record<string, unknown>) => void;
@@ -30,6 +31,19 @@ export function OverlayHost({ runAction }: { runAction: RunAction }) {
         <CoolerModal
           mode={overlay.mode ?? "off"}
           onSetMode={onSetMode}
+          onClose={closeOverlay}
+        />
+      );
+    }
+
+    case "message-machine": {
+      return (
+        <MessageMachineModal
+          messages={overlay.messages ?? "off"}
+          messagesPlayedById={overlay.messagesPlayedById ?? {}}
+          onMarkPlayed={(messageId) => {
+            runAction("markMessagePlayed", { messageId });
+          }}
           onClose={closeOverlay}
         />
       );

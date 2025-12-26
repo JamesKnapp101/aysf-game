@@ -14,9 +14,10 @@ export type ActionHandler = (
 ) => ActionResult;
 
 export type ActionRequest = {
-  verb: "setCoolerMode" | "openCoolerPanel";
+  verb: "setCoolerMode" | "openCoolerPanel" | "markMessagePlayed";
   payload: {
     mode?: "off" | "cool" | "cold" | "freeze";
+    messageId?: string;
   };
 };
 // add more UI actions later

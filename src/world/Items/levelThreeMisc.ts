@@ -258,7 +258,7 @@ export const levelThreeItems: Item[] = [
     itemSize: 2,
     isWearable: false,
     isReadable: false,
-    isContainer: false,
+    isContainer: true,
   },
   {
     id: "gorillanote",
@@ -911,7 +911,7 @@ export const levelThreeItems: Item[] = [
       "A laminated access pass with a printed code running up one edge and block letters giving its owner limited privileges in the Hub.",
     sceneryDescription:
       "The pass is slightly warped from years of being flexed between nervous fingers, the laminate peeling just a bit at the corners. The text inside is perfectly preserved, frozen in flattened plastic—name, clearance, and an expiration date that might as well be a tombstone.",
-    location: "PigBucket",
+    location: "",
     vocab: ["laminated", "hub", "pass", "card"],
     itemClass: "solid",
     itemCategory: "collectable",

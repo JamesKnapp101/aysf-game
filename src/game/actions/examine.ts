@@ -23,6 +23,17 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "You don't see that here." };
   }
 
+  if (item?.meta?.kind === "phone") {
+    return {
+      state,
+      overlay: {
+        kind: "message-machine",
+        messages: item?.meta?.messages,
+        messagesPlayedById: {},
+      },
+    };
+  }
+
   let itemDesc = item.description?.trim() || "You see nothing special.";
   if (item.isContainer && state.itemState.containerFilled[item.id]) {
     const containerContents = state.itemState.containerFilled[item.id];

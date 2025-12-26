@@ -116,6 +116,7 @@ export interface ItemState {
   searchableContents: Record<ItemId, ItemId[]>;
   itemSettings: Partial<Record<ItemId, ItemSettings>>;
   frozenItems: Record<ItemId, boolean>;
+  messagesPlayed: Record<string, boolean>;
 }
 
 type ConsumableEffect =

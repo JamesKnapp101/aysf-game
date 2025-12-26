@@ -1,4 +1,5 @@
 import { handleSetCoolerMode } from "../rules/cooler";
+import { setMessageListened } from "../rules/message-machine";
 import { getCoolerMode } from "../selectors/gadgetSelectors";
 import type { ActionRequest, ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
@@ -8,6 +9,7 @@ export function dispatchAction(
   state: GameState,
   req: ActionRequest
 ): ActionResult {
+  console.log("What is req? ", req);
   switch (req.verb) {
     case "setCoolerMode": {
       const mode = (req.payload?.mode ?? "off") as CoolerMode;
@@ -30,6 +32,9 @@ export function dispatchAction(
           mode: getCoolerMode(state),
         },
       };
+    case "markMessagePlayed":
+      let next = setMessageListened(state, req.payload.messageId ?? "");
+      return { state: next, message: undefined };
     default:
       return { state, message: "Nothing happens." };
   }

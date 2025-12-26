@@ -450,7 +450,26 @@ A bedside phone with a touch pad and a small message indicator.
 Several keys are worn smooth.`,
       sceneryDescription: `
 Near the bed sits a phone, still and dark.`,
-      // messages: [] // add later
+      messages: [
+        {
+          id: "6WM1",
+          title: "CALLER ID: MILDRED ZAPATOS",
+          transcript:
+            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+        },
+        {
+          id: "6WM2",
+          title: "CALLER ID: KEVIN LENTZ",
+          transcript:
+            "Ed, it's me...what's going on, do you know? People in med uniforms are all over the ship, along with military types..they're getting everyone out of the public areas and moving them back to their quarters, and some they're taking with them...Janeal got thrown out of The Hub along with a bunch of others with more than a half-day's credit left...did your Mom tell you anything? Call me!",
+        },
+        {
+          id: "6WM3",
+          title: "CALLER ID: KELLY PYZNAR",
+          transcript:
+            "Ed, it's Kelly...something really serious is happening, isn't it?  Do you know anything?  Where are you..?  Look, I'm really scared and (what sounds like an explosion rumbles in the background) What was...(pause) Ed, I think something just blew up or something...what the hell is happening!?  Please come see me when you get this, okay, I'll be in my (There is a loud boom cut short by the whine of feedback and the message abruptly halts).",
+        },
+      ],
     },
 
     sink: {

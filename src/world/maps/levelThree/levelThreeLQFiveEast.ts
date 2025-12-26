@@ -241,6 +241,26 @@ The touch contacts still respond with crisp little flashes of light.
 The cord at the back of the cradle has been twisted and re-twisted until it holds a permanent spiral kink.
 A couple of the touch pads are more worn than others.
 `,
+      messages: [
+        {
+          id: "5EM1",
+          title: "CALLER ID: PAGE RIPLEY",
+          transcript:
+            "Hey, it's me...I'm, just calling because...I've seen something strange. I know this probably sounds ridiculous, but it kind of weirded me out...give me a call when you get this. Bye.",
+        },
+        {
+          id: "5EM2",
+          title: "CALLER ID: SUNI SINGH",
+          transcript:
+            "Alice..? It's me...I got your message...oh dear God, poor Cathy, my heart is breaking. Please call me as soon as you get this.",
+        },
+        {
+          id: "5EM3",
+          title: "CALLER ID: PAGE RIPLEY",
+          transcript:
+            "- and stay together! Alice, if you're there, pick up the phone! Alice!? The lights went out on all of three and all hell is breaking loose! Damn...I hope you're alright...a group of us are going to try and hole up in the Hub, we think it's safe there! I'll...look for you...if you get this message, meet us there!",
+        },
+      ],
     },
 
     sink: {

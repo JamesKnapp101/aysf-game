@@ -270,7 +270,7 @@ export const corpseItems: Item[] = [
       "Under the conference table, a woman’s body is curled tightly into the fetal position.",
     sceneryDescription:
       "A woman’s body lies curled under the conference table, still and tight as a knot.",
-    location: "PigBucket",
+    location: "LevelTwoConferenceRoom",
     vocab: ["woman", "body", "corpse"],
     itemClass: "solid",
     itemCategory: "scenery",

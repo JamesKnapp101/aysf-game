@@ -95,6 +95,7 @@ export const createInitialState = (world: World): GameState => {
         Cooler: { kind: "cooler", mode: "off" },
       },
       frozenItems: {},
+      messagesPlayed: {},
     },
   };
   return seedInitialPlacements(initialGameState);

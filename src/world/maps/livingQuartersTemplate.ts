@@ -427,7 +427,7 @@ export function createPhone(args: {
     description: normalize(args.description),
     sceneryDescription: normalize(args.sceneryDescription),
     location: args.location,
-    vocab: args.vocab ?? ["phone", "handset", "headset"],
+    vocab: args.vocab ?? ["phone", "handset", "headset", "machine", "messages"],
     itemClass: "solid",
     itemCategory: "scenery",
     isUseable: true,
