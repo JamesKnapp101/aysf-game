@@ -8,3 +8,11 @@ export function getCoolerMode(state: GameState): CoolerMode {
   }
   return "off"; // default
 }
+
+export function getCameraGunCurrentIndex(state: GameState): number {
+  const setting = state.itemState.itemSettings["CameraGun"];
+  if (setting?.kind === "camera-gun-viewer") {
+    return setting.currentViewIndex;
+  }
+  return 0; // default
+}

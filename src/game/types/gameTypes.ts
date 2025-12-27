@@ -40,6 +40,7 @@ export type StatusId =
   | "xantophol"
   | "regenerationWoozies"
   | "possessed"
+  | "nightvision-active"
   | "dreaming";
 
 export interface StatusEffect {
@@ -87,6 +88,7 @@ export interface SyringeState {
 
 export interface WorldState {
   doors: Record<string, DoorState>;
+  darkRooms: Record<string, boolean>;
   threatTimers?: {
     engineMeltdown?: Countdown;
     reactorOverload?: Countdown;

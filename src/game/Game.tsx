@@ -118,25 +118,6 @@ export const Game: React.FC = () => {
     }
   }, [layout]);
 
-  const applyActionResult = useCallback(
-    (result: { state: GameState; message?: string; overlay?: unknown }) => {
-      // IMPORTANT:
-      // You cannot call setState because you're using useReducer.
-      // So we update state by dispatching a "command" action? No.
-      // Instead: you need a reducer action that sets state OR switch to useState.
-      //
-      // Minimal fix: add a "replaceState" action to reducer and dispatch it.
-      //
-      // For drop-in, we do it inline by dispatching a custom action via a second reducer.
-      //
-      // Since you asked for cleanup, the clean solution is: useState for GameState.
-      // But if you want to keep useReducer, add a new action type.
-      //
-      // We'll implement replaceState below with a local dispatchState.
-    },
-    []
-  );
-
   /**
    * We need a way to replace the whole GameState from ActionResults (UI actions).
    * Easiest: useState instead of useReducer.
@@ -232,6 +213,9 @@ export const Game: React.FC = () => {
     (eff: StatusEffect) => eff.id === "drunk"
   );
 
+  const roomHasLight = !state.worldState.darkRooms[currentRoom.id];
+  console.log("roomHasLight? ", roomHasLight);
+
   const overlayRunAction = useCallback(
     (verb: string, payload?: any) => {
       runAction({ verb, payload } as unknown as ActionRequest);
@@ -241,7 +225,7 @@ export const Game: React.FC = () => {
 
   return (
     <>
-      <OverlayHost runAction={overlayRunAction} />
+      <OverlayHost runAction={overlayRunAction} state={state} />
 
       <div
         ref={rootRef}
@@ -255,6 +239,7 @@ export const Game: React.FC = () => {
         }
         data-status={activeEffects.join(" ")}
         data-drunkenness={isDrunk?.intensity ?? 0}
+        data-room-has-light={roomHasLight}
         onClick={() => inputRef.current?.focus()}
       >
         {/* HEADER */}
@@ -276,6 +261,8 @@ export const Game: React.FC = () => {
           exits={exits}
           roomPanelFlexBasis={roomPanelFlexBasis}
           inputRef={inputRef}
+          activeEffects={activeEffects.join(" ")}
+          roomHasLight={roomHasLight}
         />
 
         {/* horizontal resizer - between room and main row */}

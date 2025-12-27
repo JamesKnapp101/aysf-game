@@ -1,4 +1,8 @@
 import {
+  applyStatusEffectToPlayer,
+  removeStatusEffectFromPlayer,
+} from "../rules/status";
+import {
   describeSicknessLevel,
   getPainStatusMessage,
 } from "../selectors/statusSelectors";
@@ -238,8 +242,30 @@ function tickSickness(state: GameState): GameState {
   return next;
 }
 
+function applyEffects(state: GameState): GameState {
+  let next = state;
+
+  const gogglesOn = !!(next.itemState.itemSettings["NVGoggles"] as any)?.isOn;
+  const gogglesWorn = next.itemState.wornByPlayer.face === "NVGoggles";
+  const shouldHaveNV = gogglesOn && gogglesWorn;
+
+  const hasNV =
+    next.player.statusEffects.filter((se) => se.id === "nightvision-active")
+      ?.length > 0;
+
+  if (shouldHaveNV && !hasNV) {
+    next = applyStatusEffectToPlayer(next, "nightvision-active", 1, 1000);
+    // better: addNonTickingStatusEffect(next, "nightvision-active")
+  } else if (!shouldHaveNV && hasNV) {
+    next = removeStatusEffectFromPlayer(next, "nightvision-active");
+  }
+
+  return next;
+}
+
 export function advanceTurn(state: GameState): GameState {
   let next = state;
+  next = applyEffects(next);
   next = tickStatusEffects(next);
   next = tickSickness(next);
   next = {

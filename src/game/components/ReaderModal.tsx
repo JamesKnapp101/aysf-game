@@ -73,7 +73,7 @@ export function ReaderModal({ title, body, onClose }: ReaderModalProps) {
   );
 
   return (
-    <CrtModal title={title} onClose={onClose}>
+    <CrtModal title={title} onClose={onClose} height={400}>
       <div
         className="reader-scroll"
         ref={scrollRef}

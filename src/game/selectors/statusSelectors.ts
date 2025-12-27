@@ -1,5 +1,6 @@
 import { PAIN_STATUS_MESSAGES } from "../text/messageMaps";
 import type { GameState, StatusEffect, StatusId } from "../types/gameTypes";
+import { getCurrentRoom } from "./roomSelectors";
 
 export function getActiveStatusEffectIds(state: GameState): string[] {
   return state.player.statusEffects.map(
@@ -193,6 +194,16 @@ export function describeCurrentEffects(state: GameState): string {
       case "regenerationWoozies":
         effectsMsg +=
           "You feel a little discombobulated, with minor little aches and pains. Muscle ache? Gas? It doesn't seem serious.\n";
+        break;
+      case "nightvision-active":
+        const currentRoom = getCurrentRoom(state);
+        if (state.worldState.darkRooms[currentRoom.id]) {
+          effectsMsg +=
+            "You're wearing night vision goggles, which allow you to see in the darkness.";
+        } else {
+          effectsMsg +=
+            "You're wearing night vision goggles, but since there's plenty of light you're effectively blind.";
+        }
         break;
       default:
         break;

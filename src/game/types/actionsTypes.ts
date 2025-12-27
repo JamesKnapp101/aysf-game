@@ -14,7 +14,11 @@ export type ActionHandler = (
 ) => ActionResult;
 
 export type ActionRequest = {
-  verb: "setCoolerMode" | "openCoolerPanel" | "markMessagePlayed";
+  verb:
+    | "setCoolerMode"
+    | "openCoolerPanel"
+    | "markMessagePlayed"
+    | "cycleCameraGunView";
   payload: {
     mode?: "off" | "cool" | "cold" | "freeze";
     messageId?: string;

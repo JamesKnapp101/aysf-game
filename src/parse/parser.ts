@@ -66,6 +66,9 @@ const PREPOSITIONS: Preposition[] = [
   "over",
 ];
 
+const SWITCH_PARTICLES = new Set(["on", "off"]);
+const SWITCH_VERBS = new Set(["switch", "turn", "flip"]);
+
 export function parseCommand(rawInput: string): ParsedCommand {
   const input = rawInput.trim().toLowerCase();
   if (!input) return { type: "unknown", raw: rawInput };
@@ -76,34 +79,55 @@ export function parseCommand(rawInput: string): ParsedCommand {
     return { type: "move", direction: DIR_MAP[tokens[0]] };
   }
 
-  const [rawVerb, ...rest] = tokens;
+  const [rawVerb, ...rest0] = tokens;
   const verb = VERB_ALIASES[rawVerb] ?? rawVerb;
 
-  if (verb === "look") {
-    return { type: "look" };
-  }
-  if (verb === "inventory") {
-    return { type: "inventory" };
-  }
+  if (verb === "look") return { type: "look" };
+  if (verb === "inventory") return { type: "inventory" };
 
-  if (verb === "go" && rest.length === 1 && DIR_MAP[rest[0]]) {
-    return { type: "move", direction: DIR_MAP[rest[0]] };
+  if (verb === "go" && rest0.length === 1 && DIR_MAP[rest0[0]]) {
+    return { type: "move", direction: DIR_MAP[rest0[0]] };
   }
 
   if (DIR_MAP[verb]) {
     return { type: "move", direction: DIR_MAP[verb] };
   }
 
-  if (rest.length === 0) {
+  if (rest0.length === 0) {
+    return { type: "action", verb, raw: rawInput };
+  }
+
+  // --- NEW: tolerate "switch on lamp" and "switch lamp on" ---
+  let rest = [...rest0];
+  let preposition: Preposition | undefined;
+
+  if (SWITCH_VERBS.has(verb)) {
+    // case A: "switch on lamp"
+    if (rest[0] && SWITCH_PARTICLES.has(rest[0])) {
+      preposition = rest[0] as Preposition; // "on" | "off"
+      rest = rest.slice(1);
+    }
+    // case B: "switch lamp on"
+    else if (rest.length >= 2 && SWITCH_PARTICLES.has(rest[rest.length - 1])) {
+      preposition = rest[rest.length - 1] as Preposition;
+      rest = rest.slice(0, -1);
+    }
+  }
+
+  // If we extracted on/off, treat the remaining as the direct object
+  if (preposition && SWITCH_PARTICLES.has(preposition)) {
+    const direct = rest.join(" ").trim() || undefined;
     return {
       type: "action",
       verb,
+      direct,
+      preposition, // on/off
       raw: rawInput,
     };
   }
 
+  // --- existing generic parsing for normal prepositions ---
   let direct: string | undefined;
-  let preposition: Preposition | undefined;
   let indirect: string | undefined;
 
   const prepIndex = rest.findIndex((t) =>

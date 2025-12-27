@@ -35,6 +35,14 @@ export function dispatchAction(
     case "markMessagePlayed":
       let next = setMessageListened(state, req.payload.messageId ?? "");
       return { state: next, message: undefined };
+    case "cycleCameraGunView":
+      return {
+        state,
+        overlay: {
+          kind: "camera-gun-viewer",
+          currentViewIndex: 0,
+        },
+      };
     default:
       return { state, message: "Nothing happens." };
   }

@@ -160,3 +160,152 @@
         animation: none !important;
     }
 }
+
+/* ============================================================
+   NIGHT VISION (room-description only)
+   Uses:
+     - data-status~="nightvision-active"
+     - data-room-has-light="true" | "false"
+   Targets only the Room Description window (assumes .game-room-panel).
+   No changes to existing effects required.
+   ============================================================ */
+
+/* ---------- NV + LIGHT: blown-out, washed, barely readable ---------- */
+.game-root[data-status~="nightvision-active"][data-room-has-light="true"] .game-room-panel {
+    position: relative;
+    will-change: filter, opacity;
+    /* blast exposure + wash color */
+    filter: brightness(1.95) contrast(0.55) saturate(0.55);
+    opacity: 0.96;
+}
+
+.game-root[data-status~="nightvision-active"][data-room-has-light="true"] .game-room-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    /* heavy glow + overexposed veil */
+    background:
+        radial-gradient(120% 110% at 50% 35%,
+            color-mix(in srgb, var(--crt-color) 82%, transparent),
+            rgba(0, 0, 0, 0) 55%),
+        radial-gradient(140% 140% at 50% 50%,
+            color-mix(in srgb, var(--crt-color) 62%, transparent),
+            rgba(0, 0, 0, 0) 70%),
+        linear-gradient(to bottom,
+            color-mix(in srgb, var(--crt-color) 44%, transparent),
+            color-mix(in srgb, var(--crt-color) 30%, transparent));
+    mix-blend-mode: screen;
+    opacity: 0.88;
+    filter: blur(18px);
+}
+
+.game-root[data-status~="nightvision-active"][data-room-has-light="true"] .game-room-panel {
+    /* make text barely readable */
+    color: color-mix(in srgb, var(--crt-color) 34%, rgba(0, 0, 0, 0.15));
+    text-shadow:
+        0 0 14px color-mix(in srgb, var(--crt-color) 42%, transparent),
+        0 0 2px rgba(0, 0, 0, 0.35);
+}
+
+
+/* ---------- NV + DARK (refined) ---------- */
+.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel {
+    color: rgba(0, 0, 0, 0.92);
+
+    background:
+        radial-gradient(140% 120% at 50% 35%,
+            color-mix(in srgb, var(--crt-color) 32%, rgba(0, 0, 0, 0.85)),
+            rgba(0, 0, 0, 0.92) 65%),
+        linear-gradient(to bottom,
+            color-mix(in srgb, var(--crt-color) 18%, rgba(0, 0, 0, 0.9)),
+            rgba(0, 0, 0, 0.95));
+
+    filter: contrast(0.95) brightness(0.92) saturate(0.75);
+    animation: nv-dark-flicker 5.8s infinite steps(1, end);
+}
+
+@keyframes nv-dark-flicker {
+    0% {
+        filter: brightness(0.92) contrast(0.95) saturate(0.75);
+    }
+
+    22% {
+        filter: brightness(0.9) contrast(0.97) saturate(0.76);
+    }
+
+    47% {
+        filter: brightness(0.93) contrast(0.94) saturate(0.74);
+    }
+
+    69% {
+        filter: brightness(0.91) contrast(0.96) saturate(0.75);
+    }
+
+    91% {
+        filter: brightness(0.92) contrast(0.95) saturate(0.75);
+    }
+}
+
+.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    /* ghostly phosphor haze + subtle vignette */
+    background:
+        radial-gradient(120% 120% at 50% 40%,
+            rgba(255, 255, 255, 0.12),
+            rgba(0, 0, 0, 0.6) 72%),
+        radial-gradient(160% 120% at 50% 50%,
+            color-mix(in srgb, var(--crt-color) 22%, transparent),
+            rgba(0, 0, 0, 0) 65%);
+    mix-blend-mode: screen;
+    opacity: 0.55;
+    filter: blur(14px);
+}
+
+.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel {
+    /* kill previous glow-y shadows so dark text stays crisp */
+    text-shadow:
+        0 0 0 transparent,
+        0 0 10px rgba(255, 255, 255, 0.12);
+}
+
+/* If your room panel contains links or accent spans that are forced green elsewhere */
+.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel a,
+.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel .game-accent {
+    color: rgba(0, 0, 0, 0.9);
+    text-decoration-color: rgba(0, 0, 0, 0.55);
+}
+
+.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        radial-gradient(circle,
+            rgba(255, 255, 255, 0.08) 0 1px,
+            transparent 2px) 0 0 / 22px 22px,
+        radial-gradient(circle,
+            rgba(0, 0, 0, 0.25) 0 1px,
+            transparent 2px) 11px 13px / 31px 31px;
+
+    mix-blend-mode: overlay;
+    opacity: 0.12;
+    animation: nv-noise 0.9s steps(2, end) infinite;
+}
+
+@keyframes nv-noise {
+    from {
+        transform: translate(0, 0);
+    }
+
+    to {
+        transform: translate(1px, -1px);
+    }
+}

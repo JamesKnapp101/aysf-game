@@ -11,7 +11,7 @@
     border: 2px solid var(--crt-color);
     padding: 6px 8px;
     min-height: 250px;
-
+    width: 100%;
     overflow-y: auto;
     /* classic scroll */
     overflow-x: hidden;

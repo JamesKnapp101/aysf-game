@@ -8,6 +8,8 @@ type RoomDescriptionPanelProps = {
   exits: Direction[];
   roomPanelFlexBasis: number | string;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  activeEffects: string;
+  roomHasLight: boolean;
 };
 
 export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
@@ -15,6 +17,8 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   exits,
   roomPanelFlexBasis,
   inputRef,
+  activeEffects,
+  roomHasLight,
 }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -47,6 +51,8 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       className="game-room-panel"
       style={{ flex: `0 0 ${roomPanelFlexBasis}`, minHeight: 0 }}
       onClick={() => inputRef.current?.focus()}
+      data-status={activeEffects}
+      data-room-has-light={roomHasLight}
     >
       <div className="game-room-inner">
         <div className="room-compass-float">

@@ -25,29 +25,26 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
 
   const getItemName = (id: string) => {
     const it = getItemById(state, id);
-    //    const filledWithRaw = state.itemState.containerFilled[id];
-    // const filledWith =
-    //   it?.meta?.water?.temperature === "frozen"
-    //     ? it?.meta?.water?.frozenName
-    //     : state.itemState.containerFilled[id];
-
-    // const filledWith = state.itemState.frozenItems[id]
-    //   ? it?.meta?.liquid?.frozenName
-    //   : state.itemState.containerFilled[id];
-
-    let filledWith = state.itemState.containerFilled[id]?.[0];
-    if (filledWith) {
-      const liquidItem = getItemById(state, filledWith);
-      if (state.itemState.frozenItems[filledWith]) {
-        filledWith =
-          liquidItem?.meta?.liquid?.frozenName ??
-          state.itemState.containerFilled[id]?.[0];
+    let annotation = "";
+    if (state.itemState.containerFilled[id]?.[0]) {
+      let filledWith = state.itemState.containerFilled[id]?.[0];
+      if (filledWith) {
+        const liquidItem = getItemById(state, filledWith);
+        if (state.itemState.frozenItems[filledWith]) {
+          filledWith =
+            liquidItem?.meta?.liquid?.frozenName ??
+            state.itemState.containerFilled[id]?.[0];
+        }
+      }
+      annotation = `, which is filled with ${filledWith}`;
+    }
+    if (it?.isWearable && it?.clothingSlot) {
+      if (state.itemState.wornByPlayer[it.clothingSlot] === it.id) {
+        annotation = ` (worn on your ${it.clothingSlot})`;
       }
     }
     let name = it?.name ?? "";
-    const itemName = (name += !filledWith
-      ? ""
-      : `, which is filled with ${filledWith}`);
+    const itemName = (name += annotation);
     return itemName ?? id;
   };
 
@@ -81,11 +78,7 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
               }
               return (
                 <li className="inv-tree-item" key={item.id}>
-                  <div className="inv-tree-row">
-                    {state.itemState.containerFilled[item.id]
-                      ? `${item.name} (filled with ${filledWith})`
-                      : item.name}
-                  </div>
+                  <div className="inv-tree-row">{getItemName(item.id)}</div>
 
                   {contents.length > 0 && (
                     <ul className="inv-tree-contents">

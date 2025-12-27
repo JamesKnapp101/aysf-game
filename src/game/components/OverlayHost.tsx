@@ -1,12 +1,20 @@
 import { useUIOverlayStore } from "../store/store";
+import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
+import { CameraGunViewerModal } from "./CameraGunModal";
 import { CoolerModal } from "./CoolerModal";
 import { MessageMachineModal } from "./MessageMachineModal";
 import { ReaderModal } from "./ReaderModal";
 
 type RunAction = (verb: string, args?: Record<string, unknown>) => void;
 
-export function OverlayHost({ runAction }: { runAction: RunAction }) {
+export function OverlayHost({
+  runAction,
+  state,
+}: {
+  runAction: RunAction;
+  state: GameState;
+}) {
   const overlay = useUIOverlayStore((s) => s.overlay);
   const closeOverlay = useUIOverlayStore((s) => s.closeOverlay);
 
@@ -49,6 +57,20 @@ export function OverlayHost({ runAction }: { runAction: RunAction }) {
       );
     }
 
+    case "camera-gun-viewer": {
+      const onCycleView = (currentViewIndex: number) => {
+        runAction("cycleCameraGunView", { currentViewIndex });
+      };
+
+      return (
+        <CameraGunViewerModal
+          currentView={overlay.currentViewIndex ?? 0}
+          onSetMode={onCycleView}
+          onClose={closeOverlay}
+          state={state}
+        />
+      );
+    }
     default:
       return null;
   }

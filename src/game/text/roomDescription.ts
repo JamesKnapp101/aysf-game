@@ -11,6 +11,13 @@ import type { GameState } from "../types/gameTypes";
 export function buildRoomDescription(state: GameState, roomId: string): string {
   const room = state.world.rooms.find((room) => room.id === roomId);
   if (!room) return "You are nowhere. (Bug: room not found.)";
+  if (
+    state.worldState.darkRooms[room.id] &&
+    state.player.statusEffects.filter((se) => se.id === "nightvision-active")
+      ?.length === 0
+  ) {
+    return "It's pitch black in here, you can't see a thing.";
+  }
 
   const rawItemsHere = getItemsInRoom(state, roomId);
   const itemsHere = Array.from(

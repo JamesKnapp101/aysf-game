@@ -556,6 +556,117 @@ export function tryPourItem(
   };
 }
 
+export function tryWearItem(
+  state: GameState,
+  item: Item
+): { state: GameState; message: string } {
+  if (!item.isWearable || !item.clothingSlot) {
+    return { state, message: "You can't wear that." };
+  }
+  // Does it fit?
+
+  // Is the player already wearing something in that slot?
+  if (state.itemState.wornByPlayer[item.clothingSlot]) {
+    return {
+      state,
+      message: `You're already wearing something on your ${item.clothingSlot}`,
+    };
+  }
+  let next = state;
+  let baseMsg =
+    item?.meta?.clothing?.wearMessage ??
+    item?.overrides?.wear ??
+    `You put on the ${item.name}`;
+
+  next = {
+    ...next,
+    itemState: {
+      ...state.itemState,
+      wornByPlayer: {
+        ...state.itemState.wornByPlayer,
+        [item.clothingSlot]: item.id,
+      },
+    },
+  };
+
+  return {
+    state: next,
+    message: baseMsg,
+  };
+}
+
+export function tryRemoveItem(
+  state: GameState,
+  item: Item
+): { state: GameState; message: string } {
+  if (!item.isWearable || !item.clothingSlot) {
+    return { state, message: "You can't remove that." };
+  }
+
+  // Is the player even wearing it?
+  if (state.itemState.wornByPlayer[item.clothingSlot] !== item.id) {
+    return {
+      state,
+      message: `You aren't wearing the ${item.name}`,
+    };
+  }
+  let next = state;
+  let baseMsg =
+    item?.meta?.clothing?.removeMessage ??
+    item?.overrides?.remove ??
+    `You remove the ${item.name}`;
+
+  next = {
+    ...next,
+    itemState: {
+      ...state.itemState,
+      wornByPlayer: {
+        ...state.itemState.wornByPlayer,
+        [item.clothingSlot]: undefined,
+      },
+    },
+  };
+
+  return {
+    state: next,
+    message: baseMsg,
+  };
+}
+
+export function trySwitchItem(
+  state: GameState,
+  item: Item
+): { state: GameState; message: string } {
+  if (!item.isSwitchable) {
+    return { state, message: "You can't switch that." };
+  }
+
+  const currentSettings = state.itemState.itemSettings[item.id];
+  const currentlyOn = !!(currentSettings as any)?.isOn;
+  const newIsOn = !currentlyOn;
+
+  const next: GameState = {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      itemSettings: {
+        ...state.itemState.itemSettings,
+        [item.id]: {
+          ...(state.itemState.itemSettings[item.id] as any),
+          isOn: newIsOn,
+        },
+      },
+    },
+  };
+
+  const baseMsg = `You switch the ${item.name} ${newIsOn ? "on" : "off"}`;
+
+  return {
+    state: next,
+    message: baseMsg,
+  };
+}
+
 export function describeScotchBottle(item: Item): string {
   const doses = item.doses ?? 0;
 

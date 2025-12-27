@@ -10,11 +10,14 @@ export type ItemClass = "solid" | "liquid" | "gas";
 export type ItemCategory = "scenery" | "collectable" | "fluid";
 export type clothingSlots =
   | "head"
+  | "face"
+  | "neck"
   | "torso"
   | "legs"
   | "feet"
-  | "jewelry"
-  | "full"; // full is for things like the space suit
+  | "waist"
+  | "wrist"
+  | "body"; // full is for things like the space suit
 
 export interface Item {
   id: string;
@@ -27,13 +30,13 @@ export interface Item {
   itemCategory: ItemCategory;
   itemWeight: number;
   itemSize: number;
-  isWearable: boolean;
+  isWearable?: boolean;
   clothingSlot?: clothingSlots;
-  isReadable: boolean;
+  isReadable?: boolean;
   readableText?: string;
   isOpenable?: boolean;
   capacity?: number;
-  isContainer: boolean;
+  isContainer?: boolean;
   isSurface?: boolean;
   canHideUnder?: boolean;
   capacityIn?: number;
@@ -94,17 +97,31 @@ export type ItemOverrideVerb =
   | "examine";
 
 export type ItemOverrides = Partial<Record<ItemOverrideVerb, any>>;
-
 export type CoolerMode = "off" | "cool" | "cold" | "freeze";
 
 export type ItemSettings =
   | { kind: "cooler"; mode: CoolerMode }
   | { kind: "safe"; dials: number[] } // e.g. [3, 7, 1, 9]
-  | { kind: "transmitter"; code: string }; // current entry "120045"
-// add more as needed
+  | { kind: "transmitter"; code: string }
+  | { kind: "flashlight"; isOn: boolean }
+  | { kind: "goggles"; isOn: boolean }
+  | { kind: "camera-gun-viewer"; currentViewIndex: number };
+
+export type PlayerClothes = {
+  head: ItemId | undefined;
+  face: ItemId | undefined;
+  neck: ItemId | undefined;
+  torso: ItemId | undefined;
+  legs: ItemId | undefined;
+  feet: ItemId | undefined;
+  wrist: ItemId | undefined;
+  waist: ItemId | undefined;
+  body: ItemId | undefined;
+};
 
 export interface ItemState {
   pickedUpByPlayer: Record<string, boolean>;
+  wornByPlayer: PlayerClothes;
   syringe: SyringeState;
   openItems: Record<ItemId, boolean>;
   spentCartridges: Record<ItemId, boolean>;
@@ -117,6 +134,7 @@ export interface ItemState {
   itemSettings: Partial<Record<ItemId, ItemSettings>>;
   frozenItems: Record<ItemId, boolean>;
   messagesPlayed: Record<string, boolean>;
+  activeGelCameras: Record<string, boolean>;
 }
 
 type ConsumableEffect =

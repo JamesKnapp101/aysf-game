@@ -1,12 +1,19 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import type { PhoneMessage } from "../../world/maps/livingQuartersTemplate";
 import "../../styles/components/message-machine.css";
+import { CrtModal } from "./CrtModal";
 
 type MessageMachineModalProps = {
   messages: PhoneMessage[] | "off";
   messagesPlayedById: Record<string, boolean | undefined>;
   onMarkPlayed: (messageId: string) => void;
   onClose: () => void;
+
+  /**
+   * Optional knobs
+   */
+  playNewestFirst?: boolean;
+  autoPlayOnOpen?: boolean;
 };
 
 export function MessageMachineModal({
@@ -14,13 +21,10 @@ export function MessageMachineModal({
   messagesPlayedById,
   onMarkPlayed,
   onClose,
+  playNewestFirst = false,
+  autoPlayOnOpen = false,
 }: MessageMachineModalProps) {
   const safeMessages: PhoneMessage[] = Array.isArray(messages) ? messages : [];
-
-  // UX toggle:
-  // true  => first play shows "3" and plays last array item first (3 → 2 → 1)
-  // false => first play shows "1" and plays first array item first (1 → 2 → 3)
-  const playNewestFirst = false;
 
   const unlistenedCount = useMemo(() => {
     return safeMessages.reduce(
@@ -36,33 +40,15 @@ export function MessageMachineModal({
     return safeMessages[activeIndex] ?? null;
   }, [activeIndex, safeMessages]);
 
-  // Display number rules:
-  // - before play: show unlistened count
-  // - after play: show "message index" in the direction we're playing
-  const displayNumber = useMemo(() => {
-    if (activeIndex == null) return unlistenedCount;
-    if (safeMessages.length === 0) return 0;
+  const isPlayed = useCallback(
+    (idx: number) => {
+      const m = safeMessages[idx];
+      return !!(m && messagesPlayedById[m.id]);
+    },
+    [safeMessages, messagesPlayedById]
+  );
 
-    // If playing newest-first, last item is "3", then "2", then "1"
-    return playNewestFirst
-      ? activeIndex + 1 // index 2 => 3
-      : activeIndex + 1; // (same numeric label; flip if you want "remaining" style)
-  }, [activeIndex, unlistenedCount, safeMessages.length, playNewestFirst]);
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
-
-  function isPlayed(idx: number) {
-    const m = safeMessages[idx];
-    return !!(m && messagesPlayedById[m.id]);
-  }
-
-  function findFirstUnplayedIndex(): number | null {
+  const findFirstUnplayedIndex = useCallback((): number | null => {
     const n = safeMessages.length;
     if (n === 0) return null;
 
@@ -72,65 +58,94 @@ export function MessageMachineModal({
       for (let i = 0; i < n; i++) if (!isPlayed(i)) return i;
     }
     return null;
-  }
+  }, [safeMessages.length, playNewestFirst, isPlayed]);
 
-  function findNextUnplayed(fromIndex: number): number | null {
-    const n = safeMessages.length;
-    if (n === 0) return null;
+  const findNextUnplayed = useCallback(
+    (fromIndex: number): number | null => {
+      const n = safeMessages.length;
+      if (n === 0) return null;
 
-    if (playNewestFirst) {
-      // go backward, then wrap backward
-      for (let i = fromIndex - 1; i >= 0; i--) if (!isPlayed(i)) return i;
-      for (let i = n - 1; i > fromIndex; i--) if (!isPlayed(i)) return i;
-    } else {
-      // go forward, then wrap forward
-      for (let i = fromIndex + 1; i < n; i++) if (!isPlayed(i)) return i;
-      for (let i = 0; i < fromIndex; i++) if (!isPlayed(i)) return i;
-    }
+      if (playNewestFirst) {
+        for (let i = fromIndex - 1; i >= 0; i--) if (!isPlayed(i)) return i;
+        for (let i = n - 1; i > fromIndex; i--) if (!isPlayed(i)) return i;
+      } else {
+        for (let i = fromIndex + 1; i < n; i++) if (!isPlayed(i)) return i;
+        for (let i = 0; i < fromIndex; i++) if (!isPlayed(i)) return i;
+      }
+      return null;
+    },
+    [safeMessages.length, playNewestFirst, isPlayed]
+  );
 
-    return null;
-  }
+  const playAtIndex = useCallback(
+    (nextIndex: number) => {
+      setActiveIndex(nextIndex);
+      const msg = safeMessages[nextIndex];
+      if (msg && !messagesPlayedById[msg.id]) onMarkPlayed(msg.id);
+    },
+    [safeMessages, messagesPlayedById, onMarkPlayed]
+  );
 
-  function playNext() {
+  const playNext = useCallback(() => {
     const n = safeMessages.length;
     if (n === 0) return;
 
-    let nextIndex: number;
-
     if (activeIndex == null) {
-      nextIndex = findFirstUnplayedIndex() ?? (playNewestFirst ? n - 1 : 0);
-    } else {
-      const wrapped = playNewestFirst
-        ? (activeIndex - 1 + n) % n
-        : (activeIndex + 1) % n;
-
-      nextIndex = findNextUnplayed(activeIndex) ?? wrapped;
+      const first = findFirstUnplayedIndex() ?? (playNewestFirst ? n - 1 : 0);
+      playAtIndex(first);
+      return;
     }
 
-    setActiveIndex(nextIndex);
+    const wrapped = playNewestFirst
+      ? (activeIndex - 1 + n) % n
+      : (activeIndex + 1) % n;
 
-    const msg = safeMessages[nextIndex];
-    if (msg && !messagesPlayedById[msg.id]) {
-      onMarkPlayed(msg.id);
-    }
-  }
+    const next = findNextUnplayed(activeIndex) ?? wrapped;
+    playAtIndex(next);
+  }, [
+    safeMessages.length,
+    activeIndex,
+    findFirstUnplayedIndex,
+    findNextUnplayed,
+    playNewestFirst,
+    playAtIndex,
+  ]);
+
+  // If you want “open modal and immediately hear the next unheard message”
+  React.useEffect(() => {
+    if (!autoPlayOnOpen) return;
+    if (activeIndex != null) return;
+    if (safeMessages.length === 0) return;
+    const first = findFirstUnplayedIndex();
+    if (first != null) playAtIndex(first);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPlayOnOpen, safeMessages.length]);
+
+  // Display number:
+  // - before play: show unlistened count
+  // - after play: show 1-based message number (based on array index)
+  const displayNumber = useMemo(() => {
+    if (activeIndex == null) return unlistenedCount;
+    if (safeMessages.length === 0) return 0;
+    return activeIndex + 1;
+  }, [activeIndex, unlistenedCount, safeMessages.length]);
 
   return (
-    <div className="mm-crtOverlay" role="dialog" aria-modal="true">
-      <button
-        className="mm-crtBackdrop"
-        aria-label="Close message machine"
-        onClick={onClose}
-      />
-
-      <div className="mm-crtWindow">
-        <div className="mm-crtScanlines" aria-hidden="true" />
-
+    <CrtModal
+      title="MESSAGE BUTLER"
+      onClose={onClose}
+      width={980}
+      height={540}
+      showHeader={false}
+    >
+      {/* IMPORTANT: no nested dialog semantics here; CrtModal owns that */}
+      <div className="mm-crtWindow crt-modal-fill">
         <header className="mm-header">
           <div className="mm-headerInner">
-            <div className="mm-logo" aria-label="Message Maid">
-              <span className="mm-logoWord">MESSAGE</span>
-              <span className="mm-logoWord">MAID</span>
+            <div className="mm-logoText" aria-label="OmniConnect">
+              <span className="mm-logoName">OMNICONNECT</span>
+              <span className="mm-logoTag">PRO</span>
+              <span className="mm-appName">MESSAGE BUTLER</span>
             </div>
 
             <div className="mm-headerRight" aria-hidden="true">
@@ -162,16 +177,17 @@ export function MessageMachineModal({
                 onClick={playNext}
                 disabled={safeMessages.length === 0}
               >
-                PLAY MESSAGE
+                PLAY
               </button>
-              <button className="mm-btn mm-btn-secondary" onClick={onClose}>
+
+              <button className="mm-btn mm-btnSecondary" onClick={onClose}>
                 CLOSE
               </button>
             </div>
           </aside>
         </div>
       </div>
-    </div>
+    </CrtModal>
   );
 }
 

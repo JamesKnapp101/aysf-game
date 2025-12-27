@@ -59,7 +59,7 @@ export function handleSetCoolerMode(
 ): ActionResult {
   let next = state;
   next = setCoolerModeInState(state, mode);
-  const coolerContents = next.itemState.containerContents["Cooler"];
+  const coolerContents = next.itemState.containerContents["Cooler"] ?? [];
   for (const content of coolerContents) {
     if (state.itemState.containerFilled[content]) {
       const containerLiquid = state.itemState.containerFilled[content];

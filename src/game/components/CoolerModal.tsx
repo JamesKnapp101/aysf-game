@@ -93,7 +93,7 @@ export function CoolerModal({ mode, onSetMode, onClose }: CoolerModalProps) {
   }, []);
 
   return (
-    <CrtModal title="OmniCool" onClose={onClose} width={980} height={340}>
+    <CrtModal title="OmniCool" onClose={onClose} width={980} showHeader={false}>
       <div
         className="cooler-root"
         ref={rootRef}

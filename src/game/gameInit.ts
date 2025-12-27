@@ -79,9 +79,23 @@ export const createInitialState = (world: World): GameState => {
     },
     worldState: {
       doors,
+      darkRooms: {
+        FiveEastBed: true,
+      },
     },
     itemState: {
       pickedUpByPlayer: {},
+      wornByPlayer: {
+        head: undefined,
+        face: undefined,
+        neck: undefined,
+        torso: undefined,
+        legs: undefined,
+        feet: undefined,
+        wrist: undefined,
+        waist: undefined,
+        body: undefined,
+      },
       syringe: { loadedCartridgeId: undefined },
       openItems: {},
       spentCartridges: {},
@@ -93,9 +107,13 @@ export const createInitialState = (world: World): GameState => {
       searchableContents: {},
       itemSettings: {
         Cooler: { kind: "cooler", mode: "off" },
+        NVGoggles: { kind: "goggles", isOn: false },
       },
       frozenItems: {},
       messagesPlayed: {},
+      activeGelCameras: {
+        GelRound1: true,
+      },
     },
   };
   return seedInitialPlacements(initialGameState);

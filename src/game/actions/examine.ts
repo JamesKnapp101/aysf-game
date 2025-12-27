@@ -34,6 +34,16 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
+  if (item?.meta?.kind === "camera-gun-viewer") {
+    return {
+      state,
+      overlay: {
+        kind: "camera-gun-viewer",
+        currentViewIndex: 0,
+      },
+    };
+  }
+
   let itemDesc = item.description?.trim() || "You see nothing special.";
   if (item.isContainer && state.itemState.containerFilled[item.id]) {
     const containerContents = state.itemState.containerFilled[item.id];
