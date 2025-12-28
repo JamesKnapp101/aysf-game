@@ -1,5 +1,6 @@
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
+import type { Room } from "../types/roomTypes";
 import { getItemsInCurrentRoom } from "./roomSelectors";
 
 export function getItemById(state: GameState, id: string): Item | undefined {
@@ -21,4 +22,17 @@ export function getPlayerLiquidContainers(state: GameState): Item[] {
   return inventoryItems.filter(
     (ii) => ii.isContainer && ii.meta?.container?.holds?.includes("liquid")
   );
+}
+
+export function getRoomForItemId(
+  state: GameState,
+  itemId: string
+): Room | undefined {
+  const item = state.world.items.find((it: Item) => it.id === itemId);
+  if (!item) return undefined;
+
+  const roomId = item.location;
+  if (typeof roomId !== "string" || roomId.length === 0) return undefined;
+
+  return state.world.rooms.find((r: Room) => r.id === roomId);
 }

@@ -15,6 +15,7 @@ import { doPour } from "./pour";
 import { doWear } from "./wear";
 import { doRemove } from "./remove";
 import { doSwitch } from "./switch";
+import { doWait } from "./wait";
 
 export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   open: doOpen,
@@ -33,4 +34,5 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   wear: doWear,
   remove: doRemove,
   switch: doSwitch,
+  wait: doWait,
 };

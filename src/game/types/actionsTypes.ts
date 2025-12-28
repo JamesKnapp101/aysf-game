@@ -18,10 +18,12 @@ export type ActionRequest = {
     | "setCoolerMode"
     | "openCoolerPanel"
     | "markMessagePlayed"
-    | "cycleCameraGunView";
+    | "cycleCameraGunView"
+    | "command";
   payload: {
     mode?: "off" | "cool" | "cold" | "freeze";
     messageId?: string;
+    input?: string;
   };
 };
 // add more UI actions later

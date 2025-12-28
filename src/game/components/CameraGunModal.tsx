@@ -5,30 +5,24 @@ import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
 import type { Room } from "../types/roomTypes";
 
-/**
- * Minimal assumptions:
- * - state.itemState.activeCameras is a record keyed by item id (GelRound id), truthy means active
- * - items are resolvable by id with location = room id string
- * - rooms are resolvable by id with description/name
- *
- * If your selectors are different, swap the two tiny helpers below.
- */
-
 type CameraGunViewerModalProps = {
   state: GameState;
   currentView: number;
-  onSetMode: (currentViewIndex: number) => void; // you call runAction("cycleCameraGunView", { currentViewIndex })
+  onCycleView: (currentViewIndex: number) => void; // you call runAction("cycleCameraGunView", { currentViewIndex })
   onClose: () => void;
+
+  /**
+   * Optional: lets the modal fire raw parser commands.
+   * For WATCH we call onRunCommand("wait").
+   */
+  onRunCommand?: (rawCommand: string) => void;
 };
 
 function getItemById(state: any, itemId: string): any | undefined {
-  // Adjust if your items live somewhere else.
-  // Common patterns: state.world.itemsById or state.itemsById
   return state?.world?.items?.filter((wi: Item) => wi.id === itemId)?.[0];
 }
 
 function getRoomById(state: any, roomId: string): any | undefined {
-  // Adjust if your rooms live somewhere else.
   return state?.world?.rooms?.filter((r: Room) => r.id === roomId)?.[0];
 }
 
@@ -42,8 +36,9 @@ function getRoomDescription(room: any | undefined): string {
 export function CameraGunViewerModal({
   state,
   currentView,
-  onSetMode,
   onClose,
+  onCycleView,
+  onRunCommand,
 }: CameraGunViewerModalProps) {
   const viewBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -53,7 +48,7 @@ export function CameraGunViewerModal({
       if (e.key === "Escape" || e.key === "Enter") onClose();
     };
     window.addEventListener("keydown", onKeyDown);
-    viewBtnRef.current?.focus();
+    // viewBtnRef.current?.focus();
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
@@ -62,7 +57,6 @@ export function CameraGunViewerModal({
       | Record<string, any>
       | undefined;
     if (!cams) return [];
-    // stable order so "cycling" feels predictable
     return Object.keys(cams)
       .filter((id) => !!cams[id])
       .sort((a, b) => a.localeCompare(b));
@@ -76,28 +70,32 @@ export function CameraGunViewerModal({
     return activeCameraIds[idx] ?? null;
   }, [activeCameraIds, currentView]);
 
-  const room = useMemo(() => {
-    if (!selectedCameraId) return undefined;
-    const item = getItemById(state, selectedCameraId);
-    const roomId = item?.location as string | undefined;
-    if (!roomId) return undefined;
-    return getRoomById(state, roomId);
-  }, [state, selectedCameraId]);
+  const item = selectedCameraId
+    ? getItemById(state, selectedCameraId)
+    : undefined;
+  const roomId = (item?.location as string | undefined) ?? undefined;
+  const room = roomId ? getRoomById(state, roomId) : undefined;
 
-  const description = useMemo(() => getRoomDescription(room), [room]);
+  const description = getRoomDescription(room);
 
-  const statusLine = useMemo(() => {
+  const statusLine = (() => {
     if (!selectedCameraId) return "NO SIGNAL";
     const roomName = (room?.name ?? "UNKNOWN LOCATION")
       .toString()
       .toUpperCase();
     return `CAM: ${selectedCameraId}  •  ${roomName}`;
-  }, [selectedCameraId, room?.name]);
+  })();
 
   function handleCycleView() {
     // You said the action expects { currentViewIndex }
-    onSetMode(0);
+    onCycleView(0);
   }
+
+  function handleWatch() {
+    onRunCommand?.("wait");
+  }
+
+  const canView = activeCameraIds.length > 0;
 
   return (
     <CrtModal
@@ -124,7 +122,6 @@ export function CameraGunViewerModal({
           <div className="cgv-body">
             <div className="cgv-screenFrame" aria-label="Camera viewer screen">
               <div className="cgv-screenGlass">
-                {/* IMPORTANT: overlays are now INSIDE the masked screenContent */}
                 <div
                   className="cgv-screenContent"
                   role="region"
@@ -142,18 +139,36 @@ export function CameraGunViewerModal({
                 </div>
               </div>
 
+              {/* LEFT control: WATCH */}
+              <div
+                className="cgv-controls cgv-controlsLeft"
+                aria-label="Watch control"
+              >
+                <button
+                  className="cgv-roundBtn cgv-watchBtn"
+                  onClick={handleWatch}
+                  disabled={!canView || !onRunCommand}
+                  aria-label="Watch (wait one turn)"
+                  title={
+                    !canView
+                      ? "No active cameras"
+                      : !onRunCommand
+                      ? "No command handler wired"
+                      : "WATCH (wait one turn)"
+                  }
+                />
+                <div className="cgv-viewLabel">WATCH</div>
+              </div>
+
+              {/* RIGHT control: VIEW */}
               <div className="cgv-controls" aria-label="Viewer controls">
                 <button
                   ref={viewBtnRef}
-                  className="cgv-viewBtn"
+                  className="cgv-roundBtn cgv-viewBtn"
                   onClick={handleCycleView}
-                  disabled={activeCameraIds.length === 0}
+                  disabled={!canView}
                   aria-label="View next camera"
-                  title={
-                    activeCameraIds.length === 0
-                      ? "No active cameras"
-                      : "View next camera"
-                  }
+                  title={!canView ? "No active cameras" : "View next camera"}
                 />
                 <div className="cgv-viewLabel">VIEW</div>
               </div>

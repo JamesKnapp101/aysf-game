@@ -47,8 +47,7 @@ function reducer(state: GameState, action: Action): GameState {
       const parsed = parseCommand(trimmed);
       const next = handleCommand(state, parsed);
 
-      // If moves should only increment for actual commands, this is fine.
-      return { ...next, moves: next.moves + 1 };
+      return { ...next };
     }
     default:
       return state;
@@ -92,13 +91,23 @@ function loadLayoutPrefs(): LayoutPrefs {
 }
 
 export const Game: React.FC = () => {
-  const [state, dispatch] = useReducer(reducer, createInitialState(WORLD));
-  const stateRef = useRef(state);
+  /**
+   * Single source of truth for game state.
+   * We keep useReducer, but add a tiny adapter so UI actions can replace the whole state.
+   */
+  type StateAction = Action | { type: "replaceState"; next: GameState };
+
+  const [gs, dispatchState] = useReducer((s: GameState, a: StateAction) => {
+    if (a.type === "replaceState") return a.next;
+    return reducer(s, a as Action);
+  }, createInitialState(WORLD));
+
+  const stateRef = useRef(gs);
 
   // keep an always-current state for non-React callbacks
   useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
+    stateRef.current = gs;
+  }, [gs]);
 
   const [layout, setLayout] = useState<LayoutPrefs>(() => loadLayoutPrefs());
   const [crtColor, setCrtColor] = useState<string>(() => loadInitialCrtColor());
@@ -117,26 +126,6 @@ export const Game: React.FC = () => {
       // ignore
     }
   }, [layout]);
-
-  /**
-   * We need a way to replace the whole GameState from ActionResults (UI actions).
-   * Easiest: useState instead of useReducer.
-   * But since you already rely on `dispatch` in LogPanel, we keep useReducer and add a tiny adapter.
-   */
-  type StateAction = Action | { type: "replaceState"; next: GameState };
-  const [state2, dispatchState] = useReducer((s: GameState, a: StateAction) => {
-    if (a.type === "replaceState") return a.next;
-    return reducer(s, a);
-  }, state);
-
-  // keep state2 in sync with original `state` initialization
-  // (state is only used now for initial render; state2 becomes authoritative)
-  useEffect(() => {
-    stateRef.current = state2;
-  }, [state2]);
-
-  // swap to use state2 everywhere below
-  const gs = state2;
 
   const applyResult = useCallback(
     (result: { state: GameState; message?: string; overlay?: any }) => {
@@ -203,7 +192,9 @@ export const Game: React.FC = () => {
 
   const currentRoom = getCurrentRoom(gs);
   const exits = getCurrentRoomExits(gs);
-  const desc = buildRoomDescription(gs, gs.player.roomId);
+
+  // IMPORTANT: use the same room id source as getCurrentRoom(gs)
+  const desc = buildRoomDescription(gs, currentRoom.id);
 
   const activeEffects = getActiveStatusEffectIds(gs);
   const rad = getRadiationIntensity(gs);
@@ -213,8 +204,8 @@ export const Game: React.FC = () => {
     (eff: StatusEffect) => eff.id === "drunk"
   );
 
-  const roomHasLight = !state.worldState.darkRooms[currentRoom.id];
-  console.log("roomHasLight? ", roomHasLight);
+  // IMPORTANT: use gs, not a stale state tree
+  const roomHasLight = !gs.worldState.darkRooms[currentRoom.id];
 
   const overlayRunAction = useCallback(
     (verb: string, payload?: any) => {
@@ -225,7 +216,8 @@ export const Game: React.FC = () => {
 
   return (
     <>
-      <OverlayHost runAction={overlayRunAction} state={state} />
+      {/* IMPORTANT: pass the authoritative state */}
+      <OverlayHost runAction={overlayRunAction} state={gs} />
 
       <div
         ref={rootRef}

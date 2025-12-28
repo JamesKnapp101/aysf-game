@@ -44,6 +44,17 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
+  if (item?.meta?.kind === "plt-viewer") {
+    return {
+      state,
+      overlay: {
+        kind: "plt-viewer",
+        isOn: (state.itemState.itemSettings["PLT"] as any)?.isOn,
+        hasLink: (state.itemState.itemSettings["PLT"] as any)?.hasLink,
+      },
+    };
+  }
+
   let itemDesc = item.description?.trim() || "You see nothing special.";
   if (item.isContainer && state.itemState.containerFilled[item.id]) {
     const containerContents = state.itemState.containerFilled[item.id];

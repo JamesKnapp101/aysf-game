@@ -4,6 +4,7 @@ import type { CoolerMode } from "../types/itemTypes";
 import { CameraGunViewerModal } from "./CameraGunModal";
 import { CoolerModal } from "./CoolerModal";
 import { MessageMachineModal } from "./MessageMachineModal";
+import { PLTModal } from "./PLTModal";
 import { ReaderModal } from "./ReaderModal";
 
 type RunAction = (verb: string, args?: Record<string, unknown>) => void;
@@ -57,20 +58,32 @@ export function OverlayHost({
       );
     }
 
+    case "plt-viewer": {
+      return <PLTModal onClose={closeOverlay} state={state} />;
+    }
+
     case "camera-gun-viewer": {
+      // "VIEW" button: cycle view index via your action
       const onCycleView = (currentViewIndex: number) => {
         runAction("cycleCameraGunView", { currentViewIndex });
       };
 
+      // "WATCH" button: run the parser command "wait"
+      const onRunCommand = (rawCommand: string) => {
+        runAction("command", { input: rawCommand });
+      };
+
       return (
         <CameraGunViewerModal
-          currentView={overlay.currentViewIndex ?? 0}
-          onSetMode={onCycleView}
-          onClose={closeOverlay}
           state={state}
+          currentView={overlay.currentViewIndex ?? 0}
+          onCycleView={onCycleView}
+          onRunCommand={onRunCommand}
+          onClose={closeOverlay}
         />
       );
     }
+
     default:
       return null;
   }

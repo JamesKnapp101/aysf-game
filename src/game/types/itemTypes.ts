@@ -105,7 +105,8 @@ export type ItemSettings =
   | { kind: "transmitter"; code: string }
   | { kind: "flashlight"; isOn: boolean }
   | { kind: "goggles"; isOn: boolean }
-  | { kind: "camera-gun-viewer"; currentViewIndex: number };
+  | { kind: "camera-gun-viewer"; currentViewIndex: number }
+  | { kind: "plt-viewer"; isOn: boolean; hasLink: boolean };
 
 export type PlayerClothes = {
   head: ItemId | undefined;

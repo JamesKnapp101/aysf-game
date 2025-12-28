@@ -144,7 +144,9 @@ export function tryDropItem(state: GameState, noun: string): RuleResult {
     return { state, message: "You aren't carrying that." };
   }
 
-  let next = updateItemLocation(state, item.id, state.player.roomId);
+  const room = getCurrentRoom(state);
+
+  let next = updateItemLocation(state, item.id, room.id);
   next = removeFromInventory(next, item.id);
 
   return { state: next, message: "Dropped." };

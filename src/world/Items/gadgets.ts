@@ -40,6 +40,9 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: true,
     isOn: false,
+    meta: {
+      kind: "plt-viewer",
+    },
   },
 
   // 3. EMP capsule -----------------------------------------------------------

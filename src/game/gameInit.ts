@@ -108,6 +108,7 @@ export const createInitialState = (world: World): GameState => {
       itemSettings: {
         Cooler: { kind: "cooler", mode: "off" },
         NVGoggles: { kind: "goggles", isOn: false },
+        PLT: { kind: "plt-viewer", isOn: true, hasLink: true },
       },
       frozenItems: {},
       messagesPlayed: {},

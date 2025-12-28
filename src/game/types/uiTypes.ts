@@ -23,7 +23,8 @@ export type Overlay =
       messages: PhoneMessage[];
       messagesPlayedById: Record<string, boolean>;
     }
-  | { kind: "camera-gun-viewer"; currentViewIndex: number };
+  | { kind: "camera-gun-viewer"; currentViewIndex: number }
+  | { kind: "plt-viewer"; isOn: boolean; hasLink: boolean };
 // | { kind: "safe"; ... }
 // | { kind: "transmitter"; ... }
 
