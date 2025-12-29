@@ -10,7 +10,6 @@ export function dispatchAction(
   state: GameState,
   req: ActionRequest
 ): ActionResult {
-  console.log("What is req? ", req);
   switch (req.verb) {
     case "command": {
       const result = handleCommand(state, {

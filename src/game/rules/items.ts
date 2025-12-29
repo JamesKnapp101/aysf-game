@@ -1,4 +1,5 @@
 import { appendLog } from "../engine/handleCommand";
+import { getItemById, moveItemToRoom } from "../helpers/itemHelpers";
 import {
   getContainerContentsIds,
   getContainerContentsItems,
@@ -13,6 +14,7 @@ import {
   getItemsInCurrentRoom,
 } from "../selectors/roomSelectors";
 import type { GameState } from "../types/gameTypes";
+import type { ItemId } from "../types/ids";
 import type { Item, ItemOverrideVerb } from "../types/itemTypes";
 import type { ParsedCommand } from "../types/parserTypes";
 import { isItemOpen, setItemClosed, setItemOpen } from "./containers";
@@ -666,6 +668,158 @@ export function trySwitchItem(
   return {
     state: next,
     message: baseMsg,
+  };
+}
+
+export function tryShootItem(
+  state: GameState,
+  shotAtItem: Item,
+  shotWithItem: Item
+): { state: GameState; message: string } {
+  let next = state;
+
+  if (!shotWithItem.isShootable) {
+    return {
+      state: next,
+      message: `The ${shotWithItem.name} isn't something you can shoot at things with.`,
+    };
+  }
+
+  const currentContents =
+    next.itemState.containerContents[shotWithItem.id] ?? [];
+  if (currentContents.length === 0) {
+    return { state: next, message: `*Click*` };
+  }
+
+  const [firedRoundId, ...remaining] = currentContents;
+  if (!firedRoundId) {
+    return { state: next, message: `*Click*` };
+  }
+
+  let msg = shotWithItem?.meta?.onShoot ?? `You fire the ${shotWithItem.name}!`;
+
+  // Always remove the fired round from the gun immediately
+  next = {
+    ...next,
+    itemState: {
+      ...next.itemState,
+      containerContents: {
+        ...next.itemState.containerContents,
+        [shotWithItem.id]: remaining,
+      },
+    },
+  };
+
+  // Figure out where the projectile should "land" initially.
+  // Prefer the target's room if it exists; otherwise use player's room.
+  const targetRoomId =
+    next.itemState.itemRoomId[shotAtItem.id] ?? next.player.roomId;
+
+  // Place the fired round into that room (so it doesn't remain "INVENTORY")
+  next = moveItemToRoom(next, firedRoundId as ItemId, targetRoomId);
+  // Handle special behavior for camera gun gel rounds
+  if (shotWithItem.id === "CameraGun") {
+    const hostId = shotAtItem.id as ItemId;
+
+    // Bind the fired round to the host (child -> host)
+    const newInventory = next.player.inventory.filter(
+      (invId) => invId !== firedRoundId
+    );
+
+    next = {
+      ...next,
+      player: {
+        ...next.player,
+        inventory: newInventory,
+      },
+      itemState: {
+        ...next.itemState,
+        attachedTo: {
+          ...next.itemState.attachedTo,
+          [firedRoundId as ItemId]: hostId,
+        },
+        itemRoomId: {
+          ...next.itemState.itemRoomId,
+          [firedRoundId]: hostId,
+        },
+      },
+    };
+
+    // Optional: custom flavor text for the cat specifically
+    if (hostId.toLowerCase() === "cat") {
+      msg += ` The cat looks momentarily startled as the sticky little projectile adheres to its fur.`;
+    } else {
+      msg += ` The sticky little projectile adheres to the ${shotAtItem.name}.`;
+    }
+
+    return {
+      state: next,
+      message: msg.endsWith(".") ? msg : msg + ".",
+    };
+  }
+
+  // Default / other shootables
+  msg += " The results of this action have not yet been implemented...";
+  return {
+    state: next,
+    message: msg.endsWith(".") ? msg : msg + ".",
+  };
+}
+
+export function tryLoadItem(
+  state: GameState,
+  itemToLoad: Item,
+  itemLoadWith: Item
+): { state: GameState; message: string } {
+  let next = state;
+  if (!itemToLoad.isShootable) {
+    return {
+      state: next,
+      message: `The ${itemToLoad.name} isn't something you can load with rounds.`,
+    };
+  }
+  if (
+    state.itemState.containerContents[itemToLoad.id]?.length ===
+    itemToLoad.capacity
+  ) {
+    return {
+      state: next,
+      message: `The ${itemToLoad.name} is already fully loaded.`,
+    };
+  }
+  if (!itemToLoad.allowedContentsIds?.includes(itemLoadWith.id)) {
+    return {
+      state: next,
+      message: `You can't load the ${itemToLoad.name} with that.`,
+    };
+  }
+
+  let msg =
+    itemToLoad?.meta?.onLoad ??
+    `You load the ${itemLoadWith.name} into the ${itemToLoad.name}`;
+  next = {
+    ...state,
+    player: {
+      ...state.player,
+      inventory: [
+        ...state.player.inventory.filter((ii) => ii !== itemLoadWith.id),
+      ],
+    },
+    itemState: {
+      ...state.itemState,
+      containerContents: {
+        ...state.itemState.containerContents,
+        [itemToLoad.id]: [
+          ...((state.itemState.containerContents[itemToLoad.id] as any) ?? []),
+          itemLoadWith.id,
+        ],
+      },
+    },
+  };
+
+  return {
+    state: next,
+    message: msg,
   };
 }
 

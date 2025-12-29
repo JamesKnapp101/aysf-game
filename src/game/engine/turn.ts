@@ -1,7 +1,15 @@
 import {
+  canMove,
+  getRoomExits,
+  isRoomDark,
+  moveItemToRoom,
+} from "../helpers/itemHelpers";
+import {
   applyStatusEffectToPlayer,
   removeStatusEffectFromPlayer,
 } from "../rules/status";
+import { getAnimateItems } from "../selectors/itemSelectors";
+import { getCurrentRoomExits } from "../selectors/roomSelectors";
 import {
   describeSicknessLevel,
   getPainStatusMessage,
@@ -10,7 +18,9 @@ import {
   pickRandomFromMsgArray,
   TRIXOPHINE_MESSAGES,
 } from "../text/messageMaps";
+import type { TickContext } from "../types/context";
 import type { GameState, StatusEffect } from "../types/gameTypes";
+import type { ItemId } from "../types/ids";
 import { appendLog } from "./handleCommand";
 
 function sicknessStage(s: number): number {
@@ -263,11 +273,80 @@ function applyEffects(state: GameState): GameState {
   return next;
 }
 
+function tickAnimateActivities(state: GameState): GameState {
+  let next = state;
+
+  for (const item of getAnimateItems(next)) {
+    const tick = item.overrides?.tick;
+    if (!tick) continue;
+
+    const updated = tick({
+      state: next,
+      item,
+      turn: next.moves,
+      rng: next.rng,
+      emit: (_ev: any) => {
+        // optional: next = { ...next, log: [...next.log, ...] }
+      },
+      moveItemToRoom: (itemId: string, roomId: string) => {
+        next = moveItemToRoom(next, itemId as ItemId, roomId);
+      },
+      getRoomExits: (roomId: string) => getRoomExits(next, roomId),
+      canEnter: (it: { id: string }, roomId: any) =>
+        canMove(next, it.id as ItemId, roomId),
+      getPlayerRoomId: () => next.player.roomId,
+      isRoomDark: (roomId: string) => isRoomDark(next, roomId),
+    });
+
+    if (updated) next = updated;
+  }
+
+  return next;
+}
+
+function tickAttachedItems(state: GameState): GameState {
+  let next = state;
+
+  const entries = Object.entries(next.itemState.attachedTo ?? {});
+  // entries: [childId, hostId]
+
+  for (const [childId, hostId] of entries) {
+    if (!hostId) continue;
+
+    // Where is the host right now?
+    const hostRoomId =
+      hostId === "INVENTORY"
+        ? next.player.roomId
+        : next.itemState.itemRoomId[hostId] ??
+          (hostId === "PLAYER" ? next.player.roomId : undefined);
+
+    if (!hostRoomId) continue;
+
+    // Ensure the child is not treated as carried (if you ever placed it in inventory)
+    if (next.player.inventory.includes(childId)) {
+      next = {
+        ...next,
+        player: {
+          ...next.player,
+          inventory: next.player.inventory.filter((id) => id !== childId),
+        },
+      };
+    }
+
+    // Move child to host room
+    next = moveItemToRoom(next, childId as ItemId, hostRoomId);
+  }
+
+  return next;
+}
+
 export function advanceTurn(state: GameState): GameState {
   let next = state;
+  next = tickAttachedItems(next);
   next = applyEffects(next);
   next = tickStatusEffects(next);
   next = tickSickness(next);
+  next = tickAnimateActivities(next);
   next = {
     ...next,
     moves: next.moves + 1,

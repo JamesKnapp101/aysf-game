@@ -113,7 +113,6 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   } else if (cmd.type === "action") {
     logWithEcho = `> ${cmd.raw}\n${message}`;
   }
-  console.log("logWithEcho: ", logWithEcho + "Z");
   nextState = appendLog(nextState, logWithEcho.trim());
   return advanceTurn(nextState);
 }

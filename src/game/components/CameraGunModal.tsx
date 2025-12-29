@@ -73,7 +73,10 @@ export function CameraGunViewerModal({
   const item = selectedCameraId
     ? getItemById(state, selectedCameraId)
     : undefined;
-  const roomId = (item?.location as string | undefined) ?? undefined;
+  const roomId =
+    state.itemState.itemRoomId[item.id] ??
+    (item?.location as string | undefined) ??
+    undefined;
   const room = roomId ? getRoomById(state, roomId) : undefined;
 
   const description = getRoomDescription(room);

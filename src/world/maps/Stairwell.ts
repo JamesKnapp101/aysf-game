@@ -4,12 +4,14 @@ import { stairwellDoors } from "../doors/stairwellDoors";
 import { badgeItems } from "../Items/badges";
 import { corpseItems } from "../Items/bodies";
 import { clothingItems } from "../Items/clothing";
+import { creatureItems } from "../Items/creatures";
 import { drugItems } from "../Items/drugs";
 import { specialItems } from "../Items/gadgets";
 import { weaponItems } from "../Items/weapons";
 
 export const STAIRWELL: WorldChunk = {
   items: [
+    ...creatureItems,
     ...badgeItems,
     ...corpseItems,
     ...drugItems,

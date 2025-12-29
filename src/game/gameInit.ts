@@ -3,6 +3,7 @@ import {
   INITIAL_SURFACE_CONTENTS,
   INITIAL_UNDER_CONTENTS,
 } from "./containerContents";
+import { seedItemRoomLocations } from "./helpers/itemHelpers";
 
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
 import type { GameState, World } from "./types/gameTypes";
@@ -50,6 +51,7 @@ export const createInitialState = (world: World): GameState => {
     .map((it) => it.id);
 
   const initialGameState: GameState = {
+    rng: () => Math.random(),
     world: normalizedWorld,
     log: getOpeningSplashLogs(),
     score: 0,
@@ -84,6 +86,7 @@ export const createInitialState = (world: World): GameState => {
       },
     },
     itemState: {
+      itemRoomId: {},
       pickedUpByPlayer: {},
       wornByPlayer: {
         head: undefined,
@@ -115,6 +118,7 @@ export const createInitialState = (world: World): GameState => {
       activeGelCameras: {
         GelRound1: true,
       },
+      attachedTo: {},
     },
   };
   return seedInitialPlacements(initialGameState);
@@ -192,5 +196,6 @@ export function seedInitialPlacements(state: GameState): GameState {
   next = seedContainerContents(next, INITIAL_CONTAINER_CONTENTS);
   next = seedSurfaceContents(next, INITIAL_SURFACE_CONTENTS);
   next = seedUnderContents(next, INITIAL_UNDER_CONTENTS);
+  next = seedItemRoomLocations(next);
   return next;
 }

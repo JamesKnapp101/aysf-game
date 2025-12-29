@@ -36,3 +36,27 @@ export function getRoomForItemId(
 
   return state.world.rooms.find((r: Room) => r.id === roomId);
 }
+
+export function getAnimateItems(state: GameState): Item[] {
+  const inventory = new Set(state.player.inventory);
+
+  return state.world.items.filter((item) => {
+    // must be alive
+    if (item.meta?.isAlive !== true) return false;
+
+    // must have a tick to run
+    if (!item.overrides?.tick) return false;
+
+    // cannot be carried
+    if (inventory.has(item.id)) return false;
+
+    // cannot be frozen
+    if (state.itemState.frozenItems[item.id]) return false;
+
+    // must exist in a room
+    const roomId = state.itemState.itemRoomId[item.id];
+    if (!roomId) return false;
+
+    return true;
+  });
+}

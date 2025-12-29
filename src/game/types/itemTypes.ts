@@ -7,7 +7,7 @@ import type {
 import type { ItemId } from "./ids";
 
 export type ItemClass = "solid" | "liquid" | "gas";
-export type ItemCategory = "scenery" | "collectable" | "fluid";
+export type ItemCategory = "scenery" | "collectable" | "fluid" | "animate";
 export type clothingSlots =
   | "head"
   | "face"
@@ -46,6 +46,7 @@ export interface Item {
   hasEffect?: (state: GameState, item: Item) => GameState;
   meta?: Record<string, any>;
   isSwitchable?: boolean;
+  isShootable?: boolean;
   isSettable?: boolean;
   isSearchable?: boolean;
   isOn?: boolean;
@@ -63,7 +64,20 @@ export interface Item {
   isSyringeCartridge?: boolean;
 }
 
+export type LivingMeta = {
+  isAlive: true;
+  canMove?: boolean;
+  canUseDoors?: boolean;
+  canCarryItems?: boolean;
+  willConsumeConsumables?: boolean;
+  vision?: "normal" | "dark" | "infrared";
+  hostility?: "neutral" | "avoidant" | "aggressive";
+  homeRegion?: string[];
+};
+
 export type ItemOverrideVerb =
+  | "tick"
+  | "onEncounter"
   | "open"
   | "close"
   | "insert"
@@ -121,6 +135,7 @@ export type PlayerClothes = {
 };
 
 export interface ItemState {
+  itemRoomId: Record<ItemId, string>;
   pickedUpByPlayer: Record<string, boolean>;
   wornByPlayer: PlayerClothes;
   syringe: SyringeState;
@@ -136,6 +151,7 @@ export interface ItemState {
   frozenItems: Record<ItemId, boolean>;
   messagesPlayed: Record<string, boolean>;
   activeGelCameras: Record<string, boolean>;
+  attachedTo: Record<ItemId, ItemId | undefined>;
 }
 
 type ConsumableEffect =

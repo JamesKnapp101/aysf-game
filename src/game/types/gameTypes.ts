@@ -12,6 +12,7 @@ export interface GameState {
   player: PlayerState;
   worldState: WorldState;
   itemState: ItemState;
+  rng: () => number;
 }
 
 export interface PlayerVitals {
