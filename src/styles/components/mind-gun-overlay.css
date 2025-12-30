@@ -1,0 +1,213 @@
+/* room text becomes the positioning context */
+.game-room-text {
+    position: relative;
+}
+
+/* your normal description wrapper */
+.game-room-desc {
+    transition: filter 260ms ease, opacity 260ms ease;
+}
+
+.game-room-desc.is-hijacked {
+    filter: blur(4px);
+    opacity: 0.45;
+}
+
+/* While hijack is active, clip tiny overflow so scrollbars don't flicker */
+.game-room-panel[data-mindflash="true"] .game-room-text {
+    overflow: hidden;
+    /* kills both x/y scrollbar flicker */
+    scrollbar-gutter: stable both-edges;
+    /* prevents layout shift in supporting browsers */
+}
+
+/* Extra safety: ensure overlay never affects layout bounds */
+.game-room-panel[data-mindflash="true"] .mindflash-layer {
+    overflow: hidden;
+}
+
+/* Prevent the static layer jitter from expanding the scrollable box */
+.game-room-panel[data-mindflash="true"] .mindflash-layer::before,
+.game-room-panel[data-mindflash="true"] .mindflash-layer::after {
+    will-change: opacity, background-position;
+}
+
+/* overlay layer */
+.mindflash-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    /* subtle darkening so the flashes pop */
+    background: rgba(0, 0, 0, 0.18);
+}
+
+/* --- static/noise layer (only visible during hijack) --- */
+.mindflash-layer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    /* "static" approximation using multiple repeating gradients */
+    background-image:
+        repeating-linear-gradient(0deg,
+            rgba(255, 255, 255, 0.03) 0px,
+            rgba(255, 255, 255, 0.03) 1px,
+            rgba(0, 0, 0, 0.00) 2px,
+            rgba(0, 0, 0, 0.00) 4px),
+        repeating-linear-gradient(90deg,
+            rgba(255, 255, 255, 0.02) 0px,
+            rgba(255, 255, 255, 0.02) 1px,
+            rgba(0, 0, 0, 0.00) 2px,
+            rgba(0, 0, 0, 0.00) 6px);
+
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+
+    animation: mindflash-static 420ms steps(2) infinite;
+}
+
+/* optional: faint vignette for "hijack" mood */
+.mindflash-layer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 45%,
+            rgba(0, 0, 0, 0.05) 0%,
+            rgba(0, 0, 0, 0.25) 70%,
+            rgba(0, 0, 0, 0.42) 100%);
+    opacity: 0.55;
+}
+
+/* one “flash” */
+.mindflash-text {
+    position: absolute;
+    max-width: 80%;
+    color: var(--crt-color, #39ff14);
+
+    /* default: visible */
+    opacity: 1;
+
+    text-shadow:
+        0 0 10px color-mix(in srgb, var(--crt-color, #39ff14) 22%, transparent),
+        0 0 24px color-mix(in srgb, var(--crt-color, #39ff14) 14%, transparent);
+
+    transform: translateZ(0);
+    filter: saturate(1.15);
+}
+
+/* animate in */
+.mindflash-text.is-entering {
+    opacity: 0;
+    animation: mindflash-in 260ms ease-out forwards;
+}
+
+/* animate out */
+.mindflash-text.is-exiting {
+    opacity: 1;
+    animation: mindflash-out 320ms ease-in forwards;
+}
+
+@keyframes mindflash-in {
+    from {
+        opacity: 0;
+        transform: translateY(3px);
+        filter: blur(1px) saturate(1.1);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0px);
+        filter: blur(0px) saturate(1.2);
+    }
+}
+
+@keyframes mindflash-out {
+    from {
+        opacity: 1;
+        transform: translateY(0px);
+        filter: blur(0px) saturate(1.2);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-2px);
+        filter: blur(1px) saturate(1.05);
+    }
+}
+
+/* fade in -> linger -> fade out */
+@keyframes mindflash-pop {
+    0% {
+        opacity: 0;
+        transform: translateY(3px);
+        filter: blur(1px) saturate(1.1);
+    }
+
+    18% {
+        opacity: 1;
+        transform: translateY(0px);
+        filter: blur(0px) saturate(1.2);
+    }
+
+    78% {
+        opacity: 1;
+        transform: translateY(0px);
+        filter: blur(0px) saturate(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-2px);
+        filter: blur(1px) saturate(1.05);
+    }
+}
+
+/* static "flicker" */
+@keyframes mindflash-static {
+    0% {
+        background-position: 0px 0px, 0px 0px;
+        opacity: 0.18;
+    }
+
+    25% {
+        background-position: -2px 1px, 1px -1px;
+        opacity: 0.24;
+    }
+
+    50% {
+        background-position: 1px -1px, -1px 2px;
+        opacity: 0.20;
+    }
+
+    75% {
+        background-position: 2px 1px, -2px -1px;
+        opacity: 0.26;
+    }
+
+    100% {
+        background-position: 0px 0px, 0px 0px;
+        opacity: 0.18;
+    }
+}
+
+
+.game-room-desc.is-hijacked {
+    filter: blur(4px);
+    opacity: 0.45;
+    animation: mindflash-drift 900ms ease-in-out infinite;
+}
+
+@keyframes mindflash-drift {
+    0% {
+        filter: blur(4px);
+    }
+
+    50% {
+        filter: blur(5px);
+    }
+
+    100% {
+        filter: blur(4px);
+    }
+}

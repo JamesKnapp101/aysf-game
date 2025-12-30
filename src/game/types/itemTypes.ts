@@ -134,6 +134,14 @@ export type PlayerClothes = {
   body: ItemId | undefined;
 };
 
+export type AnimalDisposition = {
+  fearLevel?: number;
+  angerLevel?: number;
+  hungerLevel?: number;
+  trustLevel?: number;
+  statusEffects?: StatusEffect[];
+};
+
 export interface ItemState {
   itemRoomId: Record<ItemId, string>;
   pickedUpByPlayer: Record<string, boolean>;
@@ -152,6 +160,8 @@ export interface ItemState {
   messagesPlayed: Record<string, boolean>;
   activeGelCameras: Record<string, boolean>;
   attachedTo: Record<ItemId, ItemId | undefined>;
+  mindGunMemoryIndex: Record<ItemId, number>;
+  animalDisposition: Record<ItemId, AnimalDisposition>;
 }
 
 type ConsumableEffect =

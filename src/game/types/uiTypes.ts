@@ -24,7 +24,13 @@ export type Overlay =
       messagesPlayedById: Record<string, boolean>;
     }
   | { kind: "camera-gun-viewer"; currentViewIndex: number }
-  | { kind: "plt-viewer"; isOn: boolean; hasLink: boolean };
+  | { kind: "plt-viewer"; isOn: boolean; hasLink: boolean }
+  | {
+      kind: "mindFlash";
+      title?: string;
+      memory: string;
+      seed?: number;
+    };
 // | { kind: "safe"; ... }
 // | { kind: "transmitter"; ... }
 

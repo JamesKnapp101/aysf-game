@@ -170,3 +170,15 @@
     animation: brain-wave-scroll 8s linear infinite,
         brain-wave-flicker 0.4s steps(2) infinite;
 }
+
+/* Level 6: base uses normal speed (inherits from .brain-row.normal), overlay runs 2x faster */
+.brain-row.foreign .brain-wave polyline.foreign-overlay {
+    /* Override the inherited 12s normal duration with 6s */
+    animation-duration: 6s;
+}
+
+/* Optional: a slight flicker/glow for the overlay to distinguish it */
+.brain-row.foreign .brain-wave polyline.foreign-overlay {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 2px #39ffdd);
+}

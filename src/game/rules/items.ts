@@ -1,3 +1,4 @@
+import { dispatchAction } from "../actions/dispatchAction";
 import { appendLog } from "../engine/handleCommand";
 import { getItemById, moveItemToRoom } from "../helpers/itemHelpers";
 import {
@@ -13,6 +14,7 @@ import {
   getCurrentRoom,
   getItemsInCurrentRoom,
 } from "../selectors/roomSelectors";
+import { useUIEffectsStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
 import type { Item, ItemOverrideVerb } from "../types/itemTypes";
@@ -683,6 +685,60 @@ export function tryShootItem(
       state: next,
       message: `The ${shotWithItem.name} isn't something you can shoot at things with.`,
     };
+  }
+
+  if (shotWithItem.id === "MindGun") {
+    // The mind gun is a special case that overrides the others; it doesn't take ammo, or fire projectiles
+    // Shoots animate Item and requires wearing MindCap
+    let next = state;
+
+    // Not wearing cap
+    if (next.itemState.wornByPlayer.head !== "MindCap") {
+      return { state: next, message: shotWithItem?.meta?.onShootNoCap };
+    }
+
+    // Wearing cap, but target is inanimate
+    if (!shotAtItem?.meta?.isAlive) {
+      return { state: next, message: shotWithItem?.meta?.onShootWithCap };
+    }
+
+    // Wearing cap, target is animate — look for memories
+    const targetMemories = shotAtItem?.meta?.memories;
+
+    if (!targetMemories) {
+      // Target was animate but had no memories to read
+      return {
+        state: next,
+        message: `${shotAtItem?.meta?.onShootWithCap} You feel dizzy for a moment, but nothing else happens.`,
+      };
+    }
+
+    let msg = shotWithItem?.meta?.onLink ?? "Nothing happens.";
+
+    // TODO: Fire off the memory recall sequence, then...
+
+    useUIEffectsStore.getState().playMindFlash({
+      memory:
+        targetMemories[next.itemState.mindGunMemoryIndex?.[shotAtItem.id]],
+      seed: Date.now(),
+    });
+
+    // Update the memory index for that target
+    const prevIndex = next.itemState.mindGunMemoryIndex?.[shotAtItem.id] ?? -1;
+    const newIndex = prevIndex + 1;
+
+    next = {
+      ...next,
+      itemState: {
+        ...next.itemState,
+        mindGunMemoryIndex: {
+          ...next.itemState.mindGunMemoryIndex,
+          [shotAtItem.id]: newIndex,
+        },
+      },
+    };
+
+    return { state: next, message: msg };
   }
 
   const currentContents =

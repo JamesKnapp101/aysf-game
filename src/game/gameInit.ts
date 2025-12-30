@@ -119,6 +119,26 @@ export const createInitialState = (world: World): GameState => {
         GelRound1: true,
       },
       attachedTo: {},
+      mindGunMemoryIndex: {
+        cat: 0,
+        gorilla: 0,
+      },
+      animalDisposition: {
+        cat: {
+          angerLevel: 0,
+          hungerLevel: 5,
+          fearLevel: 1,
+          trustLevel: 0,
+          statusEffects: [],
+        },
+        gorilla: {
+          angerLevel: 10,
+          hungerLevel: 10,
+          fearLevel: 10,
+          trustLevel: 0,
+          statusEffects: [],
+        },
+      },
     },
   };
   return seedInitialPlacements(initialGameState);

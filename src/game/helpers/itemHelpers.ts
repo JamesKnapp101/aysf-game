@@ -307,3 +307,18 @@ export function seedItemRoomLocations(state: GameState): GameState {
     },
   };
 }
+
+export function setPlayerBrainActivityValue(state: GameState, value: number) {
+  let next = state;
+  next = {
+    ...next,
+    player: {
+      ...next.player,
+      vitals: {
+        ...next.player.vitals,
+        brainActivity: value,
+      },
+    },
+  };
+  return { state: next, message: `Your mind reels...` };
+}

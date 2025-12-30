@@ -7,11 +7,14 @@ import {
   getStatusEffectById,
 } from "../selectors/statusSelectors";
 import type { GameState } from "../types/gameTypes";
+import { useUIEffectsStore } from "../store/store";
 
 interface StatusTabProps {
   gameState: GameState;
 }
+
 export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
+  const mindFlash = useUIEffectsStore((s) => s.mindFlash);
   return (
     <div>
       <div className="crt-vitals-monitor-stack">
@@ -49,12 +52,10 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
         />
         {/* Brain activity */}
         {(() => {
-          const brainLevel = (gameState.player.vitals.brainActivity ?? 1) as
-            | 1
-            | 2
-            | 3
-            | 4
-            | 5;
+          const brainLevel = (
+            mindFlash ? 6 : gameState.player.vitals.brainActivity ?? 1
+          ) as 1 | 2 | 3 | 4 | 5 | 6;
+
           return <BrainWaveRow level={brainLevel} />;
         })()}
       </div>
@@ -209,7 +210,7 @@ const TempRow: React.FC<TempRowProps> = ({ value }) => {
   );
 };
 
-type BrainWaveLevel = 1 | 2 | 3 | 4 | 5; // 1 normal … 5 possessed
+type BrainWaveLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 interface BrainWaveRowProps {
   level: BrainWaveLevel;
@@ -221,6 +222,7 @@ const BRAIN_WAVE_LABELS: Record<BrainWaveLevel, string> = {
   3: "Slowed",
   4: "Altered",
   5: "???",
+  6: "Foreign",
 };
 
 type Pt = [number, number];
@@ -228,11 +230,11 @@ type Pt = [number, number];
 function makeSineBase(points: number, cycles: number, amplitude: number): Pt[] {
   const result: Pt[] = [];
   const width = 200;
-  const stepX = width / (points - 1); // span 0..200 inclusive
+  const stepX = width / (points - 1);
 
   for (let i = 0; i < points; i++) {
     const x = i * stepX;
-    const t = (i / (points - 1)) * cycles * Math.PI * 2; // 0..2π*cycles
+    const t = (i / (points - 1)) * cycles * Math.PI * 2;
     const y = 20 + Math.sin(t) * amplitude;
     result.push([x, Math.round(y)]);
   }
@@ -241,19 +243,20 @@ function makeSineBase(points: number, cycles: number, amplitude: number): Pt[] {
 
 function buildScrollingPattern(base: Pt[]): string {
   const extended: Pt[] = [];
-
-  // first cycle 0–200
-  for (const [x, y] of base) extended.push([x, y]);
-  // second cycle 200–400
-  for (const [x, y] of base) extended.push([x + 200, y]);
-
+  for (const [x, y] of base) extended.push([x, y]); // 0–200
+  for (const [x, y] of base) extended.push([x + 200, y]); // 200–400
   return extended.map(([x, y]) => `${x},${y}`).join(" ");
 }
 
-const NORMAL_BASE: Pt[] = makeSineBase(33, 3, 9); // 2 cycles, medium amp
-const EXCITED_BASE: Pt[] = makeSineBase(49, 6, 16); // 5 cycles, bigger amp
-const SLOWED_BASE: Pt[] = makeSineBase(17, 1, 9); // 1 big cycle
-const STONED_BASE: Pt[] = makeSineBase(48, 3.5, 10); // 1.5 cycles, deep highs/lows
+function clampPts(base: Pt[], minY = 2, maxY = 38): Pt[] {
+  return base.map(([x, y]) => [x, Math.max(minY, Math.min(maxY, y))] as Pt);
+}
+
+// Base waves (same as before)
+const NORMAL_BASE: Pt[] = makeSineBase(33, 3, 9);
+const EXCITED_BASE: Pt[] = makeSineBase(49, 6, 16);
+const SLOWED_BASE: Pt[] = makeSineBase(17, 1, 9);
+const STONED_BASE: Pt[] = makeSineBase(48, 3.5, 10);
 
 // 5: Possessed – almost flat, small ticks
 const POSSESSED_BASE: Pt[] = (() => {
@@ -267,18 +270,29 @@ const POSSESSED_BASE: Pt[] = (() => {
     const y = 20 + (i % 7 === 0 ? 1 : 0);
     pts.push([x, Math.round(y)]);
   }
-
   return pts;
 })();
 
-// Scrolling-ready 0–400 patterns
+// 6 overlay: "excited-ish" but distinct (busy + slightly jagged)
+const FOREIGN_OVERLAY_BASE: Pt[] = (() => {
+  // Busy wave closer to excited: higher cycles and decent amplitude
+  const busy = makeSineBase(49, 6, 16);
+
+  return clampPts(busy);
+})();
+
+// scrolling patterns 0–400
 const BRAIN_WAVE_PATTERNS: Record<BrainWaveLevel, string> = {
   1: buildScrollingPattern(NORMAL_BASE),
   2: buildScrollingPattern(EXCITED_BASE),
   3: buildScrollingPattern(SLOWED_BASE),
   4: buildScrollingPattern(STONED_BASE),
   5: buildScrollingPattern(POSSESSED_BASE),
+  // 6 base uses normal pattern; overlay separate below
+  6: buildScrollingPattern(NORMAL_BASE),
 };
+
+const FOREIGN_OVERLAY_PATTERN = buildScrollingPattern(FOREIGN_OVERLAY_BASE);
 
 export const BrainWaveRow: React.FC<BrainWaveRowProps> = ({ level }) => {
   const label = BRAIN_WAVE_LABELS[level] ?? "Unknown";
@@ -290,6 +304,7 @@ export const BrainWaveRow: React.FC<BrainWaveRowProps> = ({ level }) => {
     3: "#16925aff",
     4: "#bd96ffff",
     5: "#88ff88",
+    6: "#39ffdd",
   };
 
   return (
@@ -298,32 +313,31 @@ export const BrainWaveRow: React.FC<BrainWaveRowProps> = ({ level }) => {
         level === 2 ? "excited" : ""
       } ${level === 3 ? "slowed" : ""} ${level === 4 ? "stoned" : ""} ${
         level === 5 ? "possessed" : ""
-      }`}
+      } ${level === 6 ? "foreign normal" : ""}`}
+      /* ^^^ note: level 6 ALSO includes "normal" so base anim matches Normal */
     >
       <span className="brain-label">
-        {/* CRT EEG icon */}
         <svg className="brain-icon" viewBox="0 0 32 20" aria-hidden="true">
           <polyline
             points="
-                0,12
-                6,12
-                8,4
-                10,20
-                12,3
-                14,21
-                16,12
-                22,12
-                28,12
-                34,12
-                40,12
-              "
+              0,12
+              6,12
+              8,4
+              10,20
+              12,3
+              14,21
+              16,12
+              22,12
+              28,12
+              34,12
+              40,12
+            "
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-
           <circle cx="32" cy="10" r="1" fill="currentColor" />
         </svg>
         EEG
@@ -334,14 +348,46 @@ export const BrainWaveRow: React.FC<BrainWaveRowProps> = ({ level }) => {
         preserveAspectRatio="none"
         className="brain-wave"
       >
-        <polyline
-          fill="none"
-          stroke={colors[level]}
-          strokeWidth="1"
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          points={points}
-        />
+        {/* Default / single-wave for levels 1–5 */}
+        {level !== 6 && (
+          <polyline
+            fill="none"
+            stroke={colors[level]}
+            strokeWidth="1"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            points={points}
+          />
+        )}
+
+        {/* Level 6: two independently-animated polylines */}
+        {level === 6 && (
+          <>
+            {/* Base = normal wave, normal scroll speed */}
+            <polyline
+              className="foreign-base"
+              fill="none"
+              stroke={colors[1]}
+              strokeWidth="1"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              points={points}
+              opacity={0.75}
+            />
+
+            {/* Overlay = busy wave, scrolls twice as fast */}
+            <polyline
+              className="foreign-overlay"
+              fill="none"
+              stroke={colors[6]}
+              strokeWidth="1"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              points={FOREIGN_OVERLAY_PATTERN}
+              opacity={0.95}
+            />
+          </>
+        )}
       </svg>
 
       <span className="brain-state">{label}</span>
