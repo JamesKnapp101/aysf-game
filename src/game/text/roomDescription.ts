@@ -11,22 +11,43 @@ import type { GameState } from "../types/gameTypes";
 export function buildRoomDescription(state: GameState, roomId: string): string {
   const room = state.world.rooms.find((room) => room.id === roomId);
   if (!room) return "You are nowhere. (Bug: room not found.)";
-  if (
-    state.worldState.darkRooms[room.id] &&
-    state.player.statusEffects.filter((se) => se.id === "nightvision-active")
-      ?.length === 0
-  ) {
-    return "It's pitch black in here, you can't see a thing.";
-  }
+
+  const isDark = Boolean(state.worldState.darkRooms[room.id]);
+
+  const nightVisionActive = state.player.statusEffects.some(
+    (se) => se.id === "nightvision-active"
+  );
+
+  const flashlightOn = (() => {
+    if (!state.player.inventory.includes("flashlight")) return false;
+    const fs = state.itemState.itemSettings["flashlight"];
+    return Boolean(fs && "isOn" in fs && fs.isOn === true);
+  })();
+
+  const canSee = !isDark || nightVisionActive || flashlightOn;
+  if (!canSee) return "It's pitch black in here, you can't see a thing.";
+
+  const visitedRooms = state.worldState.visitedRooms ?? {};
+  const isFirstVisit = !visitedRooms[roomId];
 
   const rawItemsHere = getItemsInRoom(state, roomId);
   const itemsHere = Array.from(
     new Map(rawItemsHere.map((it) => [it.id, it])).values()
   );
 
-  const sceneryItems = itemsHere.filter(
-    (item) => item.itemCategory === "scenery"
-  );
+  const sceneryItems = itemsHere
+    .filter((item) => item.itemCategory === "scenery")
+    .sort((a, b) => {
+      const ao = a.meta?.sceneryDescriptionOrder ?? Number.POSITIVE_INFINITY;
+      const bo = b.meta?.sceneryDescriptionOrder ?? Number.POSITIVE_INFINITY;
+      if (ao !== bo) return ao - bo;
+
+      const an = a.name.toLowerCase();
+      const bn = b.name.toLowerCase();
+      if (an !== bn) return an.localeCompare(bn);
+      return a.id.localeCompare(b.id);
+    });
+
   const nonSceneryItems = itemsHere.filter(
     (item) => item.itemCategory !== "scenery"
   );
@@ -35,21 +56,44 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
 
   const parts: string[] = [];
 
-  parts.push(`${room.description.trim()}`);
+  const sceneryText = sceneryItems
+    .map((it) => it.sceneryDescription)
+    .filter((s): s is string => Boolean(s && s.trim()))
+    .map((s) =>
+      s
+        .replace(/\n\n/g, "\n")
+        .replace(/[ \t]+\n/g, "\n")
+        .replace(/\n[ \t]+/g, "\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim()
+    )
+    .join(" ")
+    .replace("[[newline]]", `\n\n`);
 
-  if (sceneryItems.length > 0) {
-    const sceneryText = sceneryItems
-      .map((item) => item.sceneryDescription?.trim())
-      .filter(Boolean)
-      .join("\n\n");
-    if (sceneryText) parts.push(sceneryText);
+  const shortDesc = (room as any).descriptionShort ?? "";
+  const token = "[[SCENERY]]";
+
+  let base = (
+    isFirstVisit ? room.description : shortDesc || room.description
+  ).trim();
+
+  if (isFirstVisit) {
+    if (base.includes(token)) {
+      base = base.replace(token, sceneryText ? `${sceneryText}` : " ");
+    } else {
+      if (sceneryText) base = `${base}\n\n${sceneryText}`;
+    }
+  } else {
+    if (base.includes(token)) base = base.replace(token, "").trim();
   }
+
+  if (base) parts.push(base);
 
   if (doorsHere.length > 0) {
     const doorText = doorsHere
       .map((door) => getDoorDescriptionForRoom(door, roomId))
       .filter((t): t is string => Boolean(t && t.trim()))
-      .join("\n\n");
+      .join("");
     if (doorText) parts.push(doorText);
   }
 
@@ -91,8 +135,12 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
   );
 
   if (listItems.length > 0) {
-    const names = listItems.map((item) => item.name).join(", ");
-    parts.push(`You can also see ${names}.`);
+    if (listItems.length === 1) {
+      parts.push(`There is ${listItems[0].name} here.`);
+    } else {
+      const names = formatNameList(listItems.map((it) => it.name));
+      parts.push(`There are ${names} here.`);
+    }
   }
 
   return parts.join("\n\n");

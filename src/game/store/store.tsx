@@ -33,7 +33,6 @@ export const useUIEffectsStore = create<UIEffectsState>((set) => ({
   mindFlash: null,
   playMindFlash: (payload) =>
     set((s) => {
-      // end any previous effect cleanly
       s.mindFlash?.onEnd?.();
       payload.onStart?.();
       return { mindFlash: payload };

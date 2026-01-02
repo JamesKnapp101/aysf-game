@@ -55,6 +55,16 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
+  if (item.id === "PowerStationMonitor") {
+    return {
+      state,
+      overlay: {
+        kind: "power-station-terminal",
+        isOn: true,
+      },
+    };
+  }
+
   let itemDesc = item.description?.trim() || "You see nothing special.";
   if (item.isContainer && state.itemState.containerFilled[item.id]) {
     const containerContents = state.itemState.containerFilled[item.id];
@@ -76,13 +86,10 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: itemDesc };
   }
 
-  // String override
   if (typeof ex === "string") {
     const msg = ex.trim() || itemDesc;
     return { state, message: msg };
   }
-
-  // Function override: can return string OR ActionResult
   const out = ex({ item, state });
 
   if (typeof out === "string") {
@@ -102,8 +109,6 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       overlay: { kind: "cooler", mode },
     };
   }
-
-  // ActionResult override
   return {
     state: out.state ?? state,
     message: (out.message ?? itemDesc).trim() || itemDesc,

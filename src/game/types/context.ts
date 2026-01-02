@@ -24,10 +24,9 @@ export type EncounterContext = {
   item: Item;
   turn: number;
 
-  rng: () => number; // deterministic if seeded
+  rng: () => number;
   emit: (ev: GamepadEvent) => void;
 
-  // helpers (so AI code doesn’t touch internals)
   determineEncounterAction: (roomId: string) => void;
 
   moveItemToRoom: (itemId: string, roomId: string) => void;

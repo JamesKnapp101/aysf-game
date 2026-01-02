@@ -9,7 +9,6 @@ import {
   removeStatusEffectFromPlayer,
 } from "../rules/status";
 import { getAnimateItems } from "../selectors/itemSelectors";
-import { getCurrentRoomExits } from "../selectors/roomSelectors";
 import {
   describeSicknessLevel,
   getPainStatusMessage,
@@ -18,7 +17,6 @@ import {
   pickRandomFromMsgArray,
   TRIXOPHINE_MESSAGES,
 } from "../text/messageMaps";
-import type { TickContext } from "../types/context";
 import type { GameState, StatusEffect } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
 import { appendLog } from "./handleCommand";
@@ -120,7 +118,6 @@ export function applyStatusEffectTick(
       break;
     }
     case "trixophine": {
-      // Brain activity spike while tripping; settles as it wears off
       const brainActivity = effect.remainingTurns === 1 ? 1 : 4;
 
       nextVitals = {
@@ -233,7 +230,7 @@ function tickSickness(state: GameState): GameState {
 
   if (stage1 > stage0) {
     const temp0 = next.player.vitals.temperature ?? 98.6;
-    const delta = 0.6; // degrees F
+    const delta = 0.6;
     const temp1 = Math.min(106, temp0 + delta);
 
     next = {
@@ -265,7 +262,7 @@ function applyEffects(state: GameState): GameState {
 
   if (shouldHaveNV && !hasNV) {
     next = applyStatusEffectToPlayer(next, "nightvision-active", 1, 1000);
-    // better: addNonTickingStatusEffect(next, "nightvision-active")
+    // TODO: addNonTickingStatusEffect(next, "nightvision-active")
   } else if (!shouldHaveNV && hasNV) {
     next = removeStatusEffectFromPlayer(next, "nightvision-active");
   }
@@ -306,14 +303,11 @@ function tickAnimateActivities(state: GameState): GameState {
 
 function tickAttachedItems(state: GameState): GameState {
   let next = state;
-
   const entries = Object.entries(next.itemState.attachedTo ?? {});
-  // entries: [childId, hostId]
 
   for (const [childId, hostId] of entries) {
     if (!hostId) continue;
 
-    // Where is the host right now?
     const hostRoomId =
       hostId === "INVENTORY"
         ? next.player.roomId
@@ -322,7 +316,6 @@ function tickAttachedItems(state: GameState): GameState {
 
     if (!hostRoomId) continue;
 
-    // Ensure the child is not treated as carried (if you ever placed it in inventory)
     if (next.player.inventory.includes(childId)) {
       next = {
         ...next,
@@ -332,8 +325,6 @@ function tickAttachedItems(state: GameState): GameState {
         },
       };
     }
-
-    // Move child to host room
     next = moveItemToRoom(next, childId as ItemId, hostRoomId);
   }
 

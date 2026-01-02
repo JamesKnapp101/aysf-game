@@ -1,7 +1,7 @@
 export type PltEntry = {
-  id: string; // stable id
-  terms: string[]; // synonyms / triggers (first term is the “display name”)
-  body: string; // raw text (can include ~ and ^ markers)
+  id: string;
+  terms: string[];
+  body: string;
 };
 
 function normalizeTerm(s: string) {
@@ -13,11 +13,6 @@ function normalizeTerm(s: string) {
     .trim();
 }
 
-/**
- * Build a lookup index:
- * - exact normalized term -> entry id
- * - if duplicates exist, the first one wins (keep your synonyms clean)
- */
 export function buildPltIndex(seedEntries?: PltEntry[]) {
   const entryList: PltEntry[] = seedEntries ?? DEFAULT_PLT_ENTRIES;
 
@@ -33,8 +28,6 @@ export function buildPltIndex(seedEntries?: PltEntry[]) {
   return { entryList, index };
 }
 
-// Seed entries adapted from your Inform data.
-// Note: I kept your ~ and ^ markers so you can paste old content without rewriting it.
 export const DEFAULT_PLT_ENTRIES: PltEntry[] = [
   {
     id: "pentatrosin",

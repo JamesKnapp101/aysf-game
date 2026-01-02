@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
-import type { PhoneMessage } from "../../world/maps/livingQuartersTemplate";
 import "../../styles/components/message-machine.css";
+import type { PhoneMessage } from "../../world/maps/livingQuartersTemplate";
 import { CrtModal } from "./CrtModal";
 
 type MessageMachineModalProps = {
@@ -111,19 +111,14 @@ export function MessageMachineModal({
     playAtIndex,
   ]);
 
-  // If you want “open modal and immediately hear the next unheard message”
   React.useEffect(() => {
     if (!autoPlayOnOpen) return;
     if (activeIndex != null) return;
     if (safeMessages.length === 0) return;
     const first = findFirstUnplayedIndex();
     if (first != null) playAtIndex(first);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlayOnOpen, safeMessages.length]);
 
-  // Display number:
-  // - before play: show unlistened count
-  // - after play: show 1-based message number (based on array index)
   const displayNumber = useMemo(() => {
     if (activeIndex == null) return unlistenedCount;
     if (safeMessages.length === 0) return 0;
@@ -138,7 +133,6 @@ export function MessageMachineModal({
       height={540}
       showHeader={false}
     >
-      {/* IMPORTANT: no nested dialog semantics here; CrtModal owns that */}
       <div className="mm-crtWindow crt-modal-fill">
         <header className="mm-header">
           <div className="mm-headerInner">

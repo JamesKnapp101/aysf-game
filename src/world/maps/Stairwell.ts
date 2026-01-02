@@ -102,7 +102,7 @@ export const STAIRWELL: WorldChunk = {
       id: "StairWellSeven",
       name: "Bottom Stairwell",
       description:
-        "This is the very bottom of the stairs; there are no exits here except back up the way you came. It appears this place may have once been used as a small storage area, but now it is covered in dust and disused. A man's body lies in a crumpled heap here, in the center of the landing where it appears to have fallen from somewhere up above. The body's arms and legs are sprawled at odd angles, and it looks like he landed on his head, where a pool of blood, tacky but not quite dry, has formed. He is wearing a brown jumpsuit with a name patch sewn onto the breast.",
+        "This is the dimly lit bottom of a long stairwell, where the tiled floor is covered in grit and the dusty corners are shrouded in shadow. Above you, the stairwell towers in a narrow, boxy spiral that climbs many floors, stretching up into the gloom. [[SCENERY]]",
       exits: [{ direction: "up", toRoomId: "StairSeven" }],
     },
 

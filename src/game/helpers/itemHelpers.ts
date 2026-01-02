@@ -4,8 +4,6 @@ import type { ItemId } from "../types/ids";
 import type { Item } from "../types/itemTypes";
 import type { Exit, Room } from "../types/roomTypes";
 
-// ---------- Small internal selectors (arrays -> objects) ----------
-
 export function getRoomById(
   state: GameState,
   roomId: string
@@ -50,7 +48,7 @@ export function isExitPassable(state: GameState, exit: Exit): boolean {
   if (!exit.doorId) return true;
 
   const ds = state.worldState.doors[exit.doorId];
-  if (!ds) return true; // or false if you prefer "unknown door = blocked"
+  if (!ds) return true;
   console.log(
     "Cat is checking isExitPassable for ",
     exit.doorId,
@@ -119,18 +117,12 @@ export function getExitDestinationRoomId(
   return undefined;
 }
 
-// Optional convenience: get destinations only
-// export function getExitTargets(state: GameState, roomId: string): string[] {
-//   return getRoomExits(state, roomId).map((e) => e.to);
-// }
-
 // ---------- Item location ----------
 
 export function getItemRoomId(
   state: GameState,
   itemId: ItemId
 ): string | undefined {
-  // If it’s in inventory, it’s not “in a room”
   if (state.player.inventory.includes(itemId)) return undefined;
 
   return state.itemState.itemRoomId[itemId];
@@ -141,7 +133,6 @@ export function setItemRoomId(
   itemId: string,
   roomId: string
 ): GameState {
-  // ADJUST HERE if your ItemState uses a different field name
   const locMap = ((state.itemState as any).itemLocations ?? {}) as Record<
     string,
     string
@@ -155,7 +146,7 @@ export function setItemRoomId(
         ...locMap,
         [itemId]: roomId,
       },
-    } as any, // remove 'as any' once ItemState includes itemLocations
+    } as any,
   };
 }
 
@@ -190,10 +181,8 @@ export function moveItemToRoom(
     },
   };
 
-  // Move any attached items with the host
   const children = getAttachedChildren(next, itemId);
   for (const childId of children) {
-    // Skip if child is carried/contained, etc. (optional, but safe)
     if (next.player.inventory.includes(childId)) continue;
     next = {
       ...next,
@@ -210,17 +199,12 @@ export function moveItemToRoom(
   return next;
 }
 
-// ---------- Door checks (optional but worth having now) ----------
-
 export function isExitBlockedByDoor(state: GameState, exit: Exit): boolean {
-  const doorId = (exit as any).doorId as string | undefined; // ADJUST HERE if Exit has doorId typed
+  const doorId = (exit as any).doorId as string | undefined;
   if (!doorId) return false;
 
   const doorState = state.worldState.doors?.[doorId];
   if (!doorState) return false;
-
-  // ADJUST HERE based on your DoorState shape
-  // Common patterns: { isOpen: boolean, isLocked: boolean }
   if ((doorState as any).isLocked === true) return true;
   if ((doorState as any).isOpen === false) return true;
 
@@ -265,7 +249,6 @@ export function flattenContents(map: ContentsMap | undefined): Set<ItemId> {
 export function seedItemRoomLocations(state: GameState): GameState {
   const contained = new Set<ItemId>();
 
-  // Anything already seeded as inside/on/under something should NOT get a room location.
   for (const s of [
     flattenContents(state.itemState.containerContents),
     flattenContents(state.itemState.surfaceContents),
@@ -286,14 +269,11 @@ export function seedItemRoomLocations(state: GameState): GameState {
     // items inside other items are not in rooms
     if (contained.has(id)) continue;
 
-    // "INVENTORY" is seed-only; player.inventory is the truth
     if (item.location === "INVENTORY") continue;
 
-    // If item.location looks like a room id, place it
     const roomExists = state.world.rooms.some((r) => r.id === item.location);
     if (!roomExists) continue;
 
-    // Don’t stomp an explicit existing placement
     if (!nextRoomId[id]) {
       nextRoomId[id] = item.location;
     }

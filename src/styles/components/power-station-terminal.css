@@ -1,0 +1,129 @@
+.pst-root {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+}
+
+.pst-screen {
+    width: 100%;
+    height: 100%;
+    max-width: 515px;
+    max-height: 340px;
+    border: 1px solid var(--crt-green, var(--crt-color));
+    border-radius: 14px;
+    padding: 0.75rem;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5) inset;
+}
+
+.pst-screen:focus {
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.5) inset,
+        0 0 10px rgba(0, 255, 120, 0.12);
+}
+
+.pst-topline {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.pst-title {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pst-breadcrumb {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+}
+
+.pst-list {
+    flex: 1;
+    overflow: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.25rem 0;
+}
+
+.pst-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 26px 1fr 70px 70px;
+    gap: 0.5rem;
+    align-items: center;
+    text-align: left;
+    padding: 0.35rem 0.4rem;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.pst-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.pst-row.is-selected {
+    background: rgba(0, 255, 120, 0.10);
+    outline: 1px solid rgba(0, 255, 120, 0.25);
+}
+
+.pst-glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.95;
+}
+
+.pst-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.pst-status {
+    text-align: right;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    opacity: 0.9;
+}
+
+.pst-hint {
+    text-align: right;
+    opacity: 0.55;
+    font-size: 0.75rem;
+}
+
+.pst-footer {
+    padding-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pst-help {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}

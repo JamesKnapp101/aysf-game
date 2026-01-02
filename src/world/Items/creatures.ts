@@ -53,14 +53,11 @@ export const creatureItems: Item[] = [
           })
           .filter((x): x is { exit: Exit; toRoomId: string } => !!x.toRoomId)
           .filter(({ exit }) => {
-            // no door => always passable
             if (!exit.doorId) return true;
 
             const doorState = state.worldState.doors[exit.doorId];
             const isOpen = doorState?.isOpen === true;
 
-            // If you truly want "only if open" no matter what, use: return isOpen;
-            // Otherwise, allow door traversal if the creature can open doors.
             return isOpen || canOpenDoors;
           });
 
@@ -133,7 +130,6 @@ export const creatureItems: Item[] = [
           })
           .filter((x): x is { exit: Exit; toRoomId: string } => !!x.toRoomId)
           .filter(({ exit }) => {
-            // no door => always passable
             if (!exit.doorId) return true;
 
             const doorState = state.worldState.doors[exit.doorId];

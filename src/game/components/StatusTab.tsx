@@ -6,8 +6,8 @@ import {
   describeSicknessLevel,
   getStatusEffectById,
 } from "../selectors/statusSelectors";
-import type { GameState } from "../types/gameTypes";
 import { useUIEffectsStore } from "../store/store";
+import type { GameState } from "../types/gameTypes";
 
 interface StatusTabProps {
   gameState: GameState;
@@ -117,14 +117,14 @@ const MeterRow: React.FC<MeterRowProps> = ({
   goodWhenHigh = true,
 }) => {
   const clamped = Math.max(min, Math.min(max, value));
-  const pct = (clamped - min) / (max - min); // 0..1
+  const pct = (clamped - min) / (max - min);
   const filled = Math.round(pct * NUM_BLOCKS);
   const severity = goodWhenHigh ? pct : 1 - pct;
 
-  let color = "#00ff00"; // green
-  if (severity < 0.2) color = "#ff0000"; // red
-  else if (severity < 0.4) color = "#ff6600"; // orange
-  else if (severity < 0.6) color = "#ffff00"; // yellow
+  let color = "#00ff00";
+  if (severity < 0.2) color = "#ff0000";
+  else if (severity < 0.4) color = "#ff6600";
+  else if (severity < 0.6) color = "#ffff00";
 
   return (
     <div className="meter-row">
@@ -164,7 +164,7 @@ interface TempRowProps {
 
 const TempRow: React.FC<TempRowProps> = ({ value }) => {
   const clamped = Math.max(TEMP_MIN, Math.min(TEMP_MAX, value));
-  const pct = (clamped - TEMP_MIN) / (TEMP_MAX - TEMP_MIN); // 0..1
+  const pct = (clamped - TEMP_MIN) / (TEMP_MAX - TEMP_MIN);
 
   let filled = Math.round(pct * NUM_BLOCKS);
   if (filled === 0 && !Number.isNaN(pct)) {
@@ -243,8 +243,8 @@ function makeSineBase(points: number, cycles: number, amplitude: number): Pt[] {
 
 function buildScrollingPattern(base: Pt[]): string {
   const extended: Pt[] = [];
-  for (const [x, y] of base) extended.push([x, y]); // 0–200
-  for (const [x, y] of base) extended.push([x + 200, y]); // 200–400
+  for (const [x, y] of base) extended.push([x, y]);
+  for (const [x, y] of base) extended.push([x + 200, y]);
   return extended.map(([x, y]) => `${x},${y}`).join(" ");
 }
 
@@ -252,13 +252,11 @@ function clampPts(base: Pt[], minY = 2, maxY = 38): Pt[] {
   return base.map(([x, y]) => [x, Math.max(minY, Math.min(maxY, y))] as Pt);
 }
 
-// Base waves (same as before)
 const NORMAL_BASE: Pt[] = makeSineBase(33, 3, 9);
 const EXCITED_BASE: Pt[] = makeSineBase(49, 6, 16);
 const SLOWED_BASE: Pt[] = makeSineBase(17, 1, 9);
 const STONED_BASE: Pt[] = makeSineBase(48, 3.5, 10);
 
-// 5: Possessed – almost flat, small ticks
 const POSSESSED_BASE: Pt[] = (() => {
   const pts: Pt[] = [];
   const width = 200;
@@ -273,22 +271,17 @@ const POSSESSED_BASE: Pt[] = (() => {
   return pts;
 })();
 
-// 6 overlay: "excited-ish" but distinct (busy + slightly jagged)
 const FOREIGN_OVERLAY_BASE: Pt[] = (() => {
-  // Busy wave closer to excited: higher cycles and decent amplitude
   const busy = makeSineBase(49, 6, 16);
-
   return clampPts(busy);
 })();
 
-// scrolling patterns 0–400
 const BRAIN_WAVE_PATTERNS: Record<BrainWaveLevel, string> = {
   1: buildScrollingPattern(NORMAL_BASE),
   2: buildScrollingPattern(EXCITED_BASE),
   3: buildScrollingPattern(SLOWED_BASE),
   4: buildScrollingPattern(STONED_BASE),
   5: buildScrollingPattern(POSSESSED_BASE),
-  // 6 base uses normal pattern; overlay separate below
   6: buildScrollingPattern(NORMAL_BASE),
 };
 
@@ -314,7 +307,6 @@ export const BrainWaveRow: React.FC<BrainWaveRowProps> = ({ level }) => {
       } ${level === 3 ? "slowed" : ""} ${level === 4 ? "stoned" : ""} ${
         level === 5 ? "possessed" : ""
       } ${level === 6 ? "foreign normal" : ""}`}
-      /* ^^^ note: level 6 ALSO includes "normal" so base anim matches Normal */
     >
       <span className="brain-label">
         <svg className="brain-icon" viewBox="0 0 32 20" aria-hidden="true">

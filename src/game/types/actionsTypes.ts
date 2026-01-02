@@ -26,4 +26,3 @@ export type ActionRequest = {
     input?: string;
   };
 };
-// add more UI actions later

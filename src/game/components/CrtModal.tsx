@@ -29,7 +29,6 @@ export function CrtModal({
     };
     window.addEventListener("keydown", onKeyDown);
 
-    // Optional: lock background scroll
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 

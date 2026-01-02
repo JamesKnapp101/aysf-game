@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { CrtModal } from "./CrtModal";
+import { useEffect, useMemo, useRef } from "react";
 import "../../styles/components/camera-gun-viewer.css";
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
 import type { Room } from "../types/roomTypes";
+import { CrtModal } from "./CrtModal";
 
 type CameraGunViewerModalProps = {
   state: GameState;
   currentView: number;
-  onCycleView: (currentViewIndex: number) => void; // you call runAction("cycleCameraGunView", { currentViewIndex })
+  onCycleView: (currentViewIndex: number) => void;
   onClose: () => void;
 
   /**
@@ -48,7 +48,6 @@ export function CameraGunViewerModal({
       if (e.key === "Escape" || e.key === "Enter") onClose();
     };
     window.addEventListener("keydown", onKeyDown);
-    // viewBtnRef.current?.focus();
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
@@ -90,7 +89,6 @@ export function CameraGunViewerModal({
   })();
 
   function handleCycleView() {
-    // You said the action expects { currentViewIndex }
     onCycleView(0);
   }
 

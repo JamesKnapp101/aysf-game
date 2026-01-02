@@ -8,7 +8,7 @@ export const specialItems: Item[] = [
     description:
       "A compact LED flashlight with a sturdy metal body and a deeply recessed lens for a tight, bright beam.",
     initialDescription: "A metal LED flashlight rests on the dresser.",
-    location: "MainEngineering",
+    location: "LivingQuartersFiveEast", //"MainEngineering",
     vocab: ["flashlight", "led", "torch"],
     itemClass: "solid",
     itemCategory: "collectable",

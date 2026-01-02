@@ -2,6 +2,73 @@ import type { Item } from "../../game/types/itemTypes";
 
 export const levelSevenItems: Item[] = [
   {
+    id: "MysteriousNote",
+    name: "mysterious note",
+    description:
+      "A small scrap of paper with a thumbprint in dried blood in the bottom right corner. There's something written on it.",
+    location: "",
+    vocab: ["note", "scrap", "paper"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 0,
+    itemSize: 1,
+    isWearable: false,
+    isReadable: true,
+    readableText: `i vote we go`,
+    meta: {
+      onFind: `Tucked in the jumpsuit's pocket you find a small scrap of paper with something written on it.`,
+    },
+  },
+
+  {
+    id: "StoredStairwellSuff",
+    name: "stacks of old, dusty boxes",
+    description:
+      "The old boxes are bound with metal bands both vertically and horizontally. You're not sure how you'd open them, but it looks like they maybe contain spare parts or something.",
+    sceneryDescription:
+      "Tucked beneath the last flight of stairs are several stacks of boxes that are bound with metal bands, each covered in dust and looking affected by mold, or mildew. Nothing down here has been touched in a long time.",
+    location: "StairWellSeven",
+    vocab: ["boxes", "storage"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 0,
+    itemSize: 1,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+  },
+  {
+    id: "seed",
+    name: "spider-like shell",
+    location: "StairWellSeven",
+    vocab: ["spider", "shell", "spider-like", "bug"],
+    initialDescription:
+      "There's some sort of large bug or spider on the floor near the body, laying on its back with its many legs curled inward.",
+    description:
+      "It’s a small metallic shell shaped vaguely like a spider, with segmented limbs arranged around a rounded abdomen. The abdomen has split open along a perfect seam, exposing an olive-sized cavity smeared with greasy residue.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    doses: 0,
+    overrides: {
+      smell: "It has a faint organic smell, but you can't place it.",
+      taste:
+        "You dab a fingertip in the greasy film and taste it. It’s a little salty, and bitter.",
+    },
+    isSwitchable: false,
+    isOn: false,
+    providesLight: false,
+    isContagious: false,
+    isRadioactive: false,
+  },
+  {
     id: "CryoWhiteIND",
     name: "indicator light",
     description:
@@ -294,7 +361,7 @@ export const levelSevenItems: Item[] = [
     itemWeight: 10,
     itemSize: 101,
     isWearable: true,
-    clothingSlot: "full",
+    clothingSlot: "body",
     isReadable: false,
     isContainer: false,
     remainingCharge: 350,

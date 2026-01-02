@@ -5,27 +5,27 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { createInitialState } from "./gameInit";
-import type { GameState, StatusEffect } from "./types/gameTypes";
 import { parseCommand } from "../parse/parser";
 import { WORLD } from "../world/World";
+import { createInitialState } from "./gameInit";
+import type { GameState, StatusEffect } from "./types/gameTypes";
 
-import { handleCommand } from "./engine/handleCommand";
 import { dispatchAction } from "./actions/dispatchAction";
+import { handleCommand } from "./engine/handleCommand";
 
 import { getCurrentRoom, getCurrentRoomExits } from "./selectors/roomSelectors";
-import { buildRoomDescription } from "./text/roomDescription";
 import {
   getActiveStatusEffectIds,
   getRadiationIntensity,
 } from "./selectors/statusSelectors";
+import { buildRoomDescription } from "./text/roomDescription";
 
-import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 import { LogPanel } from "./components/LogPanel";
 import { OverlayHost } from "./components/OverlayHost";
+import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 
-import { useUIOverlayStore } from "./store/store";
 import { appendLog } from "./engine/handleCommand"; // (keeping your existing export)
+import { useUIOverlayStore } from "./store/store";
 import type { ActionRequest } from "./types/actionsTypes";
 
 type Action = { type: "command"; input: string };
@@ -93,7 +93,7 @@ function loadLayoutPrefs(): LayoutPrefs {
 export const Game: React.FC = () => {
   /**
    * Single source of truth for game state.
-   * We keep useReducer, but add a tiny adapter so UI actions can replace the whole state.
+   * Keep useReducer, but add a tiny adapter so UI actions can replace the whole state.
    */
   type StateAction = Action | { type: "replaceState"; next: GameState };
 
@@ -171,8 +171,6 @@ export const Game: React.FC = () => {
         const startHeight = startRatio * rect.height;
         const newHeight = startHeight + deltaY;
         let newRatio = newHeight / rect.height;
-
-        // clamp so room and log both stay visible
         newRatio = Math.max(0.15, Math.min(0.7, newRatio));
         setLayout((prev) => ({ ...prev, roomHeightRatio: newRatio }));
       };
@@ -192,10 +190,7 @@ export const Game: React.FC = () => {
 
   const currentRoom = getCurrentRoom(gs);
   const exits = getCurrentRoomExits(gs);
-
-  // IMPORTANT: use the same room id source as getCurrentRoom(gs)
   const desc = buildRoomDescription(gs, currentRoom.id);
-
   const activeEffects = getActiveStatusEffectIds(gs);
   const rad = getRadiationIntensity(gs);
   const rad01 = Math.max(0, Math.min(1, rad / 100));
@@ -204,8 +199,25 @@ export const Game: React.FC = () => {
     (eff: StatusEffect) => eff.id === "drunk"
   );
 
-  // IMPORTANT: use gs, not a stale state tree
-  const roomHasLight = !gs.worldState.darkRooms[currentRoom.id];
+  const roomIsDark = Boolean(gs.worldState.darkRooms[currentRoom.id]);
+
+  const nightVisionActive = activeEffects.includes("nightvision-active");
+
+  const flashlightOn = (() => {
+    if (!gs.player.inventory.includes("flashlight")) return false;
+    const fs = gs.itemState.itemSettings["flashlight"];
+    return Boolean(fs && "isOn" in fs && fs.isOn === true);
+  })();
+
+  // Light and Dark
+  const roomAmbientLight = !roomIsDark;
+  const playerCanSee = !roomIsDark || nightVisionActive || flashlightOn;
+  const playerLightMode =
+    roomIsDark && nightVisionActive
+      ? "nightvision"
+      : roomIsDark && flashlightOn
+      ? "flashlight"
+      : "none";
 
   const overlayRunAction = useCallback(
     (verb: string, payload?: any) => {
@@ -216,9 +228,8 @@ export const Game: React.FC = () => {
 
   return (
     <>
-      {/* IMPORTANT: pass the authoritative state */}
+      {/* The OverlayHost handles all the screen effects */}
       <OverlayHost runAction={overlayRunAction} state={gs} />
-
       <div
         ref={rootRef}
         className="game-root"
@@ -231,7 +242,11 @@ export const Game: React.FC = () => {
         }
         data-status={activeEffects.join(" ")}
         data-drunkenness={isDrunk?.intensity ?? 0}
-        data-room-has-light={roomHasLight}
+        data-room-ambient-light={roomAmbientLight ? "true" : "false"}
+        data-room-is-dark={roomIsDark ? "true" : "false"}
+        data-player-can-see={playerCanSee ? "true" : "false"}
+        data-player-light-mode={playerLightMode}
+        data-flashlight-on={flashlightOn ? "true" : "false"}
         onClick={() => inputRef.current?.focus()}
       >
         {/* HEADER */}
@@ -254,7 +269,13 @@ export const Game: React.FC = () => {
           roomPanelFlexBasis={roomPanelFlexBasis}
           inputRef={inputRef}
           activeEffects={activeEffects.join(" ")}
-          roomHasLight={roomHasLight}
+          roomIsDark={roomIsDark}
+          roomAmbientLight={roomAmbientLight}
+          playerCanSee={playerCanSee}
+          playerLightMode={playerLightMode}
+          flashlightOn={flashlightOn ? "true" : "false"}
+          roomId={currentRoom.id}
+          worldState={gs.worldState}
         />
 
         {/* horizontal resizer - between room and main row */}
@@ -266,7 +287,7 @@ export const Game: React.FC = () => {
         {/* MAIN ROW: log + sidebar */}
         <LogPanel
           state={gs}
-          dispatch={dispatchState as any} // LogPanel expects dispatch(Action) - now includes replaceState
+          dispatch={dispatchState as any}
           layout={layout}
           setLayout={setLayout}
           crtColor={crtColor}

@@ -447,7 +447,7 @@ export const levelFourItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
     isWearable: true,
-    clothingSlot: "jewelry",
+    clothingSlot: "wrist",
     isReadable: true,
     readableText: "DeM Department of Zoology",
     isContainer: false,
@@ -622,12 +622,8 @@ export const levelFourItems: Item[] = [
   {
     id: "GridYellowIND",
     name: "indicator light",
-    description:
-      "A circular indicator disk glows with the same electric yellow light as the remote station, linking the readouts together in color if not in sanity.",
-    initialDescription:
-      "The disk is glowing with an electric yellow light, a tiny sun stuck to the wall.",
-    sceneryDescription:
-      "The harsh yellow radiance spills across the power grid controls, making every switch and gauge look like a bad idea waiting to happen.",
+    description: "The disk is glowing with an electric yellow light.",
+    sceneryDescription: "",
     location: "PowerGrid",
     vocab: ["glow", "indicator", "light", "disk"],
     itemClass: "solid",
@@ -643,15 +639,37 @@ export const levelFourItems: Item[] = [
     id: "PowerStation",
     name: "power station",
     description:
-      "A massive control station for the ship’s power grid dominates the room. A dizzying forest of gauges and lights blankets its surface, but the core controls are clear: a computer-terminal keyboard, a viewscreen mounted above it, a large round silver key receptacle, and a square red button waiting beside it.",
+      "It looks like the ship’s nervous system, all blinking indicators and quiet hums.",
     sceneryDescription:
-      "From a distance it looks like the ship’s nervous system, all blinking indicators and quiet hums. Up close it’s more like a life support system with a sense of humor and far too many failure modes.",
+      "A massive control station for the ship’s power grid dominates the room, a dizzying forest of gauges and lights covering its surface. The lights are a mixture of greens, yellows, and reds, and you can see that some of the gauges needles are moving into the warning zone but don't have a clear idea what they all mean.",
     location: "PowerGrid",
     vocab: ["grid", "power", "station", "console", "panel"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 0,
+    },
     itemWeight: 800,
     itemSize: 9,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+  },
+  {
+    id: "PowerStationKeyboard",
+    name: "power station keyboard",
+    description: "The legends on some of the keys are half-worn away.",
+    sceneryDescription:
+      "In the middle of the main panel is a well-used keyboard, its keys slightly polished from long hours of nervous typing,",
+    location: "PowerGrid",
+    vocab: ["keyboard", "keypad"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 3,
+    itemSize: 2,
     isWearable: false,
     isReadable: false,
     isContainer: false,
@@ -680,47 +698,35 @@ export const levelFourItems: Item[] = [
     id: "PowerStationMonitor",
     name: "view screen",
     description:
-      'A flat nineteen-inch viewscreen is mounted above the power station keyboard. When the system is inactive it remains dark; when powered, a prompt appears in the bottom corner inviting: "To log in type LOGIN".',
-    sceneryDescription:
-      "The surface reflects your face faintly until power surges through the system and monochrome text crawls into existence, giving the whole thing an old-school terminal vibe with much higher stakes.",
+      "The viewscreen is mounted above the power station keyboard. This must be how you access the ship's power systems.",
+    sceneryDescription: `and mounted above the keyboard is a flat nineteen-inch viewscreen, where a prompt appears in the bottom corner inviting: "To log in type LOGIN".`,
     location: "PowerGrid",
     vocab: ["view", "screen", "monitor", "video", "viewscreen"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
     itemWeight: 10,
     itemSize: 3,
     isWearable: false,
     isReadable: false,
     isContainer: false,
   },
-  {
-    id: "PowerStationKeyboard",
-    name: "power station keyboard",
-    description:
-      "A well-used computer keyboard is built into the console, its keys slightly polished from long hours of nervous typing.",
-    sceneryDescription:
-      'The legends on some of the keys are half-worn away, as if they’ve spent years spelling out variations on the phrase "this is fine" in system commands.',
-    location: "PowerGrid",
-    vocab: ["keyboard", "keypad"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 3,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
+
   {
     id: "PowerStationKeyhole",
     name: "large keyhole",
     description:
-      'A large, round silver receptacle sits next to the keyboard. Markings show two positions: one labeled "O" and one labeled "I". It’s clearly built for the oversized hazard-striped key.',
-    sceneryDescription:
-      "The receptacle has that satisfyingly overbuilt look, as if someone expected people to turn this key hard enough to break reality.",
+      "The receptacle seems to be for a key, presumably needed in order to activate the console.",
+    sceneryDescription: `Next to the keyboard is a large, round silver receptacle, like a keyhole for a large key. Markings show two positions: one labeled "O" and one labeled "I".`,
     location: "PowerGrid",
     vocab: ["power", "keyhole", "receptacle", "slot"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
     itemWeight: 5,
     itemSize: 2,
     isWearable: false,
@@ -738,13 +744,16 @@ export const levelFourItems: Item[] = [
     id: "PowerStationButton",
     name: "square red button",
     description:
-      "A square red button is set into the station beside the keyhole. In idle mode it’s dark; when the key is turned it flashes, and once power is fully engaged it glows with a steady, solid light.",
+      "Next to the keyhole there is a square, raised red button. In idle mode it’s dark; when the key is turned it flashes, and once power is fully engaged it glows with a steady, solid light.",
     sceneryDescription:
-      "The button sits there with the patient menace of something designed to either fix everything or make your problems a lot louder.",
+      "Next to the receptable is a square, raised red button.",
     location: "PowerGrid",
     vocab: ["square", "red", "button"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,

@@ -1,23 +1,23 @@
-import { trySwitchItem } from "../rules/items";
+import { trySearchItem } from "../rules/items";
 import { resolveItemByNoun } from "../rules/scope";
 import type { ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 import type { ParsedCommand } from "../types/parserTypes";
 
-export function doSwitch(state: GameState, cmd: ParsedCommand): ActionResult {
-  if (cmd.type !== "action" || cmd.verb !== "switch") {
+export function doSearch(state: GameState, cmd: ParsedCommand): ActionResult {
+  if (cmd.type !== "action" || cmd.verb !== "search") {
     return { state, message: "You can't do that." };
   }
 
   const direct = cmd.direct?.trim();
   if (!direct) {
-    return { state, message: "Switch what?" };
+    return { state, message: "Search what?" };
   }
 
   const item = resolveItemByNoun(state, direct);
-  if (!item || !item?.isSwitchable) {
-    return { state, message: "There's nothing to switch." };
+  if (!item || !item?.isSearchable) {
+    return { state, message: "There's nothing to search." };
   }
 
-  return trySwitchItem(state, item);
+  return trySearchItem(state, item);
 }

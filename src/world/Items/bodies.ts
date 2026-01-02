@@ -1,6 +1,30 @@
 import type { Item } from "../../game/types/itemTypes";
 
 export const corpseItems: Item[] = [
+  // STAIRWELL BOTTOM -----------------------------------
+
+  {
+    id: "FallenCorpse",
+    name: "fallen corpse",
+    description: `It looks like the poor guy maybe slipped, and fell over the railing from up above. His head is a bit of a mess but his hair, what was left of it, had gone gray and he wore a bushy gray mustache, now hung like a curtain over his open mouth. The patch on his jumpsuit reads "DAMON."`,
+    sceneryDescription:
+      "[[newline]]In the middle of the tiled landing a man's body lay crumpled in a heap, having fallen from somewhere up above. He looks to have landed on his head which, while still in one piece, has cracked like an egg, and his body has been left sprawled at all angles. A pool of blood, tacky but not quite dry, has formed around his head, and you can see part of a name tag sewn onto the breast of his brown jumpsuit.",
+    location: "StairWellSeven",
+    vocab: ["corpse", "body", "man"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 80,
+    itemSize: 10,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    isContagious: true,
+    isSearchable: true,
+  },
+
   // LEVEL 7 – Splattered corpse in corridor ---------------------------------
   {
     id: "SplatteredCorpse",

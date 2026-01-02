@@ -1,12 +1,10 @@
-import React from "react";
-import type { GameState } from "../types/gameTypes"; // adjust path
-import type { Item } from "../types/itemTypes"; // adjust path
 import { getItemById } from "../selectors/itemSelectors";
-import { resolveItemByNoun } from "../rules/scope";
+import type { GameState } from "../types/gameTypes";
+import type { Item } from "../types/itemTypes";
 
 type InventoryTreeProps = {
   state: GameState;
-  inventoryItems: Item[]; // top-level items the player is carrying
+  inventoryItems: Item[];
 };
 
 /**
@@ -23,9 +21,47 @@ type InventoryTreeProps = {
 export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
   const showContentsOnlyIfOpen = true;
 
-  const getItemName = (id: string) => {
+  const startsWithVowelSound = (word: string) => {
+    const w = word.trim().toLowerCase();
+    if (
+      w.startsWith("hour") ||
+      w.startsWith("honest") ||
+      w.startsWith("heir") ||
+      w.startsWith("led")
+    )
+      return true;
+    if (w.startsWith("uni") || w.startsWith("use") || w.startsWith("euro"))
+      return false;
+    return /^[aeiou]/.test(w);
+  };
+
+  const withIndefiniteArticle = (name: string) => {
+    const n = name.trim();
+    if (!n) return n;
+
+    if (/^(a|an|the|some|your)\b/i.test(n)) return n;
+
+    const article = startsWithVowelSound(n) ? "an" : "a";
+    return `${article} ${n}`;
+  };
+
+  const isSwitchable = (id: string) => {
+    const s = state.itemState.itemSettings?.[id];
+    return Boolean(s && typeof (s as any).isOn === "boolean");
+  };
+
+  const isOn = (id: string) => {
+    const s = state.itemState.itemSettings?.[id];
+    return Boolean(
+      s && typeof (s as any).isOn === "boolean" && (s as any).isOn
+    );
+  };
+
+  const getItemLabel = (id: string) => {
     const it = getItemById(state, id);
+    const baseName = withIndefiniteArticle(it?.name ?? id);
     let annotation = "";
+
     if (state.itemState.containerFilled[id]?.[0]) {
       let filledWith = state.itemState.containerFilled[id]?.[0];
       if (filledWith) {
@@ -43,9 +79,11 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
         annotation = ` (worn on your ${it.clothingSlot})`;
       }
     }
-    let name = it?.name ?? "";
-    const itemName = (name += annotation);
-    return itemName ?? id;
+    if (isSwitchable(id) && isOn(id)) {
+      annotation += ` (which is on)`;
+    }
+
+    return `${baseName}${annotation}`;
   };
 
   const getContents = (containerId: string): string[] => {
@@ -67,18 +105,10 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
           <ul className="game-list inv-tree-list">
             {inventoryItems.map((item) => {
               const contents = item.isContainer ? getContents(item.id) : [];
-              let filledWith = state.itemState.containerFilled[item.id]?.[0];
-              if (filledWith) {
-                const liquidItem = getItemById(state, filledWith);
-                if (state.itemState.frozenItems[filledWith]) {
-                  filledWith =
-                    liquidItem?.meta?.liquid?.frozenName ??
-                    state.itemState.containerFilled[item.id]?.[0];
-                }
-              }
+
               return (
                 <li className="inv-tree-item" key={item.id}>
-                  <div className="inv-tree-row">{getItemName(item.id)}</div>
+                  <div className="inv-tree-row">{getItemLabel(item.id)}</div>
 
                   {contents.length > 0 && (
                     <ul className="inv-tree-contents">
@@ -95,7 +125,7 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
                               {glyph}&nbsp;
                             </span>
                             <span className="inv-tree-child-name">
-                              {getItemName(childId)}
+                              {getItemLabel(childId)}
                             </span>
                           </li>
                         );

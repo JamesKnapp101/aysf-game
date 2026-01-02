@@ -32,6 +32,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         message = "You can't go that way.";
         break;
       }
+
       let destinationRoomId: string | undefined;
       let moveMessage = "";
 
@@ -69,14 +70,33 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         break;
       }
 
-      nextState = {
+      const movedState: GameState = {
         ...state,
         player: {
           ...state.player,
           roomId: destinationRoomId,
         },
       };
-      message = "";
+
+      const roomDesc = buildRoomDescription(movedState, destinationRoomId);
+
+      const visitedRooms = movedState.worldState.visitedRooms ?? {};
+      const nextVisitedRooms = {
+        ...visitedRooms,
+        [destinationRoomId]: true,
+      };
+
+      nextState = {
+        ...movedState,
+        worldState: {
+          ...movedState.worldState,
+          visitedRooms: nextVisitedRooms,
+        },
+      };
+
+      message = [moveMessage.trim(), roomDesc.trim()]
+        .filter(Boolean)
+        .join("\n");
       break;
     }
 
@@ -105,6 +125,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     }
   }
 
+  // Echo line (unchanged idea, but move now has real output)
   let logWithEcho = "";
   if (cmd.type === "move") {
     logWithEcho = `> ${cmd.direction}\n${message}`;
@@ -113,6 +134,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   } else if (cmd.type === "action") {
     logWithEcho = `> ${cmd.raw}\n${message}`;
   }
+
   nextState = appendLog(nextState, logWithEcho.trim());
   return advanceTurn(nextState);
 }

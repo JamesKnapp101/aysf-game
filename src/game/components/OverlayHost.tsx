@@ -1,3 +1,4 @@
+import { PowerStationTerminalModal } from "../components/PowerStationTerminalModal";
 import { useUIOverlayStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
@@ -62,13 +63,14 @@ export function OverlayHost({
       return <PLTModal onClose={closeOverlay} state={state} />;
     }
 
+    case "power-station-terminal": {
+      return <PowerStationTerminalModal onClose={closeOverlay} state={state} />;
+    }
+
     case "camera-gun-viewer": {
-      // "VIEW" button: cycle view index via your action
       const onCycleView = (currentViewIndex: number) => {
         runAction("cycleCameraGunView", { currentViewIndex });
       };
-
-      // "WATCH" button: run the parser command "wait"
       const onRunCommand = (rawCommand: string) => {
         runAction("command", { input: rawCommand });
       };

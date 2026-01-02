@@ -162,30 +162,33 @@
 }
 
 /* ============================================================
-   NIGHT VISION (room-description only)
+   NIGHT VISION (room-description only) — PANEL SCOPED
    Uses:
-     - data-status~="nightvision-active"
-     - data-room-has-light="true" | "false"
-   Targets only the Room Description window (assumes .game-room-panel).
-   No changes to existing effects required.
+     - .game-room-panel[data-status~="nightvision-active"]
+     - .game-room-panel[data-room-ambient-light="true" | "false"]
    ============================================================ */
 
-/* ---------- NV + LIGHT: blown-out, washed, barely readable ---------- */
-.game-root[data-status~="nightvision-active"][data-room-has-light="true"] .game-room-panel {
-    position: relative;
-    will-change: filter, opacity;
-    /* blast exposure + wash color */
+/* NV + ambient light: very washed out */
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="true"][data-flashlight-on="false"] {
     filter: brightness(1.95) contrast(0.55) saturate(0.55);
     opacity: 0.96;
 }
 
-.game-root[data-status~="nightvision-active"][data-room-has-light="true"] .game-room-panel::before {
+/* NV + flashlight in dark: slightly washed, still readable */
+.game-room-panel[data-status~="nightvision-active"][data-room-is-dark="true"][data-flashlight-on="true"] {
+    filter: brightness(1.25) contrast(0.85) saturate(0.75);
+    opacity: 0.98;
+}
+.game-root[data-flashlight-on="true"] .game-room-panel[data-status~="nightvision-active"][data-room-is-dark="true"] {
+    filter: brightness(1.25) contrast(0.85) saturate(0.75);
+    opacity: 0.98;
+}
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="true"]::before {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
 
-    /* heavy glow + overexposed veil */
     background:
         radial-gradient(120% 110% at 50% 35%,
             color-mix(in srgb, var(--crt-color) 82%, transparent),
@@ -201,8 +204,7 @@
     filter: blur(18px);
 }
 
-.game-root[data-status~="nightvision-active"][data-room-has-light="true"] .game-room-panel {
-    /* make text barely readable */
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="true"] {
     color: color-mix(in srgb, var(--crt-color) 34%, rgba(0, 0, 0, 0.15));
     text-shadow:
         0 0 14px color-mix(in srgb, var(--crt-color) 42%, transparent),
@@ -211,7 +213,8 @@
 
 
 /* ---------- NV + DARK (refined) ---------- */
-.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel {
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"] {
+    position: relative;
     color: rgba(0, 0, 0, 0.92);
 
     background:
@@ -248,13 +251,12 @@
     }
 }
 
-.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel::before {
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"]::before {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
 
-    /* ghostly phosphor haze + subtle vignette */
     background:
         radial-gradient(120% 120% at 50% 40%,
             rgba(255, 255, 255, 0.12),
@@ -267,21 +269,19 @@
     filter: blur(14px);
 }
 
-.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel {
-    /* kill previous glow-y shadows so dark text stays crisp */
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"] {
     text-shadow:
         0 0 0 transparent,
         0 0 10px rgba(255, 255, 255, 0.12);
 }
 
-/* If your room panel contains links or accent spans that are forced green elsewhere */
-.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel a,
-.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel .game-accent {
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"] a,
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"] .game-accent {
     color: rgba(0, 0, 0, 0.9);
     text-decoration-color: rgba(0, 0, 0, 0.55);
 }
 
-.game-root[data-status~="nightvision-active"][data-room-has-light="false"] .game-room-panel::after {
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"]::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -308,4 +308,146 @@
     to {
         transform: translate(1px, -1px);
     }
+}
+
+/* ============================================================
+   FLASHLIGHT (room-description only)
+   Uses (recommended):
+     - data-room-is-dark="true" | "false"
+     - data-room-has-light="true" | "false"
+     - data-room-light-source="flashlight" (optional)
+   Avoids triggering when nightvision is active.
+   ============================================================ */
+
+/* Dark room + has light (flashlight) + NOT nightvision:
+   readable text, subtle vignette cue */
+.game-root:not([data-status~="nightvision-active"]) [data-room-is-dark="true"][data-room-has-light="true"][data-room-light-source="flashlight"] .game-room-panel {
+    position: relative;
+    will-change: filter;
+    /* Slightly dim/warmer feel without killing readability */
+    filter: brightness(0.98) contrast(0.98) saturate(0.9);
+}
+
+/* Vignette/dark edges + gentle center lift */
+.game-root:not([data-status~="nightvision-active"]) [data-room-is-dark="true"][data-room-has-light="true"][data-room-light-source="flashlight"] .game-room-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    /* The “torch” look: darker edges, center stays readable */
+    background:
+        radial-gradient(120% 120% at 50% 45%,
+            rgba(0, 0, 0, 0) 0 48%,
+            rgba(0, 0, 0, 0.50) 72%,
+            rgba(0, 0, 0, 0.72) 100%),
+        radial-gradient(75% 65% at 50% 42%,
+            color-mix(in srgb, var(--crt-color) 10%, transparent),
+            transparent 60%);
+    opacity: 0.9;
+}
+
+/* Optional: a tiny bit of “beam haze” in the center */
+.game-root:not([data-status~="nightvision-active"]) [data-room-is-dark="true"][data-room-has-light="true"][data-room-light-source="flashlight"] .game-room-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background: radial-gradient(60% 55% at 50% 42%,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0) 65%);
+    mix-blend-mode: screen;
+    opacity: 0.35;
+    filter: blur(10px);
+}
+
+/* Keep text crisp */
+.game-root:not([data-status~="nightvision-active"]) [data-room-is-dark="true"][data-room-has-light="true"][data-room-light-source="flashlight"] .game-room-panel {
+    color: color-mix(in srgb, var(--crt-color) 88%, rgba(255, 255, 255, 0.1));
+    text-shadow:
+        0 0 10px rgba(0, 0, 0, 0.55),
+        0 0 2px rgba(0, 0, 0, 0.75);
+}
+
+.game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"][data-flashlight-on="true"] {
+    filter: brightness(1.02) contrast(0.96) saturate(0.8);
+}
+
+/* ============================================================
+   FLASHLIGHT VIGNETTE (visible on black)
+   - Drawn OVER the text area so it can be seen even on dark bg
+   - Uses only ::before (your ::after is already used for overflow fade)
+   - Avoids running when nightvision is active
+   ============================================================ */
+
+.game-room-panel[data-player-light-mode="flashlight"]:not([data-status~="nightvision-active"]) .game-room-text {
+    position: relative;
+    isolation: isolate;
+    /* keep blending contained to this box */
+}
+
+/* Overlay ABOVE text */
+.game-room-panel[data-player-light-mode="flashlight"]:not([data-status~="nightvision-active"]) .game-room-text::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+
+    /* Darken edges + faint center “beam” tint */
+    background:
+        /* edge vignette */
+        radial-gradient(120% 120% at 50% 45%,
+            rgba(0, 0, 0, 0) 0 52%,
+            rgba(0, 0, 0, 0.28) 74%,
+            rgba(0, 0, 0, 0.44) 100%),
+        /* subtle center illumination cue */
+        radial-gradient(60% 55% at 50% 42%,
+            color-mix(in srgb, var(--crt-color) 16%, transparent),
+            transparent 66%);
+
+    /* This is what makes it visible: it darkens/tints text underneath */
+    mix-blend-mode: multiply;
+    opacity: 0.65;
+}
+
+.game-room-panel[data-player-light-mode="flashlight"]:not([data-status~="nightvision-active"]) .game-room-text::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+
+    background:
+        /* NEW: outer falloff / edge dim */
+        radial-gradient(140% 130% at 90% 95%,
+            rgba(0, 0, 0, 0) 0 46%,
+            rgba(0, 0, 0, 0.22) 90%,
+            rgba(0, 0, 0, 0.38) 100%),
+
+        /* existing vignette (keeps the “beam” feel) */
+        radial-gradient(120% 120% at 90% 45%,
+            rgba(0, 0, 0, 0) 0 52%,
+            rgba(0, 0, 0, 0.28) 74%,
+            rgba(0, 0, 0, 0.44) 100%),
+
+        /* existing subtle center flare */
+        radial-gradient(60% 55% at 50% 42%,
+            color-mix(in srgb, var(--crt-color) 16%, transparent),
+            transparent 66%);
+
+    mix-blend-mode: multiply;
+    opacity: 0.75;
+    /* slightly stronger so edge dim is noticeable */
+}
+
+/* keep the overflow fade above everything */
+.game-room-text::after {
+    z-index: 10;
+}
+
+/* Keep your existing overflow fade on top of everything */
+.game-room-text::after {
+    z-index: 10;
 }

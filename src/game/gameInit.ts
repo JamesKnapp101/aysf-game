@@ -58,7 +58,7 @@ export const createInitialState = (world: World): GameState => {
     rating: 0,
     moves: 0,
     player: {
-      roomId: "LivingQuartersFiveEast",
+      roomId: "StairWellSeven",
       inventory: startingInventoryIds,
       memories: {
         memoryScore: 0,
@@ -84,6 +84,24 @@ export const createInitialState = (world: World): GameState => {
       darkRooms: {
         FiveEastBed: true,
       },
+      noPowerRooms: {
+        // This will basically be everything on some of the floors
+        FiveEastBed: true, // for testing
+      },
+      gravityOffRooms: {},
+      visitedRooms: {
+        PowerGrid: false,
+      },
+      roomAirQuality: {
+        StairWellSeven: "thin",
+      },
+      roomAudioLevel: {
+        PowerGrid: 3,
+        StairWellSeven: 1,
+      },
+      roomTemp: {
+        StairWellSeven: "cool",
+      },
     },
     itemState: {
       itemRoomId: {},
@@ -107,11 +125,14 @@ export const createInitialState = (world: World): GameState => {
       surfaceContents: {},
       underContents: {},
       revealedUnder: {},
-      searchableContents: {},
+      searchableContents: {
+        FallenCorpse: ["MysteriousNote"],
+      },
       itemSettings: {
         Cooler: { kind: "cooler", mode: "off" },
         NVGoggles: { kind: "goggles", isOn: false },
-        PLT: { kind: "plt-viewer", isOn: true, hasLink: true },
+        PLT: { kind: "plt-viewer", isOn: false, hasLink: false },
+        flashlight: { kind: "flashlight", isOn: false },
       },
       frozenItems: {},
       messagesPlayed: {},

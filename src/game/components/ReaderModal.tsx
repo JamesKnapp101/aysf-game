@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { CrtModal } from "./CrtModal";
 import "../../styles/reader-modal.css";
+import { CrtModal } from "./CrtModal";
 
 type ReaderModalProps = {
   title: string;
@@ -12,9 +12,7 @@ export function ReaderModal({ title, body, onClose }: ReaderModalProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Start at top whenever opened
     scrollRef.current?.scrollTo({ top: 0 });
-    // Put focus on the scroll area so arrow keys work immediately
     scrollRef.current?.focus();
   }, [title, body]);
 
@@ -23,7 +21,7 @@ export function ReaderModal({ title, body, onClose }: ReaderModalProps) {
       const el = scrollRef.current;
       if (!el) return;
 
-      const line = 28; // px per arrow press (tune to taste)
+      const line = 28;
       const page = Math.max(120, Math.floor(el.clientHeight * 0.85));
 
       switch (e.key) {
@@ -39,7 +37,6 @@ export function ReaderModal({ title, body, onClose }: ReaderModalProps) {
 
         case "PageDown":
         case " ":
-          // spacebar = page down (classic terminal/reader vibe)
           e.preventDefault();
           el.scrollBy({ top: page, behavior: "auto" });
           break;
@@ -60,7 +57,6 @@ export function ReaderModal({ title, body, onClose }: ReaderModalProps) {
           break;
 
         case "Escape":
-          // CrtModal also listens, but this keeps it working even if that changes
           e.preventDefault();
           onClose();
           break;

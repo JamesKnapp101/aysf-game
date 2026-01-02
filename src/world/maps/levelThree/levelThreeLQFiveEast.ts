@@ -11,13 +11,16 @@ Red speckling rims the corners of her mouth and eyes, marring an otherwise peace
 She wears pajamas, her posture suggesting sleep rather than death, which makes it harder to look at for long.
 `,
     sceneryDescription: `
-On the living room floor lies the body of a young girl, curled inward as if bracing against a cold that never left.
+[[newline]]Lying on the living room floor is the body of a young girl who looks to have been no more than nine, now still, and cold.
 `,
     initialDescription: undefined,
     location: "LivingQuartersFiveEast",
     vocab: ["little", "girl", "body", "corpse"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 6,
+    },
     itemWeight: 40,
     itemSize: 5,
     isWearable: false,
@@ -25,7 +28,6 @@ On the living room floor lies the body of a young girl, curled inward as if brac
     isContainer: false,
     isContagious: true,
   },
-
   {
     id: "BLANKIE",
     name: "blanket",
@@ -34,12 +36,15 @@ The flannel blanket is soft and well-worn, the fabric creased by years of being 
 It’s twisted tightly in small fists, as though letting go was never an option.
 `,
     sceneryDescription: `
-Draped over the girl’s body is a flannel blanket, wrapped around her with a care that feels heartbreakingly deliberate.
+Draped over the girl’s body is a flannel blanket, wrapped around her with a care that feels careful, and deliberate. 
 `,
     location: "LivingQuartersFiveEast",
     vocab: ["flannel", "blanket"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 7,
+    },
     itemWeight: 2,
     itemSize: 3,
     isWearable: false,
@@ -51,16 +56,20 @@ Draped over the girl’s body is a flannel blanket, wrapped around her with a ca
     id: "CARPET",
     name: "carpet",
     description: `
-The carpet is a soft, light cream color, the fibers clean and plush underfoot—except where a series of dark boot prints break the perfection.
-`,
-    sceneryDescription: `
 The pile has been brushed in one direction to a uniform sheen, the kind of fastidious upkeep that doesn’t survive toddlers or reality.
 Dark boot tracks interrupt the neatness at odd intervals, meandering from door to door like someone pacing with bad news.
+`,
+    sceneryDescription: `
+    The carpet is a soft, light cream color, the fibers clean and plush underfoot, except where a series of dark boot prints have crushed it flat
+
 `,
     location: "LivingQuartersFiveEast",
     vocab: ["cream", "colored", "carpet"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
     itemWeight: 20,
     itemSize: 8,
     isWearable: false,
@@ -72,17 +81,18 @@ Dark boot tracks interrupt the neatness at odd intervals, meandering from door t
     id: "BOOTTRACKS",
     name: "boot tracks",
     description: `
-Heavy boot tracks cross the carpet, several pairs at least.
-They enter from the west, fan out toward the southern door and eastern doorway, then converge and leave the way they came.
+The pattern of the prints tells a whole story without needing faces: multiple people, moving with purpose, checking doors and exits before regrouping.
 `,
     sceneryDescription: `
-The pattern of the prints tells a whole story without needing faces: multiple people, moving with purpose, checking doors and exits before regrouping.
-The treads are sharp and military, the kind you wear when you expect the floor to fight back.
+    Heavy boot tracks cross the carpet, several pairs at least. They enter from the west, fan out toward the southern door and eastern doorway, then converge and then leave the way they came.
 `,
     location: "LivingQuartersFiveEast",
     vocab: ["boot", "tracks", "footprints", "prints"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 5,
+    },
     itemWeight: 0,
     itemSize: 0,
     isWearable: false,
@@ -126,10 +136,7 @@ export const {
   bathDoorId: "FiveEastBDoor",
 
   livingDescription: `
-The air here feels held, as if the room has been waiting to exhale.
-Low light pools unevenly across the space, caught and bent by shadows that don’t quite stay still.
-Nothing appears overturned or broken, yet the sense of interruption is unmistakable.
-Doors lead west, south, and east, each one suggesting a different kind of privacy that was not respected.
+This is a small living room dominated by a large seating area, with a cozy decor that has recently been upset, as if the furniture had been jostled by frantic movement through the room. [[SCENERY]] The room is dimly lit, with eerie shadows playing across the walls and ceiling. An open doorway to the east leads to a bedroom.
 `,
   bathDescription: `
 This bathroom is small and carefully maintained, the kind of space meant to be used quickly and forgotten.
@@ -169,18 +176,19 @@ A low wooden end table with a smooth top and a single shallow drawer.
 The surface has been wiped clean, leaving only faint circular marks where objects once rested.
 `,
       sceneryDescription: `
-Near the seating area sits a small end table, positioned with careful intent rather than habit.
+Laying on its side near the seating area is a wooden end table with a single, shallow drawer and a crack in one leg.
 `,
+      sceneryDescriptionOrder: 0,
     },
-
     sofaLiving: {
       description: `
 A cushioned sofa upholstered in neutral fabric.
 One seat is slightly more worn than the others, the stuffing compressed by repeated use.
 `,
       sceneryDescription: `
-A sofa sits angled toward the entertainment center, its cushions disturbed just enough to suggest recent occupancy.
+A sofa sits angled toward the cabinet for an entertainment center, and its cushions, which are comfortable and well-worn, look to have been recently occupied.
 `,
+      sceneryDescriptionOrder: 1,
     },
 
     loveseatLiving: {
@@ -189,8 +197,9 @@ A smaller matching loveseat, its cushions firmer and less worn.
 It looks like the kind of furniture chosen to complete a set rather than fill a need.
 `,
       sceneryDescription: `
-Beside the sofa is a loveseat, positioned close enough to imply shared evenings and quiet routines.
+Next to the sofa is a loveseat, also positioned toward the cabinet
 `,
+      sceneryDescriptionOrder: 2,
     },
 
     entertainmentLiving: {
@@ -199,8 +208,9 @@ A compact entertainment unit housing an older television and audio components.
 The screen is dark, faintly reflective, and unresponsive to casual input.
 `,
       sceneryDescription: `
-Against one wall stands an entertainment center, its dormant screen reflecting the room back at itself.
+which contains an entertainment center, whose dormant screen reflects the room back at itself.
 `,
+      sceneryDescriptionOrder: 3,
     },
 
     bed: {
@@ -211,6 +221,7 @@ The sheets are cool and undisturbed, as though no one ever lay down to sleep.
       sceneryDescription: `
 The bed dominates the bedroom, perfectly made in a way that feels more memorial than inviting.
 `,
+      sceneryDescriptionOrder: 1,
     },
 
     dresser: {
@@ -220,6 +231,7 @@ A scarred wooden dresser with several misaligned drawers and a faint chemical sm
       sceneryDescription: `
 Against the wall sits a battered wooden dresser, its drawers slightly ajar as if searched in a hurry.
 `,
+      sceneryDescriptionOrder: 2,
     },
 
     closet: {
@@ -230,6 +242,7 @@ Inside, the space smells faintly of fabric and cleaning solvent.
       sceneryDescription: `
 Set into the wall is a closet, its door fully closed, offering no hint of what might be inside.
 `,
+      sceneryDescriptionOrder: 3,
     },
 
     phone: {
@@ -241,6 +254,7 @@ The touch contacts still respond with crisp little flashes of light.
 The cord at the back of the cradle has been twisted and re-twisted until it holds a permanent spiral kink.
 A couple of the touch pads are more worn than others.
 `,
+      sceneryDescriptionOrder: 4,
       messages: [
         {
           id: "5EM1",
@@ -271,6 +285,7 @@ The drain is dry, as if it hasn’t been used in some time.
       sceneryDescription: `
 A small sink is mounted beneath the mirror, its surface unnervingly clean.
 `,
+      sceneryDescriptionOrder: 1,
     },
 
     mirror: {
@@ -281,6 +296,7 @@ For a moment, it feels like it’s waiting for something else to appear behind y
       sceneryDescription: `
 Mounted above the sink is a mirror, its surface pristine and unmarked.
 `,
+      sceneryDescriptionOrder: 2,
     },
 
     shower: {
@@ -291,6 +307,7 @@ The interior is dry, the metal fixtures cold to the touch.
       sceneryDescription: `
 A shower occupies one corner of the bathroom, its door sealed and undisturbed.
 `,
+      sceneryDescriptionOrder: 3,
     },
 
     washlet: {
@@ -301,6 +318,7 @@ A faint discoloration rings the interior.
       sceneryDescription: `
 The washlet sits against the wall, its control panel dark and unresponsive.
 `,
+      sceneryDescriptionOrder: 4,
     },
 
     medicineChest: {
@@ -311,6 +329,7 @@ It looks rarely used, stocked more out of caution than routine.
       sceneryDescription: `
 Above the sink is a medicine chest, closed and unassuming against the wall.
 `,
+      sceneryDescriptionOrder: 5,
     },
   },
 });

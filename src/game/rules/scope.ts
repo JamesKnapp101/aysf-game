@@ -130,7 +130,6 @@ export function resolveTeleportPadByNoun(
   if (!padsHere.length) return null;
 
   if (!noun) {
-    // Allow bare "step" if there's only one pad here
     return padsHere.length === 1 ? padsHere[0] : null;
   }
 

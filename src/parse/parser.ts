@@ -97,36 +97,33 @@ export function parseCommand(rawInput: string): ParsedCommand {
     return { type: "action", verb, raw: rawInput };
   }
 
-  // --- NEW: tolerate "switch on lamp" and "switch lamp on" ---
   let rest = [...rest0];
   let preposition: Preposition | undefined;
 
   if (SWITCH_VERBS.has(verb)) {
-    // case A: "switch on lamp"
     if (rest[0] && SWITCH_PARTICLES.has(rest[0])) {
-      preposition = rest[0] as Preposition; // "on" | "off"
+      preposition = rest[0] as Preposition;
       rest = rest.slice(1);
-    }
-    // case B: "switch lamp on"
-    else if (rest.length >= 2 && SWITCH_PARTICLES.has(rest[rest.length - 1])) {
+    } else if (
+      rest.length >= 2 &&
+      SWITCH_PARTICLES.has(rest[rest.length - 1])
+    ) {
       preposition = rest[rest.length - 1] as Preposition;
       rest = rest.slice(0, -1);
     }
   }
 
-  // If we extracted on/off, treat the remaining as the direct object
   if (preposition && SWITCH_PARTICLES.has(preposition)) {
     const direct = rest.join(" ").trim() || undefined;
     return {
       type: "action",
       verb,
       direct,
-      preposition, // on/off
+      preposition,
       raw: rawInput,
     };
   }
 
-  // --- existing generic parsing for normal prepositions ---
   let direct: string | undefined;
   let indirect: string | undefined;
 

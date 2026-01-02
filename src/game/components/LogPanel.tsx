@@ -1,14 +1,12 @@
 import { CRT_COLOR_STORAGE_KEY, type LayoutPrefs } from "../Game";
 import { getItemsInInventory } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
-import type { Direction } from "../types/roomTypes";
-import { RoomCompass } from "./Compass";
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { StatusTab } from "./StatusTab";
 import { HintsTab } from "../../hints/HintMenu";
 import { allHintsRoot } from "../../hints/allHintsRoot";
 import { InventoryTree } from "./InventoryTree";
+import { StatusTab } from "./StatusTab";
 
 type LogPanelProps = {
   state: GameState;
@@ -89,8 +87,6 @@ export const LogPanel: React.FC<LogPanelProps> = ({
       const startSidebarWidth = startSidebarRatio * rect.width;
       const newSidebarWidth = startSidebarWidth - deltaX;
       let newRatio = newSidebarWidth / rect.width;
-
-      // clamp so both log and sidebar are usable
       newRatio = Math.max(0.18, Math.min(0.5, newRatio));
 
       setLayout((prev) => ({ ...prev, sidebarWidthRatio: newRatio }));

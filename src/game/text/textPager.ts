@@ -27,14 +27,12 @@ export function useTextPager({
   const [pages, setPages] = useState<string[]>([text]);
   const [pageIndex, setPageIndex] = useState(0);
 
-  // Reset whenever the text changes
   useEffect(() => {
     setExpanded(false);
     setPageIndex(0);
     setPages([text]);
   }, [text]);
 
-  // Create measurer BEFORE first paint (so initial pagination can happen)
   useLayoutEffect(() => {
     const el = document.createElement("div");
     el.style.position = "fixed";
@@ -55,7 +53,6 @@ export function useTextPager({
     };
   }, []);
 
-  // Paginate when text/size changes (unless expanded or disabled)
   useLayoutEffect(() => {
     if (!enabled) {
       setPages([text]);
@@ -77,7 +74,6 @@ export function useTextPager({
     const compute = () => {
       const viewportHeight = container.clientHeight;
 
-      // If the element isn't laid out yet, bail (we'll try again on RAF/resize)
       if (viewportHeight <= 0) {
         setPages([text]);
         setPageIndex(0);
@@ -86,7 +82,6 @@ export function useTextPager({
 
       const cs = window.getComputedStyle(container);
 
-      // Make measurer mimic the container
       measurer.style.boxSizing = cs.boxSizing;
       measurer.style.width = `${container.clientWidth}px`;
       measurer.style.font = cs.font;
@@ -101,8 +96,6 @@ export function useTextPager({
         measurer.textContent = s;
         return measurer.scrollHeight <= viewportHeight;
       };
-
-      // Trust the real DOM if it says overflow exists
       const domOverflows = container.scrollHeight > container.clientHeight;
 
       if (!domOverflows && fits(text)) {
@@ -142,7 +135,6 @@ export function useTextPager({
         out.push(chunk.trimEnd());
         remaining = remaining.slice(chunk.length).trimStart();
 
-        // Safety
         if (out.length > 200) break;
       }
 
@@ -151,7 +143,7 @@ export function useTextPager({
     };
 
     compute();
-    // One extra pass after layout settles (fonts / resize handles / etc.)
+
     const raf = requestAnimationFrame(compute);
 
     const ro = new ResizeObserver(() => compute());

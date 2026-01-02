@@ -1,18 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/components/plt-modal.css";
+import type { GameState } from "../types/gameTypes";
 import { CrtModal } from "./CrtModal";
 import { buildPltIndex, type PltEntry } from "./plt-entries";
-import type { GameState } from "../types/gameTypes";
 
 type PLTModalProps = {
   onClose: () => void;
   state: GameState;
-  //  hasPower?: boolean;
+  hasPower?: boolean;
   hasLink?: boolean;
-
-  /**
-   * Optional: override entries (handy for tests / future content packs).
-   */
   entries?: PltEntry[];
 };
 
@@ -24,15 +20,12 @@ const KEY_ROWS: string[][] = [
 ];
 
 function normalizeTerm(s: string) {
-  return (
-    s
-      .trim()
-      .toLowerCase()
-      // keep letters/numbers/spaces only
-      .replace(/[^a-z0-9\s]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-  );
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function renderLibraryText(raw: string) {
@@ -59,17 +52,12 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
     return buildPltIndex(entryList);
   }, [entries]);
 
-  // Key flash (cosmetic)
   const [flashKey, setFlashKey] = useState<string | null>(null);
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      // Don’t flash for meta keys, etc.
       if (e.ctrlKey || e.metaKey || e.altKey) return;
-
       const k = e.key?.toLowerCase();
       if (!k) return;
-
-      // Only flash keys we render.
       const isRendered = KEY_ROWS.some((row) => row.includes(k));
       if (!isRendered) return;
 
@@ -84,7 +72,6 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
   }, []);
 
   useEffect(() => {
-    // Focus the search bar on open.
     inputRef.current?.focus();
   }, []);
 
@@ -104,16 +91,12 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
       return;
     }
 
-    // Exact token match (fast)
     const hitId = index.get(term);
     if (hitId) {
       const found = entryList.find((e) => e.id === hitId);
       setDisplay(found ? renderLibraryText(found.body) : "Entry index error.");
       return;
     }
-
-    // Fallback: try partial match across known terms
-    // (Keeps it from feeling too strict without doing fuzzy-search complexity.)
     const candidates: PltEntry[] = [];
     for (const e of entryList) {
       const allTerms = e.terms.map(normalizeTerm);
@@ -152,7 +135,6 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
       showHeader={false}
     >
       <div className="plt">
-        {/* Top logo / indicator strip */}
         <div className="plt-top">
           <div className="plt-logoArea">
             <div className="plt-logoLine1">

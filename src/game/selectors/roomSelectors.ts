@@ -21,7 +21,6 @@ export function getCurrentRoomExits(state: GameState): Direction[] {
 export function getItemsInRoom(state: GameState, roomId: string): Item[] {
   const inv = new Set(state.player.inventory);
 
-  // Items that are "inside/on/under/searchable" something should not appear loose in rooms
   const contained = new Set<string>();
   for (const s of [
     flattenContents(state.itemState.containerContents),
@@ -33,18 +32,11 @@ export function getItemsInRoom(state: GameState, roomId: string): Item[] {
   }
 
   return state.world.items.filter((item) => {
-    // never list inventory items as room items
     if (inv.has(item.id)) return false;
-
-    // never list items that are currently contained somewhere
     if (contained.has(item.id)) return false;
 
-    // PRIMARY: dynamic location map
     const dynRoomId = state.itemState.itemRoomId[item.id];
     if (dynRoomId) return dynRoomId === roomId;
-
-    // FALLBACK (optional): seed-time location for items not yet placed into itemRoomId
-    // Once seedItemRoomLocations is solid, you can delete this fallback.
     return item.location === roomId;
   });
 }

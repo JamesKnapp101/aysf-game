@@ -102,7 +102,7 @@ export const LEVEL_FOUR: WorldChunk = {
       id: "PowerGrid",
       name: "Power Grid",
       description:
-        "This is a large room which acts as the main access to the electrical power grid. The room is octagonal, and positioned along the walls on almost every side are a series of electronic level, status, and safety monitors and gauges which cause the darkened room to dance with flashing, multicolored lights. The room is dominated in the center by what looks like the main power station which accesses and routes the power from the main grids. Positioned in one corner is a slightly raised yellow disk, four feet in diameter, which appears to be made of some glassy substance.",
+        "This is a large room which acts as the main access to the electrical power grid. The room is octagonal, and positioned along the walls on almost every side are a series of electronic level, status, and safety monitors and gauges which cause the darkened room to dance with flashing, multicolored lights. The room is dominated in the center by what looks like the main power station which accesses and routes the power from the main grids. [[SCENERY]]Positioned in one corner is a slightly raised yellow disk, four feet in diameter, which appears to be made of some glassy substance.",
       exits: [{ direction: "north", doorId: "PowerGridDoors" }],
     },
   ],

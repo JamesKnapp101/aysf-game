@@ -6,7 +6,7 @@ export function getCoolerMode(state: GameState): CoolerMode {
   if (setting?.kind === "cooler") {
     return setting.mode;
   }
-  return "off"; // default
+  return "off";
 }
 
 export function getCameraGunCurrentIndex(state: GameState): number {
@@ -14,5 +14,5 @@ export function getCameraGunCurrentIndex(state: GameState): number {
   if (setting?.kind === "camera-gun-viewer") {
     return setting.currentViewIndex;
   }
-  return 0; // default
+  return 0;
 }

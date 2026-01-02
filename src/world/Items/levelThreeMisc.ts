@@ -1932,7 +1932,7 @@ export const levelThreeItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
     isWearable: true,
-    clothingSlot: "jewelry",
+    clothingSlot: "wrist",
     isReadable: true,
     isContainer: false,
     readableText: "JZ Syndrome",

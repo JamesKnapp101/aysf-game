@@ -1,5 +1,3 @@
-import { dispatchAction } from "../actions/dispatchAction";
-import { appendLog } from "../engine/handleCommand";
 import { getItemById, moveItemToRoom } from "../helpers/itemHelpers";
 import {
   getContainerContentsIds,
@@ -344,21 +342,20 @@ export function tryEmptyItem(
   let next = state;
   let baseMsg = "";
   const liquid2Empty = state.itemState.containerFilled[item.id];
-  // The item doesn't even hold liquid
+
   if (!item.meta?.container?.holds?.includes("liquid")) {
     return { state, message: "You can't do that." };
   }
-  // The item is already empty
+
   if (!liquid2Empty) {
     return { state, message: `The ${item.name} is already empty.` };
   }
-  // Otherwise do the emptying...
+
   if (
     item.meta?.container?.holds?.includes("liquid") &&
     state.itemState.containerFilled[item.id]
   )
     if (!preposition && !indirect) {
-      // Just empty item with no further context, so dump it
       next = removeLiquidFromFillableContainer(state, item);
       baseMsg += `You empty the ${cmd.direct} out onto the floor.`;
     }
@@ -366,17 +363,14 @@ export function tryEmptyItem(
     return { state, message: `Empty it ${preposition} what?` };
   }
 
-  // Secondary item included
   if (indirect && indirect !== "") {
     const indirectItem = resolveItemInScopeByNoun(next, indirect);
 
-    // Empty item on item
     if (
       preposition === "on" ||
       preposition === "onto" ||
       preposition === "over"
     ) {
-      // This is where puzzle cases can live, like pour water on coals, etc but default is to lose the liquid
       next = removeLiquidFromFillableContainer(next, item);
       return {
         state: next,
@@ -384,7 +378,6 @@ export function tryEmptyItem(
       };
     }
 
-    // Empty item into item
     if (preposition === "in" || preposition === "into") {
       if (!indirectItem?.meta?.container?.holds?.includes("liquid")) {
         return { state, message: `The ${indirect} can't hold that.` };
@@ -432,18 +425,18 @@ export function tryFillItem(
   const liquid2Get = cmd.indirect?.trim();
   let next = state;
   let baseMsg = "";
-  // Bad syntax
+
   if (preposition && preposition !== "with") {
     return { state, message: `I don't understand that.` };
   }
-  // The item doesn't hold liquid
+
   if (!item.meta?.container?.holds?.includes("liquid")) {
     return {
       state,
       message: `The ${item.name} won't hold any sort of liquid.`,
     };
   }
-  // The item is already full
+
   if (state.itemState.containerFilled[item.id]) {
     return {
       state,
@@ -452,7 +445,7 @@ export function tryFillItem(
       }.`,
     };
   }
-  // Else do the filling...
+
   if (liquid2Get === "water") {
     const waterSourcesInRoom = getWaterSourcesInRoom(state);
     if (waterSourcesInRoom.length === 0) {
@@ -527,7 +520,6 @@ export function tryPourItem(
         preposition === "over" ||
         preposition === "onto"
       ) {
-        // Puzzle solutions can go here, by default it just dumps it out
         next = removeLiquidFromFillableContainer(state, waterContainer[0]);
         baseMsg += `You pour the water ${preposition} the ${indirect}, but it doesn't really accomplish much.`;
       }
@@ -569,9 +561,8 @@ export function tryWearItem(
   if (!item.isWearable || !item.clothingSlot) {
     return { state, message: "You can't wear that." };
   }
-  // Does it fit?
+  // TODO: Does it fit?
 
-  // Is the player already wearing something in that slot?
   if (state.itemState.wornByPlayer[item.clothingSlot]) {
     return {
       state,
@@ -609,7 +600,6 @@ export function tryRemoveItem(
     return { state, message: "You can't remove that." };
   }
 
-  // Is the player even wearing it?
   if (state.itemState.wornByPlayer[item.clothingSlot] !== item.id) {
     return {
       state,
@@ -673,6 +663,56 @@ export function trySwitchItem(
   };
 }
 
+export function trySearchItem(
+  state: GameState,
+  item: Item
+): { state: GameState; message: string } {
+  if (!item.isSearchable) {
+    return { state, message: "You don't see anything that isn't obvious." };
+  }
+  if (
+    item.isSearchable &&
+    (!state.itemState.searchableContents[item.id] ||
+      state.itemState.searchableContents[item.id]?.length === 0)
+  ) {
+    return {
+      state,
+      message: `You look the ${item.name} over but you don't find anything interesting.`,
+    };
+  }
+  let next = state;
+
+  let baseMsg = "";
+  const searchResults = state.itemState.searchableContents[item.id];
+  for (const item of searchResults) {
+    const itemData = getItemById(next, item);
+    baseMsg += itemData?.meta?.onFind ?? "";
+  }
+
+  next = {
+    ...state,
+    player: {
+      ...state.player,
+      inventory: [
+        ...state.player.inventory,
+        ...state.itemState.searchableContents[item.id],
+      ],
+    },
+    itemState: {
+      ...state.itemState,
+      searchableContents: {
+        ...state.itemState.searchableContents,
+        [item.id]: [],
+      },
+    },
+  };
+
+  return {
+    state: next,
+    message: baseMsg,
+  };
+}
+
 export function tryShootItem(
   state: GameState,
   shotAtItem: Item,
@@ -689,24 +729,19 @@ export function tryShootItem(
 
   if (shotWithItem.id === "MindGun") {
     // The mind gun is a special case that overrides the others; it doesn't take ammo, or fire projectiles
-    // Shoots animate Item and requires wearing MindCap
     let next = state;
 
-    // Not wearing cap
     if (next.itemState.wornByPlayer.head !== "MindCap") {
       return { state: next, message: shotWithItem?.meta?.onShootNoCap };
     }
 
-    // Wearing cap, but target is inanimate
     if (!shotAtItem?.meta?.isAlive) {
       return { state: next, message: shotWithItem?.meta?.onShootWithCap };
     }
 
-    // Wearing cap, target is animate — look for memories
     const targetMemories = shotAtItem?.meta?.memories;
 
     if (!targetMemories) {
-      // Target was animate but had no memories to read
       return {
         state: next,
         message: `${shotAtItem?.meta?.onShootWithCap} You feel dizzy for a moment, but nothing else happens.`,
@@ -715,15 +750,12 @@ export function tryShootItem(
 
     let msg = shotWithItem?.meta?.onLink ?? "Nothing happens.";
 
-    // TODO: Fire off the memory recall sequence, then...
-
     useUIEffectsStore.getState().playMindFlash({
       memory:
         targetMemories[next.itemState.mindGunMemoryIndex?.[shotAtItem.id]],
       seed: Date.now(),
     });
 
-    // Update the memory index for that target
     const prevIndex = next.itemState.mindGunMemoryIndex?.[shotAtItem.id] ?? -1;
     const newIndex = prevIndex + 1;
 
@@ -754,7 +786,6 @@ export function tryShootItem(
 
   let msg = shotWithItem?.meta?.onShoot ?? `You fire the ${shotWithItem.name}!`;
 
-  // Always remove the fired round from the gun immediately
   next = {
     ...next,
     itemState: {
@@ -766,18 +797,14 @@ export function tryShootItem(
     },
   };
 
-  // Figure out where the projectile should "land" initially.
-  // Prefer the target's room if it exists; otherwise use player's room.
   const targetRoomId =
     next.itemState.itemRoomId[shotAtItem.id] ?? next.player.roomId;
 
-  // Place the fired round into that room (so it doesn't remain "INVENTORY")
   next = moveItemToRoom(next, firedRoundId as ItemId, targetRoomId);
-  // Handle special behavior for camera gun gel rounds
   if (shotWithItem.id === "CameraGun") {
     const hostId = shotAtItem.id as ItemId;
 
-    // Bind the fired round to the host (child -> host)
+    // Bind the fired round to the host
     const newInventory = next.player.inventory.filter(
       (invId) => invId !== firedRoundId
     );
@@ -801,7 +828,6 @@ export function tryShootItem(
       },
     };
 
-    // Optional: custom flavor text for the cat specifically
     if (hostId.toLowerCase() === "cat") {
       msg += ` The cat looks momentarily startled as the sticky little projectile adheres to its fur.`;
     } else {
@@ -814,7 +840,6 @@ export function tryShootItem(
     };
   }
 
-  // Default / other shootables
   msg += " The results of this action have not yet been implemented...";
   return {
     state: next,

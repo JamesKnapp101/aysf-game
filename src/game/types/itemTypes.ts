@@ -17,13 +17,13 @@ export type clothingSlots =
   | "feet"
   | "waist"
   | "wrist"
-  | "body"; // full is for things like the space suit
+  | "body";
 
 export interface Item {
   id: string;
   name: string;
   description: string;
-  location: string; // room id or "INVENTORY"
+  location: string;
   vocab: string[];
   initialDescription?: string;
   itemClass: ItemClass;
@@ -115,7 +115,7 @@ export type CoolerMode = "off" | "cool" | "cold" | "freeze";
 
 export type ItemSettings =
   | { kind: "cooler"; mode: CoolerMode }
-  | { kind: "safe"; dials: number[] } // e.g. [3, 7, 1, 9]
+  | { kind: "safe"; dials: number[] }
   | { kind: "transmitter"; code: string }
   | { kind: "flashlight"; isOn: boolean }
   | { kind: "goggles"; isOn: boolean }

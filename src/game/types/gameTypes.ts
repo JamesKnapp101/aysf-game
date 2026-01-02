@@ -90,6 +90,23 @@ export interface SyringeState {
 export interface WorldState {
   doors: Record<string, DoorState>;
   darkRooms: Record<string, boolean>;
+  gravityOffRooms: Record<string, boolean>;
+  noPowerRooms: Record<string, boolean>;
+  visitedRooms: Record<string, boolean>;
+  roomTemp: Record<
+    string,
+    "freezing" | "cold" | "cool" | "temperate" | "warm" | "hot" | "scorching"
+  >;
+  roomAirQuality: Record<
+    string,
+    | "clean"
+    | "gas emmissions"
+    | "foreign particles"
+    | "smoke"
+    | "thin"
+    | "vaccum"
+  >;
+  roomAudioLevel: Record<string, number>;
   threatTimers?: {
     engineMeltdown?: Countdown;
     reactorOverload?: Countdown;

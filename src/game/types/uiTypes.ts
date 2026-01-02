@@ -25,14 +25,13 @@ export type Overlay =
     }
   | { kind: "camera-gun-viewer"; currentViewIndex: number }
   | { kind: "plt-viewer"; isOn: boolean; hasLink: boolean }
+  | { kind: "power-station-terminal"; isOn: boolean }
   | {
       kind: "mindFlash";
       title?: string;
       memory: string;
       seed?: number;
     };
-// | { kind: "safe"; ... }
-// | { kind: "transmitter"; ... }
 
 export type UIOverlayActions = {
   openReader: (args: {
