@@ -24,9 +24,11 @@ export type MindFlashPayload = {
 };
 
 type UIEffectsState = {
+  teleportFlashNonce: number;
   mindFlash: MindFlashPayload | null;
   playMindFlash: (payload: MindFlashPayload) => void;
   clearMindFlash: () => void;
+  triggerTeleportFlash: () => void;
 };
 
 export const useUIEffectsStore = create<UIEffectsState>((set) => ({
@@ -43,4 +45,8 @@ export const useUIEffectsStore = create<UIEffectsState>((set) => ({
       s.mindFlash?.onEnd?.();
       return { mindFlash: null };
     }),
+
+  teleportFlashNonce: 0,
+  triggerTeleportFlash: () =>
+    set((s) => ({ teleportFlashNonce: s.teleportFlashNonce + 1 })),
 }));

@@ -65,6 +65,7 @@ export const drugItems: Item[] = [
     isSyringeCartridge: true,
     injectionRemoveEffectId: "radiation",
     doses: 1,
+    scoreId: "obtained_radiation_cure",
   },
   {
     id: "DeathCart",
@@ -119,6 +120,7 @@ export const drugItems: Item[] = [
     isContainer: false,
     isSyringeCartridge: true,
     doses: 1,
+    scoreId: "obtained_innoculant",
   },
   {
     id: "SleepyCart",

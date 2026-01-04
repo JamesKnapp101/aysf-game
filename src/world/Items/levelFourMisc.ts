@@ -693,6 +693,7 @@ export const levelFourItems: Item[] = [
     overrides: {
       take: "You wrap your hand around the oversized grip. It comes free only if the system isn’t keyed on; otherwise it refuses to budge, like the hardware equivalent of a disapproving look.",
     },
+    scoreId: "obtained_power_key",
   },
   {
     id: "PowerStationMonitor",

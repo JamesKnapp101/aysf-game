@@ -97,6 +97,7 @@ export const levelTwoItems: Item[] = [
     providesLight: false,
     isContagious: false,
     isRadioactive: false,
+    scoreId: "obtained_dogtag",
   },
   {
     id: "burnedUpDresser",

@@ -62,6 +62,7 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: false,
     isOn: false,
+    scoreId: "obtained_emp",
   },
 
   // 4. DNA Reader ------------------------------------------------------------
@@ -212,8 +213,9 @@ export const specialItems: Item[] = [
     id: "Radio",
     name: "a two-way radio",
     description:
-      "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, and a squat black antenna jutting from the top.",
-    initialDescription: "A small hand-held walkie-talkie lies near the corpse.",
+      "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, and a squat black antenna jutting from the top. The casing is cracked on one corner, but it still works.",
+    initialDescription:
+      "Laying on the floor near the young man's body is some kind of small, hand-held walkie-talkie.",
     location: "StairSix",
     vocab: ["radio", "walkie-talkie", "walkie", "cb"],
     itemClass: "solid",
@@ -245,5 +247,6 @@ export const specialItems: Item[] = [
     isWearable: true,
     isSwitchable: true,
     clothingSlot: "face",
+    scoreId: "obtained_nv_goggles",
   },
 ];

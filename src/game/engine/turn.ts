@@ -1,3 +1,4 @@
+import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
   canMove,
   getRoomExits,
@@ -331,6 +332,45 @@ function tickAttachedItems(state: GameState): GameState {
   return next;
 }
 
+function updateCurrentScore(state: GameState): GameState {
+  let calculatedScore = 0;
+
+  for (const key of Object.keys(
+    playerScoreMap
+  ) as (keyof typeof playerScoreMap)[]) {
+    if (state.worldState.scoresTriggered?.[key]) {
+      calculatedScore += playerScoreMap[key].value;
+    }
+  }
+
+  return calculatedScore === state.score
+    ? state
+    : { ...state, score: calculatedScore };
+}
+
+function updateCurrentMemory(state: GameState): GameState {
+  let calculatedMemory = 0;
+
+  for (const key of Object.keys(
+    playerMemoryMap
+  ) as (keyof typeof playerMemoryMap)[]) {
+    if (state.player.memoriesTriggered?.[key]) {
+      calculatedMemory += playerMemoryMap[key].value;
+    }
+  }
+
+  return calculatedMemory === state.score
+    ? state
+    : { ...state, score: calculatedMemory };
+}
+
+function tickScoreAndMemory(state: GameState): GameState {
+  let next: GameState = state;
+  next = updateCurrentScore(next);
+  next = updateCurrentMemory(next);
+  return next;
+}
+
 export function advanceTurn(state: GameState): GameState {
   let next = state;
   next = tickAttachedItems(next);
@@ -338,6 +378,7 @@ export function advanceTurn(state: GameState): GameState {
   next = tickStatusEffects(next);
   next = tickSickness(next);
   next = tickAnimateActivities(next);
+  next = tickScoreAndMemory(next);
   next = {
     ...next,
     moves: next.moves + 1,

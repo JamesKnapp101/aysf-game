@@ -6,7 +6,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "BridgeDoors",
     name: "a security door",
     descriptionFromA:
-      "To the north is a security door, mounted next to which is a badge scanner of some kind with a blue strip across the top. A sign over the door reads 'Lab'.",
+      "To the north is a security door, mounted next to which is a badge scanner of some kind with a dark grey strip across the top. A sign over the door reads 'BRIDGE'.",
     descriptionFromB:
       "To the south is a security door leading back to the corridor.",
     kind: "badgeScanner",
@@ -24,7 +24,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "BridgeStairDoors",
     name: "bridge access door",
     descriptionFromA:
-      "To the west is a door which is different from those on the other floors; this door has no handle, and mounted on the wall next to it is some kind of badge scanner with a grey strip across the top. Printed on the door are the words 'MAIN BRIDGE'.",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a dark grey horizontal stripe across it at eye level. Stenciled across the banner is the word 'MAIN BRIDGE', and mounted above the doorway is a small panel marked '1'. ",
     descriptionFromB:
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",
@@ -41,7 +41,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "LabDoors",
     name: "a security door",
     descriptionFromA:
-      "To the west is a security door, mounted next to which is a badge scanner of some kind with a blue strip across the top. A sign over the door reads 'Lab'.",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a blue horizontal stripe across it at eye level. Stenciled across the banner is the word 'LAB'.",
     descriptionFromB: "To the east is a security door leading back to Medical.",
     kind: "badgeScanner",
     vocab: ["door", "lab door", "security door"],
@@ -60,7 +60,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "PowerGridDoors",
     name: "a security door",
     descriptionFromA:
-      "To the south is a security door, mounted next to which is a badge scanner of some kind with a yellow strip across the top. A sign over the door reads 'MAIN POWER GRID'.",
+      "To the south is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a yellow horizontal stripe across it at eye level. Stenciled across the banner is the word 'MAIN POWER GRID'.",
     descriptionFromB:
       "To the north is a security door leading back to the corridor.",
     kind: "badgeScanner",
@@ -80,7 +80,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "HydroponicsDoors",
     name: "a security door",
     descriptionFromA:
-      "To the west is a security door, mounted next to which is a badge scanner of some kind with a green strip across the top. A sign over the door reads 'BOTANITCAL'.",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the banner is the word 'BOTANICAL', and mounted above the doorway is a small panel marked '6'.",
     descriptionFromB:
       "To the east is a security door leading back to the corridor.",
     kind: "badgeScanner",
@@ -100,7 +100,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "CryoStairDoors",
     name: "cryo access door",
     descriptionFromA:
-      "There is a door to the west with the word 'CRYONICS' printed on it and mounted over it is a plastic sign labeled '7'.",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a white horizontal stripe across it at eye level. Stenciled across the banner is the word 'CRYONICS', and mounted above the doorway is a small panel marked '7'.",
     descriptionFromB:
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",

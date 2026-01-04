@@ -12,6 +12,96 @@
     animation: crtBoot 400ms ease-out;
 }
 
+/* FLASH LAYER */
+.game-root::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.95);
+    opacity: 0;
+}
+
+/* DISTORTION LAYER */
+.game-root::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    mix-blend-mode: screen;
+background:
+        repeating-linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.08) 0px,
+            rgba(255, 255, 255, 0.08) 1px,
+            transparent 2px,
+            transparent 4px);
+}
+
+/* Trigger */
+.game-root.teleport-flash::after {
+    animation: teleportFlash 420ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.game-root.teleport-flash::before {
+    animation: teleportDistort 420ms cubic-bezier(.2, .8, .2, 1);
+}
+
+/* FLASH */
+@keyframes teleportFlash {
+    0% {
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    35% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* DISTORT / SNAP */
+@keyframes teleportDistort {
+    0% {
+        opacity: 0;
+        transform: translateX(0) scale(1);
+        filter: blur(0);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateX(-4px) scale(1.01);
+        filter: blur(1px);
+    }
+
+    40% {
+        transform: translateX(4px) scale(0.99);
+    }
+
+    60% {
+        transform: translateX(-2px) scale(1.005);
+        filter: blur(0.5px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.teleport-flash {
+    position: relative;
+}
+
+
+
 /* Header stays auto height */
 .game-header {
     flex: 0 0 auto;

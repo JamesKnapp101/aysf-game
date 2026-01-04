@@ -926,6 +926,7 @@ export const levelThreeItems: Item[] = [
       "Day: Any\n" +
       "Exp. 03/07/71\n",
     isContainer: false,
+    scoreId: "obtained_hub_pass",
   },
   {
     id: "HubPassSlot",
@@ -2231,6 +2232,7 @@ export const levelThreeItems: Item[] = [
     isReadable: true,
     isContainer: false,
     readableText: "1 10 88 7 43 39 13 : 3",
+    scoreId: "obtained_lotto_ticket",
   },
   {
     id: "MagicWord",
@@ -2262,6 +2264,7 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    scoreId: "obtained_music_box",
   },
   {
     id: "PhoneNumber",
@@ -2278,6 +2281,7 @@ export const levelThreeItems: Item[] = [
     isReadable: true,
     isContainer: false,
     readableText: "X7239",
+    scoreId: "obtained_secret_phone_number_1",
   },
   {
     id: "LIBSIGN",

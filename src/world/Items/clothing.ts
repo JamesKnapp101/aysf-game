@@ -454,5 +454,6 @@ export const clothingItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 4,
     itemSize: 3,
+    scoreId: "obtained_gravity_boots",
   },
 ];

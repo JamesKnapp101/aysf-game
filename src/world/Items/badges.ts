@@ -17,6 +17,7 @@ export const badgeItems: Item[] = [
     isContainer: false,
     readableText:
       "This pink badge entitles the carrier to one free pink badge.",
+    scoreId: "obtained_pink_badge",
   },
 
   {
@@ -35,6 +36,7 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    scoreId: "obtained_black_badge",
   },
 
   {
@@ -51,6 +53,7 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    scoreId: "obtained_grey_badge",
   },
 
   {
@@ -69,6 +72,7 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    scoreId: "obtained_brown_badge",
   },
 
   {
@@ -85,6 +89,7 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    scoreId: "obtained_blue_badge",
   },
 
   {
@@ -101,6 +106,7 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    scoreId: "obtained_green_badge",
   },
 
   {
@@ -118,6 +124,7 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    scoreId: "obtained_yellow_badge",
   },
 
   {
@@ -134,5 +141,6 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    scoreId: "obtained_white_badge",
   },
 ];

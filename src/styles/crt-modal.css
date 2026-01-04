@@ -17,8 +17,6 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-
-    /* keep fixed width/height from inline style, but protect viewport */
     max-width: calc(100vw - 48px);
     max-height: calc(100vh - 48px);
 }
@@ -53,20 +51,10 @@
 
 .crt-modal-body {
     padding: 12px;
-
-    /* body fills remaining height under header */
     flex: 1;
     min-height: 0;
-
-    /* IMPORTANT: don’t force flex layout on all children */
     display: block;
 }
-
-/* ============================================================
-   Opt-in “fill the modal body” helper
-   Add className="crt-modal-fill" to your modal content root
-   when you want it to stretch vertically.
-   ============================================================ */
 
 .crt-modal-body>.crt-modal-fill {
     height: 100%;
@@ -75,7 +63,6 @@
     min-width: 0;
 }
 
-/* if you want the fill element to behave like a layout container */
 .crt-modal-body>.crt-modal-fill.crt-modal-fill-flex {
     display: flex;
     flex-direction: column;

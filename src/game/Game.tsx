@@ -5,28 +5,27 @@ import React, {
   useRef,
   useState,
 } from "react";
+import {
+  getCurrentMemory,
+  getCurrentScore,
+} from "../game/selectors/scoreSelectors";
 import { parseCommand } from "../parse/parser";
 import { WORLD } from "../world/World";
-import { createInitialState } from "./gameInit";
-import type { GameState, StatusEffect } from "./types/gameTypes";
-
 import { dispatchAction } from "./actions/dispatchAction";
-import { handleCommand } from "./engine/handleCommand";
-
+import { LogPanel } from "./components/LogPanel";
+import { OverlayHost } from "./components/OverlayHost";
+import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
+import { appendLog, handleCommand } from "./engine/handleCommand";
+import { createInitialState } from "./gameInit";
 import { getCurrentRoom, getCurrentRoomExits } from "./selectors/roomSelectors";
 import {
   getActiveStatusEffectIds,
   getRadiationIntensity,
 } from "./selectors/statusSelectors";
+import { useUIEffectsStore, useUIOverlayStore } from "./store/store";
 import { buildRoomDescription } from "./text/roomDescription";
-
-import { LogPanel } from "./components/LogPanel";
-import { OverlayHost } from "./components/OverlayHost";
-import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
-
-import { appendLog } from "./engine/handleCommand"; // (keeping your existing export)
-import { useUIOverlayStore } from "./store/store";
 import type { ActionRequest } from "./types/actionsTypes";
+import type { GameState, StatusEffect } from "./types/gameTypes";
 
 type Action = { type: "command"; input: string };
 
@@ -91,10 +90,6 @@ function loadLayoutPrefs(): LayoutPrefs {
 }
 
 export const Game: React.FC = () => {
-  /**
-   * Single source of truth for game state.
-   * Keep useReducer, but add a tiny adapter so UI actions can replace the whole state.
-   */
   type StateAction = Action | { type: "replaceState"; next: GameState };
 
   const [gs, dispatchState] = useReducer((s: GameState, a: StateAction) => {
@@ -104,7 +99,6 @@ export const Game: React.FC = () => {
 
   const stateRef = useRef(gs);
 
-  // keep an always-current state for non-React callbacks
   useEffect(() => {
     stateRef.current = gs;
   }, [gs]);
@@ -126,6 +120,19 @@ export const Game: React.FC = () => {
       // ignore
     }
   }, [layout]);
+
+  // const rootRef = useRef<HTMLDivElement>(null);
+  const nonce = useUIEffectsStore((s) => s.teleportFlashNonce);
+
+  useEffect(() => {
+    if (nonce === 0) return;
+    const el = rootRef.current;
+    if (!el) return;
+
+    el.classList.remove("teleport-flash");
+    void el.offsetWidth;
+    el.classList.add("teleport-flash");
+  }, [nonce]);
 
   const applyResult = useCallback(
     (result: { state: GameState; message?: string; overlay?: any }) => {
@@ -190,7 +197,8 @@ export const Game: React.FC = () => {
 
   const currentRoom = getCurrentRoom(gs);
   const exits = getCurrentRoomExits(gs);
-  const desc = buildRoomDescription(gs, currentRoom.id);
+  const desc = buildRoomDescription(gs, currentRoom.id, { mode: "panel" });
+
   const activeEffects = getActiveStatusEffectIds(gs);
   const rad = getRadiationIntensity(gs);
   const rad01 = Math.max(0, Math.min(1, rad / 100));
@@ -231,6 +239,7 @@ export const Game: React.FC = () => {
       {/* The OverlayHost handles all the screen effects */}
       <OverlayHost runAction={overlayRunAction} state={gs} />
       <div
+        id={"game-root"}
         ref={rootRef}
         className="game-root"
         style={
@@ -255,8 +264,8 @@ export const Game: React.FC = () => {
             {currentRoom.name || "Unknown Location"}
           </div>
           <div className="game-header-stats">
-            <span>Score: {gs.score}</span>
-            <span>Memory: {gs.player.memories.memoryScore}%</span>
+            <span>Score: {getCurrentScore(gs)}</span>
+            <span>Memory: {getCurrentMemory(gs)}%</span>
             <span>Rating: {gs.rating}</span>
             <span>Moves: {gs.moves}</span>
           </div>

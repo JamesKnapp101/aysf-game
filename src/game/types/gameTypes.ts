@@ -1,3 +1,4 @@
+import { playerMemoryMap, playerScoreMap } from "@game/constants";
 import type { DoorDefinition, DoorState } from "./doorTypes";
 import type { Item, ItemState } from "./itemTypes";
 import type { Room } from "./roomTypes";
@@ -51,17 +52,32 @@ export interface StatusEffect {
   source?: string;
 }
 
-export interface PlayerMemories {
-  memoryScore: number;
-  revealedFlags: Set<string>;
-}
+export type PlayerScoreId = keyof typeof playerScoreMap;
+export type PlayerMemoryId = keyof typeof playerMemoryMap;
+type PowerSectionId =
+  | "lights-level-one"
+  | "lights-level-two"
+  | "lights-level-three"
+  | "lights-level-four"
+  | "lights-level-five"
+  | "lights-level-six"
+  | "lights-level-seven"
+  | "gravity-level-one"
+  | "gravity-level-two"
+  | "gravity-level-three"
+  | "gravity-level-four"
+  | "gravity-level-five"
+  | "gravity-level-six"
+  | "gravity-level-sevent"
+  | "library-power"
+  | "teleport-pads";
 
 export interface PlayerState {
   roomId: string;
   inventory: string[];
   vitals: PlayerVitals;
   statusEffects: StatusEffect[];
-  memories: PlayerMemories;
+  memoriesTriggered: Record<PlayerMemoryId, boolean>;
 }
 
 export interface Countdown {
@@ -92,7 +108,9 @@ export interface WorldState {
   darkRooms: Record<string, boolean>;
   gravityOffRooms: Record<string, boolean>;
   noPowerRooms: Record<string, boolean>;
+  powerRestoredSections: Record<PowerSectionId, boolean>;
   visitedRooms: Record<string, boolean>;
+  scoresTriggered: Record<PlayerScoreId, boolean>;
   roomTemp: Record<
     string,
     "freezing" | "cold" | "cool" | "temperate" | "warm" | "hot" | "scorching"

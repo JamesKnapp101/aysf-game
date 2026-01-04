@@ -690,9 +690,9 @@ export const corpseItems: Item[] = [
     id: "StairFourBody",
     name: "dead soldier",
     description:
-      "The young man wears heavy black clothing woven from reinforced fibers, the kind favored by commandos. Whatever weapon he carried is gone, scavenged by someone else. His face is drained of color, lips a cold blue, and two gory puncture wounds gape at either side of his neck.",
+      "His eyes are widened even in death, pupils dilated into black pools ringed with hazel. It's hard to interpret those eyes, if it's fear alone in them or something else, but the look is frozen on his face. On closer examination you see some ulceration of the skin creeping up from the V in his shirt, and when you lift the fabric for a better look it peels away in silky strands. Beneath the material you see that while his basic shape is intact, the skin is pocked with deep holes that merge together into soft honeycomb patterns. What could have caused it?",
     sceneryDescription:
-      "A young man in military-style garb lies on his back in the middle of the landing, lifeless eyes staring up the stairwell.",
+      "A young man lies on his back in the middle of the landing, lifeless eyes gazing up the stairwell. He looks to have been no older than twenty, fit, and healthy looking but his mouth is frozen open and he's as still as a stone. He's dressed in a blue collared short-sleeve shirt and a pair of khaki pants, the tips of his leather shoes pointing in opposite directions.",
     location: "StairSix",
     vocab: ["dead", "body", "man", "soldier"],
     itemClass: "solid",

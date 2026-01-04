@@ -8,7 +8,23 @@ import {
 import { getItemsInRoom } from "../selectors/roomSelectors";
 import type { GameState } from "../types/gameTypes";
 
-export function buildRoomDescription(state: GameState, roomId: string): string {
+type RoomDescriptionMode = "log" | "panel";
+
+type BuildRoomDescriptionOptions = {
+  /** "log" = short on revisit; "panel" = always full */
+  mode?: RoomDescriptionMode;
+  /**
+   * If true, forces "full" behavior regardless of visit state
+   * (useful for explicit LOOK).
+   */
+  forceFull?: boolean;
+};
+
+export function buildRoomDescription(
+  state: GameState,
+  roomId: string,
+  opts: BuildRoomDescriptionOptions = {}
+): string {
   const room = state.world.rooms.find((room) => room.id === roomId);
   if (!room) return "You are nowhere. (Bug: room not found.)";
 
@@ -29,6 +45,12 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
 
   const visitedRooms = state.worldState.visitedRooms ?? {};
   const isFirstVisit = !visitedRooms[roomId];
+
+  const mode: RoomDescriptionMode = opts.mode ?? "log";
+
+  // Panel should always be "full" (include scenery every time)
+  // LOOK should always be "full" (even in log)
+  const forceFull = Boolean(opts.forceFull) || mode === "panel";
 
   const rawItemsHere = getItemsInRoom(state, roomId);
   const itemsHere = Array.from(
@@ -70,14 +92,24 @@ export function buildRoomDescription(state: GameState, roomId: string): string {
     .join(" ")
     .replace("[[newline]]", `\n\n`);
 
-  const shortDesc = (room as any).descriptionShort ?? "";
   const token = "[[SCENERY]]";
 
-  let base = (
-    isFirstVisit ? room.description : shortDesc || room.description
-  ).trim();
+  // Decide whether this render should include scenery:
+  // - full if first visit
+  // - OR forced full (panel, or explicit LOOK)
+  const includeScenery = forceFull || isFirstVisit;
 
-  if (isFirstVisit) {
+  // Decide base description text for this render:
+  // - On revisit in the LOG, prefer descriptionShort (if provided)
+  // - Otherwise use full description
+  const useShortBase = !includeScenery && mode === "log" && !isFirstVisit;
+  let base = (useShortBase ? room.descriptionShort : room.description) ?? "";
+  base = base.trim();
+
+  // Apply scenery token rules:
+  // - If we include scenery: inject/append it
+  // - If we don't: strip token (and do NOT append scenery)
+  if (includeScenery) {
     if (base.includes(token)) {
       base = base.replace(token, sceneryText ? `${sceneryText}` : " ");
     } else {

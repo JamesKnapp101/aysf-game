@@ -18,7 +18,11 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   const room = getCurrentRoom(state);
 
   if (cmd.type === "look") {
-    const desc = buildRoomDescription(state, state.player.roomId);
+    // Explicit LOOK should always print the full description to the log.
+    const desc = buildRoomDescription(state, state.player.roomId, {
+      mode: "panel",
+      forceFull: true,
+    });
     return appendLog(state, desc);
   }
 
@@ -78,7 +82,12 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         },
       };
 
-      const roomDesc = buildRoomDescription(movedState, destinationRoomId);
+      // For movement output, use LOG mode:
+      // - first visit: full
+      // - revisit: short (prefer descriptionShort)
+      const roomDesc = buildRoomDescription(movedState, destinationRoomId, {
+        mode: "log",
+      });
 
       const visitedRooms = movedState.worldState.visitedRooms ?? {};
       const nextVisitedRooms = {

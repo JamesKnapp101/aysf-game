@@ -40,11 +40,39 @@ const FADE_IN_MS = 180;
 const FADE_OUT_MS = 160;
 const GAP_MS = 260;
 const WIND_DOWN_MS = 220;
+const MIN_LINGER_MS = 700;
+const MAX_LINGER_MS = 2600;
+const MS_PER_WORD = 220;
 
-declare function splitMemory(text: string): string[];
-declare function wait(ms: number): Promise<void>;
-declare function makeRand(seed: number): () => number;
-declare function computeLingerMs(text: string): number;
+function computeLingerMs(text: string): number {
+  const wordCount = text.trim().split(/\s+/).length;
+  const raw = wordCount * MS_PER_WORD;
+
+  return Math.max(MIN_LINGER_MS, Math.min(MAX_LINGER_MS, raw));
+}
+
+function splitMemory(memory: string): string[] {
+  return memory
+    .split(".")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => (s.endsWith(".") ? s : `${s}.`));
+}
+
+// tiny deterministic RNG so flashes feel consistent per run
+function makeRand(seed: number) {
+  let t = seed >>> 0;
+  return () => {
+    t += 0x6d2b79f5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function wait(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
 
 const clamp = (n: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, n));

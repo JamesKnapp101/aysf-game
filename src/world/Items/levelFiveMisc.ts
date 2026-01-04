@@ -110,6 +110,21 @@ export const levelFiveItems: Item[] = [
     providesLight: false,
   },
   {
+    id: "EngineRoomKey",
+    name: "large orange and black key",
+    description:
+      "It's a large key of some kind with a rectangular orange and black grip.",
+    initialDescription:
+      "Floating nearby in a slow end-over-end spin is a key with a rectangular orange and black grip.",
+    location: "AboveTheQuadThree",
+    vocab: ["large", "key", "black", "orange"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 2,
+    scoreId: "obtained_engine_room_key",
+  },
+  {
     id: "EngineRoomButton",
     name: "square red button",
     description:
@@ -1111,6 +1126,7 @@ export const levelFiveItems: Item[] = [
     readableText:
       "The device displays a constantly shifting sequence of red numbers—coordinates, if the accompanying tech jargon in your memory is to be trusted. Unfortunately, the meaning behind them remains frustratingly opaque. All you know is that wherever you are, the CoordFinder knows too, and it’s quietly keeping score.",
     isContainer: false,
+    scoreId: "obtained_coord_finder",
   },
   {
     id: "SeatCushion",

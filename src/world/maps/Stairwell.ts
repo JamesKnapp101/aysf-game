@@ -7,6 +7,7 @@ import { clothingItems } from "../Items/clothing";
 import { creatureItems } from "../Items/creatures";
 import { drugItems } from "../Items/drugs";
 import { specialItems } from "../Items/gadgets";
+import { teleportationPadItems } from "../Items/teleportationPads";
 import { weaponItems } from "../Items/weapons";
 
 export const STAIRWELL: WorldChunk = {
@@ -18,6 +19,7 @@ export const STAIRWELL: WorldChunk = {
     ...specialItems,
     ...clothingItems,
     ...weaponItems,
+    ...teleportationPadItems,
   ],
   doors: [...stairwellDoors, ...badgeScannerDoors],
   teleportPads: [],
@@ -91,7 +93,8 @@ export const STAIRWELL: WorldChunk = {
       id: "StairSeven",
       name: "Stairs Level Seven",
       description:
-        "This is the stair landing for Level Seven. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west here which is different from the other doors; it has no handle and mounted next to it is a badge scanner of some kind with a white strip across its top. The door is printed with the word 'CRYONICS', and mounted over it is a plastic sign labeled '7'. The stairs, flanked by a metal railing, continue up, and down to a small enclosed area below. There is what looks like blood covering a portion of the steps about midway down.",
+        "The stairwell landing here looks clean but rarely used, with stairs heading both up and down, flanked by a smooth metal railing. Looking down the stairs you can see what looks like blood spattered across the steps near the bottom.",
+      descriptionShort: "",
       exits: [
         { direction: "up", toRoomId: "StairSix" },
         { direction: "down", toRoomId: "StairWellSeven" },
@@ -100,9 +103,11 @@ export const STAIRWELL: WorldChunk = {
     },
     {
       id: "StairWellSeven",
-      name: "Bottom Stairwell",
+      name: "Bottom of Stairwell",
       description:
         "This is the dimly lit bottom of a long stairwell, where the tiled floor is covered in grit and the dusty corners are shrouded in shadow. Above you, the stairwell towers in a narrow, boxy spiral that climbs many floors, stretching up into the gloom. [[SCENERY]]",
+      descriptionShort:
+        "The dimly lit bottom of a long stairwell, where the body of a man lay sprawled.",
       exits: [{ direction: "up", toRoomId: "StairSeven" }],
     },
 

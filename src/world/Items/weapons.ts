@@ -1,6 +1,74 @@
 import type { Item } from "../../game/types/itemTypes";
 
 export const weaponItems: Item[] = [
+  {
+    id: "Z4",
+    name: "satchel of Z4",
+    vocab: ["z4", "satchel", "explosive", "plastic explosive"],
+    description:
+      "It's a rectangular black satchel, about 10X6X6 inches containing some kind of heavy plastic brick. Stenciled on one side in white is the code 'Z4'",
+    location: "seeded",
+    meta: {
+      onLoad: "You plug the detonator into the satchel's socket.",
+    },
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 4,
+    itemSize: 4,
+    isContainer: true,
+    allowedContentsIds: ["Z4Detonator", "FriedZ4Detonator"],
+    capacity: 1,
+    isArmed: false,
+    scoreId: "obtained_z4",
+  },
+  {
+    id: "Z4Detonator",
+    name: "Z4 detonator",
+    vocab: ["z4", "detonator"],
+    description:
+      "It's a small metallic bylinder with a round, single prong plug extending from the bottom. The plug is about a quarter inch in diameter.",
+    location: "seeded",
+    meta: {
+      onLoad: "You plug the detonator into the satchel's socket.",
+    },
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 2,
+    scoreId: "obtained_new_z4_detonator",
+  },
+  {
+    id: "FriedZ4Detonator",
+    name: "fried detonator",
+    vocab: ["fried", "detonator"],
+    description:
+      "It's a small metallic cylinder with a round, single prong plug extending from the bottom. There is scorching all around the seam, it looks fried.",
+    location: "seeded",
+    meta: {
+      onLoad: "You plug the fried detonator into the satchel's socket.",
+    },
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 2,
+  },
+  {
+    id: "Z4Trigger",
+    name: "Z4 trigger mechanism",
+    vocab: ["trigger", "mechanism"],
+    description:
+      "It's a cylindrical unit about five inches tall and two inches in diameter, fitted with a rubber grip.  Mounted on its top is a round red button.",
+
+    location: "seeded",
+    meta: {
+      onSqueeze:
+        "You squeeze the trigger mechanism, pressing down on the trigger.",
+    },
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 2,
+  },
   // The camera gun and its ammo
   {
     id: "CameraGun",

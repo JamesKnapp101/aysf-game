@@ -1,3 +1,4 @@
+import { doStand } from "../actions/stand/stand";
 import type { ActionHandler } from "../types/actionsTypes";
 import { doClose } from "./close";
 import { doDrink } from "./drink";
@@ -41,4 +42,5 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   shoot: doShoot,
   load: doLoad,
   search: doSearch,
+  stand: doStand,
 };

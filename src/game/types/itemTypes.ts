@@ -1,5 +1,6 @@
 import type {
   GameState,
+  PlayerScoreId,
   StatusEffect,
   StatusId,
   SyringeState,
@@ -62,6 +63,9 @@ export interface Item {
   injectionEffectId?: StatusId;
   injectionRemoveEffectId?: StatusId;
   isSyringeCartridge?: boolean;
+  isArmed?: boolean;
+  isSqueezable?: boolean;
+  scoreId?: PlayerScoreId;
 }
 
 export type LivingMeta = {

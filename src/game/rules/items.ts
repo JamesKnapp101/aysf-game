@@ -1,4 +1,6 @@
+import { playerScoreMap } from "../constants";
 import { getItemById, moveItemToRoom } from "../helpers/itemHelpers";
+import { triggerScoreOnce } from "../rules/score";
 import {
   getContainerContentsIds,
   getContainerContentsItems,
@@ -88,7 +90,22 @@ export function tryTakeItem(
     let next = updateItemLocation(state, itemOnFloor.id, "INVENTORY");
     next = addToInventory(next, itemOnFloor.id);
 
-    return { state: next, message: "Taken." };
+    const scoreId = getItemById(next, itemOnFloor.id)?.scoreId ?? "";
+    if (scoreId === "") {
+      return { state: next, message: "Taken." };
+    } else {
+      let msg = `Taken.`;
+      if (next.worldState.scoresTriggered[scoreId] !== true) {
+        next = triggerScoreOnce(
+          next,
+          getItemById(next, itemOnFloor.id)?.scoreId
+        );
+        msg += `\n\nYour score has just went up by ${
+          playerScoreMap[scoreId]?.value ?? 0
+        } points!`;
+      }
+      return { state: next, message: msg };
+    }
   }
 
   const room = getCurrentRoom(state);
@@ -117,7 +134,7 @@ export function tryTakeItem(
 
     let next = updateItemLocation(state, found.id, "INVENTORY");
     next = addToInventory(next, found.id);
-
+    next = triggerScoreOnce(next, getItemById(next, found.id)?.scoreId);
     next = {
       ...next,
       itemState: {
