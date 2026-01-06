@@ -178,9 +178,16 @@ export const {
   livingRoomId: "LivingQuartersSixEast",
   bedRoomId: "SixEastBed",
   bathRoomId: "SixEastBath",
-  corridorRoomId: "LevelThreeCorridorSix",
-  corridorDoorId: "DOOR3FE",
+  corridorRoomId: "LevelThreeCorridorSixPointSix",
+  corridorDoorId: "DOOR3FW",
   bathDoorId: "SixEastBDoor",
+  dirs: {
+    livingToCorridorDir: "east",
+    bedToLivingDir: "east",
+    livingToBedDir: "west",
+    livingToBathDir: "north",
+    bathToLivingDir: "south",
+  },
   livingDescription: `
 The space is kept with practiced care, the kind that turns routine into a shield.
 The air holds a clean edge beneath the ship’s stale breath, like someone fought hard to keep things bright.
@@ -223,6 +230,7 @@ A low end table with a smooth top and a shallow drawer.
 The surface has been wiped clean, leaving faint circular marks.`,
       sceneryDescription: `
 Near the seating area sits a small end table, aligned with careful intent.`,
+      sceneryDescriptionOrder: 0,
     },
     sofaLiving: {
       description: `
@@ -230,6 +238,7 @@ A modern sofa upholstered in dark fabric.
 The cushions are firm and neatly set, showing more maintenance than comfort.`,
       sceneryDescription: `
 A sofa faces the far wall, kept straight as if alignment mattered.`,
+      sceneryDescriptionOrder: 0,
     },
     loveseatLiving: {
       description: `
@@ -237,6 +246,7 @@ A matching loveseat, compact and clean-lined.
 The fabric is barely worn, the cushions squared and tidy.`,
       sceneryDescription: `
 Beside the sofa sits a loveseat, positioned close enough for shared evenings.`,
+      sceneryDescriptionOrder: 0,
     },
     entertainmentLiving: {
       description: `
@@ -244,6 +254,7 @@ An entertainment unit with a silent screen and neatly arranged components.
 A game console is housed within the lower bay, its light dark.`,
       sceneryDescription: `
 Against one wall stands an entertainment center, dormant and watchful.`,
+      sceneryDescriptionOrder: 0,
     },
 
     bed: {
@@ -252,6 +263,7 @@ A neatly made bed with tight corners.
 The sheets are cool and undisturbed, left in mid-routine.`,
       sceneryDescription: `
 The bed sits centered in the room, made with precision.`,
+      sceneryDescriptionOrder: 0,
     },
     dresser: {
       description: `
@@ -259,6 +271,7 @@ A dresser with clean lines and quiet drawers.
 The top is bare, the wood faintly scented with polish.`,
       sceneryDescription: `
 Along one wall sits a dresser, closed and orderly.`,
+      sceneryDescriptionOrder: 0,
     },
     closet: {
       description: `
@@ -266,6 +279,7 @@ A narrow closet with a sliding door.
 Inside, the air smells faintly of fabric and dry cleaner solvent.`,
       sceneryDescription: `
 Set into the wall is a closet, its door shut tight.`,
+      sceneryDescriptionOrder: 0,
     },
     phone: {
       description: `
@@ -273,7 +287,7 @@ A bedside phone with a touch pad and a small message indicator.
 Several keys are worn smooth by repeated use.`,
       sceneryDescription: `
 Near the bed sits a phone, still and dark.`,
-      // messages: [] // add later
+      sceneryDescriptionOrder: 0,
     },
 
     sink: {
@@ -282,6 +296,7 @@ A compact sink with a spotless basin and cold chrome fixtures.
 The drain is dry, the surface wiped clean.`,
       sceneryDescription: `
 A small sink sits beneath the mirror, cleaned to a dull shine.`,
+      sceneryDescriptionOrder: 0,
     },
     mirror: {
       description: `
@@ -289,6 +304,7 @@ A clean mirror that reflects you plainly.
 Your face looks too sharp in the flat light.`,
       sceneryDescription: `
 Mounted above the sink is a mirror, unmarked and still.`,
+      sceneryDescriptionOrder: 0,
     },
     shower: {
       description: `
@@ -296,6 +312,7 @@ A shower stall with a translucent door and cold metal fixtures.
 The interior is dry where it shouldn’t be.`,
       sceneryDescription: `
 A shower occupies the corner, the door closed.`,
+      sceneryDescriptionOrder: 0,
     },
     washlet: {
       description: `
@@ -303,6 +320,7 @@ A combination toilet and bidet with a small side-mounted control panel.
 The buttons are clean, the panel dark.`,
       sceneryDescription: `
 The washlet sits against the wall, pristine and silent.`,
+      sceneryDescriptionOrder: 0,
     },
     medicineChest: {
       description: `
@@ -310,6 +328,7 @@ A wall-mounted medicine chest with a mirrored front and a thin latch.
 It closes with a soft click.`,
       sceneryDescription: `
 Above the sink is a medicine chest, shut tight.`,
+      sceneryDescriptionOrder: 0,
     },
   },
 });

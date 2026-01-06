@@ -132,7 +132,7 @@ export const {
   bedRoomId: "FiveEastBed",
   bathRoomId: "FiveEastBath",
   corridorRoomId: "LevelThreeCorridorFive",
-  corridorDoorId: "DOOR3EE",
+  corridorDoorId: "DOOR3CE",
   bathDoorId: "FiveEastBDoor",
 
   livingDescription: `

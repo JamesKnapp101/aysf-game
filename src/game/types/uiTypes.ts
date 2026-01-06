@@ -26,6 +26,7 @@ export type Overlay =
   | { kind: "camera-gun-viewer"; currentViewIndex: number }
   | { kind: "plt-viewer"; isOn: boolean; hasLink: boolean }
   | { kind: "power-station-terminal"; isOn: boolean }
+  | { kind: "matter-transmitter"; isOn: boolean }
   | {
       kind: "mindFlash";
       title?: string;

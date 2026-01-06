@@ -234,10 +234,24 @@ export const Game: React.FC = () => {
     [runAction]
   );
 
+  const setGameState = useCallback(
+    (updater: (prev: GameState) => GameState) => {
+      dispatchState({
+        type: "replaceState",
+        next: updater(stateRef.current),
+      });
+    },
+    []
+  );
+
   return (
     <>
       {/* The OverlayHost handles all the screen effects */}
-      <OverlayHost runAction={overlayRunAction} state={gs} />
+      <OverlayHost
+        runAction={overlayRunAction}
+        state={gs}
+        setGameState={setGameState}
+      />
       <div
         id={"game-root"}
         ref={rootRef}

@@ -1,3 +1,4 @@
+import { generateTerminalTpadDescription } from "../helpers/gameHelpers";
 import { isItemOpen } from "../rules/containers";
 import { formatNameList } from "../rules/items";
 import { getContainerContentsItems } from "../selectors/containerSelectors";
@@ -11,12 +12,7 @@ import type { GameState } from "../types/gameTypes";
 type RoomDescriptionMode = "log" | "panel";
 
 type BuildRoomDescriptionOptions = {
-  /** "log" = short on revisit; "panel" = always full */
   mode?: RoomDescriptionMode;
-  /**
-   * If true, forces "full" behavior regardless of visit state
-   * (useful for explicit LOOK).
-   */
   forceFull?: boolean;
 };
 
@@ -148,6 +144,34 @@ export function buildRoomDescription(
 
   if (containerLines.length > 0) {
     parts.push(containerLines.join(" "));
+  }
+
+  // Certain scenery props can be powered up
+  const isTpadTerminal = room.id === "TPADTerminal";
+
+  // If we're in TPADTerminal, emit one aggregated description and skip per-disk "onPowered" text.
+  if (isTpadTerminal) {
+    parts.push(
+      generateTerminalTpadDescription(state.worldState.powerRestoredSections)
+    );
+  } else {
+    for (const sceneryItem of sceneryItems) {
+      if (sceneryItem.meta?.teleport) {
+        const section = sceneryItem.meta.teleport.section;
+        const sectionKey =
+          section as unknown as keyof typeof state.worldState.powerRestoredSections;
+        if (sectionKey && state.worldState.powerRestoredSections[sectionKey]) {
+          parts.push(sceneryItem.meta?.onPowered);
+        }
+      }
+      // Other cases go here...
+      if (sceneryItem?.meta?.onPowered) {
+        const powerKey = sceneryItem.meta.powerKey as unknown as keyof typeof state.worldState.powerRestoredSections;
+        if (powerKey && state.worldState.powerRestoredSections[powerKey]) {
+          parts.push(sceneryItem.meta?.onPowered);
+        }
+      }
+    }
   }
 
   const seen = state.itemState.pickedUpByPlayer ?? {};

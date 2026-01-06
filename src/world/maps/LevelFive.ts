@@ -69,6 +69,7 @@ export const LEVEL_FIVE: WorldChunk = {
       exits: [
         { direction: "south", toRoomId: "EngCorridorTwo" },
         { direction: "east", toRoomId: "LevelFiveStairAccess" },
+        { direction: "north", toRoomId: "EngCorridorThree" },
       ],
     },
     {
@@ -78,7 +79,7 @@ export const LEVEL_FIVE: WorldChunk = {
         "This is the main corridor providing access to the engineering section. It heads back to the north, and continues south as well. To the west is a doorway providing access to what looks like the main engineering section. To the east is a set of heavy double doors which have been buckled and jammed in place due to some kind of impact; there's a space between the doors that is not nearly wide enough to crawl through, and you can't see much through it.",
       exits: [
         { direction: "north", toRoomId: "EngCorridorOne" },
-        { direction: "south", toRoomId: "EngCorridorThree" },
+        //  { direction: "south", toRoomId: "EngCorridorThree" },
         { direction: "east", toRoomId: "Warehouse" },
         { direction: "west", toRoomId: "MainEngineering" },
       ],
@@ -89,8 +90,8 @@ export const LEVEL_FIVE: WorldChunk = {
       description:
         "The corridor ends here, where a large doorway to the east opens up into a wide open area of some kind.",
       exits: [
-        { direction: "north", toRoomId: "EngCorridorTwo" },
-        { direction: "east", toRoomId: "ShuttleBay" },
+        { direction: "south", toRoomId: "EngCorridorOne" },
+        { direction: "north", toRoomId: "ShuttleBay" },
       ],
     },
     {
@@ -99,8 +100,8 @@ export const LEVEL_FIVE: WorldChunk = {
       description:
         "This is a wide, open area which acts as a landing bay for the large shuttlecraft which dominates it. The bay itself is mostly empty, the floor painted with green and white lines dividing it into zones. The shuttle itself is not that large; from out here it looks like it might be capable of carrying maybe six people. It's shaped like a half-moon, wide in the back where the engines are mounted, then tapering to a near point along the edge. It is mounted on three short landing pads, and pointed in the direction of a set of large bay doors. There is a door leading into the craft to the north.",
       exits: [
-        { direction: "west", toRoomId: "EngCorridorThree" },
-        { direction: "north", doorId: "ShuttleDoor" },
+        { direction: "south", toRoomId: "EngCorridorThree" },
+        { direction: "west", toRoomId: "InsideShuttle" },
       ],
     },
     {
@@ -109,8 +110,8 @@ export const LEVEL_FIVE: WorldChunk = {
       description:
         "This is the somewhat cramped interior of one of the ship's shuttlecrafts. A dim overhead light illuminates the interior to reveal a series of cushioned seats along the north and south sides. One such seat cushion has a nylon tab extending from it, and below that the word 'STORAGE' is stenciled in white letters. There is a featureless door to the east which looks like it leads to the cockpit.",
       exits: [
-        { direction: "south", toRoomId: "ShuttleDoor" },
-        { direction: "east", doorId: "ShuttleCockpitDoor" },
+        { direction: "east", toRoomId: "ShuttleBay" },
+        // { direction: "east", doorId: "ShuttleCockpitDoor" },
       ],
     },
     {

@@ -55,6 +55,11 @@ function tokenize(text: string): string[] {
  * Resolve an item by noun, scoped to:
  *   - items in current room
  *   - items in inventory
+ *   - items inside open containers that are in the current room (recurses)
+ *
+ * Container open state:
+ *   state.itemState.openItems[item.id] === true  -> open
+ *   false/undefined                              -> closed
  */
 export function resolveItemByNoun(
   state: GameState,
@@ -63,9 +68,54 @@ export function resolveItemByNoun(
   const room = getCurrentRoom(state);
   const tokens = tokenize(noun);
 
-  const itemsInScope = state.world.items.filter((it) => {
-    return it.location === room.id || state.player.inventory.includes(it.id);
-  });
+  const itemsById = new Map(state.world.items.map((it) => [it.id, it]));
+
+  const isOpen = (itemId: string): boolean =>
+    state.itemState.openItems?.[itemId] === true;
+
+  // Build a set of item ids that are in scope.
+  const inScopeIds = new Set<string>();
+
+  // 1) Base scope: room + inventory
+  for (const it of state.world.items) {
+    if (it.location === room.id) inScopeIds.add(it.id);
+    if (state.player.inventory.includes(it.id)) inScopeIds.add(it.id);
+  }
+
+  // 2) Add contents of open containers in the room (recursively)
+  const queue: string[] = [];
+  const visitedContainers = new Set<string>();
+
+  // Seed with open items that are physically in the room
+  for (const id of inScopeIds) {
+    const it = itemsById.get(id);
+    if (!it) continue;
+
+    if (it.location === room.id && isOpen(it.id)) {
+      queue.push(it.id);
+      visitedContainers.add(it.id);
+    }
+  }
+
+  // BFS: include children, and if a child is an open container, include its children too
+  while (queue.length) {
+    const containerId = queue.shift()!;
+
+    for (const child of state.world.items) {
+      if (child.location !== containerId) continue;
+
+      if (!inScopeIds.has(child.id)) inScopeIds.add(child.id);
+
+      if (isOpen(child.id) && !visitedContainers.has(child.id)) {
+        visitedContainers.add(child.id);
+        queue.push(child.id);
+      }
+    }
+  }
+
+  const itemsInScope = [...inScopeIds]
+    .map((id) => itemsById.get(id))
+    .filter((x): x is Item => Boolean(x));
 
   const exactId = itemsInScope.find(
     (it) => normalize(it.id) === normalize(noun)

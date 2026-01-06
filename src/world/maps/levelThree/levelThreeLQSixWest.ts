@@ -1,7 +1,4 @@
-import {
-  describeActionResult,
-  describeScotchBottle,
-} from "../../../game/rules/items";
+import { describeScotchBottle } from "../../../game/rules/items";
 import type { Item } from "../../../game/types/itemTypes";
 import { createLivingQuarter } from "../../maps/livingQuartersTemplate";
 
@@ -354,12 +351,14 @@ export const {
   bedRoomId: "SixWestBed",
   bathRoomId: "SixWestBath",
   corridorRoomId: "LevelThreeCorridorSix",
-  corridorDoorId: "DOOR3FW",
+  corridorDoorId: "DOOR3EW",
   bathDoorId: "SixWestBDoor",
   dirs: {
     livingToCorridorDir: "east",
     bedToLivingDir: "east",
     livingToBedDir: "west",
+    livingToBathDir: "north",
+    bathToLivingDir: "south",
   },
   livingDescription: `
 The living area is clean and composed, arranged like someone cared how it looked from the doorway.
@@ -401,6 +400,7 @@ A small end table with a smooth top and a single drawer.
 The surface is bare, wiped clean.`,
       sceneryDescription: `
 Near the seating area sits an end table, squared to the room.`,
+      sceneryDescriptionOrder: 0,
     },
     sofaLiving: {
       description: `
@@ -408,6 +408,7 @@ A neutral sofa with firm cushions and clean seams.
 It looks chosen for appearance first.`,
       sceneryDescription: `
 A sofa faces the far wall, aligned as if measured into place.`,
+      sceneryDescriptionOrder: 0,
     },
     loveseatLiving: {
       description: `
@@ -415,6 +416,7 @@ A matching loveseat, compact and minimally worn.
 The fabric is clean, the cushions squared.`,
       sceneryDescription: `
 Beside the sofa sits a loveseat, close enough to imply company.`,
+      sceneryDescriptionOrder: 0,
     },
     entertainmentLiving: {
       description: `
@@ -422,6 +424,7 @@ An entertainment unit with a silent screen and neatly stacked components.
 The display reflects only dim shapes.`,
       sceneryDescription: `
 Against one wall stands an entertainment center, dormant and dark.`,
+      sceneryDescriptionOrder: 0,
     },
     bed: {
       description: `
@@ -429,6 +432,7 @@ A neatly made bed with covers pulled tight.
 The sheets are cool and undisturbed.`,
       sceneryDescription: `
 The bed sits centered beneath the ceiling, arranged with rigid neatness.`,
+      sceneryDescriptionOrder: 0,
     },
     dresser: {
       description: `
@@ -436,6 +440,7 @@ A wooden dresser with drawers that close flush and quietly.
 The surface smells faintly of polish.`,
       sceneryDescription: `
 Along one wall sits a dresser, closed tight.`,
+      sceneryDescriptionOrder: 0,
     },
     closet: {
       description: `
@@ -443,6 +448,7 @@ A narrow closet with a sliding door.
 Inside, the air is dry and faintly scented.`,
       sceneryDescription: `
 Set into the wall is a closet, its door shut.`,
+      sceneryDescriptionOrder: 0,
     },
     phone: {
       description: `
@@ -450,6 +456,7 @@ A bedside phone with a touch pad and a small message indicator.
 Several keys are worn smooth.`,
       sceneryDescription: `
 Near the bed sits a phone, still and dark.`,
+      sceneryDescriptionOrder: 0,
       messages: [
         {
           id: "6WM1",
@@ -478,6 +485,7 @@ A compact sink with a clean basin and cold chrome fixtures.
 The drain is dry.`,
       sceneryDescription: `
 A small sink sits beneath the mirror, maintained with habitual care.`,
+      sceneryDescriptionOrder: 0,
     },
     mirror: {
       description: `
@@ -485,6 +493,7 @@ A clean mirror with no spots or streaks.
 Your reflection looks too sharp in the flat light.`,
       sceneryDescription: `
 Mounted above the sink is a mirror, unmarked and still.`,
+      sceneryDescriptionOrder: 0,
     },
     shower: {
       description: `
@@ -492,6 +501,7 @@ A shower stall with a translucent door and cold metal fixtures.
 Everything inside is dry.`,
       sceneryDescription: `
 A shower occupies the corner, the door closed.`,
+      sceneryDescriptionOrder: 0,
     },
     washlet: {
       description: `
@@ -499,6 +509,7 @@ A combination toilet and bidet with a small side control panel.
 The buttons are clean and slightly worn.`,
       sceneryDescription: `
 The washlet sits against the wall, sterile at first glance.`,
+      sceneryDescriptionOrder: 0,
     },
     medicineChest: {
       description: `
@@ -506,6 +517,7 @@ A wall-mounted medicine chest with a mirrored front.
 It closes tightly.`,
       sceneryDescription: `
 Above the sink is a medicine chest, shut and centered.`,
+      sceneryDescriptionOrder: 0,
     },
   },
 });

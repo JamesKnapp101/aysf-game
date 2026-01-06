@@ -15,8 +15,8 @@ export const LEVEL_ONE: WorldChunk = {
       exits: [
         { direction: "south", doorId: "BridgeDoors" },
         { direction: "north", toRoomId: "BridgeCaptain" },
-        { direction: "east", toRoomId: "BridgeTact" },
-        { direction: "west", toRoomId: "BridgeComm" },
+        { direction: "west", toRoomId: "BridgeTact" },
+        { direction: "southwest", toRoomId: "BridgeComm" },
       ],
     },
     {
@@ -50,14 +50,14 @@ export const LEVEL_ONE: WorldChunk = {
       name: "Bridge, Tactical",
       description:
         "This appears to be the Weapon's Station. A man's body is lying sprawled on the floor here just in front of the main console. The console looks to be still active.",
-      exits: [{ direction: "west", toRoomId: "Bridge" }],
+      exits: [{ direction: "east", toRoomId: "Bridge" }],
     },
     {
       id: "BridgeComm",
       name: "Bridge, Communications",
       description:
         "This is the ship's communications station. A woman's body is sitting slumped over in the chair, her head resting between her knees and her arms dangling onto the floor. The console seems to still be active; several lights are flashing regularly.",
-      exits: [{ direction: "east", toRoomId: "Bridge" }],
+      exits: [{ direction: "northeast", toRoomId: "Bridge" }],
     },
     {
       id: "BridgeReady",

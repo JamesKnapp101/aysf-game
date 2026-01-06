@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/components/power-station-terminal.css";
-import type { GameState } from "../types/gameTypes";
+import { POWER_SECTION_MAP } from "../constants";
+import type { GameState, WorldState } from "../types/gameTypes";
+import { SwitchStates } from "../types/itemTypes";
 import { CrtModal } from "./CrtModal";
 
 type SwitchKind = "switch" | "static";
@@ -26,6 +28,7 @@ type TreeNode = MenuNode | OptionNode;
 type Props = {
   onClose: () => void;
   state: GameState;
+  setGameState: (updater: (prev: GameState) => GameState) => void;
 };
 
 function isMenu(n: TreeNode): n is MenuNode {
@@ -60,7 +63,7 @@ function statusGlyph(n: TreeNode): string {
     case "off":
       return "○";
     case "locked":
-      return "⛔";
+      return "✖";
     case "failure":
       return "✖";
     default:
@@ -72,19 +75,83 @@ function normalizeLabelToStatus(label: string): SwitchStatus {
   const lower = label.toLowerCase();
   if (lower.includes("locked")) return "locked";
   if (lower.includes("system failure")) return "failure";
-  return "unknown";
+  // default to a valid switch state instead of "unknown"
+  return "off";
 }
 
 function stripParenNotes(label: string) {
   return label.replace(/\s*\([^)]*\)\s*$/, "");
 }
 
-function buildPowerGridTree(): MenuNode {
+function buildPowerGridTree(state: GameState): MenuNode {
   return {
     id: "power_grid_menu",
     kind: "menu",
     label: "Main Power Distribution",
     children: [
+      {
+        id: "teleportNetwork",
+        kind: "menu",
+        label: "TELEPORTATION",
+        children: [
+          {
+            id: "TPADPOWER1",
+            kind: "switch",
+            label: "Green Network",
+            status: state.worldState.powerRestoredSections[
+              "teleport-pads-green"
+            ]
+              ? "on"
+              : "off",
+          },
+          {
+            id: "TPADPOWER2",
+            kind: "switch",
+            label: "White Network",
+            status: state.worldState.powerRestoredSections[
+              "teleport-pads-white"
+            ]
+              ? "on"
+              : "off",
+          },
+          {
+            id: "TPADPOWER3",
+            kind: "switch",
+            label: "Blue Network",
+            status: state.worldState.powerRestoredSections["teleport-pads-blue"]
+              ? "on"
+              : "off",
+          },
+          {
+            id: "TPADPOWER4",
+            kind: "switch",
+            label: "Yellow Network",
+            status: state.worldState.powerRestoredSections[
+              "teleport-pads-yellow"
+            ]
+              ? "on"
+              : "off",
+          },
+          {
+            id: "TPADPOWER5",
+            kind: "switch",
+            label: "Brown Network",
+            status: state.worldState.powerRestoredSections[
+              "teleport-pads-brown"
+            ]
+              ? "on"
+              : "off",
+          },
+          {
+            id: "TPADPOWER6",
+            kind: "switch",
+            label: "Grey Network",
+            status: state.worldState.powerRestoredSections["teleport-pads-grey"]
+              ? "on"
+              : "off",
+          },
+        ],
+      },
       {
         id: "lvl1",
         kind: "menu",
@@ -94,13 +161,17 @@ function buildPowerGridTree(): MenuNode {
             id: "Lvl1Grav",
             kind: "switch",
             label: "Artificial Gravity Field",
-            status: "on",
+            status: state.worldState.powerRestoredSections["gravity-level-one"]
+              ? "on"
+              : "off",
           },
           {
             id: "Lvl1Lights",
             kind: "switch",
             label: "Level One Lights",
-            status: "on",
+            status: state.worldState.powerRestoredSections["lights-level-one"]
+              ? "on"
+              : "off",
           },
           {
             id: "Lvl1Sheilds",
@@ -115,20 +186,15 @@ function buildPowerGridTree(): MenuNode {
             status: "failure",
           },
           {
-            id: "TPADPOWER",
-            kind: "switch",
-            label: "Teleportation Pads",
-            status: "off",
-          },
-          {
             id: "Lvl1Weapons",
             kind: "switch",
             label: "Primary Weapons System",
-            status: "on",
+            status: state.worldState.powerRestoredSections["weapons-system"]
+              ? "on"
+              : "off",
           },
         ],
       },
-
       {
         id: "lvl2",
         kind: "menu",
@@ -138,7 +204,9 @@ function buildPowerGridTree(): MenuNode {
             id: "Lvl2Grav",
             kind: "switch",
             label: "Artificial Gravity Field",
-            status: "on",
+            status: state.worldState.powerRestoredSections["gravity-level-two"]
+              ? "on"
+              : "off",
           },
           {
             id: "Lvl2Lights",
@@ -146,15 +214,8 @@ function buildPowerGridTree(): MenuNode {
             label: "Level Two Lights (system failure)",
             status: "failure",
           },
-          {
-            id: "Lvl2TPADS",
-            kind: "static",
-            label: "Teleportation Pads (system failure)",
-            status: "failure",
-          },
         ],
       },
-
       {
         id: "lvl3",
         kind: "menu",
@@ -164,29 +225,39 @@ function buildPowerGridTree(): MenuNode {
             id: "Lvl3Grav",
             kind: "switch",
             label: "Artificial Gravity Field",
-            status: "on",
+            status: state.worldState.powerRestoredSections[
+              "gravity-level-three"
+            ]
+              ? "on"
+              : "off",
           },
           {
             id: "Lvl3Lights",
             kind: "switch",
             label: "Level Three Lights",
-            status: "on",
+            status: state.worldState.powerRestoredSections["lights-level-three"]
+              ? "on"
+              : "off",
           },
+
           {
             id: "HubSecurity",
             kind: "switch",
             label: "Hub Security",
-            status: "on",
+            status: state.worldState.powerRestoredSections["hub-security"]
+              ? "on"
+              : "off",
           },
           {
             id: "Lvl3Terminal",
             kind: "switch",
             label: "Library Terminals",
-            status: "off",
+            status: state.worldState.powerRestoredSections["library-power"]
+              ? "on"
+              : "off",
           },
         ],
       },
-
       {
         id: "lvl4",
         kind: "menu",
@@ -196,43 +267,53 @@ function buildPowerGridTree(): MenuNode {
             id: "Lvl4Grav",
             kind: "switch",
             label: "Artificial Gravity Field",
-            status: "on",
+            status: state.worldState.powerRestoredSections["gravity-level-four"]
+              ? "on"
+              : "off",
           },
           {
             id: "Lvl4Lights",
             kind: "switch",
             label: "Level Four Lights",
-            status: "on",
+            status: state.worldState.powerRestoredSections["lights-level-four"]
+              ? "on"
+              : "off",
           },
         ],
       },
-
       {
         id: "lvl5",
         kind: "menu",
         label: "LEVEL FIVE",
         children: [
           {
-            id: "Lvl5Lights",
-            kind: "switch",
-            label: "Level Five Lights",
-            status: "off",
-          },
-          {
             id: "Lvl5Grav",
             kind: "switch",
             label: "Artificial Gravity Field",
-            status: "on",
+            status: state.worldState.powerRestoredSections["gravity-level-five"]
+              ? "on"
+              : "off",
+          },
+          {
+            id: "Lvl5Lights",
+            kind: "switch",
+            label: "Level Five Lights",
+            status: state.worldState.powerRestoredSections["lights-level-five"]
+              ? "on"
+              : "off",
           },
           {
             id: "ECore",
             kind: "switch",
             label: "Engine Core Power Lock",
-            status: "on",
+            status: state.worldState.powerRestoredSections[
+              "engine-room-power-lock"
+            ]
+              ? "on"
+              : "off",
           },
         ],
       },
-
       {
         id: "lvl6",
         kind: "menu",
@@ -242,29 +323,37 @@ function buildPowerGridTree(): MenuNode {
             id: "Lvl6Grav",
             kind: "switch",
             label: "Artificial Gravity Field",
-            status: "on",
+            status: state.worldState.powerRestoredSections["gravity-level-six"]
+              ? "on"
+              : "off",
           },
           {
             id: "Lvl6Lights",
             kind: "switch",
             label: "Level Six Lights",
-            status: "on",
+            status: state.worldState.powerRestoredSections["lights-level-six"]
+              ? "on"
+              : "off",
           },
+
           {
             id: "LoadDockDoor",
             kind: "switch",
             label: "Loading Dock Door",
-            status: "on",
+            status: state.worldState.powerRestoredSections["loading-dock-door"]
+              ? "on"
+              : "off",
           },
           {
             id: "LoadGrid",
             kind: "switch",
             label: "Loading Grid",
-            status: "off",
+            status: state.worldState.powerRestoredSections["loading-grid"]
+              ? "on"
+              : "off",
           },
         ],
       },
-
       {
         id: "lvl7",
         kind: "menu",
@@ -274,25 +363,35 @@ function buildPowerGridTree(): MenuNode {
             id: "Lvl7Grav",
             kind: "switch",
             label: "Artificial Gravity Field",
-            status: "on",
+            status: state.worldState.powerRestoredSections[
+              "gravity-level-seven"
+            ]
+              ? "on"
+              : "off",
           },
           {
             id: "Lvl7Lights",
             kind: "switch",
             label: "Level Seven Lights",
-            status: "on",
+            status: state.worldState.powerRestoredSections["lights-level-seven"]
+              ? "on"
+              : "off",
           },
           {
             id: "CryoLabs",
             kind: "switch",
             label: "Cryonics Laboratory",
-            status: "on",
+            status: state.worldState.powerRestoredSections["cryo-labs"]
+              ? "on"
+              : "off",
           },
           {
             id: "Sleepers",
             kind: "switch",
             label: "Cryonics Sleep Chambers",
-            status: "on",
+            status: state.worldState.powerRestoredSections["cryo-sleep"]
+              ? "on"
+              : "off",
           },
         ],
       },
@@ -302,26 +401,47 @@ function buildPowerGridTree(): MenuNode {
 
 type Breadcrumb = { node: MenuNode; selectedIndex: number };
 
-export function PowerStationTerminalModal({ onClose, state }: Props) {
+function applyPowerFromSwitches(
+  worldState: WorldState,
+  switchStates: SwitchStates
+): WorldState {
+  const nextPower = { ...worldState.powerRestoredSections };
+
+  for (const [switchId, config] of Object.entries(POWER_SECTION_MAP)) {
+    const value = switchStates[switchId];
+    if (!value) continue;
+
+    const section = config.section as keyof typeof nextPower;
+    nextPower[section] = value === config.activeWhen;
+  }
+
+  return {
+    ...worldState,
+    powerRestoredSections: nextPower,
+  };
+}
+
+export function PowerStationTerminalModal({
+  onClose,
+  state,
+  setGameState,
+}: Props) {
   void state;
 
-  const root = useMemo(() => buildPowerGridTree(), []);
+  const root = useMemo(() => buildPowerGridTree(state), []);
   const [path, setPath] = useState<Breadcrumb[]>([
     { node: root, selectedIndex: 0 },
   ]);
 
-  const [switchStates, setSwitchStates] = useState<
-    Record<string, SwitchStatus>
-  >(() => {
-    const map: Record<string, SwitchStatus> = {};
+  const [switchStates, setSwitchStates] = useState<SwitchStates>(() => {
+    const map = {} as SwitchStates;
     const walk = (n: TreeNode) => {
       if (isMenu(n)) n.children.forEach(walk);
       else {
-        if (n.status === "unknown") {
-          map[n.id] = normalizeLabelToStatus(n.label);
-        } else {
-          map[n.id] = n.status;
-        }
+        // normalize any "unknown" nodes by label, and cast to satisfy SwitchStates typing
+        map[n.id] = (
+          n.status === "unknown" ? normalizeLabelToStatus(n.label) : n.status
+        ) as any;
       }
     };
     walk(root);
@@ -394,6 +514,17 @@ export function PowerStationTerminalModal({ onClose, state }: Props) {
   };
 
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setGameState((prev) => {
+      const nextWorldState = applyPowerFromSwitches(
+        prev.worldState,
+        switchStates
+      );
+      if (nextWorldState === prev.worldState) return prev;
+      return { ...prev, worldState: nextWorldState };
+    });
+  }, [switchStates, setGameState]);
 
   useEffect(() => {
     rootRef.current?.focus();

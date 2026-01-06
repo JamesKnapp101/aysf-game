@@ -1,3 +1,5 @@
+import { doPush } from "@game/actions/push/push";
+import { doTurn } from "@game/actions/turn/turn";
 import { doStand } from "../actions/stand/stand";
 import type { ActionHandler } from "../types/actionsTypes";
 import { doClose } from "./close";
@@ -43,4 +45,6 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   load: doLoad,
   search: doSearch,
   stand: doStand,
+  turn: doTurn,
+  push: doPush,
 };

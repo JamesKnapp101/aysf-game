@@ -68,9 +68,23 @@ type PowerSectionId =
   | "gravity-level-four"
   | "gravity-level-five"
   | "gravity-level-six"
-  | "gravity-level-sevent"
+  | "gravity-level-seven"
   | "library-power"
-  | "teleport-pads";
+  | "teleport-pads-green"
+  | "teleport-pads-blue"
+  | "teleport-pads-yellow"
+  | "teleport-pads-brown"
+  | "teleport-pads-white"
+  | "teleport-pads-grey"
+  | "hub-security"
+  | "engine-room-power-lock"
+  | "weapons-system"
+  | "loading-dock-door"
+  | "loading-grid"
+  | "cryo-labs"
+  | "cryo-sleep"
+  | "power-key-turned"
+  | "power-initialized";
 
 export interface PlayerState {
   roomId: string;
@@ -91,6 +105,7 @@ export interface World {
   items: Item[];
   doors: DoorDefinition[];
   teleportPads: TeleportPadDefinition[];
+  meta?: Record<string, any>;
 }
 
 export interface WorldChunk {

@@ -1,3 +1,4 @@
+import { updateItemLocation } from "@game/rules/items";
 import { isSerumCartridge } from "../selectors/containerSelectors";
 import { getItemById } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
@@ -93,17 +94,18 @@ export function tryPutItemInContainer(
   }
 
   const updatedContents = [...currentContents, item.id];
-
+  let next = state;
+  next = updateItemLocation(next, item.id, container.id);
   return {
-    ...state,
+    ...next,
     player: {
-      ...state.player,
-      inventory: state.player.inventory.filter((id) => id !== item.id),
+      ...next.player,
+      inventory: next.player.inventory.filter((id) => id !== item.id),
     },
     itemState: {
-      ...state.itemState,
+      ...next.itemState,
       containerContents: {
-        ...state.itemState.containerContents,
+        ...next.itemState.containerContents,
         [container.id]: updatedContents,
       },
     },

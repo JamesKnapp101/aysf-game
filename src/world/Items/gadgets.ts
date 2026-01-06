@@ -29,7 +29,7 @@ export const specialItems: Item[] = [
       "A slim, portable library terminal—basically a ruggedized tablet with a matte display and a scattering of status LEDs along one edge.",
     initialDescription:
       "Lying on the bed is a slim electronic device of some kind.",
-    location: "SixWestBed",
+    location: "PowerGrid", //"SixWestBed",
     vocab: ["plt", "terminal", "library", "device", "portable"],
     itemClass: "solid",
     itemCategory: "collectable",

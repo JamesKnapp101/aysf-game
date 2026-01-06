@@ -40,7 +40,7 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
   const [display, setDisplay] = useState<string>(() => {
     if (!(state.itemState.itemSettings["PLT"] as any)?.isOn)
       return "The PLT is off.";
-    if (!(state.itemState.itemSettings["PLT"] as any)?.hasLink)
+    if (!state.worldState.powerRestoredSections["library-power"])
       return "No link. The LINK indicator remains dark.";
     return "Enter a search term to consult the Central Library.";
   });
@@ -80,7 +80,7 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
       setDisplay("The PLT is off.");
       return;
     }
-    if (!(state.itemState.itemSettings["PLT"] as any)?.hasLink) {
+    if (!state.worldState.powerRestoredSections["library-power"]) {
       setDisplay("No link. The LINK indicator remains dark.");
       return;
     }
@@ -160,7 +160,7 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
             <div className="plt-indicatorStack">
               <div
                 className={`plt-light ${
-                  (state.itemState.itemSettings["PLT"] as any)?.hasLink
+                  state.worldState.powerRestoredSections["library-power"]
                     ? "is-on"
                     : ""
                 }`}
@@ -197,14 +197,14 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder={
               (state.itemState.itemSettings["PLT"] as any)?.isOn
-                ? (state.itemState.itemSettings["PLT"] as any)?.hasLink
+                ? state.worldState.powerRestoredSections["library-power"]
                   ? "Enter query item here"
                   : "LINK unavailable"
                 : "Power off"
             }
             disabled={
               !(state.itemState.itemSettings["PLT"] as any)?.isOn ||
-              !(state.itemState.itemSettings["PLT"] as any)?.hasLink
+              !state.worldState.powerRestoredSections["library-power"]
             }
           />
         </form>

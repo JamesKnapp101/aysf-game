@@ -160,7 +160,7 @@ export const {
   bedRoomId: "FiveWestBed",
   bathRoomId: "FiveWestBath",
   corridorRoomId: "LevelThreeCorridorFive",
-  corridorDoorId: "DOOR3EW",
+  corridorDoorId: "DOOR3CW",
   bathDoorId: "FiveWestBDoor",
   dirs: {
     livingToCorridorDir: "east",
@@ -217,6 +217,7 @@ The wood bears faint scuffs where something was set down and picked up, again an
       sceneryDescription: `
 Beside the seating area sits a small end table, positioned like an anchor for habits that mattered.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     sofaLiving: {
@@ -227,6 +228,7 @@ The seat cushions are subtly shaped by years of careful sitting and slow standin
       sceneryDescription: `
 A sofa faces the entertainment center, arranged for quiet evenings and bodies that needed rest more than excitement.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     loveseatLiving: {
@@ -237,6 +239,7 @@ The fabric is less worn, as if it belonged to the one who could still shift easi
       sceneryDescription: `
 A loveseat sits near the sofa, close enough to share warmth, far enough to breathe.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     entertainmentLiving: {
@@ -247,6 +250,7 @@ The display is blank, reflecting the room back without offering distraction.
       sceneryDescription: `
 An entertainment center stands against the wall, a quiet relic of evenings spent counting commercials and minutes.
 `,
+      sceneryDescriptionOrder: 0,
     },
     bed: {
       description: `
@@ -256,6 +260,7 @@ It doesn’t look inviting. It looks prepared—like someone expected to need it
       sceneryDescription: `
 The bed dominates the room, made in a way that feels less like comfort and more like readiness.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     dresser: {
@@ -266,6 +271,7 @@ The handles are polished by hands that opened them daily, sometimes in the dark.
       sceneryDescription: `
 A dresser rests against the wall, its drawers closed but not quite aligned, as if hurried shut.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     closet: {
@@ -276,6 +282,7 @@ The faint smell of clean fabric leaks from the seams.
       sceneryDescription: `
 Set into the wall is a closet, closed and patient, as if it expects to be opened again.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     phone: {
@@ -286,7 +293,7 @@ The plastic is dulled and yellowed, worn smooth in the places fingers returned t
       sceneryDescription: `
 On the bedside surface sits a phone, the kind kept close when help might need to be called quickly.
 `,
-      // messages: [] // later
+      sceneryDescriptionOrder: 0,
     },
     sink: {
       description: `
@@ -296,6 +303,7 @@ The drain is dry. The metal is cold.
       sceneryDescription: `
 A small sink is mounted under the mirror, wiped clean with the care of people who couldn’t risk getting sick.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     mirror: {
@@ -306,6 +314,7 @@ It reflects you too clearly, and for a moment you expect a second shape to settl
       sceneryDescription: `
 A mirror hangs above the sink, spotless and severe under the bathroom light.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     shower: {
@@ -316,6 +325,7 @@ The interior is dry, the fixtures untouched.
       sceneryDescription: `
 A shower occupies the corner, closed up as if it was used on schedule and then suddenly never again.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     washlet: {
@@ -326,6 +336,7 @@ A faint discoloration rings the interior, the subtle evidence of ordinary use.
       sceneryDescription: `
 The washlet sits against the wall, its control panel dark beneath the harsh bathroom light.
 `,
+      sceneryDescriptionOrder: 0,
     },
 
     medicineChest: {
@@ -336,6 +347,7 @@ The hinge is slightly loose, as if it was opened often—sometimes with shaking 
       sceneryDescription: `
 Above the sink is a medicine chest, the sort of thing that turns a bathroom into a quiet dispensary.
 `,
+      sceneryDescriptionOrder: 0,
     },
   },
 });

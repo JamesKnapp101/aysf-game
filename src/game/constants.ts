@@ -1,3 +1,39 @@
+import { SwitchState } from "./types/itemTypes";
+
+export const POWER_SECTION_MAP: Record<
+  string,
+  { section: string; activeWhen: SwitchState }
+> = {
+  TPADPOWER1: { section: "teleport-pads-green", activeWhen: "on" },
+  TPADPOWER2: { section: "teleport-pads-white", activeWhen: "on" },
+  TPADPOWER3: { section: "teleport-pads-blue", activeWhen: "on" },
+  TPADPOWER4: { section: "teleport-pads-yellow", activeWhen: "on" },
+  TPADPOWER5: { section: "teleport-pads-brown", activeWhen: "on" },
+  TPADPOWER6: { section: "teleport-pads-grey", activeWhen: "on" },
+  Lvl1Lights: { section: "lights-level-one", activeWhen: "on" },
+  Lvl2Lights: { section: "lights-level-two", activeWhen: "on" },
+  Lvl3Lights: { section: "lights-level-three", activeWhen: "on" },
+  Lvl4Lights: { section: "lights-level-four", activeWhen: "on" },
+  Lvl5Lights: { section: "lights-level-five", activeWhen: "on" },
+  Lvl6Lights: { section: "lights-level-six", activeWhen: "on" },
+  Lvl7Lights: { section: "lights-level-seven", activeWhen: "on" },
+  Lvl1Grav: { section: "gravity-level-one", activeWhen: "on" },
+  Lvl2Grav: { section: "gravity-level-two", activeWhen: "on" },
+  Lvl3Grav: { section: "gravity-level-three", activeWhen: "on" },
+  Lvl4Grav: { section: "gravity-level-four", activeWhen: "on" },
+  Lvl5Grav: { section: "gravity-level-five", activeWhen: "on" },
+  Lvl6Grav: { section: "gravity-level-six", activeWhen: "on" },
+  Lvl7Grav: { section: "gravity-level-seven", activeWhen: "on" },
+  Lvl3Terminal: { section: "library-power", activeWhen: "on" },
+  HubSecurity: { section: "hub-security", activeWhen: "on" },
+  Lvl1Weapons: { section: "weapons-system", activeWhen: "on" },
+  ECore: { section: "engine-core-power-lock", activeWhen: "on" },
+  LoadDockDoor: { section: "loading-dock-door", activeWhen: "on" },
+  LoadGrid: { section: "loading-grid", activeWhen: "on" },
+  CryoLabs: { section: "cryo-labs", activeWhen: "on" },
+  Sleepers: { section: "cryo-sleep", activeWhen: "on" },
+};
+
 export const playerScoreMap = {
   accessed_above_quad: { value: 5 },
   accessed_bridge: { value: 5 },

@@ -687,8 +687,7 @@ export const levelFourItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 1,
     itemSize: 1,
-    isWearable: false,
-    isReadable: false,
+    isTurnable: true,
     isContainer: false,
     overrides: {
       take: "You wrap your hand around the oversized grip. It comes free only if the system isn’t keyed on; otherwise it refuses to budge, like the hardware equivalent of a disapproving look.",
@@ -700,13 +699,14 @@ export const levelFourItems: Item[] = [
     name: "view screen",
     description:
       "The viewscreen is mounted above the power station keyboard. This must be how you access the ship's power systems.",
-    sceneryDescription: `and mounted above the keyboard is a flat nineteen-inch viewscreen, where a prompt appears in the bottom corner inviting: "To log in type LOGIN".`,
+    sceneryDescription: `and mounted above the keyboard is a flat nineteen-inch viewscreen.`,
     location: "PowerGrid",
     vocab: ["view", "screen", "monitor", "video", "viewscreen"],
     itemClass: "solid",
     itemCategory: "scenery",
     meta: {
       sceneryDescriptionOrder: 2,
+      onNoPower: "The viewscreen is currently dark.",
     },
     itemWeight: 10,
     itemSize: 3,
@@ -726,6 +726,9 @@ export const levelFourItems: Item[] = [
     itemClass: "solid",
     itemCategory: "scenery",
     meta: {
+      onInsertKey:
+        "You insert the black and yellow key into the panel's keyhole.",
+      onWrongKey: "It doesn't fit in the panel's keyhole.",
       sceneryDescriptionOrder: 3,
     },
     itemWeight: 5,
@@ -735,11 +738,7 @@ export const levelFourItems: Item[] = [
     isContainer: true,
     isOpenable: false,
     capacity: 1,
-
-    overrides: {
-      insert:
-        "The large key slides into the receptacle with a heavy, mechanical click that suggests you just did something expensive.",
-    },
+    allowedContentsIds: ["PowerStationKey"],
   },
   {
     id: "PowerStationButton",
@@ -753,13 +752,13 @@ export const levelFourItems: Item[] = [
     itemClass: "solid",
     itemCategory: "scenery",
     meta: {
+      onPowered: "The red button is lit solid.",
+      powerKey: "power-initialized",
       sceneryDescriptionOrder: 4,
     },
     itemWeight: 1,
     itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
+    isPushable: true,
     overrides: {
       push: "You press the button. If the station is properly keyed, the internal fans thump to life and the console wakes up with a low, rising hum. If not, nothing happens at all—which is its own kind of ominous.",
     },

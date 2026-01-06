@@ -17,20 +17,20 @@ export const levelFiveDoors: DoorDefinition[] = [
     initiallyOpen: false,
     initiallyLocked: true,
   },
-  {
-    id: "ShuttleCockpitDoor",
-    name: "a narrow door leading into the shuttle's cockpit",
-    descriptionFromA:
-      "To the east is a narrow door leading into the shuttle's cockpit.",
-    descriptionFromB: "",
-    kind: "keyed",
-    vocab: ["door", "cockpit door"],
-    connects: {
-      roomAId: "InsideShuttle",
-      roomBId: "InsideShuttle", // Currently no way in
-    },
-    directions: { fromA: "east", fromB: "west" },
-    initiallyOpen: false,
-    initiallyLocked: true,
-  },
+  // {
+  //   id: "ShuttleCockpitDoor",
+  //   name: "a narrow door leading into the shuttle's cockpit",
+  //   descriptionFromA:
+  //     "To the east is a narrow door leading into the shuttle's cockpit.",
+  //   descriptionFromB: "",
+  //   kind: "keyed",
+  //   vocab: ["door", "cockpit door"],
+  //   connects: {
+  //     roomAId: "InsideShuttle",
+  //     roomBId: "InsideShuttle", // Currently no way in
+  //   },
+  //   directions: { fromA: "east", fromB: "west" },
+  //   initiallyOpen: false,
+  //   initiallyLocked: true,
+  // },
 ];

@@ -34,7 +34,7 @@ export function tryPut(
       return { state, message: result };
     }
 
-    return { state: result, message: "Done." };
+    return { state: result, message: host.meta?.onInsertKey ?? "Done." };
   }
 
   if (preposition === "on") {

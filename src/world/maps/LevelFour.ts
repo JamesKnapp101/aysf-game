@@ -26,7 +26,7 @@ export const LEVEL_FOUR: WorldChunk = {
       exits: [
         { direction: "south", toRoomId: "LevelFourCorridorTwo" },
         { direction: "west", doorId: "HydroponicsDoors" },
-        { direction: "east", toRoomId: "ZooOne" },
+        { direction: "north", toRoomId: "ZooOne" },
       ],
     },
     {
@@ -70,7 +70,7 @@ export const LEVEL_FOUR: WorldChunk = {
       description:
         "This is a large room, which looks to be devoted to the care of animals; there are pen areas set aside, tables which look as though they might have been used to administer medicine, and other supplies such as clippers, brushes and swabs stored throughout the room. To the north is an open doorway, which seems to lead into another, larger area where animals are kept. The doorway is framed by some kind of electronic devices which are evenly spaced and pointed inward. They are each emitting a soft, red glow. Above the doorway is a small sign lit up red which reads 'Emergency Containment'.",
       exits: [
-        { direction: "west", toRoomId: "LevelFourCorridorOne" },
+        { direction: "south", toRoomId: "LevelFourCorridorOne" },
         { direction: "north", toRoomId: "ZooTwo" },
       ],
     },

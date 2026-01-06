@@ -17,6 +17,8 @@ export function tryStandItem(
     if (item.meta?.teleport) {
       let teleportMsg = "";
       const ringId = item.meta.teleport.ring;
+      const section = item.meta.teleport
+        .section as keyof typeof state.worldState.powerRestoredSections;
       const currentOrder = item.meta.teleport.order ?? 1;
       const disksInRing = state.world.items.filter(
         (it: Item) => it.meta?.teleport?.ring === ringId
@@ -26,7 +28,7 @@ export function tryStandItem(
           (disk: Item) => disk.meta?.teleport?.order === currentOrder + 1
         ) ?? disksInRing.find((disk: Item) => disk.meta?.teleport?.order === 1);
 
-      if (!state.worldState.powerRestoredSections["teleport-pads"]) {
+      if (!state.worldState.powerRestoredSections[section]) {
         return {
           state,
           message: "You stand on the disk, but nothing happens.",

@@ -1,3 +1,4 @@
+import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
 import {
   INITIAL_CONTAINER_CONTENTS,
   INITIAL_SURFACE_CONTENTS,
@@ -37,8 +38,28 @@ export const createInitialState = (world: World): GameState => {
     items: uniqueItems,
   };
 
+  // ✅ derive coord maps from rooms + doors (doors bypassed logically)
+  const { coordByRoomId, roomIdByCoord } = deriveRoomCoordMaps(
+    normalizedWorld.rooms,
+    normalizedWorld.doors,
+    "InsideShuttle",
+    {
+      ignoreIslands: true,
+      excludeRoomIdPatterns: [/^Stair/i, /Stairwell/i, /Elevator/i, /Shaft/i],
+    }
+  );
+
+  // ✅ stash derived transmitter metadata on the world
+  const worldWithMeta: World = {
+    ...normalizedWorld,
+    meta: {
+      ...(normalizedWorld as any).meta,
+      transmitter: { coordByRoomId, roomIdByCoord },
+    },
+  };
+
   // Initialize doorStates as a map keyed by door id
-  const initialDoorStatesArray = initDoorStates(normalizedWorld.doors);
+  const initialDoorStatesArray = initDoorStates(worldWithMeta.doors);
   const doors: Record<string, DoorState> = {};
   for (const ds of initialDoorStatesArray) {
     doors[ds.id] = ds;
@@ -46,19 +67,19 @@ export const createInitialState = (world: World): GameState => {
 
   // Seed all the containers with their starting contents
   // Anything defined with location === "INVENTORY" should start in the player's inventory
-  const startingInventoryIds = normalizedWorld.items
+  const startingInventoryIds = worldWithMeta.items
     .filter((it) => it.location === "INVENTORY")
     .map((it) => it.id);
 
   const initialGameState: GameState = {
     rng: () => Math.random(),
-    world: normalizedWorld,
+    world: worldWithMeta, // ✅ use the world that includes meta
     log: getOpeningSplashLogs(),
     score: 0,
     rating: 0,
     moves: 0,
     player: {
-      roomId: "StairWellSeven",
+      roomId: "InsideShuttle",
       inventory: startingInventoryIds,
       memoriesTriggered: {
         own_name: false,
@@ -102,10 +123,10 @@ export const createInitialState = (world: World): GameState => {
         FiveEastBed: true, // for testing
       },
       powerRestoredSections: {
-        "lights-level-one": false,
+        "lights-level-one": true,
         "lights-level-two": false,
         "lights-level-three": true,
-        "lights-level-four": false,
+        "lights-level-four": true,
         "lights-level-five": false,
         "lights-level-six": false,
         "lights-level-seven": false,
@@ -115,9 +136,23 @@ export const createInitialState = (world: World): GameState => {
         "gravity-level-four": true,
         "gravity-level-five": true,
         "gravity-level-six": true,
-        "gravity-level-sevent": true,
+        "gravity-level-seven": true,
         "library-power": false,
-        "teleport-pads": true,
+        "hub-security": true,
+        "teleport-pads-green": false,
+        "teleport-pads-blue": false,
+        "teleport-pads-yellow": false,
+        "teleport-pads-brown": false,
+        "teleport-pads-white": false,
+        "teleport-pads-grey": false,
+        "engine-room-power-lock": false,
+        "weapons-system": false,
+        "loading-dock-door": true,
+        "loading-grid": false,
+        "cryo-labs": true,
+        "cryo-sleep": true,
+        "power-key-turned": false,
+        "power-initialized": false,
       },
       gravityOffRooms: {},
       visitedRooms: {
@@ -128,7 +163,7 @@ export const createInitialState = (world: World): GameState => {
         StairWellSeven: "thin",
       },
       roomAudioLevel: {
-        PowerGrid: 3,
+        PowerGrid: 1,
         StairWellSeven: 1,
       },
       roomTemp: {
@@ -223,7 +258,9 @@ export const createInitialState = (world: World): GameState => {
         body: undefined,
       },
       syringe: { loadedCartridgeId: undefined },
-      openItems: {},
+      openItems: {
+        PowerStationKeyhole: true,
+      },
       spentCartridges: {},
       containerContents: {},
       containerFilled: {},
@@ -267,6 +304,7 @@ export const createInitialState = (world: World): GameState => {
       },
     },
   };
+
   return seedInitialPlacements(initialGameState);
 };
 

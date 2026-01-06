@@ -1,0 +1,225 @@
+/* matter-transmitter-modal.css */
+
+.mt-root {
+    padding: 10px;
+    color: var(--crt-green, var(--crt-color));
+    font-family: var(--crt-font, "VT323", monospace);
+    letter-spacing: 1px;
+}
+
+.mt-top {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.15) inset;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mt-top-left {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.mt-brand-omni {
+    font-size: 34px;
+    font-weight: 900;
+}
+
+.mt-brand-dot {
+    font-size: 34px;
+    font-weight: 900;
+    opacity: 0.85;
+}
+
+.mt-brand-port {
+    font-size: 28px;
+    font-weight: 800;
+    opacity: 0.95;
+}
+
+.mt-top-right {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.mt-bars {
+    font-size: 18px;
+    font-weight: 900;
+    opacity: 0.9;
+}
+
+.mt-title {
+    font-size: 22px;
+    font-weight: 900;
+}
+
+.mt-body {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 10px;
+}
+
+.mt-left,
+.mt-right {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.15) inset;
+    padding: 10px;
+}
+
+.mt-panel-header {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    padding: 8px 10px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+}
+
+.mt-coords {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.mt-axis {
+    display: grid;
+    grid-template-rows: 28px 90px 28px;
+    align-items: center;
+    justify-items: center;
+}
+
+.mt-arrow {
+    width: 100%;
+    border: 1px solid var(--crt-green, var(--crt-color));
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 900;
+    height: 28px;
+    cursor: pointer;
+}
+
+.mt-arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.mt-digit {
+    width: 100%;
+    height: 90px;
+    border: 1px solid var(--crt-green, var(--crt-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 54px;
+    font-weight: 900;
+}
+
+.mt-subline {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0, 255, 0, 0.35);
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    font-size: 13px;
+    opacity: 0.95;
+}
+
+.mt-sub-label {
+    font-weight: 900;
+    opacity: 0.85;
+}
+
+.mt-sub-value {
+    font-weight: 900;
+}
+
+.mt-sub-spacer {
+    flex: 1;
+}
+
+.mt-right {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 10px;
+}
+
+.mt-plate {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    padding: 8px 10px;
+}
+
+.mt-plate-label {
+    font-size: 12px;
+    font-weight: 900;
+    opacity: 0.8;
+}
+
+.mt-plate-value {
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-top: 4px;
+    min-height: 20px;
+}
+
+.mt-list-wrap {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    padding: 8px 10px;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 8px;
+}
+
+.mt-list-label {
+    font-size: 12px;
+    font-weight: 900;
+    opacity: 0.8;
+}
+
+.mt-select {
+    width: 100%;
+    border: 1px solid var(--crt-green, var(--crt-color));
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 14px;
+    padding: 6px 8px;
+    outline: none;
+}
+
+.mt-select option {
+    background: #000;
+    color: var(--crt-green, var(--crt-color));
+}
+
+.mt-hint {
+    font-size: 12px;
+    opacity: 0.85;
+    line-height: 1.25;
+}
+
+.mt-transmit {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 900;
+    padding: 10px 10px;
+    cursor: pointer;
+    letter-spacing: 3px;
+}
+
+.mt-transmit:disabled {
+    opacity: 0.35;
+    cursor: default;
+}

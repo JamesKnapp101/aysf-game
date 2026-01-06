@@ -65,6 +65,8 @@ export interface Item {
   isSyringeCartridge?: boolean;
   isArmed?: boolean;
   isSqueezable?: boolean;
+  isTurnable?: boolean;
+  isPushable?: boolean;
   scoreId?: PlayerScoreId;
 }
 
@@ -186,3 +188,7 @@ export type ConsumableMeta = {
     onEmpty?: ConsumableEffect[];
   };
 };
+
+export type SwitchState = "on" | "off" | "locked" | "failure";
+
+export type SwitchStates = Record<string, SwitchState>;

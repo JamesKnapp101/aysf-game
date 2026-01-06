@@ -1,3 +1,19 @@
+import {
+  LivingQuartersFourEastItems,
+  LivingQuartersFourEastRooms,
+} from "src/world/maps/levelThree/LevelThreeLQFourEast";
+import {
+  LivingQuartersOneWestItems,
+  LivingQuartersOneWestRooms,
+} from "src/world/maps/levelThree/LevelThreeLQOneWest";
+// import {
+//   LivingQuartersThreeEastItems,
+//   LivingQuartersThreeEastRooms,
+// } from "src/world/maps/levelThree/LevelThreeLQThreeEast";
+// import {
+//   LivingQuartersThreeWestItems,
+//   LivingQuartersThreeWestRooms,
+// } from "src/world/maps/levelThree/LevelThreeLQThreeWest";
 import type { WorldChunk } from "../../game/types/gameTypes";
 import {
   levelThreeHubDoors,
@@ -5,6 +21,8 @@ import {
   levelThreeMedicalAndSpaDoors,
 } from "../doors/levelThreeDoors";
 import { drugItems } from "../Items/drugs";
+import { generalItems } from "../Items/general";
+import { levelThreeItems } from "../Items/levelThreeMisc";
 import {
   LivingQuartersFiveEastItems,
   LivingQuartersFiveEastRooms,
@@ -13,7 +31,6 @@ import {
   LivingQuartersFiveWestItems,
   LivingQuartersFiveWestRooms,
 } from "./levelThree/levelThreeLQFiveWest";
-import { levelThreeItems } from "../Items/levelThreeMisc";
 import {
   LivingQuartersSixEastItems,
   LivingQuartersSixEastRooms,
@@ -22,13 +39,16 @@ import {
   LivingQuartersSixWestItems,
   LivingQuartersSixWestRooms,
 } from "./levelThree/levelThreeLQSixWest";
-import { generalItems } from "../Items/general";
 
 export const LEVEL_THREE: WorldChunk = {
   items: [
     ...generalItems,
     ...drugItems,
     ...levelThreeItems,
+    ...LivingQuartersOneWestItems,
+    //  ...LivingQuartersThreeEastItems,
+    //  ...LivingQuartersThreeWestItems,
+    ...LivingQuartersFourEastItems,
     ...LivingQuartersFiveEastItems,
     ...LivingQuartersFiveWestItems,
     ...LivingQuartersSixEastItems,
@@ -41,6 +61,10 @@ export const LEVEL_THREE: WorldChunk = {
   ],
   teleportPads: [],
   rooms: [
+    ...LivingQuartersOneWestRooms,
+    //  ...LivingQuartersThreeEastRooms,
+    //  ...LivingQuartersThreeWestRooms,
+    ...LivingQuartersFourEastRooms,
     ...LivingQuartersFiveEastRooms,
     ...LivingQuartersFiveWestRooms,
     ...LivingQuartersSixEastRooms,
@@ -52,7 +76,7 @@ export const LEVEL_THREE: WorldChunk = {
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorTwo" },
         { direction: "east", doorId: "DOOR3AE" },
-        { direction: "west", doorId: "DOOR3AW" },
+        { direction: "west", toRoomId: "LivingQuartersTwoEast" },
       ],
     },
     {
@@ -62,8 +86,8 @@ export const LEVEL_THREE: WorldChunk = {
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorThree" },
         { direction: "south", toRoomId: "LevelThreeCorridorOne" },
-        { direction: "east", doorId: "DOOR3BE" },
-        { direction: "west", doorId: "DOOR3BW" },
+        // { direction: "east", doorId: "DOOR3BE" },
+        // { direction: "west", doorId: "DOOR3BW" },
       ],
     },
     {
@@ -95,7 +119,7 @@ export const LEVEL_THREE: WorldChunk = {
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorSix" },
         { direction: "south", toRoomId: "LevelThreeCorridorFour" },
-        { direction: "east", doorId: "DOOR3EE" },
+        // { direction: "east", doorId: "DOOR3EE" },
         { direction: "west", doorId: "DOOR3EW" },
       ],
     },
@@ -104,9 +128,19 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Level Three Corridor Six",
       description: `This is the main corridor for accessing the Level Three Living Quarters. To the east and west are doors affixed with neat black plastic labels indicating '3FE' and '3FW' respectively.`,
       exits: [
-        { direction: "north", toRoomId: "LevelThreeCorridorSeven" },
+        { direction: "north", toRoomId: "LevelThreeCorridorSixPointSix" },
         { direction: "south", toRoomId: "LevelThreeCorridorFive" },
         { direction: "east", doorId: "DOOR3FE" },
+        // { direction: "west", doorId: "DOOR3FW" },
+      ],
+    },
+    {
+      id: "LevelThreeCorridorSixPointSix",
+      name: "Damaged Corridor",
+      description: `This section of the corridor begins to show signs of significant damage up ahead to the north.`,
+      exits: [
+        { direction: "north", toRoomId: "LevelThreeCorridorSeven" },
+        { direction: "south", toRoomId: "LevelThreeCorridorSix" },
         { direction: "west", doorId: "DOOR3FW" },
       ],
     },
@@ -115,8 +149,8 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Ruined Corridor",
       description: `This is the main corridor for accessing the Level Three Living Quarters. Only one of the lights remains on here, providing just a flickering, weak electric strobe. The way north has been cut off by a violent buckle in the deck which has caused the huge metal floor plating to wrinkle, actually piercing the ceiling above it in spots. A huge amount of debris has settled in the upheaval. A small gap near the ceiling is the only way through, but it's much too small to fit through. To the west is a door affixed with neat black plastic labels reading '3GW' and a strip of yellow and black warning tape stretched across it. There is no door to the east; instead the corridor bends and heads off in that direction.`,
       exits: [
-        { direction: "south", toRoomId: "LevelThreeCorridorSix" },
-        { direction: "west", doorId: "DOOR3GW" },
+        { direction: "south", toRoomId: "LevelThreeCorridorSixPointSix" },
+        //    { direction: "west", doorId: "DOOR3GW" },
         { direction: "north", doorId: "CubbySqueeze" },
         { direction: "east", toRoomId: "LevelThreeStairAccess" },
       ],
@@ -185,9 +219,9 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Living Quarters Two East",
       description: `This set of living quarters is a complete wreck...as you cast the flashlight beam around to room you see a grey sofa which has been overturned, stuffing spilling from one side, a loveseat in similar condition lying on its side near the north wall, what looks like the splintered remains of a desk, and strewn all around are the smashed remnants of a television and what might have been a stereo...it looks as though someone or something deliberately trashed the place, and there is shattered glass, plastic, and small electronic components scattered everywhere. There are tears on the surface of the furniture, and what look like deep claw marks gouging the walls. You can see the shattered remains of the lighting near the ceiling. A door to the south has been pulverized, leaving only an empty doorway, and another doorway leads east.`,
       exits: [
-        { direction: "west", toRoomId: "LevelThreeCorridorTwo" },
+        { direction: "east", toRoomId: "LevelThreeCorridorOne" },
         { direction: "south", doorId: "TwoEastBDoor" },
-        { direction: "east", toRoomId: "TwoEastBed" },
+        { direction: "west", toRoomId: "TwoEastBed" },
       ],
     },
     {
@@ -200,7 +234,7 @@ export const LEVEL_THREE: WorldChunk = {
       id: "TwoEastBed",
       name: "Two East Bedroom",
       description: `These sleeping quarters have likewise been violently torn apart; your flashlight finds the remains of a double bed which dominates the room, the bedding torn apart and strewn everywhere. The headboard is splintered on the left side and deeply gouged with what appear to be claw marks. The mattress has been split open and tossed to one side, and the boxspring has been ripped open. An endtable and dresser have been overturned, scattering sundries across the floor to mingle with the rest of the debris. Lying on the floor is a somewhat battered message box with an integrated headset. A doorway leads back out to the west.`,
-      exits: [{ direction: "west", toRoomId: "LivingQuartersTwoEast" }],
+      exits: [{ direction: "east", toRoomId: "LivingQuartersTwoEast" }],
     },
 
     // LIVING QUARTERS TWO WEST
@@ -209,47 +243,49 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Living Quarters Two West",
       description: `This is a spartan set of living quarters, furniture-wise; there's an entertainment center complete with stereo near the north wall, with a comfortable-looking sofa and loveseat facing that general direction, and that's about it. What it lacks in furnitings, however, it makes up for in plants; there are a number of plants in pots on the floor, on an end table, and hanging from several plant hangers positioned around the room. The overall effect is rather nice; a little like being outside almost. A door leads to the south and a doorway leads west into the bedroom area. A door leads back out to the east.`,
       exits: [
-        { direction: "east", toRoomId: "LevelThreeCorridorTwo" },
-        { direction: "south", doorId: "TwoWestBDoor" },
-        { direction: "west", toRoomId: "TwoWestBed" },
+        { direction: "west", doorId: "DOOR3FE" },
+        { direction: "east", toRoomId: "TwoWestBed" },
       ],
     },
     {
       id: "TwoWestBath",
       name: "Two West Bathroom",
       description: `This is a moderately clean bathroom with a sink, toilet and half-shower. An oval mirror is mounted over the sink. A door leads back out to the north.`,
-      exits: [{ direction: "north", doorId: "TwoWestBDoor" }],
+      exits: [{ direction: "west", doorId: "TwoWestBDoor" }],
     },
     {
       id: "TwoWestBed",
       name: "Two West Bedroom",
       description: `The bedroom to these quarters is decorated in the same motif as the living area; there is a double bed dominating the center of the room, and a dresser against the southern wall with a lamp sitting on it. The rest of the room seems devoted to a variety of different plant specimens, including flowers, small potted shrubs, hanging plants and more of the ivy running along one wall. Resting on the end table is a flat, compact messaging system with an integrated headset. A doorway leads back to the Living Area to the east.`,
-      exits: [{ direction: "east", toRoomId: "LivingQuartersTwoWest" }],
+      exits: [
+        { direction: "west", toRoomId: "LivingQuartersTwoWest" },
+        { direction: "east", doorId: "TwoWestBDoor" },
+      ],
     },
 
     // LIVING QUARTERS FOUR EAST
-    {
-      id: "LivingQuartersFourEast",
-      name: "Living Quarters Four East",
-      description: `This is a modest but tasteful living room, with a sofa and loveseat combination situated around an entertainment center. There is an endtable next to the sofa. There is a doorway leading east, a door to the south, and another doorway to the west which leads back out into the corridor. The room gives the general impression that perhaps someone, or a group of people, were in here moving things around...maybe searching for something. The room is more or less in order, but looks to be in slight disarray. You notice there seems to be a good deal of cat hair on the carpet and furniture here. A door leads south, and a doorway leads into the bedroom area to the east.`,
-      exits: [
-        { direction: "west", toRoomId: "LevelThreeCorridorFour" },
-        { direction: "south", doorId: "FourEastBDoor" },
-        { direction: "east", toRoomId: "FourEastBed" },
-      ],
-    },
-    {
-      id: "FourEastBath",
-      name: "Four East Bathroom",
-      description: `Like the main living area, the bathroom looks like perhaps it was searched, then hastilly straightened up. There is a sink, toilet, and half-shower, with a mirror mounted over the sink. A door leads back out to the north.`,
-      exits: [{ direction: "north", doorId: "FourEastBDoor" }],
-    },
-    {
-      id: "FourEastBed",
-      name: "Four East Bedroom",
-      description: `This bedroom is dominated by a huge king-sized bed, piled with a comforter and a ton of pillows. There is a spot in the middle of the bed where a lot of cat hair has accumulated. Flanking the bed on one side is a dresser, and there is an end table with a brass lamp on the other side. Resting on the end table is a flat, compact messaging system with an integrated headset.`,
-      exits: [{ direction: "west", toRoomId: "LivingQuartersFourEast" }],
-    },
+    // {
+    //   id: "LivingQuartersFourEast",
+    //   name: "Living Quarters Four East",
+    //   description: `This is a modest but tasteful living room, with a sofa and loveseat combination situated around an entertainment center. There is an endtable next to the sofa. There is a doorway leading east, a door to the south, and another doorway to the west which leads back out into the corridor. The room gives the general impression that perhaps someone, or a group of people, were in here moving things around...maybe searching for something. The room is more or less in order, but looks to be in slight disarray. You notice there seems to be a good deal of cat hair on the carpet and furniture here. A door leads south, and a doorway leads into the bedroom area to the east.`,
+    //   exits: [
+    //     { direction: "west", toRoomId: "LevelThreeCorridorFour" },
+    //     { direction: "south", doorId: "FourEastBDoor" },
+    //     { direction: "east", toRoomId: "FourEastBed" },
+    //   ],
+    // },
+    // {
+    //   id: "FourEastBath",
+    //   name: "Four East Bathroom",
+    //   description: `Like the main living area, the bathroom looks like perhaps it was searched, then hastilly straightened up. There is a sink, toilet, and half-shower, with a mirror mounted over the sink. A door leads back out to the north.`,
+    //   exits: [{ direction: "north", doorId: "FourEastBDoor" }],
+    // },
+    // {
+    //   id: "FourEastBed",
+    //   name: "Four East Bedroom",
+    //   description: `This bedroom is dominated by a huge king-sized bed, piled with a comforter and a ton of pillows. There is a spot in the middle of the bed where a lot of cat hair has accumulated. Flanking the bed on one side is a dresser, and there is an end table with a brass lamp on the other side. Resting on the end table is a flat, compact messaging system with an integrated headset.`,
+    //   exits: [{ direction: "west", toRoomId: "LivingQuartersFourEast" }],
+    // },
 
     // LIVING QUARTERS SEVEN WEST
     {
@@ -364,8 +400,8 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Hub West",
       description: `This is the westernmost point of the Hub, as you follow along the outer ring of the brick-paved walkway. To the east, across the grass, you can see the obelisk at the Hub's center. The circular path continues to the north from here, where you can see the entranceway that looks like it might be a movie theater; from where you're standing you can see a small marquee over the entranceway with the words 'THE TRIALS OF FRED' posted in block lettering. The path also continues to the south where you can see the entrance to what looks like a restaurant. There is a park bench here, facing inward to the Hub's center. Sitting in the park bench is the body of a middle aged woman, dressed in a white blouse and tartan skirt.`,
       exits: [
-        { direction: "south", toRoomId: "RestaurantEntrance" },
-        { direction: "north", toRoomId: "MovieEntrance" },
+        { direction: "southeast", toRoomId: "RestaurantEntrance" },
+        { direction: "northeast", toRoomId: "MovieEntrance" },
         { direction: "east", toRoomId: "HubTree" },
       ],
     },
@@ -421,9 +457,9 @@ export const LEVEL_THREE: WorldChunk = {
       exits: [
         { direction: "southeast", toRoomId: "HubCenter" },
         { direction: "northwest", toRoomId: "MovieTheatreOne" },
-        { direction: "west", toRoomId: "Projection" },
+        { direction: "southwest", toRoomId: "HubWest" },
         { direction: "east", toRoomId: "HubNorth" },
-        { direction: "south", toRoomId: "HubWest" },
+        { direction: "south", toRoomId: "HubTree" },
         { direction: "up", toRoomId: "Projection" },
       ],
     },
@@ -432,7 +468,7 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Projector Room",
       description: `This is the movie theater's projection room, a small, cozy area which looks to have been torn to shreds; The remains of what looks like a wooden chair lies in pieces and the walls and floor have been gouged with what look like deep claw marks. A trail of dried blood heads in the direction of the door then peters out. There is a small window which overlooks the movie theater below, and the projector, looking a bit battered, stares out through this window, the lens dark.`,
       exits: [
-        { direction: "east", toRoomId: "MovieEntrance" },
+        //   { direction: "east", toRoomId: "MovieEntrance" },
         { direction: "down", toRoomId: "MovieEntrance" },
       ],
     },
@@ -458,9 +494,10 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Restaurant Entrance",
       description: `This is the entrance to a restaurant with a small outdoor-cafe area. There are several round tables, each surrounded by several chairs, situated on a level area covered in red, white, and green colored tile. Mounted over the door leading in is a large, rustic-looking painted sign which reads 'ALBERTOS'. A paved brick path leads northeast through a grassy area toward a large, stone obelisk. The path around the hub's perimeter also leads north and east. A glass door leads southwest into the establishment.`,
       exits: [
+        { direction: "northwest", toRoomId: "HubWest" },
         { direction: "northeast", toRoomId: "HubCenter" },
         { direction: "southwest", toRoomId: "Restaurant" },
-        { direction: "north", toRoomId: "HubWest" },
+        { direction: "north", toRoomId: "HubTree" },
         { direction: "east", toRoomId: "HubSouth" },
         { direction: "up", toRoomId: "UpOnTheRoof" },
       ],

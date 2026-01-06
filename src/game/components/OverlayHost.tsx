@@ -1,3 +1,4 @@
+import { MatterTransmitterModal } from "@game/components/MatterTransmitterModal";
 import { PowerStationTerminalModal } from "../components/PowerStationTerminalModal";
 import { useUIOverlayStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
@@ -13,9 +14,11 @@ type RunAction = (verb: string, args?: Record<string, unknown>) => void;
 export function OverlayHost({
   runAction,
   state,
+  setGameState,
 }: {
   runAction: RunAction;
   state: GameState;
+  setGameState: (updater: (prev: GameState) => GameState) => void;
 }) {
   const overlay = useUIOverlayStore((s) => s.overlay);
   const closeOverlay = useUIOverlayStore((s) => s.closeOverlay);
@@ -64,7 +67,23 @@ export function OverlayHost({
     }
 
     case "power-station-terminal": {
-      return <PowerStationTerminalModal onClose={closeOverlay} state={state} />;
+      return (
+        <PowerStationTerminalModal
+          onClose={closeOverlay}
+          state={state}
+          setGameState={setGameState}
+        />
+      );
+    }
+
+    case "matter-transmitter": {
+      return (
+        <MatterTransmitterModal
+          onClose={closeOverlay}
+          state={state}
+          setGameState={setGameState}
+        />
+      );
     }
 
     case "camera-gun-viewer": {

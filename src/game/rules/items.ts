@@ -71,6 +71,21 @@ export function tryTakeItem(
     (i) => i.vocab.includes(lower) || i.name.toLowerCase() === lower
   );
 
+  if (itemOnFloor?.id === "PowerStationKey") {
+    if (
+      state.itemState.containerContents["PowerStationKeyhole"]?.includes(
+        "PowerStationKey"
+      ) &&
+      state.worldState.powerRestoredSections["power-key-turned"]
+    ) {
+      return {
+        state,
+        message:
+          "The key appears to be locked in place now, you can't pull it free again.",
+      };
+    }
+  }
+
   if (noun === "water") {
     const waterSourcesInRoom = getWaterSourcesInRoom(state);
     if (waterSourcesInRoom.length === 0) {

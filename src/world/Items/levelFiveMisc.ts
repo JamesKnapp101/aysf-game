@@ -1197,24 +1197,22 @@ export const levelFiveItems: Item[] = [
     id: "MatterTransmitter",
     name: "matter transmitter plate",
     description:
-      "The aft section of the shuttle is dominated by a large mechanism built around an oval metal plate about six feet by four. A sturdy base and central column support it from below, while a smaller square plate hangs overhead like a waiting guillotine. Between them runs a dense spine of electronics, cabling, and cooling panels. A side console juts out from the base, fitted with an LCD readout that displays six shifting values, a keypad for entering coordinates, and a glowing green contact that looks suspiciously like a go button.",
-    initialDescription:
-      "The aft section of the shuttle is devoted to a towering device built around a large, slightly curved metal plate, paired with a smaller plate mounted on the ceiling above. A console with an LCD readout, keypad, and glowing green contact extends from the base.",
+      "The machine has an emblem on it that says 'OMNI-Port - Matter Transceiver.' It looks like the metal plate is for sending and receiving.",
     sceneryDescription:
-      "A tall column of machinery frames an oval metal plate and its smaller twin overhead, the entire rig humming quietly with the potential to tear things apart and reassemble them somewhere else—assuming it feels like it.",
+      "The aft section of the shuttle is devoted to a large mechanism of some kind which consists of a base with a sturdy column, which supports a large, oval, slightly curved metal plate, about six feet by four feet. Above the plate is another, smaller square metal plate mounted on the ceiling. The base and column are home to a complex series of electronics and wires. A panel is mounted to the unit, extending outward from just in front of the metal plate.  The panel is home to an LCD readout which displays six different values, and in front of that is a keypad for setting the values. Beside the keypad is a glowing green contact.",
     location: "InsideShuttle",
     vocab: ["matter", "transmitter", "device", "plate"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 20,
     itemSize: 20,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
+    isSurface: true,
     isOpenable: false,
-    capacity: 2,
-
-    providesLight: true,
+    capacity: 1,
+    meta: {
+      onPlateOccupied:
+        "There's already another item on the machine's transceiver plate.",
+    },
   },
   {
     id: "MTManual",

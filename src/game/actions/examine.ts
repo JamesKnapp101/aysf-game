@@ -56,10 +56,23 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   }
 
   if (item.id === "PowerStationMonitor") {
+    if (!state.worldState.powerRestoredSections["power-initialized"]) {
+      return { state, message: item?.meta?.onNoPower ?? "The screen is dark." };
+    }
     return {
       state,
       overlay: {
         kind: "power-station-terminal",
+        isOn: true,
+      },
+    };
+  }
+
+  if (item.id === "MatterTransmitter") {
+    return {
+      state,
+      overlay: {
+        kind: "matter-transmitter",
         isOn: true,
       },
     };
@@ -70,7 +83,7 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     const containerContents = state.itemState.containerFilled[item.id];
     itemDesc += ` The ${item.name} is filled with ${containerContents}`;
   } else if (item.isContainer && state.itemState.openItems[item.id]) {
-    const containerContents = state.itemState.containerContents[item.id];
+    const containerContents = state.itemState.containerContents[item.id] ?? [];
     let containerItems: Item[] = [];
     for (const itemId of containerContents) {
       const containerItem = getItemById(state, itemId);
