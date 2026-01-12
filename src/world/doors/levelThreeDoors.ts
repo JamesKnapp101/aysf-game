@@ -44,7 +44,7 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     kind: "standard",
     vocab: ["west door", "door 3aw"],
     connects: {
-      roomAId: "LivingQuartersTwoEast",
+      roomAId: "LivingQuartersOneWest",
       roomBId: "LevelThreeCorridorOne",
     },
     directions: { fromA: "west", fromB: "east" },
@@ -154,7 +154,7 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     vocab: ["east door", "door 3ce"],
     connects: {
       roomAId: "LevelThreeCorridorThree",
-      roomBId: "LivingQuartersFiveEast",
+      roomBId: "LivingQuartersThreeEast",
     },
     directions: { fromA: "east", fromB: "west" },
     initiallyOpen: false,
@@ -170,7 +170,7 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     vocab: ["west door", "door 3cw"],
     connects: {
       roomAId: "LevelThreeCorridorThree",
-      roomBId: "LivingQuartersFiveWest",
+      roomBId: "LivingQuartersThreeWest",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
@@ -265,7 +265,7 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     vocab: ["west door", "door 3ew"],
     connects: {
       roomAId: "LevelThreeCorridorFive",
-      roomBId: "LivingQuartersSixWest",
+      roomBId: "LivingQuartersFiveWest",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
@@ -313,7 +313,7 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     vocab: ["east door", "door 3fe"],
     connects: {
       roomAId: "LevelThreeCorridorSix",
-      roomBId: "LivingQuartersTwoWest",
+      roomBId: "LivingQuartersSixEast",
     },
     directions: { fromA: "east", fromB: "west" },
     initiallyOpen: false,
@@ -358,7 +358,7 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     vocab: ["west door", "door 3fw"],
     connects: {
       roomAId: "LevelThreeCorridorSixPointSix",
-      roomBId: "LivingQuartersSixEast",
+      roomBId: "LivingQuartersSixWest",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
@@ -400,6 +400,23 @@ export const levelThreeHubDoors: DoorDefinition[] = [
     initiallyOpen: true,
     initiallyLocked: false,
   },
+  {
+    id: "WalkInDoor",
+    name: "walk-in door",
+    descriptionFromA:
+      "To the north is a large, heavy-looking door of polished steel, with a pull handle.",
+    descriptionFromB:
+      "To the south is the freezer door, covered with a thin layer of frost.",
+    kind: "keyed",
+    vocab: ["freezer door", "walk-in door", "walk in door"],
+    connects: {
+      roomAId: "Kitchen",
+      roomBId: "WalkIn",
+    },
+    directions: { fromA: "north", fromB: "south" },
+    initiallyOpen: true,
+    initiallyLocked: false,
+  },
 ];
 
 export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
@@ -408,16 +425,16 @@ export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
     id: "LevelThreeSecondCorrThreeDoor",
     name: "aluminum and glass door",
     descriptionFromA:
-      "To the west is a large glass door with an aluminum frame.",
+      "To the north is a large glass door with an aluminum frame.",
     descriptionFromB:
-      "To the east is a large glass door with an aluminum frame.",
+      "To the south is a large glass door with an aluminum frame.",
     kind: "keyed",
     vocab: ["door", "aluminum door", "glass door", "aluminum and glass door"],
     connects: {
       roomAId: "LevelThreeSecondCorridorThree",
       roomBId: "Spa",
     },
-    directions: { fromA: "west", fromB: "east" },
+    directions: { fromA: "north", fromB: "south" },
     initiallyOpen: false,
     initiallyLocked: false,
   },
@@ -442,16 +459,16 @@ export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
     id: "SteamRoomDoor",
     name: "heavy glass door",
     descriptionFromA:
-      "To the south is a heavy glass door that looks into a tiled steam room.",
+      "To the east is a heavy glass door that looks into a tiled steam room.",
     descriptionFromB:
-      "To the north, a heavy glass door looks out into the main Spa.",
+      "To the west, a heavy glass door looks out into the main Spa.",
     kind: "standard",
     vocab: ["glass door", "heavy glass door", "steam door", "steam room door"],
     connects: {
       roomAId: "Spa",
       roomBId: "SteamRoom",
     },
-    directions: { fromA: "south", fromB: "north" },
+    directions: { fromA: "east", fromB: "west" },
     initiallyOpen: false,
     initiallyLocked: false,
   },

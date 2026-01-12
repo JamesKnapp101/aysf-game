@@ -1,7 +1,7 @@
-import type { Item } from "../../../game/types/itemTypes";
-import { createLivingQuarter } from "../livingQuartersTemplate";
+import { Item } from "@game/types/itemTypes";
+import { createLivingQuarter } from "src/world/maps/livingQuartersTemplate";
 
-export const LQFiveEastCustomItems: Item[] = [
+export const LQThreeEastCustomItems: Item[] = [
   {
     id: "AlicesDaughter",
     name: "little girl's body",
@@ -14,7 +14,7 @@ She wears pajamas, her posture suggesting sleep rather than death, which makes i
 [[newline]]Lying on the living room floor is the body of a young girl who looks to have been no more than nine, now still, and cold.
 `,
     initialDescription: undefined,
-    location: "LivingQuartersFiveEast",
+    location: "LivingQuartersThreeEast",
     vocab: ["little", "girl", "body", "corpse"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -38,7 +38,7 @@ It’s twisted tightly in small fists, as though letting go was never an option.
     sceneryDescription: `
 Draped over the girl’s body is a flannel blanket, wrapped around her with a care that feels careful, and deliberate. 
 `,
-    location: "LivingQuartersFiveEast",
+    location: "LivingQuartersThreeEast",
     vocab: ["flannel", "blanket"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -63,7 +63,7 @@ Dark boot tracks interrupt the neatness at odd intervals, meandering from door t
     The carpet is a soft, light cream color, the fibers clean and plush underfoot, except where a series of dark boot prints have crushed it flat
 
 `,
-    location: "LivingQuartersFiveEast",
+    location: "LivingQuartersThreeEast",
     vocab: ["cream", "colored", "carpet"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -86,7 +86,7 @@ The pattern of the prints tells a whole story without needing faces: multiple pe
     sceneryDescription: `
     Heavy boot tracks cross the carpet, several pairs at least. They enter from the west, fan out toward the southern door and eastern doorway, then converge and then leave the way they came.
 `,
-    location: "LivingQuartersFiveEast",
+    location: "LivingQuartersThreeEast",
     vocab: ["boot", "tracks", "footprints", "prints"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -101,7 +101,7 @@ The pattern of the prints tells a whole story without needing faces: multiple pe
   },
 
   {
-    id: "FiveEastBrownStains",
+    id: "ThreeEastBrownStains",
     name: "brown stains",
     description: `
 A faint trail of little brown marks—too deliberate to be random, too small to be made by shoes.
@@ -110,7 +110,7 @@ They look like something crawled here, paused, then continued on.
     sceneryDescription: `
 On the bathroom surfaces are faint brown marks, like tiny tracks pressed into place and forgotten.
 `,
-    location: "FiveEastBath",
+    location: "ThreeEastBath",
     vocab: ["brown", "stain", "stains", "marks", "spot", "spots"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -123,17 +123,17 @@ On the bathroom surfaces are faint brown marks, like tiny tracks pressed into pl
 ];
 
 export const {
-  rooms: LivingQuartersFiveEastRooms,
-  items: LivingQuartersFiveEastItems,
+  rooms: LivingQuartersThreeEastRooms,
+  items: LivingQuartersThreeEastItems,
 } = createLivingQuarter({
-  prefix: "FiveEast",
-  designator: "Five East",
-  livingRoomId: "LivingQuartersFiveEast",
-  bedRoomId: "FiveEastBed",
-  bathRoomId: "FiveEastBath",
-  corridorRoomId: "LevelThreeCorridorFive",
+  prefix: "ThreeEast",
+  designator: "Three East",
+  livingRoomId: "LivingQuartersThreeEast",
+  bedRoomId: "ThreeEastBed",
+  bathRoomId: "ThreeEastBath",
+  corridorRoomId: "LevelThreeCorridorThree",
   corridorDoorId: "DOOR3CE",
-  bathDoorId: "FiveEastBDoor",
+  bathDoorId: "ThreeEastBDoor",
 
   livingDescription: `
 This is a small living room dominated by a large seating area, with a cozy decor that has recently been upset, as if the furniture had been jostled by frantic movement through the room. [[SCENERY]] The room is dimly lit, with eerie shadows playing across the walls and ceiling. An open doorway to the east leads to a bedroom.
@@ -151,22 +151,22 @@ The air smells faintly of fabric and something antiseptic, a combination that li
 A doorway leads back west into the living area.
 `,
 
-  customItems: LQFiveEastCustomItems,
+  customItems: LQThreeEastCustomItems,
 
   fixtureIds: {
-    endTableLiving: "FiveEastEndtable",
-    sofaLiving: "FiveEastSofa",
-    loveseatLiving: "FiveEastLoveseat",
-    entertainmentLiving: "FiveEastEntertainment",
-    bed: "FiveEastBedding",
-    dresser: "FiveEastDresser",
-    closet: "FiveEastCloset",
+    endTableLiving: "ThreeEastEndtable",
+    sofaLiving: "ThreeEastSofa",
+    loveseatLiving: "ThreeEastLoveseat",
+    entertainmentLiving: "ThreeEastEntertainment",
+    bed: "ThreeEastBedding",
+    dresser: "ThreeEastDresser",
+    closet: "ThreeEastCloset",
     phone: "PHONE5EBed",
-    sink: "FiveEastSink",
-    mirror: "FiveEastMirror",
-    shower: "FiveEastShower",
-    washlet: "FiveEastBowl",
-    medicineChest: "FiveEastMedicineChest",
+    sink: "ThreeEastSink",
+    mirror: "ThreeEastMirror",
+    shower: "ThreeEastShower",
+    washlet: "ThreeEastBowl",
+    medicineChest: "ThreeEastMedicineChest",
   },
 
   fixtureText: {

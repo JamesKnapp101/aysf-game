@@ -1,9 +1,9 @@
-import type { Item } from "../../../game/types/itemTypes";
-import { createLivingQuarter } from "../livingQuartersTemplate";
+import { Item } from "@game/types/itemTypes";
+import { createLivingQuarter } from "src/world/maps/livingQuartersTemplate";
 
-export const LQFiveWestCustomItems: Item[] = [
+export const LQThreeWestCustomItems: Item[] = [
   {
-    id: "FiveWestElderlyMan",
+    id: "ThreeWestElderlyMan",
     name: "elderly man's body",
     description: `
 He sits slack against the sofa cushions, posture softened into a final surrender.
@@ -13,7 +13,7 @@ One hand rests close to the other body, as if he tried to keep contact even as e
     sceneryDescription: `
 On the sofa sits an elderly man, slumped but still angled toward the person beside him, like closeness was the last thing he chose.
 `,
-    location: "LivingQuartersFiveWest",
+    location: "LivingQuartersThreeWest",
     vocab: ["elderly", "man", "body", "corpse", "husband"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -26,7 +26,7 @@ On the sofa sits an elderly man, slumped but still angled toward the person besi
   },
 
   {
-    id: "FiveWestElderlyWoman",
+    id: "ThreeWestElderlyWoman",
     name: "elderly woman's body",
     description: `
 She sits beside him, shoulders drawn inward beneath the shared blanket, as if she was trying to keep warm.
@@ -37,7 +37,7 @@ The same faint red speckling marks the edges of her mouth and eyes, delicate and
 Beside him sits an elderly woman, leaned close enough that their shoulders still touch.
 It looks like they meant to wait something out together, and never got the chance to stand again.
 `,
-    location: "LivingQuartersFiveWest",
+    location: "LivingQuartersThreeWest",
     vocab: ["elderly", "woman", "body", "corpse", "wife"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -50,7 +50,7 @@ It looks like they meant to wait something out together, and never got the chanc
   },
 
   {
-    id: "FiveWestKnitBlanket",
+    id: "ThreeWestKnitBlanket",
     name: "knit blanket",
     description: `
 A thick knit blanket, heavy with warmth it can’t deliver anymore.
@@ -59,7 +59,7 @@ The yarn is slightly pilled and repaired in places, kept alive by patient hands.
     sceneryDescription: `
 A knit blanket is wrapped around both of their shoulders, arranged with quiet care, as if someone tried to make the end less frightening.
 `,
-    location: "LivingQuartersFiveWest",
+    location: "LivingQuartersThreeWest",
     vocab: ["knit", "blanket", "throw", "afghan"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -70,7 +70,7 @@ A knit blanket is wrapped around both of their shoulders, arranged with quiet ca
     isContainer: false,
   },
   {
-    id: "FiveWestCarpet",
+    id: "ThreeWestCarpet",
     name: "carpet",
     description: `
 A faded carpet with a careful vacuum pattern that stops abruptly near the doorway,
@@ -79,7 +79,7 @@ as if whoever kept it up finally ran out of time.
     sceneryDescription: `
 A worn carpet covers the living room floor, its fibers flattened in places where people paused and sat for long hours.
 `,
-    location: "LivingQuartersFiveWest",
+    location: "LivingQuartersThreeWest",
     vocab: ["carpet", "floor", "rug"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -91,7 +91,7 @@ A worn carpet covers the living room floor, its fibers flattened in places where
   },
 
   {
-    id: "FiveWestFootprints",
+    id: "ThreeWestFootprints",
     name: "footprints",
     description: `
 Overlapping prints cross the carpet—lighter house-shoe marks and heavier boots that don’t belong in a home.
@@ -99,7 +99,7 @@ Overlapping prints cross the carpet—lighter house-shoe marks and heavier boots
     sceneryDescription: `
 Footprints overlap in muted layers: slow, shuffling steps, and then sharper boot treads that cut through them like an intrusion.
 `,
-    location: "LivingQuartersFiveWest",
+    location: "LivingQuartersThreeWest",
     vocab: ["footprints", "prints", "tracks"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -110,7 +110,7 @@ Footprints overlap in muted layers: slow, shuffling steps, and then sharper boot
     isContainer: false,
   },
   {
-    id: "FiveWestPillDust",
+    id: "ThreeWestPillDust",
     name: "white residue",
     description: `
 A faint white residue clings to the corner of the counter, like something crushed and wiped away in a hurry.
@@ -118,7 +118,7 @@ A faint white residue clings to the corner of the counter, like something crushe
     sceneryDescription: `
 There’s a faint white residue on the bathroom counter, easy to miss unless you’re already looking for signs of routine and need.
 `,
-    location: "FiveWestBath",
+    location: "ThreeWestBath",
     vocab: ["white", "residue", "powder", "dust"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -129,7 +129,7 @@ There’s a faint white residue on the bathroom counter, easy to miss unless you
     isContainer: false,
   },
   {
-    id: "FiveWestWalker",
+    id: "ThreeWestWalker",
     name: "folding walker",
     description: `
 A lightweight folding walker, the grips smoothed by constant use.
@@ -138,7 +138,7 @@ One rubber foot is newer than the others.
     sceneryDescription: `
 Leaning near the bedroom doorway is a folding walker, parked with the muscle memory of long practice.
 `,
-    location: "LivingQuartersFiveWest",
+    location: "LivingQuartersThreeWest",
     vocab: ["walker", "frame", "folding", "walking"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -151,17 +151,17 @@ Leaning near the bedroom doorway is a folding walker, parked with the muscle mem
 ];
 
 export const {
-  rooms: LivingQuartersFiveWestRooms,
-  items: LivingQuartersFiveWestItems,
+  rooms: LivingQuartersThreeWestRooms,
+  items: LivingQuartersThreeWestItems,
 } = createLivingQuarter({
-  prefix: "FiveWest",
-  designator: "Five West",
-  livingRoomId: "LivingQuartersFiveWest",
-  bedRoomId: "FiveWestBed",
-  bathRoomId: "FiveWestBath",
+  prefix: "ThreeWest",
+  designator: "Three West",
+  livingRoomId: "LivingQuartersThreeWest",
+  bedRoomId: "ThreeWestBed",
+  bathRoomId: "ThreeWestBath",
   corridorRoomId: "LevelThreeCorridorFive",
   corridorDoorId: "DOOR3CW",
-  bathDoorId: "FiveWestBDoor",
+  bathDoorId: "ThreeWestBDoor",
   dirs: {
     livingToCorridorDir: "east",
     livingToBedDir: "west",
@@ -188,24 +188,24 @@ The air is thin with detergent and something sterile, as if comfort had to share
 A doorway leads back west.
 `,
 
-  customItems: LQFiveWestCustomItems,
+  customItems: LQThreeWestCustomItems,
 
   fixtureIds: {
-    endTableLiving: "FiveWestEndtable",
-    sofaLiving: "FiveWestSofa",
-    loveseatLiving: "FiveWestLoveseat",
-    entertainmentLiving: "FiveWestEntertainment",
+    endTableLiving: "ThreeWestEndtable",
+    sofaLiving: "ThreeWestSofa",
+    loveseatLiving: "ThreeWestLoveseat",
+    entertainmentLiving: "ThreeWestEntertainment",
 
-    bed: "FiveWestBedding",
-    dresser: "FiveWestDresser",
-    closet: "FiveWestCloset",
+    bed: "ThreeWestBedding",
+    dresser: "ThreeWestDresser",
+    closet: "ThreeWestCloset",
     phone: "PHONE5WBed",
 
-    sink: "FiveWestSink",
-    mirror: "FiveWestMirror",
-    shower: "FiveWestShower",
-    washlet: "FiveWestBowl",
-    medicineChest: "FiveWestMedicineChest",
+    sink: "ThreeWestSink",
+    mirror: "ThreeWestMirror",
+    shower: "ThreeWestShower",
+    washlet: "ThreeWestBowl",
+    medicineChest: "ThreeWestMedicineChest",
   },
 
   fixtureText: {

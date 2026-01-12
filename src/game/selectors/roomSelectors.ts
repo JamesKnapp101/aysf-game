@@ -57,3 +57,7 @@ export function describeRoomWithItems(state: GameState): string {
 
   return room.description + itemsText;
 }
+
+export function getPlayerRoomId(state: any): string {
+  return state.player.roomId;
+}

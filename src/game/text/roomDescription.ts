@@ -1,7 +1,10 @@
 import { generateTerminalTpadDescription } from "../helpers/gameHelpers";
 import { isItemOpen } from "../rules/containers";
 import { formatNameList } from "../rules/items";
-import { getContainerContentsItems } from "../selectors/containerSelectors";
+import {
+  getContainerContentsItems,
+  getSurfaceItems,
+} from "../selectors/containerSelectors";
 import {
   getDoorDescriptionForRoom,
   getVisibleDoorsInRoom,
@@ -125,6 +128,7 @@ export function buildRoomDescription(
     if (doorText) parts.push(doorText);
   }
 
+  // Things in other things
   const containersHere = itemsHere.filter((item) => item.isContainer);
   const containerLines: string[] = [];
 
@@ -144,6 +148,26 @@ export function buildRoomDescription(
 
   if (containerLines.length > 0) {
     parts.push(containerLines.join(" "));
+  }
+
+  // Things on other things
+  const surfacesHere = itemsHere.filter((item) => item.isSurface);
+  const surfaceLines: string[] = [];
+
+  for (const surface of surfacesHere) {
+    const contents = getSurfaceItems(state, surface);
+    if (contents.length === 0) continue;
+
+    const names = contents.map((c) => c.name);
+    const list = formatNameList(names);
+
+    surfaceLines.push(
+      `On the ${surface.name.toLowerCase()} you can see ${list}.`
+    );
+  }
+
+  if (surfaceLines.length > 0) {
+    parts.push(surfaceLines.join(" "));
   }
 
   // Certain scenery props can be powered up
@@ -166,7 +190,8 @@ export function buildRoomDescription(
       }
       // Other cases go here...
       if (sceneryItem?.meta?.onPowered) {
-        const powerKey = sceneryItem.meta.powerKey as unknown as keyof typeof state.worldState.powerRestoredSections;
+        const powerKey = sceneryItem.meta
+          .powerKey as unknown as keyof typeof state.worldState.powerRestoredSections;
         if (powerKey && state.worldState.powerRestoredSections[powerKey]) {
           parts.push(sceneryItem.meta?.onPowered);
         }

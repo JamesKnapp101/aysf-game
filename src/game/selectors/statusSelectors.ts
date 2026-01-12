@@ -1,5 +1,5 @@
 import { PAIN_STATUS_MESSAGES } from "../text/messageMaps";
-import type { GameState, StatusEffect, StatusId } from "../types/gameTypes";
+import type { GameState, StatusEffect } from "../types/gameTypes";
 import { getCurrentRoom } from "./roomSelectors";
 
 export function getActiveStatusEffectIds(state: GameState): string[] {
@@ -172,6 +172,10 @@ export function describeCurrentEffects(state: GameState): string {
   for (const statusEffect of statusEffects) {
     const effectId = statusEffect.id;
     switch (effectId) {
+      case "death":
+        effectsMsg +=
+          "You are dead. Without intervention, you will remain so.\n";
+        break;
       case "drunk":
         effectsMsg += "You are feeling a little tipsy from the alcohol.\n\n";
         break;

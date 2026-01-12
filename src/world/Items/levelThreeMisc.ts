@@ -2,6 +2,66 @@ import type { Item } from "../../game/types/itemTypes";
 
 export const levelThreeItems: Item[] = [
   {
+    id: "MensLockers",
+    name: "array of small lockers",
+    description:
+      "There are sixteen of them in total, each one can be locked with a key.",
+    sceneryDescription:
+      "Against the far wall is a grid of small lockers, four across and four down.",
+    location: "MensShower",
+    vocab: ["lockers", "locker"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+  },
+  {
+    id: "WomensLockers",
+    name: "array of small lockers",
+    description:
+      "There are sixteen of them in total, each one can be locked with a key.",
+    sceneryDescription:
+      "Against the far wall is a grid of small lockers, four across and four down.",
+    location: "WomensShower",
+    vocab: ["lockers", "locker"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+  },
+  {
+    id: "MensLockerKey5",
+    name: "blue locker key, labeled '5'",
+    description:
+      "It's a small key with a blue rubber grip. The grip has the number '5' pressed into it.",
+    location: "INVENTORY",
+    vocab: ["key", "locker key", "five", "5"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      lockerType: "men",
+      lockerIndex: 5,
+    },
+  },
+  {
+    id: "WomensLockerKey12",
+    name: "white locker key, labeled '12'",
+    description:
+      "It's a small key with a white rubber grip. The grip has the number '12' pressed into it.",
+    location: "INVENTORY",
+    vocab: ["key", "locker key", "twelve", "12"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      lockerType: "women",
+      lockerIndex: 12,
+    },
+  },
+  {
     id: "TAPE3AE",
     name: "warning tape",
     description:
@@ -148,7 +208,7 @@ export const levelThreeItems: Item[] = [
       "A standard-issue cabin phone, all clean lines and matte plastic. The touchpad is set flush with the surface, each contact point lighting under your fingertip.",
     sceneryDescription:
       "This handset looks newer than some of the others—less scratched, less abused. It rests perfectly aligned on its base, the kind of detail that suggests an owner who liked things orderly, right up until order stopped mattering.",
-    location: "TwoEastBed",
+    location: "OneWestBed",
     vocab: ["phone", "handset", "headset"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -331,13 +391,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "TwoEastDEBRIS_LQ2E",
+    id: "OneWestDEBRIS_LQ2E",
     name: "debris",
     description:
       "Shattered plastic, splintered composites, and twisted metal fragments are scattered everywhere. Whatever was here before didn’t survive the outburst.",
     sceneryDescription:
       "The living area looks like it lost an argument with a wrecking ball. Desk pieces, panel shards, and anonymous chunks of hardware are piled up in drifts, smashed into splinters too small to easily identify.",
-    location: "LivingQuartersTwoEast",
+    location: "LivingQuartersOneWest",
     vocab: ["debris", "desk", "glass", "plastic", "components"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -348,13 +408,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "TwoEastDEBRIS_Bath",
+    id: "OneWestDEBRIS_Bath",
     name: "debris",
     description:
       "Fragments of fixtures and shattered polyglass litter the bathroom floor, mixed with smaller pieces of electronics that clearly don’t belong in a bathroom.",
     sceneryDescription:
       "The debris is clustered around the sink and mirror, as if someone hit them hard enough to explode both into the room. Bits of wiring and casing glitter among the ceramic shards, like someone smashed an appliance in here too for good measure.",
-    location: "TwoEastBath",
+    location: "OneWestBath",
     vocab: ["debris", "shards", "glass", "plastic", "components"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -365,13 +425,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "TwoEastDEBRIS_Bed",
+    id: "OneWestDEBRIS_Bed",
     name: "debris",
     description:
       "Splintered furniture and broken casing pieces are strewn across the sleeping area, as if someone ripped through the room with zero interest in subtlety.",
     sceneryDescription:
       "Around the bed, the debris forms a chaotic halo of broken slats, cracked paneling, and bent brackets. It feels less like damage from an accident and more like the aftermath of something that very specifically wanted the room destroyed.",
-    location: "TwoEastBed",
+    location: "OneWestBed",
     vocab: ["debris", "splinters", "glass", "plastic", "components"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -382,13 +442,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "TwoEastSTEREO",
+    id: "OneWestSTEREO",
     name: "electronics",
     description:
       "A jumbled heap of circuitry, cracked display panels, and warped housings. It might once have been a television, a stereo, or an all-in-one entertainment center.",
     sceneryDescription:
       "The tangle of electronics is too broken to identify cleanly. Heat has bubbled the plastic in places, while sharp metal fins and half-melted connectors jut out at odd angles. You can almost imagine which piece went where, but whatever it played isn’t playing anymore.",
-    location: "LivingQuartersTwoEast",
+    location: "LivingQuartersOneWest",
     vocab: ["television", "tv", "stereo", "entertainment", "center"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -405,7 +465,7 @@ export const levelThreeItems: Item[] = [
       "Long gouges rake across the wall and furniture, deep enough to expose the internal structure beneath the finish.",
     sceneryDescription:
       "The marks are ragged but deliberate, parallel lines carved in sets of four and five. Judging from the depth of the grooves and their spacing, whatever made them had claws both very long and very sharp, and absolutely no respect for interior design.",
-    location: "LivingQuartersTwoEast",
+    location: "LivingQuartersOneWest",
     vocab: ["claw", "marks", "tears", "mark"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -422,7 +482,7 @@ export const levelThreeItems: Item[] = [
       "Several deep scratches score the bathroom door and tiles, as if something tried very hard to get in—or out.",
     sceneryDescription:
       "The gouges on the bathroom surfaces are unpleasantly specific. Claws have ripped through synthetic wood, plaster, even a bit of ceramic, leaving white and gray scars against the smooth finishes. Some marks curve mid-swipe, suggesting whatever it was changed its mind mid-attack.",
-    location: "TwoEastBath",
+    location: "OneWestBath",
     vocab: ["claw", "marks", "tears", "scratches"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -439,7 +499,7 @@ export const levelThreeItems: Item[] = [
       "The bedframe and wall near the headboard are torn with long, brutal rakes that cut through fabric, padding, and into the structure beneath.",
     sceneryDescription:
       "The claw marks here look fresh, edges still sharp and un-softened by time. They radiate outward from where a sleeper’s throat or chest might have been, which is a thought you immediately wish you hadn’t had.",
-    location: "TwoEastBed",
+    location: "OneWestBed",
     vocab: ["claw", "marks", "tears", "gouges"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -473,7 +533,7 @@ export const levelThreeItems: Item[] = [
       "An old, chewed-on cigar butt. One end is a ragged, gnawed nub; the other is flattened and dusted with ash. From a certain angle it does look uncomfortably like a dead bug.",
     sceneryDescription:
       "The stub lies abandoned near the drain, its wrapper split and stained. Tar has seeped out in sticky dark patches, and a ring of ash flakes marks where someone ground it out with finality.",
-    location: "TwoEastBath",
+    location: "OneWestBath",
     vocab: ["butt", "bug", "dead", "cigar"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -484,13 +544,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "TWOEASTMATTRESS",
+    id: "OneWestMATTRESS",
     name: "distressed mattress",
     description:
       "The mattress has been split open, its stuffing spilled out in uneven heaps. Springs poke through the torn fabric like exposed bone.",
     sceneryDescription:
       "The top layer hangs in ragged flaps, revealing clumps of synthetic fill and metal coils bent into awkward angles. Whatever did this wasn’t just trying to find something—it was making a point.",
-    location: "TwoEastBed",
+    location: "OneWestBed",
     vocab: ["mattress"],
     itemClass: "solid",
     itemCategory: "scenery",

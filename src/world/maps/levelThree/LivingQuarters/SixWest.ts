@@ -1,9 +1,9 @@
-import type { Item } from "../../../game/types/itemTypes";
-import { createLivingQuarter } from "../../maps/livingQuartersTemplate";
+import { Item } from "@game/types/itemTypes";
+import { createLivingQuarter } from "src/world/maps/livingQuartersTemplate";
 
-const SixEastCustomItems: Item[] = [
+const SixWestCustomItems: Item[] = [
   {
-    id: "SixEastBoyfriendBody",
+    id: "SixWestBoyfriendBody",
     name: "man's body",
     description: `
 He lies collapsed in the shower, shoulders hunched as if he tried to disappear into the corner.
@@ -12,7 +12,7 @@ His wrists are cut; the blood has dried in layered stains that won’t tell you 
 Where his eyes should be is only damage, raw and deliberate.`,
     sceneryDescription: `
 In the shower lies a man’s body, slumped against the tile, streaked with paint and dried blood.`,
-    location: "SixEastBath",
+    location: "SixWestBath",
     vocab: ["man", "body", "corpse", "boyfriend"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -25,7 +25,7 @@ In the shower lies a man’s body, slumped against the tile, streaked with paint
   },
 
   {
-    id: "SixEastPaintbrush",
+    id: "SixWestPaintbrush",
     name: "paintbrush",
     description: `
 A paintbrush with bristles clotted hard.
@@ -33,7 +33,7 @@ The handle has been sharpened down to a brutal point.
 Dried paint crusts the wood, and darker stains cling where fingers gripped too tightly.`,
     sceneryDescription: `
 Near the shower drain lies a paintbrush, its handle whittled into a sharp point and smeared with paint and blood.`,
-    location: "SixEastBath",
+    location: "SixWestBath",
     vocab: ["paintbrush", "brush"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -46,14 +46,14 @@ Near the shower drain lies a paintbrush, its handle whittled into a sharp point 
   },
 
   {
-    id: "SixEastRazorBlade",
+    id: "SixWestRazorBlade",
     name: "razor blade",
     description: `
 A single razor blade, bare and utilitarian.
 One edge is nicked. The metal is spotted with brown that isn’t rust.`,
     sceneryDescription: `
 On the bathroom floor, near the shower, a razor blade lies where it fell and stayed.`,
-    location: "SixEastBath",
+    location: "SixWestBath",
     vocab: ["razor", "blade"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -66,7 +66,7 @@ On the bathroom floor, near the shower, a razor blade lies where it fell and sta
   },
 
   {
-    id: "SixEastPaintSmears",
+    id: "SixWestPaintSmears",
     name: "paint smears",
     description: `
 Color dragged across tile and glass in wide, impatient swipes.
@@ -74,7 +74,7 @@ Some strokes are thick enough to hold texture; others are smeared thin, wiped ne
 It never resolves into a picture. It only insists something happened.`,
     sceneryDescription: `
 Paint is smeared across the shower and nearby surfaces, bright strokes turned grim under the bathroom light.`,
-    location: "SixEastBath",
+    location: "SixWestBath",
     vocab: ["paint", "smears", "streaks", "color"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -85,7 +85,7 @@ Paint is smeared across the shower and nearby surfaces, bright strokes turned gr
     isContainer: false,
   },
   {
-    id: "SixEastElliptical",
+    id: "SixWestElliptical",
     name: "elliptical machine",
     description: `
 A compact elliptical with clean grips and a small readout panel.
@@ -93,7 +93,7 @@ The frame is sturdy and quiet, built for repetition.
 A faint saltiness clings to the handles despite the ship’s filtered air.`,
     sceneryDescription: `
 Near one wall of the living area stands an elliptical machine, positioned like it belonged in the daily rhythm here.`,
-    location: "LivingQuartersSixEast",
+    location: "LivingQuartersSixWest",
     vocab: ["elliptical", "machine", "trainer"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -106,7 +106,7 @@ Near one wall of the living area stands an elliptical machine, positioned like i
   },
 
   {
-    id: "SixEastFicus",
+    id: "SixWestFicus",
     name: "synthetic ficus",
     description: `
 A tall synthetic ficus with glossy leaves that never curl or brown.
@@ -114,7 +114,7 @@ The trunk is a molded twist meant to look alive.
 Dust has gathered in the upper leaves where no one remembered to reach.`,
     sceneryDescription: `
 In a large pot stands a synthetic ficus reaching toward the ceiling, too perfect to feel comforting.`,
-    location: "LivingQuartersSixEast",
+    location: "LivingQuartersSixWest",
     vocab: ["ficus", "plant", "tree", "synthetic"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -125,7 +125,7 @@ In a large pot stands a synthetic ficus reaching toward the ceiling, too perfect
     isContainer: false,
   },
   {
-    id: "SixEastBlackCanvas",
+    id: "SixWestBlackCanvas",
     name: "black canvas",
     description: `
 An oil canvas painted entirely black.
@@ -133,7 +133,7 @@ The surface is matte in places, glossy in others, as if the paint was applied in
 Up close, the finish looks disturbed by faint texture beneath.`,
     sceneryDescription: `
 Leaning in the bedroom is a canvas painted solid black, propped as if it was set aside rather than displayed.`,
-    location: "SixEastBed",
+    location: "SixWestBed",
     vocab: ["canvas", "painting", "black"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -149,14 +149,14 @@ Leaning in the bedroom is a canvas painted solid black, propped as if it was set
     },
   },
   {
-    id: "SixEastGameConsole",
+    id: "SixWestGameConsole",
     name: "game console",
     description: `
 A compact game console with a dark casing and a single status light.
 The ports are clean. The power button gives no response.`,
     sceneryDescription: `
 Beneath the entertainment unit sits a small game console, tucked neatly into place.`,
-    location: "LivingQuartersSixEast",
+    location: "LivingQuartersSixWest",
     vocab: ["console", "game", "system"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -170,17 +170,17 @@ Beneath the entertainment unit sits a small game console, tucked neatly into pla
 ];
 
 export const {
-  rooms: LivingQuartersSixEastRooms,
-  items: LivingQuartersSixEastItems,
+  rooms: LivingQuartersSixWestRooms,
+  items: LivingQuartersSixWestItems,
 } = createLivingQuarter({
-  prefix: "SixEast",
-  designator: "Six East",
-  livingRoomId: "LivingQuartersSixEast",
-  bedRoomId: "SixEastBed",
-  bathRoomId: "SixEastBath",
+  prefix: "SixWest",
+  designator: "Six West",
+  livingRoomId: "LivingQuartersSixWest",
+  bedRoomId: "SixWestBed",
+  bathRoomId: "SixWestBath",
   corridorRoomId: "LevelThreeCorridorSixPointSix",
   corridorDoorId: "DOOR3FW",
-  bathDoorId: "SixEastBDoor",
+  bathDoorId: "SixWestBDoor",
   dirs: {
     livingToCorridorDir: "east",
     bedToLivingDir: "east",
@@ -205,22 +205,22 @@ The air smells faintly of fabric and something clean, not quite pleasant.
 Even here, the ship’s stillness feels watched.
 A doorway leads back west.`,
 
-  customItems: SixEastCustomItems,
+  customItems: SixWestCustomItems,
 
   fixtureIds: {
-    endTableLiving: "SixEastEndtable",
-    sofaLiving: "SixEastSofa",
-    loveseatLiving: "SixEastLoveseat",
-    entertainmentLiving: "SixEastEntertainment",
-    bed: "SixEastBedding",
-    dresser: "SixEastDresser",
-    closet: "SixEastCloset",
+    endTableLiving: "SixWestEndtable",
+    sofaLiving: "SixWestSofa",
+    loveseatLiving: "SixWestLoveseat",
+    entertainmentLiving: "SixWestEntertainment",
+    bed: "SixWestBedding",
+    dresser: "SixWestDresser",
+    closet: "SixWestCloset",
     phone: "PHONE6EBed",
-    sink: "SixEastSink",
-    mirror: "SixEastMirror",
-    shower: "SixEastShower",
-    washlet: "SixEastBowl",
-    medicineChest: "SixEastMedicineChest",
+    sink: "SixWestSink",
+    mirror: "SixWestMirror",
+    shower: "SixWestShower",
+    washlet: "SixWestBowl",
+    medicineChest: "SixWestMedicineChest",
   },
 
   fixtureText: {

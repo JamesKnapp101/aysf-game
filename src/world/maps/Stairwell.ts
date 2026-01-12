@@ -148,7 +148,7 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "east", doorId: "StairDoorThree" },
         { direction: "west", toRoomId: "LevelThreeCorridorSeven" },
-        { direction: "south", toRoomId: "TPADTerminal" },
+        { direction: "north", toRoomId: "TPADTerminal" },
       ],
     },
     {
@@ -156,7 +156,7 @@ export const STAIRWELL: WorldChunk = {
       name: "Terminal",
       description:
         "This is a large room, rectangular in shape, which looks to have been designed to accomodate a large amount of people. The walls  and floor are covered with a white, ceramic tile, and painted on the floor are a series of black lines which seem to mark off areas where queues are  formed. Along the southern wall where the black lines are directed are a series of six colored disks, each about four feet in diameter and evenly spaced  about four feet apart. The disks are colored, from left to right facing the southern wall; green, blue, yellow, brown, white, and grey.",
-      exits: [{ direction: "north", toRoomId: "LevelThreeStairAccess" }],
+      exits: [{ direction: "south", toRoomId: "LevelThreeStairAccess" }],
     },
     {
       id: "LevelFourStairAccess",

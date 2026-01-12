@@ -1,0 +1,167 @@
+.ml-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 8px 10px;
+    gap: 10px;
+}
+
+.ml-help {
+    font-size: 12px;
+    letter-spacing: 1px;
+    opacity: 0.85;
+}
+
+.ml-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    align-content: start;
+    overflow: auto;
+    padding: 6px 2px;
+}
+
+/* Locker button */
+.ml-locker {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 22px;
+    align-items: stretch;
+    border: 1px solid var(--crt-green, var(--crt-color));
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0;
+    cursor: pointer;
+    height: 96px;
+    box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.12) inset;
+}
+
+.ml-locker:focus {
+    outline: none;
+    box-shadow:
+        0 0 0 1px rgba(0, 255, 0, 0.35) inset,
+        0 0 10px rgba(0, 255, 0, 0.18);
+}
+
+.ml-door {
+    position: relative;
+    margin: 6px 0 6px 6px;
+    border: 1px solid rgba(0, 255, 0, 0.35);
+    box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.10) inset;
+}
+
+.ml-plate {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 34px;
+    text-align: center;
+    border: 1px solid rgba(0, 255, 0, 0.55);
+    padding: 2px 6px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--crt-color);
+    opacity: .8;
+}
+
+/* Right strip: handle + keyhole */
+.ml-handleStrip {
+    position: relative;
+    margin: 6px 6px 6px 4px;
+    border-left: 1px solid rgba(0, 255, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.ml-handleBar {
+    width: 10px;
+    height: 34px;
+    border: 1px solid rgba(0, 255, 0, 0.45);
+    box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.10) inset;
+}
+
+.ml-keyhole {
+    width: 10px;
+    height: 14px;
+    border: 1px solid rgba(0, 255, 0, 0.45);
+    border-radius: 6px 6px 10px 10px;
+    position: relative;
+}
+
+.ml-keyhole::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 8px;
+    background: rgba(0, 255, 0, 0.55);
+}
+
+/* Opened styling */
+.ml-locker.is-open .ml-door {
+    background: rgba(0, 255, 0, 0.15);
+}
+
+.ml-openMark {
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: 0.85;
+}
+
+/* Popup */
+.ml-popupBackdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: grid;
+    place-items: center;
+    z-index: 10;
+}
+
+.ml-popup {
+    width: min(420px, 92%);
+    border: 1px solid var(--crt-green, var(--crt-color));
+    background: rgba(0, 0, 0, 0.90);
+    padding: 12px 12px 10px 12px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.15);
+}
+
+.ml-popupTitle {
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.ml-popupList {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.ml-popupItem {
+    margin: 4px 0;
+}
+
+.ml-popupActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.ml-popupBtn {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    background: rgba(0, 0, 0, 0.35);
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--crt-color);
+}

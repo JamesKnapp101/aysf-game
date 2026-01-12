@@ -8,7 +8,7 @@ export const specialItems: Item[] = [
     description:
       "A compact LED flashlight with a sturdy metal body and a deeply recessed lens for a tight, bright beam.",
     initialDescription: "A metal LED flashlight rests on the dresser.",
-    location: "LivingQuartersFiveEast", //"MainEngineering",
+    location: "INVENTORY", //"MainEngineering",
     vocab: ["flashlight", "led", "torch"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -114,7 +114,7 @@ export const specialItems: Item[] = [
     description:
       "A red-and-white plastic cooler with a folding handle on top and a dial on the front to control the internal temperature.",
     initialDescription: "A red-and-white plastic cooler rests in the corner.",
-    location: "LivingQuartersFiveEast", // "Kitchen",
+    location: "LivingQuartersThreeEast", // "Kitchen",
     vocab: ["cooler", "icebox"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -222,14 +222,32 @@ export const specialItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 3,
     itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
     isSwitchable: true,
     isOn: false,
-    isContagious: true, // held by infected NPC
+    isContagious: true,
+    meta: {
+      remoteRadio: "RadioTwo",
+    },
   },
-
+  {
+    id: "RadioTwo",
+    name: "a two-way radio",
+    description:
+      "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, and a squat black antenna jutting from the top. The casing is cracked on one corner, but it still works.",
+    initialDescription:
+      "Laying on the floor near the man is a hand-held walkie-talkie.",
+    location: "Warehouse",
+    vocab: ["radio", "walkie-talkie", "walkie", "cb"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 3,
+    itemSize: 2,
+    isSwitchable: true,
+    isOn: true,
+    meta: {
+      remoteRadio: "Radio",
+    },
+  },
   // 11. Night Vision Goggles -----------------------------------------------
   {
     id: "NVGoggles",
@@ -238,7 +256,7 @@ export const specialItems: Item[] = [
       "A pair of high-tech goggles with a black elastic strap. Beside the right eyepiece sits a selector lens that can switch between several imaging modes.",
     initialDescription:
       "Hanging around your twin’s neck is a pair of high-tech goggles.",
-    location: "LivingQuartersFiveEast", //"Warehouse",
+    location: "LivingQuartersThreeEast", //"Warehouse",
     vocab: ["goggles", "night", "vision"],
     itemClass: "solid",
     itemCategory: "collectable",

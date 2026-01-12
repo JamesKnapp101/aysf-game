@@ -1,4 +1,9 @@
+import {
+  MensLockerModal,
+  WomensLockerModal,
+} from "@game/components/LockerModal";
 import { MatterTransmitterModal } from "@game/components/MatterTransmitterModal";
+import type { Dispatch, SetStateAction } from "react";
 import { PowerStationTerminalModal } from "../components/PowerStationTerminalModal";
 import { useUIOverlayStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
@@ -18,7 +23,7 @@ export function OverlayHost({
 }: {
   runAction: RunAction;
   state: GameState;
-  setGameState: (updater: (prev: GameState) => GameState) => void;
+  setGameState: Dispatch<SetStateAction<GameState>>;
 }) {
   const overlay = useUIOverlayStore((s) => s.overlay);
   const closeOverlay = useUIOverlayStore((s) => s.closeOverlay);
@@ -79,6 +84,26 @@ export function OverlayHost({
     case "matter-transmitter": {
       return (
         <MatterTransmitterModal
+          onClose={closeOverlay}
+          state={state}
+          setGameState={setGameState}
+        />
+      );
+    }
+
+    case "mens-lockers": {
+      return (
+        <MensLockerModal
+          onClose={closeOverlay}
+          state={state}
+          setGameState={setGameState}
+        />
+      );
+    }
+
+    case "womens-lockers": {
+      return (
+        <WomensLockerModal
           onClose={closeOverlay}
           state={state}
           setGameState={setGameState}

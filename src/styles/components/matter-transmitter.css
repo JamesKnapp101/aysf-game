@@ -80,12 +80,29 @@
     min-height: 34px;
     display: flex;
     align-items: center;
+    display: flex;
+        flex-direction: column;
+        gap: 4px;
 }
 
 .mt-coords {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
+    margin-top: 2.6rem;
+}
+
+.mt-target-label {
+    font-size: 12px;
+    font-weight: 900;
+    opacity: 0.8;
+    letter-spacing: 2px;
+}
+
+.mt-target-value {
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
 .mt-axis {
@@ -123,9 +140,9 @@
 }
 
 .mt-subline {
-    margin-top: 10px;
+    margin-top: 64px;
     padding-top: 8px;
-    border-top: 1px solid rgba(0, 255, 0, 0.35);
+    border-top: 1px solid var(--crt-green, var(--crt-color));
     display: flex;
     gap: 8px;
     align-items: baseline;
@@ -209,17 +226,105 @@
 
 .mt-transmit {
     border: 1px solid var(--crt-green, var(--crt-color));
-    background: transparent;
+    background: rgba(0, 0, 0, 0.35);
+    /* base shade */
     color: inherit;
     font: inherit;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 900;
     padding: 10px 10px;
     cursor: pointer;
-    letter-spacing: 3px;
+    letter-spacing: 6px;
+    box-shadow:
+        0 0 6px rgba(0, 255, 0, 0.25),
+        inset 0 0 10px rgba(0, 255, 0, 0.08);
+}
+
+.mt-transmit:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow:
+        0 0 10px rgba(0, 255, 0, 0.4),
+        inset 0 0 14px rgba(0, 255, 0, 0.12);
+}
+
+.mt-transmit:active:not(:disabled) {
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow:
+        0 0 4px rgba(0, 255, 0, 0.2),
+        inset 0 0 18px rgba(0, 255, 0, 0.2);
 }
 
 .mt-transmit:disabled {
     opacity: 0.35;
     cursor: default;
+    box-shadow: none;
+}
+
+.mt-transmit:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+
+.mt-list-wrap {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    padding: 8px 10px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 8px;
+}
+
+.mt-list-label {
+    font-size: 12px;
+    font-weight: 900;
+    opacity: 0.8;
+}
+
+.mt-picklist {
+    border: 1px solid var(--crt-green, var(--crt-color));
+    background: transparent;
+    min-height: 150px;
+    max-height: 150px;
+    overflow: auto;
+    outline: none;
+}
+
+.mt-picklist.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.mt-pickrow {
+    padding: 7px 8px;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.15);
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mt-pickrow:last-child {
+    border-bottom: none;
+}
+
+.mt-pickrow:hover {
+    background: rgba(0, 255, 0, 0.06);
+}
+
+.mt-pickrow.is-selected {
+    background: rgba(0, 255, 0, 0.12);
+    box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.25) inset;
+}
+
+.mt-pickname {
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.mt-hint {
+    font-size: 12px;
+    opacity: 0.85;
+    line-height: 1.25;
 }

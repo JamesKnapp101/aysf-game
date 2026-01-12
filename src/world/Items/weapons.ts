@@ -76,7 +76,7 @@ export const weaponItems: Item[] = [
     vocab: ["gel", "gun", "viewer"],
     description:
       "A small, silvery dart gun of some sort that fires sticky gel projectiles.",
-    location: "LivingQuartersFiveEast",
+    location: "LivingQuartersThreeEast",
     meta: {
       kind: "camera-gun-viewer",
       onLoad: "You load the soft little projectile into the gas-powered gun.",
@@ -146,7 +146,7 @@ export const weaponItems: Item[] = [
       "It looks kind of like a pistol, in that it clearly has a grip, a trigger, and what looks like a barrel, but it doesn't look like a projectile weapon; the barrel is rectangular and it isn't hollow.  The end is fitted with some kind of small panel or cell, and the body of it is non-symetrical and a little cumbersome.  Printed on one side is the logo 'NexiCorp'.  It appears to contain a lot of wires and circuitry.",
     initialDescription:
       "Lying in the middle of the floor is what looks like some kind of strange, high-tech pistol.",
-    location: "LivingQuartersFiveEast",
+    location: "LivingQuartersThreeEast",
     meta: {
       onLoad: "It doesn't seem to take any ammo, nor does it have a barrel.",
       onLink:
@@ -168,7 +168,7 @@ export const weaponItems: Item[] = [
     vocab: ["cap", "headdress", "squid"],
     description:
       "The cap consists of a series of silvery components meshed together in a web with some kind of metallic filaments. It can be draped over the head almost like a wig. The logo 'NexiCorp' is printed on one of the components.",
-    location: "LivingQuartersFiveEast",
+    location: "LivingQuartersThreeEast",
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,

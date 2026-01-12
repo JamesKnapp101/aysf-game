@@ -78,6 +78,24 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
+  if (item.id === "MensLockers") {
+    return {
+      state,
+      overlay: {
+        kind: "mens-lockers",
+      },
+    };
+  }
+
+  if (item.id === "WomensLockers") {
+    return {
+      state,
+      overlay: {
+        kind: "womens-lockers",
+      },
+    };
+  }
+
   let itemDesc = item.description?.trim() || "You see nothing special.";
   if (item.isContainer && state.itemState.containerFilled[item.id]) {
     const containerContents = state.itemState.containerFilled[item.id];

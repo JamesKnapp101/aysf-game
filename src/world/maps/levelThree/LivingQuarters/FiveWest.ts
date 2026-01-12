@@ -1,10 +1,10 @@
-import { describeScotchBottle } from "../../../game/rules/items";
-import type { Item } from "../../../game/types/itemTypes";
-import { createLivingQuarter } from "../../maps/livingQuartersTemplate";
+import { describeScotchBottle } from "@game/rules/items";
+import { Item } from "@game/types/itemTypes";
+import { createLivingQuarter } from "src/world/maps/livingQuartersTemplate";
 
-const SixWestCustomItems: Item[] = [
+const FiveWestCustomItems: Item[] = [
   {
-    id: "SixWestWetBar",
+    id: "FiveWestWetBar",
     name: "wet bar",
     description: `
 A built-in wet bar with a small counter and cabinet doors below.
@@ -12,7 +12,7 @@ The finish is immaculate, the handles polished.
 The sink is dry and the glassware is put away.`,
     sceneryDescription: `
 Along one wall is a wet bar, kept with careful pride.`,
-    location: "LivingQuartersSixWest",
+    location: "LivingQuartersFiveWest",
     vocab: ["wet", "bar", "counter", "cabinet"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -27,12 +27,12 @@ Along one wall is a wet bar, kept with careful pride.`,
     capacityOn: 4,
   },
   {
-    id: "SixWestBourbon",
+    id: "FiveWestBourbon",
     name: "bottle of bourbon",
     description: `
 A heavy glass bottle with a paper label and a sealed cap.
 The amber liquid inside catches the light without warmth.`,
-    location: "SixWestWetBar",
+    location: "FiveWestWetBar",
     vocab: ["bourbon", "bottle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -43,12 +43,12 @@ The amber liquid inside catches the light without warmth.`,
     isContainer: false,
   },
   {
-    id: "SixWestScotch",
+    id: "FiveWestScotch",
     name: "bottle of scotch",
     description: `
 A tall bottle with a clean label and an unbroken seal.
 The glass is clear, the contents dark.`,
-    location: "SixWestWetBar",
+    location: "FiveWestWetBar",
     vocab: ["scotch", "bottle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -76,12 +76,12 @@ The glass is clear, the contents dark.`,
     },
   },
   {
-    id: "SixWestBeer",
+    id: "FiveWestBeer",
     name: "bottle of beer",
     description: `
 A brown glass bottle, unopened.
 Condensation never formed; it was never chilled long enough to matter.`,
-    location: "SixWestWetBar",
+    location: "FiveWestWetBar",
     vocab: ["beer", "bottle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -92,14 +92,14 @@ Condensation never formed; it was never chilled long enough to matter.`,
     isContainer: false,
   },
   {
-    id: "SixWestWineRack",
+    id: "FiveWestWineRack",
     name: "wine rack",
     description: `
 A compact wine rack holding a few dark bottles.
 The wood is clean and the slots are dusted, maintained out of habit.`,
     sceneryDescription: `
 Near the living area is a small wine rack, arranged with quiet care.`,
-    location: "LivingQuartersSixWest",
+    location: "LivingQuartersFiveWest",
     vocab: ["wine", "rack", "bottles"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -112,12 +112,12 @@ Near the living area is a small wine rack, arranged with quiet care.`,
     capacity: 6,
   },
   {
-    id: "SixWestWine1",
+    id: "FiveWestWine1",
     name: "bottle of wine",
     description: `
 A dark bottle with a crisp label and an intact foil seal.
 The cork has never been touched.`,
-    location: "SixWestWineRack",
+    location: "FiveWestWineRack",
     vocab: ["wine", "bottle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -129,12 +129,12 @@ The cork has never been touched.`,
     meta: { wine: "snooty-1" },
   },
   {
-    id: "SixWestWine2",
+    id: "FiveWestWine2",
     name: "bottle of wine",
     description: `
 A dark bottle with a narrow neck and a pristine label.
 The seal is unbroken.`,
-    location: "SixWestWineRack",
+    location: "FiveWestWineRack",
     vocab: ["wine", "bottle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -146,12 +146,12 @@ The seal is unbroken.`,
     meta: { wine: "snooty-2" },
   },
   {
-    id: "SixWestWine3",
+    id: "FiveWestWine3",
     name: "bottle of wine",
     description: `
 A bottle with a heavy punt and an immaculate foil wrap.
 It looks chosen to impress someone who would notice.`,
-    location: "SixWestWineRack",
+    location: "FiveWestWineRack",
     vocab: ["wine", "bottle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -163,14 +163,14 @@ It looks chosen to impress someone who would notice.`,
     meta: { wine: "snooty-3" },
   },
   {
-    id: "SixWestCologne",
+    id: "FiveWestCologne",
     name: "bottle of cologne",
     description: `
 A glass bottle with a metal atomizer and a clean label.
 The scent that clings to it is sharp and expensive.`,
     sceneryDescription: `
 On the bathroom counter sits a bottle of cologne, placed squarely as if it mattered.`,
-    location: "SixWestBath",
+    location: "FiveWestBath",
     vocab: ["cologne", "bottle"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -181,14 +181,14 @@ On the bathroom counter sits a bottle of cologne, placed squarely as if it matte
     isContainer: false,
   },
   {
-    id: "SixWestShavingKit",
+    id: "FiveWestShavingKit",
     name: "shaving kit",
     description: `
 A compact kit with neatly arranged tools.
 Everything is cleaned, dried, and returned to place.`,
     sceneryDescription: `
 Near the sink is a shaving kit, laid out with careful order.`,
-    location: "SixWestBath",
+    location: "FiveWestBath",
     vocab: ["shaving", "kit", "razor", "brush"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -199,14 +199,14 @@ Near the sink is a shaving kit, laid out with careful order.`,
     isContainer: false,
   },
   {
-    id: "SixWestPotpourriBasket",
+    id: "FiveWestPotpourriBasket",
     name: "wicker basket",
     description: `
 A small wicker basket filled with dried petals and curled leaves.
 The scent is sweet, dusty, and wrong in recycled air.`,
     sceneryDescription: `
 On the back of the washlet sits a wicker basket of potpourri, placed like an apology for the sterile light.`,
-    location: "SixWestBath",
+    location: "FiveWestBath",
     vocab: ["wicker", "basket", "potpourri", "petals"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -217,7 +217,7 @@ On the back of the washlet sits a wicker basket of potpourri, placed like an apo
     isContainer: false,
   },
   {
-    id: "SixWestBedroomEye",
+    id: "FiveWestBedroomEye",
     name: "painted eye",
     description: `
 A massive eye painted across the ceiling.
@@ -225,7 +225,7 @@ The sclera is bloodshot with red veins worked in too carefully.
 The iris is layered dark, as if the painter kept trying to reach the same depth and never could.`,
     sceneryDescription: `
 Across the bedroom ceiling is a painted eye, bloodshot and enormous, staring straight down.`,
-    location: "SixWestBed",
+    location: "FiveWestBed",
     vocab: ["eye", "painted", "ceiling", "bloodshot"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -236,7 +236,7 @@ Across the bedroom ceiling is a painted eye, bloodshot and enormous, staring str
     isContainer: false,
   },
   {
-    id: "SixWestWallScribbles",
+    id: "FiveWestWallScribbles",
     name: "painted scribbles",
     description: `
 The walls are covered in symbols and lines that refuse to become language.
@@ -244,7 +244,7 @@ Some marks are careful, repeated as if rehearsed.
 Others are slashed on in uneven strokes that look like panic made visible.`,
     sceneryDescription: `
 The bedroom walls are scrawled with painted symbols, arrows, and circles, layered over and over.`,
-    location: "SixWestBed",
+    location: "FiveWestBed",
     vocab: ["scribbles", "symbols", "marks", "paint", "writing"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -255,7 +255,7 @@ The bedroom walls are scrawled with painted symbols, arrows, and circles, layere
     isContainer: false,
   },
   {
-    id: "SixWestBedroomLamps",
+    id: "FiveWestBedroomLamps",
     name: "lamps",
     description: `
 A set of lamps arranged to flood the room with light.
@@ -263,7 +263,7 @@ The glow is harsh and constant, flattening shadows into thin stains.
 They feel less decorative than defensive.`,
     sceneryDescription: `
 Several lamps brighten the bedroom far beyond the rest of the unit, as if darkness was not allowed here.`,
-    location: "SixWestBed",
+    location: "FiveWestBed",
     vocab: ["lamp", "lamps", "light", "lights"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -275,7 +275,7 @@ Several lamps brighten the bedroom far beyond the rest of the unit, as if darkne
     providesLight: true,
   },
   {
-    id: "SixWestDiary",
+    id: "FiveWestDiary",
     name: "scribbled diary",
     description: `
 A thin diary with a warped cover and pages swollen slightly at the edges.
@@ -325,7 +325,7 @@ He looked around like he was searching for the source.
 Maybe he hears it too. Maybe I’m not alone in this. Maybe that’s why it chose to get close.`,
     sceneryDescription: `
 Partly hidden beneath the bed is a thin diary, shoved back as if it was meant to stay out of sight.`,
-    location: "SixWestBed",
+    location: "FiveWestBed",
     vocab: ["diary", "journal", "scribbles", "book"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -335,24 +335,24 @@ Partly hidden beneath the bed is a thin diary, shoved back as if it was meant to
     isReadable: true,
     isContainer: false,
     meta: {
-      hiddenUnder: "SixWestBedding",
+      hiddenUnder: "FiveWestBedding",
       kind: "diary",
     },
   },
 ];
 
 export const {
-  rooms: LivingQuartersSixWestRooms,
-  items: LivingQuartersSixWestItems,
+  rooms: LivingQuartersFiveWestRooms,
+  items: LivingQuartersFiveWestItems,
 } = createLivingQuarter({
-  prefix: "SixWest",
-  designator: "Six West",
-  livingRoomId: "LivingQuartersSixWest",
-  bedRoomId: "SixWestBed",
-  bathRoomId: "SixWestBath",
+  prefix: "FiveWest",
+  designator: "Five West",
+  livingRoomId: "LivingQuartersFiveWest",
+  bedRoomId: "FiveWestBed",
+  bathRoomId: "FiveWestBath",
   corridorRoomId: "LevelThreeCorridorSix",
   corridorDoorId: "DOOR3EW",
-  bathDoorId: "SixWestBDoor",
+  bathDoorId: "FiveWestBDoor",
   dirs: {
     livingToCorridorDir: "east",
     bedToLivingDir: "east",
@@ -377,21 +377,21 @@ Paint and light compete for the walls, leaving no place for your eyes to rest.
 The ship’s hum feels louder here, as if the room is tuned to it.
 A doorway leads back east.`,
 
-  customItems: SixWestCustomItems,
+  customItems: FiveWestCustomItems,
   fixtureIds: {
-    endTableLiving: "SixWestEndtable",
-    sofaLiving: "SixWestSofa",
-    loveseatLiving: "SixWestLoveseat",
-    entertainmentLiving: "SixWestEntertainment",
-    bed: "SixWestBedding",
-    dresser: "SixWestDresser",
-    closet: "SixWestCloset",
+    endTableLiving: "FiveWestEndtable",
+    sofaLiving: "FiveWestSofa",
+    loveseatLiving: "FiveWestLoveseat",
+    entertainmentLiving: "FiveWestEntertainment",
+    bed: "FiveWestBedding",
+    dresser: "FiveWestDresser",
+    closet: "FiveWestCloset",
     phone: "PHONE6WBed",
-    sink: "SixWestSink",
-    mirror: "SixWestMirror",
-    shower: "SixWestShower",
-    washlet: "SixWestBowl",
-    medicineChest: "SixWestMedicineChest",
+    sink: "FiveWestSink",
+    mirror: "FiveWestMirror",
+    shower: "FiveWestShower",
+    washlet: "FiveWestBowl",
+    medicineChest: "FiveWestMedicineChest",
   },
   fixtureText: {
     endTableLiving: {

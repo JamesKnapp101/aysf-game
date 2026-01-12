@@ -87,7 +87,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     vocab: ["door", "security door", "botanical door"],
     connects: {
       roomAId: "LevelFourCorridorOne",
-      roomBId: "HydroponicsOne",
+      roomBId: "BotanicalOne",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,

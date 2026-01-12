@@ -14,11 +14,22 @@ export function getContainerContentsIds(
   return state.itemState.containerContents[container.id] ?? [];
 }
 
+export function getSurfacesIds(state: GameState, surface: Item): ItemId[] {
+  return state.itemState.surfaceContents[surface.id] ?? [];
+}
+
 export function getContainerContentsItems(
   state: GameState,
   container: Item
 ): Item[] {
   const ids = getContainerContentsIds(state, container);
+  return ids
+    .map((id) => getItemById(state, id))
+    .filter((it): it is Item => Boolean(it));
+}
+
+export function getSurfaceItems(state: GameState, surface: Item): Item[] {
+  const ids = getSurfacesIds(state, surface);
   return ids
     .map((id) => getItemById(state, id))
     .filter((it): it is Item => Boolean(it));

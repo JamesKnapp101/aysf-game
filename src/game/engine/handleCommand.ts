@@ -1,7 +1,9 @@
+import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
+import { AQUARIUM_ROOM_IDS } from "src/world/Items/creatures/octopus";
 import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";
-import { getCurrentRoom } from "../selectors/roomSelectors";
+import { getCurrentRoom, getPlayerRoomId } from "../selectors/roomSelectors";
 import { useUIOverlayStore } from "../store/store";
 import { buildRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
@@ -35,6 +37,37 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       if (!exit) {
         message = "You can't go that way.";
         break;
+      }
+
+      if (AQUARIUM_ROOM_IDS.has(getPlayerRoomId(state))) {
+        if (
+          state.worldState.octopusState.occupiedRoomIds.includes(
+            exit.toRoomId ?? ""
+          )
+        ) {
+          message =
+            "A giant tentacle fills most of the passageway in that direction, you better steer clear.";
+          if (
+            state.worldState.octopusState.tipRoomIds.includes(
+              exit.toRoomId ?? ""
+            )
+          ) {
+            message =
+              "You move through the murky water in that direction and run headlong into the groping end of a giant tentacle! You struggle as it wraps around you and jerks you off your feet, dragging you back toward the source in a chaos of flailing arms and ink-black water. You catch a glimpse of the creatures massive, bulbous head, eyes studying you, before it pulls you into a gaping, razor sharp beak...";
+            nextState = triggerPlayerDeath(
+              nextState,
+              message,
+              "aquarium octopus"
+            );
+            return appendLog(nextState, "");
+          }
+          break;
+        }
+        if (
+          state.worldState.octopusState.tipRoomIds.includes(exit.toRoomId ?? "")
+        ) {
+          console.log("The tentacle grabbed you! You done been GOT");
+        }
       }
 
       let destinationRoomId: string | undefined;

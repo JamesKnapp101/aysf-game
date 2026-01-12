@@ -1,6 +1,7 @@
 import { CrtModal } from "@game/components/CrtModal";
+import { useUIEffectsStore } from "@game/store/store";
 import { GameState } from "@game/types/gameTypes";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/components/matter-transmitter.css";
 
 type MatterTransmitterModalProps = {
@@ -61,8 +62,6 @@ export function MatterTransmitterModal({
     const playerRoomId = state.player.roomId;
     const playerCoord = coordByRoomId[playerRoomId];
     if (playerCoord) return playerCoord;
-
-    // fallback to origin, wrapped into bounds
     return { x: 0, y: 0, z: 0 };
   }, [state.player.roomId, coordByRoomId]);
 
@@ -70,9 +69,7 @@ export function MatterTransmitterModal({
   const [y, setY] = useState<number>(initialCoord.y);
   const [z, setZ] = useState<number>(initialCoord.z);
 
-  // If player room changes while modal is open, keep stable unless coords are uninitialized
   useEffect(() => {
-    // only nudge if current xyz are all 0 and player has real coord
     const playerCoord = coordByRoomId[state.player.roomId];
     if (!playerCoord) return;
     if (x === 0 && y === 0 && z === 0) {
@@ -108,11 +105,9 @@ export function MatterTransmitterModal({
     itemId: string,
     s: GameState
   ): string | undefined => {
-    // Prefer runtime placement map if present
     const overridden = s.itemState.itemRoomId?.[itemId];
     if (overridden) return overridden;
 
-    // Otherwise, use author-defined location if it looks like a room id
     const it = s.world.items.find((x) => x.id === itemId);
     const loc = (it as any)?.location;
     if (typeof loc === "string") return loc;
@@ -124,11 +119,10 @@ export function MatterTransmitterModal({
     const it = s.world.items.find((x) => x.id === itemId);
     if (!it) return false;
 
-    // Conservative: don't offer scenery/fixtures
     if ((it as any).scenery === true) return false;
     if ((it as any).isFixture === true) return false;
     if ((it as any).fixed === true) return false;
-    if ((it as any).meta?.collectable === false) return false;
+    if ((it as any).itemCategory !== "collectable") return false;
 
     return true;
   };
@@ -136,17 +130,12 @@ export function MatterTransmitterModal({
   const targetRoomCollectables = useMemo(() => {
     if (!targetRoomId) return [];
 
-    // Items that are directly "in the room" (not in inventory/containers/surfaces)
-    // This assumes your engine uses itemState.itemRoomId as the authoritative override.
     const ids: string[] = [];
 
     for (const it of state.world.items) {
       const id = it.id;
 
-      // Skip items on the transmitter plate already (they're in current room but on surface)
       if (plateItemIds.includes(id)) continue;
-
-      // Skip items in player inventory
       if (state.player.inventory.includes(id)) continue;
 
       const curRoom = itemCurrentRoomId(id, state);
@@ -154,7 +143,6 @@ export function MatterTransmitterModal({
 
       if (!isCollectable(id, state)) continue;
 
-      // Also skip if the item is currently on some surface/inside something (best-effort)
       const inAnySurface = Object.values(
         state.itemState.surfaceContents ?? {}
       ).some((arr) => (arr ?? []).includes(id));
@@ -166,7 +154,6 @@ export function MatterTransmitterModal({
       ids.push(id);
     }
 
-    // Sort by display name for nicer UX
     return ids.sort((a, b) => {
       const an = getItemById(a)?.name ?? a;
       const bn = getItemById(b)?.name ?? b;
@@ -185,13 +172,14 @@ export function MatterTransmitterModal({
 
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
-  // If target room changes, clear selection if it’s no longer valid
   useEffect(() => {
     if (!selectedItemId) return;
     if (!targetRoomCollectables.includes(selectedItemId)) {
       setSelectedItemId("");
     }
   }, [targetRoomCollectables, selectedItemId]);
+
+  const listRef = useRef<HTMLDivElement | null>(null);
 
   const bump = (axis: Axis, dir: 1 | -1) => {
     const b = axisBounds[axis];
@@ -203,10 +191,8 @@ export function MatterTransmitterModal({
   const canTransmit = useMemo(() => {
     if (!targetRoomId) return false;
 
-    // Sending mode: plate has item
     if (plateItemId) return true;
 
-    // Receiving mode: need a selection AND an available item
     if (!selectedItemId) return false;
     if (!targetRoomCollectables.length) return false;
 
@@ -219,8 +205,16 @@ export function MatterTransmitterModal({
     return "IDLE";
   }, [plateItemId, selectedItemId]);
 
+  const triggerFx = () => {
+    try {
+      useUIEffectsStore.getState().triggerTeleportFlash();
+    } catch {}
+  };
+
   const handleTransmit = () => {
     if (!targetRoomId) return;
+
+    let didMove = false;
 
     setGameState((prev) => {
       const prevPlate = prev.itemState.surfaceContents?.[MT_HOST_ID] ?? [];
@@ -228,20 +222,20 @@ export function MatterTransmitterModal({
 
       // --- SENDING: move plate item into target room
       if (prevPlateItemId) {
+        didMove = true;
+
         const nextSurfaceContents = {
           ...(prev.itemState.surfaceContents ?? {}),
         };
-        nextSurfaceContents[MT_HOST_ID] = prevPlate.slice(1); // drop first item
+        nextSurfaceContents[MT_HOST_ID] = prevPlate.slice(1);
 
         const nextItemRoomId = { ...(prev.itemState.itemRoomId ?? {}) };
         nextItemRoomId[prevPlateItemId] = targetRoomId;
 
-        // Ensure it isn't in player inventory
         const nextInventory = prev.player.inventory.includes(prevPlateItemId)
           ? prev.player.inventory.filter((id) => id !== prevPlateItemId)
           : prev.player.inventory;
 
-        // Best-effort: remove from any other surface/container lists
         const cleanFromLists = (lists?: Record<string, string[]>) => {
           if (!lists) return lists;
           const out: Record<string, string[]> = {};
@@ -278,22 +272,20 @@ export function MatterTransmitterModal({
       // --- RECEIVING: move selected item from target room onto transmitter surface
       if (!selectedItemId) return prev;
 
-      // Validate item is still present in target room and collectable
       const curRoom = (prev.itemState.itemRoomId?.[selectedItemId] ??
         (prev.world.items.find((it) => it.id === selectedItemId) as any)
           ?.location) as string | undefined;
 
       if (curRoom !== targetRoomId) return prev;
 
-      // Place on transmitter surface (single-item plate: replace contents)
+      didMove = true;
+
       const nextSurfaceContents = { ...(prev.itemState.surfaceContents ?? {}) };
       nextSurfaceContents[MT_HOST_ID] = [selectedItemId];
 
-      // Ensure item is in the player's current room (host is in this room)
       const nextItemRoomId = { ...(prev.itemState.itemRoomId ?? {}) };
       nextItemRoomId[selectedItemId] = prev.player.roomId;
 
-      // Best-effort: remove from any other surface/container lists
       const cleanFromLists = (lists?: Record<string, string[]>) => {
         if (!lists) return lists;
         const out: Record<string, string[]> = {};
@@ -322,13 +314,63 @@ export function MatterTransmitterModal({
         },
       };
     });
+
+    if (didMove) {
+      triggerFx();
+    }
+  };
+
+  const handleListKeyDown = (e: React.KeyboardEvent) => {
+    if (!targetRoomId) return;
+    if (plateItemId) return; // disabled in sending mode
+    if (targetRoomCollectables.length === 0) return;
+
+    const idx = selectedItemId
+      ? targetRoomCollectables.indexOf(selectedItemId)
+      : -1;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const nextIdx = Math.min(targetRoomCollectables.length - 1, idx + 1);
+      setSelectedItemId(targetRoomCollectables[nextIdx] ?? "");
+      return;
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const nextIdx = Math.max(0, idx - 1);
+      setSelectedItemId(targetRoomCollectables[nextIdx] ?? "");
+      return;
+    }
+    if (e.key === "Home") {
+      e.preventDefault();
+      setSelectedItemId(targetRoomCollectables[0] ?? "");
+      return;
+    }
+    if (e.key === "End") {
+      e.preventDefault();
+      setSelectedItemId(
+        targetRoomCollectables[targetRoomCollectables.length - 1] ?? ""
+      );
+      return;
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      setSelectedItemId("");
+      return;
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      // Enter triggers transmit if valid
+      if (canTransmit) handleTransmit();
+      return;
+    }
   };
 
   return (
     <CrtModal
       title="Matter Transmitter"
       onClose={onClose}
-      width={810}
+      width={910}
       showHeader={false}
     >
       <div
@@ -345,7 +387,7 @@ export function MatterTransmitterModal({
           </div>
           <div className="mt-top-right">
             <span className="mt-bars">|||</span>
-            <span className="mt-title">MATTER TRANSMISSION</span>
+            <span className="mt-title">MATTER TRANSCEIVER</span>
           </div>
         </div>
 
@@ -354,7 +396,8 @@ export function MatterTransmitterModal({
           {/* Left: coordinates */}
           <section className="mt-left" aria-label="Coordinates">
             <div className="mt-panel-header" title={targetRoomId ?? ""}>
-              {targetRoomName}
+              <div className="mt-target-label">TARGET LOCATION:</div>
+              <div className="mt-target-value">{targetRoomName}</div>
             </div>
 
             <div className="mt-coords">
@@ -428,47 +471,88 @@ export function MatterTransmitterModal({
             </div>
           </section>
 
-          {/* Right: plate + selection + transmit */}
+          {/* Right: plate + list + transmit */}
           <section className="mt-right" aria-label="Transmission controls">
             <div className="mt-plate">
-              <div className="mt-plate-label">PLATE</div>
+              <div className="mt-plate-label">TX/RX PLATE</div>
               <div className="mt-plate-value">{plateItemName}</div>
             </div>
 
             <div className="mt-list-wrap">
               <div className="mt-list-label">TARGET ITEMS</div>
-              <select
-                className="mt-select"
-                value={selectedItemId}
-                onChange={(e) => setSelectedItemId(e.target.value)}
-                disabled={
+
+              {/* Scrollable single-select list */}
+              <div
+                ref={listRef}
+                className={[
+                  "mt-picklist",
+                  !targetRoomId ? "is-disabled" : "",
+                  plateItemId ? "is-disabled" : "",
+                  targetRoomCollectables.length === 0 ? "is-disabled" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                role="listbox"
+                aria-label="Target item list"
+                aria-disabled={
                   !targetRoomId ||
                   !!plateItemId ||
                   targetRoomCollectables.length === 0
                 }
-                aria-label="Select target item"
+                tabIndex={
+                  !targetRoomId ||
+                  !!plateItemId ||
+                  targetRoomCollectables.length === 0
+                    ? -1
+                    : 0
+                }
+                onKeyDown={handleListKeyDown}
               >
-                <option value="">No Selection</option>
+                <div
+                  className={[
+                    "mt-pickrow",
+                    selectedItemId === "" ? "is-selected" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  role="option"
+                  aria-selected={selectedItemId === ""}
+                  onClick={() => setSelectedItemId("")}
+                >
+                  <span className="mt-pickname">No Selection</span>
+                </div>
+
                 {targetRoomCollectables.map((id) => {
                   const name = getItemById(id)?.name ?? id;
+                  const selected = selectedItemId === id;
+
                   return (
-                    <option key={id} value={id}>
-                      {name}
-                    </option>
+                    <div
+                      key={id}
+                      className={["mt-pickrow", selected ? "is-selected" : ""]
+                        .filter(Boolean)
+                        .join(" ")}
+                      role="option"
+                      aria-selected={selected}
+                      onClick={() => setSelectedItemId(id)}
+                      title={id}
+                    >
+                      <span className="mt-pickname">{name}</span>
+                    </div>
                   );
                 })}
-              </select>
+              </div>
 
               {!targetRoomId ? (
                 <div className="mt-hint">No room at these coordinates.</div>
               ) : targetRoomCollectables.length === 0 ? (
-                <div className="mt-hint">No collectable items detected.</div>
+                <div className="mt-hint">No transmittable items detected.</div>
               ) : plateItemId ? (
                 <div className="mt-hint">
                   Plate occupied. Transmission will send.
                 </div>
               ) : (
-                <div className="mt-hint">Select an item to receive.</div>
+                <div className="mt-hint">Highlight an item to receive.</div>
               )}
             </div>
 
