@@ -32,6 +32,38 @@ function applyCRTColor(colorHex: string) {
   root.style.setProperty("--crt-color-rgb", `${r} ${g} ${b}`);
 }
 
+function renderLogLine(line: string) {
+  const parts: React.ReactNode[] = [];
+
+  let rest = line;
+  while (true) {
+    const start = rest.indexOf("[[ROOM_NAME]]");
+    if (start === -1) {
+      parts.push(rest);
+      break;
+    }
+
+    const end = rest.indexOf("[[/ROOM_NAME]]", start);
+    if (end === -1) {
+      parts.push(rest);
+      break;
+    }
+
+    if (start > 0) parts.push(rest.slice(0, start));
+
+    const roomText = rest.slice(start + 13, end);
+    parts.push(
+      <span className="log-room-name" key={parts.length}>
+        {roomText}
+      </span>
+    );
+
+    rest = rest.slice(end + 14);
+  }
+
+  return <>{parts}</>;
+}
+
 export const LogPanel: React.FC<LogPanelProps> = ({
   state,
   dispatch,
@@ -151,7 +183,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           <div className="game-log-inner" ref={logRef}>
             {state.log.map((line, idx) => (
               <p key={idx} className="game-line">
-                {line}
+                {renderLogLine(line)}
               </p>
             ))}
           </div>

@@ -1,4 +1,6 @@
+import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
+import { getRoomById } from "@game/helpers/itemHelpers";
 import { AQUARIUM_ROOM_IDS } from "src/world/Items/creatures/octopus";
 import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
@@ -19,8 +21,8 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
   const room = getCurrentRoom(state);
 
+  // LOOK should always print the full description to the log, and NOT advance time.
   if (cmd.type === "look") {
-    // Explicit LOOK should always print the full description to the log.
     const desc = buildRoomDescription(state, state.player.roomId, {
       mode: "panel",
       forceFull: true,
@@ -30,15 +32,19 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
   let nextState = state;
   let message = "I don't understand that.";
+  let consumesTurn = false;
 
   switch (cmd.type) {
     case "move": {
+      consumesTurn = true;
+
       const exit = room.exits.find((e) => e.direction === cmd.direction);
       if (!exit) {
         message = "You can't go that way.";
         break;
       }
 
+      // Aquarium special-case
       if (AQUARIUM_ROOM_IDS.has(getPlayerRoomId(state))) {
         if (
           state.worldState.octopusState.occupiedRoomIds.includes(
@@ -47,6 +53,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         ) {
           message =
             "A giant tentacle fills most of the passageway in that direction, you better steer clear.";
+
           if (
             state.worldState.octopusState.tipRoomIds.includes(
               exit.toRoomId ?? ""
@@ -59,14 +66,9 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
               message,
               "aquarium octopus"
             );
-            return appendLog(nextState, "");
+            break; // we'll still echo below
           }
           break;
-        }
-        if (
-          state.worldState.octopusState.tipRoomIds.includes(exit.toRoomId ?? "")
-        ) {
-          console.log("The tentacle grabbed you! You done been GOT");
         }
       }
 
@@ -96,7 +98,6 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         }
 
         if (gateMsg) moveMessage += gateMsg;
-
         destinationRoomId = resolveDoorDestination(doorDef, room.id);
       } else if (exit.toRoomId) {
         destinationRoomId = exit.toRoomId;
@@ -107,26 +108,15 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         break;
       }
 
+      // Move player first
       const movedState: GameState = {
         ...state,
-        player: {
-          ...state.player,
-          roomId: destinationRoomId,
-        },
+        player: { ...state.player, roomId: destinationRoomId },
       };
 
-      // For movement output, use LOG mode:
-      // - first visit: full
-      // - revisit: short (prefer descriptionShort)
-      const roomDesc = buildRoomDescription(movedState, destinationRoomId, {
-        mode: "log",
-      });
-
+      // Mark visited before describing (keeps short/full logic consistent)
       const visitedRooms = movedState.worldState.visitedRooms ?? {};
-      const nextVisitedRooms = {
-        ...visitedRooms,
-        [destinationRoomId]: true,
-      };
+      const nextVisitedRooms = { ...visitedRooms, [destinationRoomId]: true };
 
       nextState = {
         ...movedState,
@@ -136,47 +126,105 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         },
       };
 
-      message = [moveMessage.trim(), roomDesc.trim()]
-        .filter(Boolean)
-        .join("\n");
+      // We'll build the room description AFTER advanceTurn so ticks (spotlight/evict/etc)
+      // are reflected in the log output.
+      message = moveMessage.trim();
       break;
     }
 
     case "action": {
-      const verb = cmd.verb;
+      // Most actions should consume time. If you have some that shouldn't,
+      // teach the handler to return consumesTurn and honor it here.
+      consumesTurn = true;
 
-      const handler = ACTION_HANDLERS[verb];
+      const handler = ACTION_HANDLERS[cmd.verb];
       if (!handler) {
         message = "I don't understand that.";
+        consumesTurn = false;
         break;
       }
 
       const result = handler(state, cmd);
       nextState = result.state;
       message = result.message ?? "";
-      if (result.overlay) {
-        openOverlay(result.overlay as any);
-      }
+      if (result.overlay) openOverlay(result.overlay as any);
+
+      // If supported:
+      // consumesTurn = result.consumesTurn ?? true;
+      break;
+    }
+
+    case "inventory": {
+      consumesTurn = false;
+      // message = buildInventoryText(state);
       break;
     }
 
     case "unknown":
     default: {
+      consumesTurn = false;
       message = "I don't understand that.";
       break;
     }
   }
 
-  // Echo line (unchanged idea, but move now has real output)
+  // --- IMPORTANT: ensure command echo/response is never "pre-dated" by tick logs ---
+  // If the command consumes a turn, ticks may append log entries during advanceTurn().
+  // We capture those entries and re-append them AFTER the command echo/response.
+  let tickLogEntries: string[] = [];
+  const logBeforeLen = (nextState as any).log?.length ?? 0;
+
+  if (consumesTurn) {
+    nextState = advanceTurn(nextState);
+
+    const logAfter: string[] = (nextState as any).log ?? [];
+    tickLogEntries = logAfter.slice(logBeforeLen);
+
+    // Roll back log to the pre-advanceTurn state so we can append echo first.
+    nextState = {
+      ...nextState,
+      log: logAfter.slice(0, logBeforeLen),
+    } as any;
+  }
+
+  // If movement, append the destination room description from the UPDATED world state.
+  if (cmd.type === "move") {
+    const destRoomId = nextState.player.roomId;
+    const roomDesc = buildRoomDescription(nextState, destRoomId, {
+      mode: "log",
+    });
+    message = [message.trim(), roomDesc.trim()].filter(Boolean).join("\n");
+  }
+  const roomName = `${ROOM_NAME_TOKEN_START}${
+    getRoomById(nextState, nextState.player.roomId)?.name
+  }${ROOM_NAME_TOKEN_END}`;
+  // Build echo block
   let logWithEcho = "";
   if (cmd.type === "move") {
-    logWithEcho = `> ${cmd.direction}\n${message}`;
+    logWithEcho = `> ${cmd.direction}\n${roomName}\n${message}`;
   } else if (cmd.type === "inventory") {
     logWithEcho = `> inventory\n${message}`;
   } else if (cmd.type === "action") {
     logWithEcho = `> ${cmd.raw}\n${message}`;
+  } else if (cmd.type === "unknown") {
+    logWithEcho = `> ${cmd.raw ?? "?"}\n${message}`;
+  } else {
+    // fallback
+    logWithEcho = message;
   }
 
-  nextState = appendLog(nextState, logWithEcho.trim());
-  return advanceTurn(nextState);
+  // Append echo/response FIRST
+  nextState = appendLog(
+    nextState,
+    logWithEcho.trim() + (tickLogEntries.length === 0 ? "\n\n" : "")
+  );
+
+  // Then append any tick messages that happened during advanceTurn()
+  for (const entry of tickLogEntries) {
+    if (entry && entry.trim()) {
+      nextState = appendLog(nextState, entry + "\n\n");
+    }
+  }
+
+  return nextState;
 }

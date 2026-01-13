@@ -52,3 +52,20 @@
     font-family: inherit;
     font-size: 1rem;
 }
+
+.log-room-name {
+    display: inline-block;
+    opacity: 0.90;
+    padding: 2px 8px;
+    margin: 4px 0;
+    background: color-mix(in srgb,
+            var(--crt-color) 100%,
+            black 0%);
+    color: #000;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border-radius: 2px;
+    box-shadow:
+        0 0 4px rgba(0, 255, 0, 0.35),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+}

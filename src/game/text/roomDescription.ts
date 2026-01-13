@@ -1,3 +1,5 @@
+import { isRoomSpotlitByAviary } from "@game/engine/ticks/aviaryTick";
+import { getAviaryNextSpotlitRoomId } from "src/world/Items/creatures/aviaryOrganisms";
 import { generateTerminalTpadDescription } from "../helpers/gameHelpers";
 import { isItemOpen } from "../rules/containers";
 import { formatNameList } from "../rules/items";
@@ -39,7 +41,12 @@ export function buildRoomDescription(
     return Boolean(fs && "isOn" in fs && fs.isOn === true);
   })();
 
-  const canSee = !isDark || nightVisionActive || flashlightOn;
+  const canSee =
+    !isDark ||
+    nightVisionActive ||
+    flashlightOn ||
+    isRoomSpotlitByAviary(state, roomId) ||
+    getAviaryNextSpotlitRoomId(state) === roomId;
   if (!canSee) return "It's pitch black in here, you can't see a thing.";
 
   const visitedRooms = state.worldState.visitedRooms ?? {};
@@ -102,7 +109,10 @@ export function buildRoomDescription(
   // - On revisit in the LOG, prefer descriptionShort (if provided)
   // - Otherwise use full description
   const useShortBase = !includeScenery && mode === "log" && !isFirstVisit;
-  let base = (useShortBase ? room.descriptionShort : room.description) ?? "";
+  let base =
+    (useShortBase && room.descriptionShort
+      ? room.descriptionShort
+      : room.description) ?? "wtf";
   base = base.trim();
 
   // Apply scenery token rules:

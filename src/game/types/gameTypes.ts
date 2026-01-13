@@ -113,6 +113,14 @@ export type OctopusState = {
   trailQueue: string[];
 };
 
+export type AviarySpotlightState = {
+  route: string[];
+  index: number; // current route index
+  turnsLeftHere: 1 | 2; // stays 2 turns per room
+  pauseWhenPlayerNotInAviary: boolean; // config
+  hintCooldown: number; // turns until next hint
+};
+
 export interface World {
   rooms: Room[];
   items: Item[];
@@ -146,6 +154,7 @@ export interface WorldState {
   visitedRooms: Record<string, boolean>;
   scoresTriggered: Record<PlayerScoreId, boolean>;
   octopusState: OctopusState;
+  aviarySpotlight: AviarySpotlightState;
   roomTemp: Record<
     string,
     "freezing" | "cold" | "cool" | "temperate" | "warm" | "hot" | "scorching"

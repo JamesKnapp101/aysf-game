@@ -6,6 +6,7 @@ import {
 } from "./containerContents";
 import { seedItemRoomLocations } from "./helpers/itemHelpers";
 
+import { AVIARY_SPOTLIGHT_ROUTE } from "@game/engine/ticks/aviaryTick";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
 import type { GameState, World } from "./types/gameTypes";
 
@@ -38,7 +39,6 @@ export const createInitialState = (world: World): GameState => {
     items: uniqueItems,
   };
 
-  // ✅ derive coord maps from rooms + doors (doors bypassed logically)
   const { coordByRoomId, roomIdByCoord } = deriveRoomCoordMaps(
     normalizedWorld.rooms,
     normalizedWorld.doors,
@@ -49,7 +49,6 @@ export const createInitialState = (world: World): GameState => {
     }
   );
 
-  // ✅ stash derived transmitter metadata on the world
   const worldWithMeta: World = {
     ...normalizedWorld,
     meta: {
@@ -73,13 +72,13 @@ export const createInitialState = (world: World): GameState => {
 
   const initialGameState: GameState = {
     rng: () => Math.random(),
-    world: worldWithMeta, // ✅ use the world that includes meta
+    world: worldWithMeta,
     log: getOpeningSplashLogs(),
     score: 0,
     rating: 0,
     moves: 0,
     player: {
-      roomId: "HubEast",
+      roomId: "InnerRingSouth",
       inventory: startingInventoryIds,
       memoriesTriggered: {
         own_name: false,
@@ -342,6 +341,13 @@ export const createInitialState = (world: World): GameState => {
         trailQueue: [],
       },
       playerDeaths: {},
+      aviarySpotlight: {
+        route: AVIARY_SPOTLIGHT_ROUTE,
+        index: 0,
+        turnsLeftHere: 1,
+        pauseWhenPlayerNotInAviary: false,
+        hintCooldown: 0,
+      },
     },
     itemState: {
       itemRoomId: {},

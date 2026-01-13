@@ -164,39 +164,40 @@ export function moveItemToRoom(
   itemId: ItemId,
   roomId: string
 ): GameState {
+  // If the player is carrying it, "location" is inventory.
   if (state.player.inventory.includes(itemId)) return state;
+
+  // Ensure destination room exists.
   if (!state.world.rooms.some((r) => r.id === roomId)) return state;
 
+  // Ensure item exists in the itemRoomId map (prevents silent "undefined" moves).
   const cur = state.itemState.itemRoomId[itemId];
+  if (!cur) return state;
+
   if (cur === roomId) return state;
 
-  let next: GameState = {
+  // Build a single patch map so we only clone once.
+  const patch: Record<string, string> = { [itemId]: roomId };
+
+  const children = getAttachedChildren(state, itemId); // note: use `state` is fine
+  for (const childId of children) {
+    if (state.player.inventory.includes(childId)) continue;
+    const childCur = state.itemState.itemRoomId[childId];
+    if (!childCur) continue; // if not tracked, skip
+    if (childCur === roomId) continue;
+    patch[childId] = roomId;
+  }
+
+  return {
     ...state,
     itemState: {
       ...state.itemState,
       itemRoomId: {
         ...state.itemState.itemRoomId,
-        [itemId]: roomId,
+        ...patch,
       },
     },
   };
-
-  const children = getAttachedChildren(next, itemId);
-  for (const childId of children) {
-    if (next.player.inventory.includes(childId)) continue;
-    next = {
-      ...next,
-      itemState: {
-        ...next.itemState,
-        itemRoomId: {
-          ...next.itemState.itemRoomId,
-          [childId]: roomId,
-        },
-      },
-    };
-  }
-
-  return next;
 }
 
 export function isExitBlockedByDoor(state: GameState, exit: Exit): boolean {

@@ -1,5 +1,8 @@
 import { SwitchState } from "./types/itemTypes";
 
+export const ROOM_NAME_TOKEN_START = "[[ROOM_NAME]]";
+export const ROOM_NAME_TOKEN_END = "[[/ROOM_NAME]]";
+
 export const POWER_SECTION_MAP: Record<
   string,
   { section: string; activeWhen: SwitchState }

@@ -14,6 +14,7 @@ export type Preposition =
 export type ParsedCommand =
   | { type: "look" }
   | { type: "inventory" }
+  | { type: "wait" }
   | { type: "move"; direction: Direction }
   | {
       type: "action";

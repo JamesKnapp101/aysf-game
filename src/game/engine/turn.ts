@@ -1,3 +1,8 @@
+import { audioRegistry } from "@game/audioRegistry";
+import { tickAviarySpotlight } from "@game/engine/ticks/aviaryTick";
+import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
+import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
+import { TickContext } from "@game/types/context";
 import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
   canMove,
@@ -275,28 +280,48 @@ function tickAnimateActivities(state: GameState): GameState {
   let next = state;
 
   for (const item of getAnimateItems(next)) {
-    const tick = item.overrides?.tick;
+    const tick = item.overrides?.tick as
+      | ((
+          ctx: TickContext & {
+            triggerPlayerDeath?: (msg: string, cause: string) => void;
+          }
+        ) => GameState | void)
+      | undefined;
     if (!tick) continue;
 
-    const updated = tick({
+    const ctxMoveItemToRoom = (itemId: string, toRoomId: string): void => {
+      next = moveItemToRoom(next, itemId as ItemId, toRoomId);
+    };
+
+    const ctxTriggerPlayerDeath = (
+      deathMessage: string,
+      cause: string
+    ): void => {
+      next = triggerPlayerDeath(next, deathMessage, cause);
+    };
+
+    const result = tick({
       state: next,
       item,
       turn: next.moves,
       rng: next.rng,
       emit: (_ev: any) => {
-        // optional: next = { ...next, log: [...next.log, ...] }
+        // optional
       },
-      moveItemToRoom: (itemId: string, roomId: string) => {
-        next = moveItemToRoom(next, itemId as ItemId, roomId);
-      },
+
+      // IMPORTANT: these now update `next`
+      moveItemToRoom: ctxMoveItemToRoom,
+      triggerPlayerDeath: ctxTriggerPlayerDeath,
+
+      // readers use latest `next`
       getRoomExits: (roomId: string) => getRoomExits(next, roomId),
       canEnter: (it: { id: string }, roomId: any) =>
         canMove(next, it.id as ItemId, roomId),
       getPlayerRoomId: () => next.player.roomId,
       isRoomDark: (roomId: string) => isRoomDark(next, roomId),
-    });
+    } as any);
 
-    if (updated) next = updated;
+    if (result) next = result;
   }
 
   return next;
@@ -373,11 +398,17 @@ function tickScoreAndMemory(state: GameState): GameState {
 
 export function advanceTurn(state: GameState): GameState {
   let next = state;
+  next = tickAviarySpotlight(next);
   next = tickAttachedItems(next);
   next = applyEffects(next);
   next = tickStatusEffects(next);
   next = tickSickness(next);
   next = tickAnimateActivities(next);
+  next = emitAdjacentAudioCues(next, {
+    registry: audioRegistry,
+    maxLinesPerTick: 1,
+    chance: 0.7,
+  });
   next = tickScoreAndMemory(next);
   next = {
     ...next,

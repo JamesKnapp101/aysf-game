@@ -235,11 +235,19 @@ export const Game: React.FC = () => {
   );
 
   const setGameState = useCallback(
-    (updater: (prev: GameState) => GameState) => {
-      dispatchState({
-        type: "replaceState",
-        next: updater(stateRef.current),
-      });
+    (value: GameState | ((prev: GameState) => GameState)) => {
+      if (typeof value === "function") {
+        const updater = value as (prev: GameState) => GameState;
+        dispatchState({
+          type: "replaceState",
+          next: updater(stateRef.current),
+        });
+      } else {
+        dispatchState({
+          type: "replaceState",
+          next: value,
+        });
+      }
     },
     []
   );

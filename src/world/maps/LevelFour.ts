@@ -1,3 +1,4 @@
+import { aviaryOrganismItems } from "src/world/Items/creatures/aviaryOrganisms";
 import { aquariumRooms } from "src/world/maps/levelFour/Aquarium";
 import { aviaryRooms } from "src/world/maps/levelFour/Aviary";
 import { fungalCaveRooms } from "src/world/maps/levelFour/FungalCave";
@@ -11,7 +12,7 @@ import { levelFourDoors } from "../doors/levelFourDoors";
 import { levelFourItems } from "../Items/levelFourMisc";
 
 export const LEVEL_FOUR: WorldChunk = {
-  items: [...levelFourItems],
+  items: [...levelFourItems, ...aviaryOrganismItems],
   doors: [...levelFourDoors],
   teleportPads: [],
   rooms: [
