@@ -763,4 +763,27 @@ export const levelFourItems: Item[] = [
       push: "You press the button. If the station is properly keyed, the internal fans thump to life and the console wakes up with a low, rising hum. If not, nothing happens at all—which is its own kind of ominous.",
     },
   },
+
+  {
+    id: "ShedCellarKey",
+    name: "rusted metal key",
+    description: "A rusted metal padlock key.",
+    location: "INVENTORY",
+    vocab: ["shed", "key", "shed key"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+  },
+  {
+    id: "ShackCellarKey",
+    name: "rusted metal key",
+    description: "A rusted metal padlock key.",
+    location: "INVENTORY",
+    vocab: ["shack", "key", "shack key"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+  },
 ];

@@ -27,7 +27,7 @@ export const restaurantRooms: Room[] = [
     description: `This is a cozy, italian-style restaurant which looks to have been hastilly abandoned; there are many overturned chairs, and many of the tables are littered with the remains of half-eaten meals. The chandelier-style lights which hang overhead are all flickering weakly, casting eerie shadows amongst the scattered silverware, silk flowers, extinguished candles and wine glasses. There is an exit back outside to the northeast, and a swinging door to the northwest. To the south is an open doorway mounted to the side of which is a small sign stating 'Rest Rooms'.`,
     exits: [
       { direction: "south", toRoomId: "BathroomEntrance" },
-      { direction: "northwest", toRoomId: "Kitchen" },
+      { direction: "west", toRoomId: "Kitchen" },
       { direction: "northeast", toRoomId: "RestaurantEntrance" },
     ],
   },
@@ -36,15 +36,15 @@ export const restaurantRooms: Room[] = [
     name: "Kitchen",
     description: `This is the kitchen area for the restaurant. It appears to have been hastilly abandoned, and you see signs of things having been cleaned up quickly, then perhaps abandoned before the clean-up was quite complete. Most of the food has been put away, with only some scattered flour, bread crumbs, and a few pieces of stray pasta to betray the fact that this was a once busy kitchen. One wall is dominated by a large steel door which must belong to a walk-in refridgerator which is padlocked.`,
     exits: [
-      { direction: "southeast", toRoomId: "Restaurant" },
-      { direction: "north", doorId: "WalkInDoor" },
+      { direction: "east", toRoomId: "Restaurant" },
+      { direction: "west", doorId: "WalkInDoor" },
     ],
   },
   {
     id: "WalkIn",
     name: "Walk In",
     description: `This is a small walk-in area that leads to the back of the restaurant. The walls are lined with metal shelves and there is a large padlocked steel door.`,
-    exits: [{ direction: "south", doorId: "WalkInDoor" }],
+    exits: [{ direction: "east", doorId: "WalkInDoor" }],
   },
   {
     id: "BathroomEntrance",

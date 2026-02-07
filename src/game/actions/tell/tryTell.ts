@@ -1,17 +1,35 @@
+import {
+  isRadioTargetItem,
+  tellNpc,
+  tellRadioDevice,
+  tellRadioVoice,
+} from "@game/helpers/conversationHelpers";
+import { normalizeTopic } from "@game/rules/scope";
+import { ActionResult } from "@game/types/actionsTypes";
+import { ConversationTarget } from "@game/types/npcTypes";
 import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
-import { Item } from "../../types/itemTypes";
 
 export function tryTell(
   state: GameState,
-  item: Item
-): { state: GameState; message: string } {
-  let next: GameState = state;
+  target: ConversationTarget,
+  topicRaw: string
+): ActionResult {
+  const topic = normalizeTopic(topicRaw);
 
-  const baseMsg = ``;
+  if (target.kind === "radioVoice") {
+    return tellRadioVoice(state, target.voice, topic);
+  }
 
-  return {
-    state: next,
-    message: baseMsg,
-  };
+  const item = target.item;
+
+  if (isRadioTargetItem(item)) {
+    return tellRadioDevice(state, topic);
+  }
+
+  if (item.itemCategory !== "animate") {
+    return { state, message: "That isn't going to respond." };
+  }
+
+  return tellNpc(state, item, topic);
 }

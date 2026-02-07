@@ -29,6 +29,7 @@ export type Overlay =
   | { kind: "mens-lockers" }
   | { kind: "womens-lockers" }
   | { kind: "matter-transmitter"; isOn: boolean }
+  | { kind: "teleportation-terminal" }
   | {
       kind: "mindFlash";
       title?: string;
@@ -44,4 +45,17 @@ export type UIOverlayActions = {
   }) => void;
   openCooler: (args: { mode: CoolerMode }) => void;
   closeOverlay: () => void;
+};
+
+export type OrganismDeathPayload = {
+  title?: string;
+  cipherText: string;
+  seed?: number;
+  onStart?: () => void;
+  onEnd?: () => void;
+
+  // Display tuning
+  revealMode?: "fade" | "type";
+  chunkMs?: number; // for "type"
+  chunkSize?: number; // for "type"
 };

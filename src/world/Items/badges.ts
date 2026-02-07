@@ -21,14 +21,14 @@ export const badgeItems: Item[] = [
   },
 
   {
-    id: "blackbadge",
-    name: "black plastic badge",
+    id: "ultravioletbadge",
+    name: "ultraviolet plastic badge",
     initialDescription:
       "Peeking out of the Captain's breast pocket is what looks like a black badge.",
     description:
       "This is another slim plastic badge, but it doesn't have a clip like the others. It is a glossy jet black.",
     location: "INVENTORY",
-    vocab: ["black", "badge", "plastic"],
+    vocab: ["ultraviolet", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -36,16 +36,16 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    scoreId: "obtained_black_badge",
+    scoreId: "obtained_ultraviolet_badge",
   },
 
   {
-    id: "greybadge",
-    name: "grey plastic badge",
+    id: "maroonbadge",
+    name: "maroon plastic badge",
     description:
-      "This is a slim, rectangular plastic badge that is entirely grey except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'ORVILLE BRIGGS, BC2' and beneath that a bar code of some kind.",
+      "This is a slim, rectangular plastic badge that is entirely maroon except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'ORVILLE BRIGGS, BC2' and beneath that a bar code of some kind.",
     location: "INVENTORY",
-    vocab: ["badge", "grey", "gray", "plastic"],
+    vocab: ["badge", "maroon", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -53,18 +53,18 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    scoreId: "obtained_grey_badge",
+    scoreId: "obtained_maroon_badge",
   },
 
   {
-    id: "brownbadge",
-    name: "brown plastic badge",
+    id: "violetbadge",
+    name: "violet plastic badge",
     initialDescription:
-      "From inside the shredded torso of the space suit, you can see a brown badge peeking out of the corpse's breast pocket.",
+      "From inside the shredded torso of the space suit, you can see a violet badge peeking out of the corpse's breast pocket.",
     description:
-      "This is a slim, rectangular plastic badge that is entirely brown except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'EDWARD GAINS, E1' and beneath that a bar code of some kind.",
+      "This is a slim, rectangular plastic badge that is entirely violet except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'EDWARD GAINS, E1' and beneath that a bar code of some kind.",
     location: "INVENTORY",
-    vocab: ["badge", "brown", "plastic"],
+    vocab: ["badge", "violet", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -72,7 +72,7 @@ export const badgeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-    scoreId: "obtained_brown_badge",
+    scoreId: "obtained_violet_badge",
   },
 
   {
@@ -91,7 +91,22 @@ export const badgeItems: Item[] = [
     isContainer: false,
     scoreId: "obtained_blue_badge",
   },
-
+  {
+    id: "orangebadge",
+    name: "orange plastic badge",
+    description:
+      "This is a slim, rectangular plastic badge that is entirely orange except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name '' and beneath that a bar code of some kind.",
+    location: "INVENTORY",
+    vocab: ["orange", "badge", "plastic"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    scoreId: "obtained_orange_badge",
+  },
   {
     id: "greenbadge",
     name: "green plastic badge",

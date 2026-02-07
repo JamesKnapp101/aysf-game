@@ -35,6 +35,19 @@ export function canMoveThroughExit(
       message: doorDef?.blockMsg ?? `You can't get through`,
     };
   }
+  if (kind === "airlock") {
+    if (doorDef.id === "InnerDoor") {
+      if (
+        !state.worldState.doors["OuterDoor"] ||
+        state.worldState.doors["OuterDoor"]?.isOpen === true
+      ) {
+        return {
+          allowed: false,
+          message: `You pull at the handle, but it won't budge.`,
+        };
+      }
+    }
+  }
 
   if (kind === "badgeScanner") {
     const badgeId = doorDef.badgeItemId;
@@ -56,7 +69,7 @@ export function canMoveThroughExit(
     return {
       allowed: true,
       message:
-        "The badge scanner flashes a barely visible laser that flickers over you. It seems to find what it was looking for and emits a satisfied chirp, then the door opens with a hydraulic sigh as you pass through.",
+        "The badge scanner flashes a barely visible laser that flickers over you. It seems to find what it was looking for and emits a satisfied chirp, then the door opens with a hydraulic sigh as you pass through.\n",
     };
   }
   if (!doorState) {
@@ -65,6 +78,17 @@ export function canMoveThroughExit(
 
   if (!doorState.isOpen) {
     if (!doorState.isLocked) {
+      if (doorState.id === "InnerDoor") {
+        if (
+          !state.worldState.doors["OuterDoor"] ||
+          state.worldState.doors["OuterDoor"]?.isOpen === true
+        ) {
+          return {
+            allowed: false,
+            message: `You grab the door's handle and pull, but it won't budge.`,
+          };
+        }
+      }
       return { allowed: true, message: "You open the door and step through." };
     }
     return { allowed: false, message: "The door is closed." };
@@ -103,7 +127,14 @@ export function tryOpenDoor(
   if (doorState.isOpen) {
     return { state, message: "The door is already open." };
   }
-
+  if (doorDef.id === "InnerDoor") {
+    if (
+      !state.worldState.doors["OuterDoor"] ||
+      state.worldState.doors["OuterDoor"].isOpen === true
+    ) {
+      return { state, message: `You pull at the handle, but it won't budge.` };
+    }
+  }
   if (doorDef.badgeItemId) {
     if (!playerHasBadge(state, doorDef.badgeItemId)) {
       return {

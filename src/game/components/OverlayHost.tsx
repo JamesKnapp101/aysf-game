@@ -3,6 +3,7 @@ import {
   WomensLockerModal,
 } from "@game/components/LockerModal";
 import { MatterTransmitterModal } from "@game/components/MatterTransmitterModal";
+import { TeleportationTerminalModal } from "@game/components/TeleportationTerminalModal";
 import type { Dispatch, SetStateAction } from "react";
 import { PowerStationTerminalModal } from "../components/PowerStationTerminalModal";
 import { useUIOverlayStore } from "../store/store";
@@ -126,6 +127,16 @@ export function OverlayHost({
           onCycleView={onCycleView}
           onRunCommand={onRunCommand}
           onClose={closeOverlay}
+        />
+      );
+    }
+
+    case "teleportation-terminal": {
+      return (
+        <TeleportationTerminalModal
+          onClose={closeOverlay}
+          state={state}
+          setGameState={setGameState}
         />
       );
     }

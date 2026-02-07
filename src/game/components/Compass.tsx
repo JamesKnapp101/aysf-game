@@ -5,9 +5,11 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
   const active = new Set(exits.map((d) => d.toLowerCase()));
   const CARDINAL_POINTS = "60,22 59,60 61,60";
   const DIAGONAL_POINTS = "60,30 59,60 61,60";
+
   const armClass = (dir: Direction) =>
     active.has(dir) ? "compass-arm compass-arm--active" : "compass-arm";
-  const labelClass = (dir: "up" | "down") =>
+
+  const labelClass = (dir: "up" | "down" | "in" | "out") =>
     active.has(dir) ? "compass-label compass-label--active" : "compass-label";
 
   return (
@@ -26,6 +28,78 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
             strokeWidth="1"
             strokeLinejoin="round"
             strokeLinecap="round"
+          />
+        </svg>
+      </div>
+
+      {/* In (upper-right) */}
+      <div
+        className={`room-compass-label room-compass-label--i ${labelClass(
+          "in"
+        )}`}
+        title={active.has("in") ? "In" : undefined}
+      >
+        <svg viewBox="0 0 10 10" className="compass-icon" aria-hidden="true">
+          {/* Door frame */}
+          <path
+            d="M8 2.2v5.6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+          />
+          {/* Arrow pointing into the frame (to the right) */}
+          <polyline
+            points="2.2,5 6.2,5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <polyline
+            points="5.2,3.8 6.8,5 5.2,6.2"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+
+      {/* Out (lower-left) */}
+      <div
+        className={`room-compass-label room-compass-label--o ${labelClass(
+          "out"
+        )}`}
+        title={active.has("out") ? "Out" : undefined}
+      >
+        <svg viewBox="0 0 10 10" className="compass-icon" aria-hidden="true">
+          {/* Door frame */}
+          <path
+            d="M2 2.2v5.6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+          />
+          {/* Arrow pointing out of the frame (to the left) */}
+          <polyline
+            points="7.8,5 3.8,5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <polyline
+            points="4.8,3.8 3.2,5 4.8,6.2"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </div>
@@ -59,6 +133,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
         <text x="60" y="18" textAnchor="middle" className="compass-n-label">
           N
         </text>
+
         {/* Needle Shapes — each is a thin triangle */}
         {/* N */}
         <polygon

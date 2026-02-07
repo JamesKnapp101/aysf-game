@@ -30,6 +30,7 @@ export const parkRooms: Room[] = [
       { direction: "southeast", toRoomId: "RestaurantEntrance" },
       { direction: "northeast", toRoomId: "MovieEntrance" },
       { direction: "east", toRoomId: "HubTree" },
+      { direction: "west", toRoomId: "Spa" },
     ],
   },
   {

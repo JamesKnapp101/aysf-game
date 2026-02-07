@@ -10,28 +10,9 @@ import { AVIARY_SPOTLIGHT_ROUTE } from "@game/engine/ticks/aviaryTick";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
 import type { GameState, World } from "./types/gameTypes";
 
-export function getOpeningSplashLogs(): string[] {
-  return [
-    "████████████████████████████████████████████████████████████",
-    "█ AND YE SHALL FIND — SCIENCE FICTION                      █",
-    "████████████████████████████████████████████████████████████",
-    "Serial: 000002    Release: 2    Build: 2026.01.01-0201",
-    "Copyright (c) 2026 Platypus Pot Pie Productions\n\n",
-    "You feel cold, a low, dull cold that seeps into bone.",
-    "You awaken slowly, drifting up from a black ocean of half-dreams, your thoughts sticky and sluggish. Something has been tugging at you from the dark edges of sleep, urging you to get up.",
-    "You reach for blankets that aren’t there, when suddenly a tremor runs down your spine, and your eyes snap open.",
-    "For a heartbeat you feel panic, with no clue where you are, no context, just raw fear. Then details trickle in: you’re on the floor, not a bed. A hard floor. Naked. A sharp ache pulses in your neck like you were dropped here.",
-    "You sense dim lighting, and air that smells faintly of smoke.",
-    "Where is this place?",
-    "More importantly, where were you *supposed* to be?",
-    "You reach into the void that should be your memory. A home. A name. A face. Nothing. You don’t know who you are.\n\n",
-    "There has to be a reason you're here.",
-  ];
-}
-
 export const createInitialState = (world: World): GameState => {
   const uniqueItems = Array.from(
-    new Map(world.items.map((it) => [it.id, it])).values()
+    new Map(world.items.map((it) => [it.id, it])).values(),
   );
 
   const normalizedWorld: World = {
@@ -46,7 +27,7 @@ export const createInitialState = (world: World): GameState => {
     {
       ignoreIslands: true,
       excludeRoomIdPatterns: [/Elevator/i, /Shaft/i],
-    }
+    },
   );
 
   const worldWithMeta: World = {
@@ -73,25 +54,22 @@ export const createInitialState = (world: World): GameState => {
   const initialGameState: GameState = {
     rng: () => Math.random(),
     world: worldWithMeta,
-    log: getOpeningSplashLogs(),
+    log: [],
     score: 0,
     rating: 0,
     moves: 0,
     player: {
-      roomId: "InnerRingSouth",
+      roomId: "LevelThreeCorridorThree",
       inventory: startingInventoryIds,
       memoriesTriggered: {
         own_name: false,
+        own_image: false,
         own_occupation: false,
         own_voice: false,
         own_handwriting: false,
         aware_of_reincarnation: false,
         aware_of_reincarnation_nature: false,
         aware_of_own_role_in_reincarnation: false,
-        gorilla_name: false,
-        cat_name: false,
-        kira_one: false,
-        kira_two: false,
         pinhole_cause: false,
         aware_of_statue_nature: false,
         aware_of_innoculant: false,
@@ -108,14 +86,16 @@ export const createInitialState = (world: World): GameState => {
         {
           id: "regenerationWoozies",
           intensity: 1,
-          remainingTurns: 18,
+          remainingTurns: 1,
         },
       ],
     },
     worldState: {
       doors,
       darkRooms: {
-        FiveEastBed: true,
+        LivingQuartersThreeWest: true,
+        ThreeWestBath: true,
+        ThreeWestBed: true,
         // Aviary rooms
         OuterRingNorth: true,
         OuterRingTopEastBend: true,
@@ -132,6 +112,20 @@ export const createInitialState = (world: World): GameState => {
         InnerRingWest: true,
         AviaryMaintenance: true,
         InnerRingSouth: true,
+        // Engineering
+        ReactorRoom: true,
+        MainReactorPlatform: true,
+        MaintenanceDuct: true,
+        MaintenanceDuctTwo: true,
+        MaintenanceDuctThree: true,
+        ReactorCore: true,
+        EngCorridorOne: true,
+        EngCorridorTwo: true,
+        EngCorridorThree: true,
+        ShuttleBay: true,
+        InsideShuttle: true,
+        Warehouse: true,
+        LevelFiveStairAccess: true,
       },
       noPowerRooms: {
         // This will basically be everything on some of the floors
@@ -154,12 +148,13 @@ export const createInitialState = (world: World): GameState => {
         "gravity-level-seven": true,
         "library-power": false,
         "hub-security": true,
-        "teleport-pads-green": false,
-        "teleport-pads-blue": false,
-        "teleport-pads-yellow": false,
-        "teleport-pads-brown": false,
-        "teleport-pads-white": false,
-        "teleport-pads-grey": false,
+        "teleport-pads-green": true,
+        "teleport-pads-blue": true,
+        "teleport-pads-yellow": true,
+        "teleport-pads-violet": true,
+        "teleport-pads-orange": true,
+        "teleport-pads-white": true,
+        "teleport-pads-maroon": true,
         "engine-room-power-lock": false,
         "weapons-system": false,
         "loading-dock-door": true,
@@ -179,7 +174,6 @@ export const createInitialState = (world: World): GameState => {
       },
       roomAudioLevel: {
         PowerGrid: 1,
-        StairWellSeven: 1,
       },
       roomTemp: {
         StairWellSeven: "cool",
@@ -212,9 +206,9 @@ export const createInitialState = (world: World): GameState => {
         gorilla_in_cryopod: false,
         gorilla_sedated: false,
         initiated_shutdown_from_terminal: false,
-        obtained_black_badge: false,
+        obtained_ultraviolet_badge: false,
         obtained_blue_badge: false,
-        obtained_brown_badge: false,
+        obtained_violet_badge: false,
         obtained_code_from_parrot: false,
         obtained_coord_finder: false,
         obtained_correct_thumb: false,
@@ -225,7 +219,7 @@ export const createInitialState = (world: World): GameState => {
         obtained_engine_shutdown_code: false,
         obtained_gravity_boots: false,
         obtained_green_badge: false,
-        obtained_grey_badge: false,
+        obtained_maroon_badge: false,
         obtained_hub_pass: false,
         obtained_infection_report: false,
         obtained_innoculant: false,
@@ -233,6 +227,7 @@ export const createInitialState = (world: World): GameState => {
         obtained_music_box: false,
         obtained_new_z4_detonator: false,
         obtained_nv_goggles: false,
+        obtained_orange_badge: false,
         obtained_pink_badge: false,
         obtained_power_key: false,
         obtained_radiation_cure: false,
@@ -345,12 +340,27 @@ export const createInitialState = (world: World): GameState => {
         route: AVIARY_SPOTLIGHT_ROUTE,
         index: 0,
         turnsLeftHere: 1,
-        pauseWhenPlayerNotInAviary: false,
+        pauseWhenPlayerNotInAviary: true,
         hintCooldown: 0,
+      },
+      hydroponicsSpider: {
+        isAlive: true,
+        turnsSinceLastBreath: 0,
+      },
+      conditionalTriggers: {
+        MysteriousNoteFound: false,
+      },
+      damagedFlashlight: {
+        isOn: false,
+        maxCharge: 6,
+        currentCharge: 6,
+        chargeRate: 1,
       },
     },
     itemState: {
-      itemRoomId: {},
+      itemRoomId: Object.fromEntries(
+        world.items.map((i) => [i.id, i.location]),
+      ),
       pickedUpByPlayer: {},
       wornByPlayer: {
         head: undefined,
@@ -400,13 +410,6 @@ export const createInitialState = (world: World): GameState => {
           trustLevel: 0,
           statusEffects: [],
         },
-        gorilla: {
-          angerLevel: 10,
-          hungerLevel: 10,
-          fearLevel: 10,
-          trustLevel: 0,
-          statusEffects: [],
-        },
       },
     },
   };
@@ -424,7 +427,7 @@ function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {
 
 function mergeContents(
   existing: Record<string, string[]>,
-  seeds: Record<string, string[]>
+  seeds: Record<string, string[]>,
 ): Record<string, string[]> {
   const next: Record<string, string[]> = { ...existing };
 
@@ -438,7 +441,7 @@ function mergeContents(
 
 export function seedContainerContents(
   state: GameState,
-  seeds: Record<string, string[]>
+  seeds: Record<string, string[]>,
 ): GameState {
   return {
     ...state,
@@ -446,7 +449,7 @@ export function seedContainerContents(
       ...state.itemState,
       containerContents: mergeContents(
         state.itemState.containerContents,
-        seeds
+        seeds,
       ),
     },
   };
@@ -454,7 +457,7 @@ export function seedContainerContents(
 
 export function seedSurfaceContents(
   state: GameState,
-  seeds: Record<string, string[]>
+  seeds: Record<string, string[]>,
 ): GameState {
   return {
     ...state,
@@ -467,7 +470,7 @@ export function seedSurfaceContents(
 
 export function seedUnderContents(
   state: GameState,
-  seeds: Record<string, string[]>
+  seeds: Record<string, string[]>,
 ): GameState {
   return {
     ...state,

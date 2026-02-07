@@ -2,12 +2,13 @@ import { CRT_COLOR_STORAGE_KEY, type LayoutPrefs } from "../Game";
 import { getItemsInInventory } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 
+import { QuantumTotePanel } from "@game/components/QuantumTotePanel";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HintsTab } from "../../hints/HintMenu";
 import { allHintsRoot } from "../../hints/allHintsRoot";
-import { InventoryTree } from "./InventoryTree";
 import { StatusTab } from "./StatusTab";
 
+type SidebarTab = "inventory" | "status" | "hints" | "settings";
 type LogPanelProps = {
   state: GameState;
   dispatch: React.Dispatch<any>;
@@ -18,6 +19,8 @@ type LogPanelProps = {
   roomPanelFlexBasis: number | string;
   inputRef: React.RefObject<HTMLInputElement | null>;
   rootRef: React.RefObject<HTMLDivElement | null>;
+  activeTab: SidebarTab;
+  setActiveTab: (t: SidebarTab) => void;
 };
 
 function applyCRTColor(colorHex: string) {
@@ -55,7 +58,7 @@ function renderLogLine(line: string) {
     parts.push(
       <span className="log-room-name" key={parts.length}>
         {roomText}
-      </span>
+      </span>,
     );
 
     rest = rest.slice(end + 14);
@@ -73,11 +76,10 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   setCrtColor,
   inputRef,
   rootRef,
+  activeTab,
+  setActiveTab,
 }) => {
   const [input, setInput] = useState("");
-  const [activeTab, setActiveTab] = useState<
-    "inventory" | "status" | "hints" | "settings"
-  >("inventory");
   const inventoryItems = getItemsInInventory(state);
   const shouldStickToBottomRef = useRef(true);
   const logRef = useRef<HTMLDivElement | null>(null);
@@ -102,7 +104,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
 
   // -------- vertical resize: log vs sidebar ---------------------------------
   const handleStartResizeVertical = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     e.preventDefault();
     e.stopPropagation();
@@ -253,7 +255,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
 
         <div className="game-sidebar-content">
           {activeTab === "inventory" && (
-            <InventoryTree state={state} inventoryItems={inventoryItems} />
+            <QuantumTotePanel state={state} inventoryItems={inventoryItems} />
           )}
 
           {activeTab === "status" && <StatusTab gameState={state} />}

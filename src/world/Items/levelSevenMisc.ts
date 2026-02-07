@@ -5,7 +5,7 @@ export const levelSevenItems: Item[] = [
     id: "MysteriousNote",
     name: "mysterious note",
     description:
-      "A small scrap of paper with a thumbprint in dried blood in the bottom right corner. There's something written on it.",
+      "A folded piece of paper with a thumbprint in dried blood in the bottom right corner. It's covered in handwritten notes, scribbled hastily.",
     location: "",
     vocab: ["note", "scrap", "paper"],
     itemClass: "solid",
@@ -14,9 +14,9 @@ export const levelSevenItems: Item[] = [
     itemSize: 1,
     isWearable: false,
     isReadable: true,
-    readableText: `i vote we go`,
+    readableText: `Rules:\n\n- Stay in the light, they won't come into the light\n- In time even casual contact will be fatal\n- Can pass through even tiny openings\n- I think they can follow thermal signatures, need to prove.\n\nLocation: some kind of facility or campus. Self contained?\n\nSEARCH EVERY BODY YOU FIND! I'll try to keep notes.\n\nMany dead bodies, cause of death unclear in many cases but at least some have been either eaten, dissolved, or absorbed entirely. No survivors found so far. Whatever happened is widespread and acted fast.\n\nTO DO LIST:\n\n\tHeard warning re: reactor overload, look into that\n\tGet power back on in several areas\n\tAccess lab to find more info on nature of threat\n\tFind out what caused those strange holes\n\n\tOther notes:\n\n\t\t- Wtf was that weird spider thing?\n\t\t- Is anyone left alive?\n\t\t- Watch those stairwell railings, they seem unstable.`,
     meta: {
-      onFind: `Tucked in the jumpsuit's pocket you find a small scrap of paper with something written on it.`,
+      onFind: `Tucked in the jumpsuit's pocket you find a folded piece of paper. When you unfold it, you see a bloody thumbprint in the bottom right corner, and several handwritten notes scribbled on it.`,
     },
   },
 
@@ -39,6 +39,49 @@ export const levelSevenItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+  },
+  {
+    id: "damagedFlashlight",
+    name: "broken flashlight",
+    location: "StairWellSeven",
+    vocab: [
+      "flashlight",
+      "broken flashlight",
+      "damaged flashlight",
+      "broken",
+      "damaged",
+    ],
+    initialDescription:
+      "Near the wall, amidst scattered pieces of broken plastic, you see a flashlight with a cracked housing.",
+    description:
+      "It sustained a pretty hard impact, cracking the housing and the lens cover, but the lens seems to be intact.",
+    describe: (state) => {
+      const damagedFlashlightState = state.worldState.damagedFlashlight;
+      let desc = `It sustained a pretty hard impact, cracking the housing and the lens cover, but the lens seems to be intact. The battery is damaged, though, and seems only capable of holding a tiny fraction of its charge, with a little charge meter on one side that reads 'Battery: ${damagedFlashlightState.currentCharge}%' The flashlight is currently ${damagedFlashlightState.isOn ? "on, " : "off."}`;
+      if (damagedFlashlightState.isOn) {
+        if (damagedFlashlightState.currentCharge >= 3) {
+          desc += `and casting a reasonably bright beam.`;
+        }
+        if (damagedFlashlightState.currentCharge === 2) {
+          desc += `and casting a sallow beam of light.`;
+        }
+        if (damagedFlashlightState.currentCharge === 1) {
+          desc += `but it's flickering, and doesn't look like it's going to be on much longer.`;
+        }
+        if (damagedFlashlightState.currentCharge < 1) {
+          desc += `but it isn't casting any light.`;
+        }
+      }
+
+      return desc;
+    },
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 2,
+    isSwitchable: true,
+    isOn: false,
+    providesLight: true,
   },
   {
     id: "seed",

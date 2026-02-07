@@ -2,15 +2,15 @@ import type { Item } from "../../game/types/itemTypes";
 
 export const levelOneItems: Item[] = [
   {
-    id: "BridgeGreyIND",
+    id: "BridgeMaroonIND",
     name: "indicator light",
     description:
-      "A circular indicator disk is set flush into the bulkhead, glowing with an unnervingly calm grey light.",
-    initialDescription: "The disk is glowing with a cold, grey light.",
+      "A circular indicator disk is set flush into the bulkhead, glowing with an unnervingly calm maroon light.",
+    initialDescription: "The disk is glowing with a warm, maroon light.",
     sceneryDescription:
-      "The small disk emits a steady, washed-out grey glow that doesn’t flicker or pulse. It throws a thin halo across the metal wall, bleaching nearby controls of color and warmth.",
+      "The small disk emits a steady, washed-out maroon glow that doesn’t flicker or pulse. It throws a thin halo across the metal wall, bleaching nearby controls of color and warmth.",
     location: "Bridge",
-    vocab: ["indicator", "light", "glow", "disk", "grey"],
+    vocab: ["indicator", "light", "glow", "disk", "maroon"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 0,

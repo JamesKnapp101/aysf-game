@@ -9,7 +9,7 @@ export const fungalCaveRooms: Room[] = [
     exits: [
       { direction: "east", toRoomId: "BotanicalOne" },
       { direction: "northeast", toRoomId: "Greenhouse" },
-      { direction: "southeast", toRoomId: "FungalIncubation" },
+      { direction: "northwest", toRoomId: "FungalIncubation" },
       { direction: "southwest", toRoomId: "FungalFruiting" },
     ],
   },
@@ -18,7 +18,7 @@ export const fungalCaveRooms: Room[] = [
     name: "Fungal Incubation Cave",
     description:
       "This is a dark, damp cave within the preserve. The walls are lined with various fungi and moss. You can see a small path leading to the northwest.",
-    exits: [{ direction: "northwest", toRoomId: "FungalCave" }],
+    exits: [{ direction: "southeast", toRoomId: "FungalCave" }],
   },
   {
     id: "FungalFruiting",

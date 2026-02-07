@@ -2,6 +2,121 @@ import type { Item } from "../../game/types/itemTypes";
 
 export const levelSixItems: Item[] = [
   {
+    id: "LevelSixStairRailing",
+    name: "metal railing",
+    description:
+      "A smooth, polished metal railing. The blood spatter may have come from the man who fell, below.",
+    sceneryDescription: "flanked by a metal railing spattered with blood.",
+    location: "StairSix",
+    vocab: ["rail", "railing"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 30,
+    itemSize: 101,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+  },
+  {
+    id: "LevelSixElevators",
+    name: "elevators",
+    description: `'Cable Fault Detected' doesn't sound good. Something must have gotten seriously damaged.`,
+    sceneryDescription: `There is a row of three elevator doors to the north, but the lights are currently off and the display mounted above each doors is red, with the message 'Out of Order: Cable Fault Detected'.`,
+    location: "LevelSixStairAccess",
+    vocab: ["elevator", "elevators", "elevator doors"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 50,
+    itemSize: 50,
+    isOpenable: true,
+    isContainer: true,
+    meta: {
+      sceneryDescriptionOrder: 1,
+      isUnopenableDoor: true,
+    },
+    overrides: {
+      open: `They're stuck shut, you can't even sneak your fingers into the seam to pull them apart.`,
+    },
+  },
+  {
+    id: "AirlockStatusDisplay",
+    name: "status display",
+    description: `It's a large, flat panel display mounted in the wall over the door.`,
+    sceneryDescription: `Z`,
+    location: "LevelSixCorridorBend",
+    vocab: ["display", "door display"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 50,
+    itemSize: 50,
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    describeScenery: (state) => {
+      let desc = `A flat panel display is mounted in the wall over a large steel door that looms at the end of the short corridor. The display is `;
+      const outerDoorState = state.worldState.doors?.["OuterDoor"];
+      if (outerDoorState.isOpen) {
+        desc += `currently lit up red, and displaying a warning message that reads: 'DEPRESSURIZED'`;
+      }
+      if (outerDoorState.isOpen === false) {
+        desc += `currently lit up green, and displaying the message 'ENTRY PERMITTED'`;
+      }
+      return desc;
+    },
+    describe: (state) => {
+      let desc = `The flat panel display is `;
+      const outerDoorState = state.worldState.doors?.["OuterDoor"];
+      if (outerDoorState.isOpen) {
+        desc += `currently lit up red, and displaying a warning message that reads: 'DEPRESSURIZED'`;
+      }
+      if (outerDoorState.isOpen === false) {
+        desc += `currently lit up green, and displaying the message 'ENTRY PERMITTED'`;
+      }
+      return desc;
+    },
+  },
+
+  // {
+  //   id: "HydroponicsDoor",
+  //   name: "door",
+  //   description: `It's a large, flat panel display mounted in the wall over the door.`,
+  //   sceneryDescription: `To the south is a security door with no obvious handle, its frame skewed enough to leave an open gap along the right side. A badge reader is mounted next to the door, but it has scorching around the seam and doesn't appear to be functional. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the dented banner is the word 'HYDROPONICS'`,
+  //   location: "LevelSixCorridorEnd",
+  //   vocab: ["door"],
+  //   itemClass: "solid",
+  //   itemCategory: "scenery",
+  //   itemWeight: 50,
+  //   itemSize: 50,
+  //   meta: {
+  //     sceneryDescriptionOrder: 1,
+  //   },
+  //   describeScenery: (state) => {
+  //     let desc = `To the south is a security door with no obvious handle, its frame skewed enough to leave an open gap along the right side. A badge reader is mounted next to the door, but it has scorching around the seam and doesn't appear to be functional. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the dented banner is the word 'HYDROPONICS'`;
+  //     const greenTpadState =
+  //       state.worldState.powerRestoredSections["teleport-pads-green"];
+  //     if (greenTpadState) {
+  //       desc += `Through the gap along the side of the door, you can see a smooth, glassy green disk on the floor, big enough to stand on. It is lit with a sallow green glow that bathes the shadows of the room beyond.`;
+  //     }
+  //     if (greenTpadState === false) {
+  //       desc += `Through the gap along the side of the door, you can see a smooth, glassy green disk on the floor, big enough to stand on.`;
+  //     }
+  //     return desc;
+  //   },
+  //   describe: (state) => {
+  //     let desc = `The door is damaged, becoming wedged tight in the frame. There's a badge reader next to it, but even if it wasn't damaged I don't think the door is functional. Through the gap along the side you can see a glassy green disk, or platform on the floor, large enough to stand on`;
+  //     const greenTpadState =
+  //       state.worldState.powerRestoredSections["teleport-pads-green"];
+  //     if (greenTpadState) {
+  //       desc += ` and glowing a sallow green color.`;
+  //     }
+  //     if (greenTpadState === false) {
+  //       desc += `.`;
+  //     }
+  //     return desc;
+  //   },
+  // },
+
+  {
     id: "CannisterOne",
     name: "cannister of gel",
     description:

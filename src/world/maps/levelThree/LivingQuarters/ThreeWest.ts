@@ -1,353 +1,706 @@
 import { Item } from "@game/types/itemTypes";
-import { createLivingQuarter } from "src/world/maps/livingQuartersTemplate";
+import { Room } from "@game/types/roomTypes";
 
-export const LQThreeWestCustomItems: Item[] = [
+export const threeWestRooms: Room[] = [
+  // LIVING QUARTERS THREE WEST
   {
-    id: "ThreeWestElderlyMan",
-    name: "elderly man's body",
-    description: `
-He sits slack against the sofa cushions, posture softened into a final surrender.
-His skin is cool and waxy to the touch, and the corners of his eyes are rimmed with faint red speckling.
-One hand rests close to the other body, as if he tried to keep contact even as everything stopped.
-`,
-    sceneryDescription: `
-On the sofa sits an elderly man, slumped but still angled toward the person beside him, like closeness was the last thing he chose.
-`,
-    location: "LivingQuartersThreeWest",
-    vocab: ["elderly", "man", "body", "corpse", "husband"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 130,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
+    id: "LivingQuartersThreeWest",
+    name: "Living Quarters Three West",
+    description: `This is a spacious living area that doubles as an entryway and den, where just inside the doorway is a rectangular gray mat, and against the wall next to it an area for guests to leave their shoes. The interior is carpeted in a warm mocha that looks to be vacuumed regularly, though maybe not recently, which extends into the den area.[[SCENERY]]`,
+    exits: [
+      { direction: "east", doorId: "DOOR3CW" },
+      { direction: "south", toRoomId: "ThreeWestBath" },
+      { direction: "west", toRoomId: "ThreeWestBed" },
+    ],
   },
+  {
+    id: "ThreeWestBath",
+    name: "Three West Bathroom",
+    description: `The unit's bathroom is in disarray, its tiled floor spattered with what looks like a mixture of blood, and something else, something blackish-brown.[[SCENERY]]`,
+    exits: [{ direction: "north", toRoomId: "LivingQuartersThreeWest" }],
+  },
+  {
+    id: "ThreeWestBed",
+    name: "Three West Bedroom",
+    description: `The bedroom is large enough to accommodate three twin beds, arranged in the corners of the room.[[SCENERY]]`,
+    exits: [{ direction: "east", toRoomId: "LivingQuartersThreeWest" }],
+  },
+];
 
+export const threeWestItems: Item[] = [
   {
-    id: "ThreeWestElderlyWoman",
-    name: "elderly woman's body",
-    description: `
-She sits beside him, shoulders drawn inward beneath the shared blanket, as if she was trying to keep warm.
-Her face is calm in a way that feels earned—lines softened by stillness, lips slightly parted.
-The same faint red speckling marks the edges of her mouth and eyes, delicate and wrong.
-`,
-    sceneryDescription: `
-Beside him sits an elderly woman, leaned close enough that their shoulders still touch.
-It looks like they meant to wait something out together, and never got the chance to stand again.
-`,
-    location: "LivingQuartersThreeWest",
-    vocab: ["elderly", "woman", "body", "corpse", "wife"],
+    id: "MensLockerKey11",
+    name: "blue locker key, labeled '11'",
+    description:
+      "It's a small key with a blue rubber grip. The grip has the number '11' pressed into it.",
+    location: "INVENTORY",
+    vocab: ["key", "locker key", "eleven", "11"],
     itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 110,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      lockerType: "men",
+      lockerIndex: 11,
+    },
   },
+  {
+    id: "MensLockerKey9",
+    name: "blue locker key, labeled '9'",
+    description:
+      "It's a small key with a blue rubber grip. The grip has the number '9' pressed into it.",
+    location: "INVENTORY",
+    vocab: ["key", "locker key", "nine", "9"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      lockerType: "men",
+      lockerIndex: 9,
+    },
+  },
+  {
+    id: "MensLockerKey2",
+    name: "blue locker key, labeled '2'",
+    description:
+      "It's a small key with a blue rubber grip. The grip has the number '2' pressed into it.",
+    location: "INVENTORY",
+    vocab: ["key", "locker key", "two", "2"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      lockerType: "men",
+      lockerIndex: 2,
+    },
+  },
+  {
+    id: "HubPass",
+    name: "laminated pass",
+    description:
+      "It's a laminated access pass with a printed code running up one edge and block letters giving its owner limited privileges in the Park.",
+    location: "",
+    vocab: ["laminated", "hub", "pass", "card"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    isWearable: false,
+    isReadable: true,
+    readableText: "HUB PASS\n" + "24 Hours\n" + "Day: Any\n",
+    isContainer: false,
+    scoreId: "obtained_hub_pass",
+  },
+  {
+    id: "ResearchNotes",
+    name: "research notes",
+    description: `It's a wrinkled paper, covered in scribbled notes.`,
+    readableText: `
+      - Unknown incident. Has affected everything.
+        - Pinholes? Source unknown. 
+          - Micrometeorites? No impact residue.
+          - Galvanic corrosion? No sign of oxides.
+          - Electrical arcing? No carbonization. 
+          - Some kind of manufacturing wear? 
+          - How widespread is this?
+      - Coincides with widespread illness. Cause?
+        - Not viral. Not bacterial. 
+        - Some kind of toxin?
+        - No sign of high radiation levels
 
-  {
-    id: "ThreeWestKnitBlanket",
-    name: "knit blanket",
-    description: `
-A thick knit blanket, heavy with warmth it can’t deliver anymore.
-The yarn is slightly pilled and repaired in places, kept alive by patient hands.
-`,
-    sceneryDescription: `
-A knit blanket is wrapped around both of their shoulders, arranged with quiet care, as if someone tried to make the end less frightening.
-`,
-    location: "LivingQuartersThreeWest",
-    vocab: ["knit", "blanket", "throw", "afghan"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 3,
-    itemSize: 4,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "ThreeWestCarpet",
-    name: "carpet",
-    description: `
-A faded carpet with a careful vacuum pattern that stops abruptly near the doorway,
-as if whoever kept it up finally ran out of time.
-`,
-    sceneryDescription: `
-A worn carpet covers the living room floor, its fibers flattened in places where people paused and sat for long hours.
-`,
-    location: "LivingQuartersThreeWest",
-    vocab: ["carpet", "floor", "rug"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 20,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
+      - There is no doubt that an incident Three experienced at the Park gymnasium is the cause of whatever is happening to him. The hospital is overwhelmed but they don't know any more about what's going on than we do at this point. We will attempt to help Three ourselves. The key has been keeping his temperature down. Whatever is causing this has spiked his temperature to the point where ice water is the only thing that slows it down, but even so, it rises.
 
-  {
-    id: "ThreeWestFootprints",
-    name: "footprints",
-    description: `
-Overlapping prints cross the carpet—lighter house-shoe marks and heavier boots that don’t belong in a home.
-`,
-    sceneryDescription: `
-Footprints overlap in muted layers: slow, shuffling steps, and then sharper boot treads that cut through them like an intrusion.
-`,
-    location: "LivingQuartersThreeWest",
-    vocab: ["footprints", "prints", "tracks"],
+      - Two's theory regarding acid turns out to be true, but what does it mean? The high temperature should have caused significant damage by now but physically Three is completely intact and unharmed. When Two took a small sample of Three's tissue and submerged it in a small amount of acid, the tissue remained undamaged. He insists that something is protecting Three from damage even as it ravages him.
+
+      - Three regained consciousness briefly, complaining of 'flickers' that he said are growing worse. He described these flickers as some sort of 'messages'
+
+      - Despite our best efforts, Three passed today. He regained conscious one last time but couldn't speak. His body went slack, then abruptly plumped significantly, such that his eyes bulged. He stopped breathing, and his body, while looking somewhat inflated, felt unyielding to the touch. 
+    `,
+    initialDescription: `Among the mess you see a wrinkled piece of paper with written notes.`,
+    location: "ThreeWestBed",
+    vocab: ["wrinkled note", "note", "wrinkled", "paper", "wrinkled paper"],
     itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isReadable: true,
   },
   {
-    id: "ThreeWestPillDust",
-    name: "white residue",
-    description: `
-A faint white residue clings to the corner of the counter, like something crushed and wiped away in a hurry.
-`,
-    sceneryDescription: `
-There’s a faint white residue on the bathroom counter, easy to miss unless you’re already looking for signs of routine and need.
-`,
+    id: "GimTwoJournal",
+    name: "blue-bound journal",
+    description: `It's a small, personalized journal with blue binding.`,
+    readableText: `
+     [Entry]\nTwo is trying but I fear there's not much either of us can do. He's only spinning his wheels, but I understand. Losing one us feels impossible.\n\n[Entry]\nI couldn't look at Three after he passed. Two took care of it, but it's so horrible. They need to come remove the rest of him, this isn't right.\n\n[Entry]\nAt first I thought I was imagining things but I'm not; at night I can hear something moving inside our unit, there is something in here with us, and it only comes out at night. Am I losing my mind?\n\n[Entry]\nTwo swears he's not sick, but I think he's lying\n\n.
+    `,
+    location: "",
+    vocab: ["journal", "blue journal"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isReadable: true,
+  },
+  {
+    id: "GimOneJournal",
+    name: "red-bound journal",
+    description: `It's a small, personalized journal with red binding.`,
+    readableText: `
+    [Entry]\nI don't know who to tell this to. One didn't see it, will he believe me? He is demanding to know where the wall hanging came from. I told him they left it when they picked up the body, but nobody picked up the body, it just went away. Most of it.\n\n[Entry]\nStill haven't told One, but I swear this is true; when Three died, I couldn't sleep, so I got up and realized we'd left the living room and bathroom lights on. I was glad to turn the bathroom light off, I didn't want to look at Three's body, but when I shut the door, I suddenly heard a loud 'snap' from inside the bathroom, followed by a thick, heavy splash. It chilled me to my core, and sounded horrible, but I made myself get up, head over there, and pull the door open. At first it looked like nothing had changed, until I realized Three's body was gone. Mostly gone. And there, on the wall, that strange hanging.\n\n[Entry]\nI make sure the bathroom door stays shut, now, but even so, at night, I can hear something moving in there. What is happening?\n\n[Entry]\nI began to feel sick today. I tried everything I could to talk myself out of it, but it's true. I haven't told One, but like with Three, it seems to be advancing quickly\n\n[Entry]\nI think I'm contagious. I should leave but I'm afraid to. What will we do?\n\n[Entry]\nThe flicker, I see it...\n\n
+    `,
+    location: "",
+    vocab: ["journal", "red journal"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isReadable: true,
+  },
+  {
+    id: "GimThreeJournal",
+    name: "green-bound journal",
+    description: `It's a small, personalized journal with green binding.`,
+    readableText: `
+      [Entry]\nI never get tired of the aviary, that owl is so cool! I already want to go back. I'd trade Park credits for zoo permissions any day.\n\n[Entry]\nThis is like the third day I've been getting weird looks from that Lil-Lilly woman from the poly group. Does she want to sex me?\n\n[Entry]\nI know that it's wrong to exclude the others, but I'd wish on every star in the cosmos if I could sex Isosceles just one time, one on one...\n\n[Entry]\nCan't wait to hit the gym!\n\n
+    `,
+    location: "",
+    vocab: ["journal", "green journal"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isReadable: true,
+  },
+  {
+    id: "GimOneCorpse",
+    name: "gimonecorpse",
+    description: `It's just like the remains in the living area, with the same stringy organic material left behind.`,
+    sceneryDescription: `A pair of red sweatpants and a red t-shirt lay on the floor, within some sort of reddish-black spatter. A single foot sticks out of the end of one pant leg, the heel pointing upward.`,
     location: "ThreeWestBath",
-    vocab: ["white", "residue", "powder", "dust"],
+    vocab: [
+      "remains",
+      "body",
+      "foot",
+      "leg",
+      "sweatpants",
+      "clothes",
+      "t-shirt",
+    ],
     itemClass: "solid",
     itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
+    itemWeight: 2,
+    itemSize: 3,
+    meta: {
+      sceneryDescriptionOrder: 12,
+    },
+    isContagious: true,
   },
   {
-    id: "ThreeWestWalker",
-    name: "folding walker",
-    description: `
-A lightweight folding walker, the grips smoothed by constant use.
-One rubber foot is newer than the others.
-`,
-    sceneryDescription: `
-Leaning near the bedroom doorway is a folding walker, parked with the muscle memory of long practice.
-`,
-    location: "LivingQuartersThreeWest",
-    vocab: ["walker", "frame", "folding", "walking"],
+    id: "JarOfAcid",
+    name: "jar of acid",
+    description: `It looks clear and unassuming through the glass.`,
+    initialDescription: `Among the glass beakers and flasks is a jar labeled 'Acid'.`,
+    location: "ThreeWestBed",
+    vocab: ["jar", "acid", "jar of acid"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isContainer: true,
+  },
+  {
+    id: "ThreeWestTablet",
+    name: "tablet",
+    description: `The tablet is corroded beyond use.`,
+    sceneryDescription: `Something corrosive was spilled there at some point, eating through the plastic and destroying an electronic tablet.`,
+    location: "ThreeWestBed",
+    vocab: ["tablet", "electronic", "electronic tablet"],
     itemClass: "solid",
     itemCategory: "scenery",
-    itemWeight: 8,
-    itemSize: 6,
+    meta: {
+      sceneryDescriptionOrder: 11,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ThreeWestBedBeakers",
+    name: "beakers",
+    description: `Some are empty, and some are filled with the residue of old chemicals. Some of the test tubes have scorch marks on the bottom. You have no idea what they were trying to accomplish`,
+    sceneryDescription: ` along with a jumble of beakers, flasks, and test tubes.`,
+    location: "ThreeWestBed",
+    vocab: ["beaker", "beakers", "flask", "flasks", "test tube", "test tubes"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 10,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ThreeWestBedHotPlate",
+    name: "hot plate",
+    description: `It looks like something shorted it out maybe, and it caught fire briefly. It doesn't look like it works anymore.`,
+    sceneryDescription: `On the plastic is a large hot plate which is scorched all around the edges of its housing, and is melted on one side so that the element is at an angle.`,
+    location: "ThreeWestBed",
+    vocab: ["plastic", "sheet", "plastic sheet"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 9,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ThreeWestBedPlastic",
+    name: "plastic sheet",
+    description: `It was meant to protect the floor but it didn't do a very good job.`,
+    sceneryDescription: `[[newline]]The middle of the bedroom has been cleared, and a plastic sheet laid down.`,
+    location: "ThreeWestBed",
+    vocab: ["plastic", "sheet", "plastic sheet"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 8,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+
+  {
+    id: "ThreeWestBedPhotos",
+    name: "photos",
+    description: `It's the exact same picture from the living area.`,
+    sceneryDescription: `Each end table projects a playing-card-sized holographic picture that displays the same picture of the three men that is displayed in the living area.`,
+    location: "ThreeWestBed",
+    vocab: [
+      "photo",
+      "photos",
+      "picture",
+      "pictures",
+      "hologram",
+      "holographic picture",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 7,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+
+  {
+    id: "ThreeWestGimThreeEndTable",
+    name: "green endtable",
+    description: `The endtable has long wooden legs, and a drawer in the front. It's been painted forest green.`,
+    sceneryDescription: ` with a nearby end table, painted red.`,
+    location: "ThreeWestBed",
+    vocab: [
+      "endtable",
+      "end table",
+      "green end table",
+      "green endtable",
+      "green",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 6,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "ThreeWestGimThreeBed",
+    name: "green bed",
+    description: `It looks like it hasn't been slept in for days.`,
+    sceneryDescription: `In the southwest corner of the room is a bunk with green bedding,`,
+    location: "ThreeWestBed",
+    vocab: ["green bed", "green bunk"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 5,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+
+  {
+    id: "ThreeWestGimTwoEndTable",
+    name: "blue endtable",
+    description: `The endtable has long wooden legs, and a drawer in the front. It's been painted cobolt blue.`,
+    sceneryDescription: ` next to which is a wooden end table with a single drawer that has been painted blue.`,
+    location: "ThreeWestBed",
+    vocab: ["endtable", "end table", "blue end table", "blue endtable", "blue"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "ThreeWestGimTwoBed",
+    name: "blue bed",
+    description: `It's been slept in recently.`,
+    sceneryDescription: `In the northwest corner of the room is a bunk with blue bedding,`,
+    location: "ThreeWestBed",
+    vocab: ["blue bed", "blue bunk"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+
+  {
+    id: "ThreeWestGimOneEndTable",
+    name: "red endtable",
+    description: `The endtable has long wooden legs, and a drawer in the front. It has been painted crimson red.`,
+    sceneryDescription: ` next to which is a wooden end table, also red, with a single drawer.`,
+    location: "ThreeWestBed",
+    vocab: ["endtable", "end table", "red end table", "red endtable", "red"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "ThreeWestGimOneBed",
+    name: "red bed",
+    description: `It hasn't been made in a while.`,
+    sceneryDescription: `In the northeast corner of the room is a bunk with red bedding,`,
+    location: "ThreeWestBed",
+    vocab: ["red bed", "red bunk"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+
+  {
+    id: "IceTray",
+    name: "ice tray",
+    description: `It's a plastic tray for making ice cubes.`,
+    initialDescription: `A plastic ice tray lays upside-down on the tiled floor.`,
+    location: "ThreeWestBath",
+    vocab: ["tray", "plastic", "plastic tray", "ice tray", "ice cube tray"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isReadable: true,
+    isContainer: true,
+    capacity: 5,
+    allowedContentsIds: ["water"],
+  },
+  {
+    id: "IceBag",
+    name: "ice bag",
+    description: `It's a somewhat crumpled, thick plastic bag capable of holding up to 20kg of ice.`,
+    initialDescription: `Crumpled on the floor near the tub is an empty plastic bag labeled 'ICE'.`,
+    readableText: `ICE`,
+    location: "ThreeWestBath",
+    vocab: ["bag", "plastic", "plastic bag", "ice bag"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isReadable: true,
+    isContainer: true,
+    capacity: 20,
+  },
+  {
+    id: "ThreeWestMedicineChestMirror",
+    name: "mirror",
+    description: `The mirror is clean and polished.`,
+    sceneryDescription: `mirror.`,
+    location: "ThreeWestBath",
+    vocab: ["mirror"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 2,
+    itemSize: 3,
+    meta: {
+      sceneryDescriptionOrder: 5,
+    },
+    isReflective: true,
+  },
+  {
+    id: "ThreeWestMedicineChest",
+    name: "medicine chest",
+    description: `It's a wall-mounted medicine chest in back of the sink.`,
+    sceneryDescription: `mounted above which is a medicine chest that doubles as a `,
+    location: "ThreeWestBath",
+    vocab: [
+      "medicine",
+      "cabinet",
+      "medicine cabinet",
+      "chest",
+      "medicine chest",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 2,
+    itemSize: 3,
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "ThreeWestSink",
+    name: "sink",
+    description: `The drops of blood trace the basin's curvature until they meet the drain.`,
+    sceneryDescription: `[[newline]]A sink stands against the opposite wall, the porcelain basin dotted with blood,`,
+    location: "ThreeWestBath",
+    vocab: ["sink", "faucet", "sink faucet"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 2,
+    itemSize: 3,
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+    overrides: {
+      turn: `You turn the faucet but no water comes out.`,
+    },
+    isTurnable: true,
+  },
+  {
+    id: "GimThreeCorpse",
+    name: "gimthreecorpse",
+    description: `It's just like the remains in the living area, with the same stringy organic material left behind.`,
+    sceneryDescription: `and there is a man's arm hanging over the edge of the tub, but the rest of him is gone except for a chunk of shoulder that anchors the arm in place. Inside the tub is an empty pair of blue sweatpants, and a blue t-shirt, stained with blood and something black.`,
+    location: "ThreeWestBath",
+    vocab: [
+      "remains",
+      "body",
+      "arm",
+      "shoulder",
+      "sweatpants",
+      "clothes",
+      "t-shirt",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 2,
+    itemSize: 3,
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    isContagious: true,
+  },
+  {
+    id: "ThreeWestBathTub",
+    name: "bathtub",
+    description: `The tub is nice and deep, the inner walls spattered with specks of organic material and the bottom covered with a pair of slimy sweatpants and t-shirt.`,
+    sceneryDescription: `The shower curtain has been removed to expose a deep bathtub`,
+    location: "ThreeWestBath",
+    vocab: ["tub", "bathtub", "bathtub faucet", "faucet"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 2,
+    itemSize: 3,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    overrides: {
+      turn: `You turn the facuet but no water comes out.`,
+    },
+    isTurnable: true,
+  },
+  {
+    id: "LivingQuartersThreeWarningNote",
+    name: "warning note",
+    description: `It's made of stiff cardboard, and written with a thick black marker.`,
+    initialDescription: `Propped up on the coffee table is a cardboard note, written in large, bold letters: LEAVE NOW.`,
+    readableText: `LEAVE NOW`,
+    location: "LivingQuartersThreeWest",
+    vocab: ["cardboard", "note", "cardboard note"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isReadable: true,
+  },
+  {
+    id: "GimTwoCorpse",
+    name: "gross remains",
+    description: `It's the strangest thing, almost as if the body vanished, or dissolved, leaving only the clothes behind. The residue around it is a mixture of dark, blood red webbed with stringy black mucus. The remaining hand is curled on itself like a dead spider, big shards of glass driven deep into bloodless wounds.`,
+    sceneryDescription: `[[newline]]Plastered onto one part of the sectional are a pair of green sweatpants, and a green t-shirt, as if the person wearing them had vanished, leaving behind only a tacky umber residue spattered where the body had been, which has now seeped into the cushions. The only thing left behind is a hand and forearm, dissolved into mucus at the elbow, the broken remains of a glass bottle cutting into the clenched fist.`,
+    location: "LivingQuartersThreeWest",
+    vocab: [
+      "remains",
+      "corpse",
+      "body",
+      "arm",
+      "hand",
+      "sweatpants",
+      "t-shirt",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 6,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+  {
+    id: "ThreeWestCoffeeTable",
+    name: "coffee table",
+    description: `There's some dried blood on one corner of the glass surface, and the carpet below.`,
+    sceneryDescription: `Between the sectional and the television is a squat, glass-topped coffee table which has a crack running down its center.`,
+    location: "LivingQuartersThreeWest",
+    vocab: ["table", "coffee", "coffee table"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 5,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+  {
+    id: "ThreeWestMusic",
+    name: "music system",
+    description: `It's completely quiet, like it's not getting a signal.`,
+    sceneryDescription: `Beneath it is a sleek, compact music system, and there are speakers arranged in the corners of the room.`,
+    location: "LivingQuartersThreeWest",
+    vocab: ["stereo", "player", "music system"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+      onSwitch: `You toggle it on and off, but nothing happens.`,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSwitchable: true,
+  },
+  {
+    id: "ThreeWestEntertainment",
+    name: "entertainment center",
+    description: `It doesn't seem to be getting any signal at the moment.`,
+    sceneryDescription: `Across from the sectional is a large flat-screen television, currently dark and reflecting the room back at itself.`,
+    location: "LivingQuartersThreeWest",
+    vocab: ["entertainment center", "tv", "television"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 3,
+      onSwitch: `You toggle it on and off, but nothing happens.`,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSwitchable: true,
+  },
+  {
+    id: "ThreeWestSectional",
+    name: "sectional",
+    description: `The sofa is large enough to easily acommodate three, or even six comfortably. It looks like it was once a cozy place but it's seen better days. The uphoustery is spattered with dark stains, and its cushions have been disturbed as if someone slept there.`,
+    sceneryDescription: `[[newline]]Arranged around an impressive entertainment center is a large, U-shaped sectional with wooden trim and cream-colored upholstery.`,
+    location: "LivingQuartersThreeWest",
+    vocab: ["sectional", "sofa", "couch"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+  {
+    id: "ThreeWestWallPhoto",
+    name: "holophoto",
+    description: `The three of them are standing in a grassy landscaped area with a well-maintained crushed gravel path. The picture is angled upward slightly, to capture the towering ribs of a massive enclosed dome. High up above them are several groups of birds, including a large owl whose disc shaped eyes stare down into the lens.`,
+    sceneryDescription: `On one wall is a holographic image of three identical-looking young men, dressed in identical white shorts and t-shirts, the only variation being the color of their ball caps, which are red, green, and blue. They're visiting some sort of huge, enclosed aviary.`,
+    location: "LivingQuartersThreeWest",
+    vocab: ["hologram", "picture", "photo"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ThreeWestPhone",
+    name: "phone",
+    description: ``,
+    sceneryDescription: ``,
+    location: "ThreeWestBed",
+    vocab: ["phone", "handset", "headset", "machine", "messages"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    isUseable: true,
+    meta: {
+      kind: "phone",
+      messages: [
+        {
+          id: "6WM1",
+          title: "CALLER ID: MILDRED ZAPATOS",
+          transcript:
+            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+        },
+        {
+          id: "6WM1",
+          title: "CALLER ID: MILDRED ZAPATOS",
+          transcript:
+            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+        },
+        {
+          id: "6WM1",
+          title: "CALLER ID: MILDRED ZAPATOS",
+          transcript:
+            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+        },
+        {
+          id: "6WM1",
+          title: "CALLER ID: MILDRED ZAPATOS",
+          transcript:
+            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+        },
+      ],
+      unreadCount: 0,
+      redFlashCount: 0,
+    },
+    itemWeight: 0,
+    itemSize: 0,
     isWearable: false,
     isReadable: false,
     isContainer: false,
   },
 ];
-
-export const {
-  rooms: LivingQuartersThreeWestRooms,
-  items: LivingQuartersThreeWestItems,
-} = createLivingQuarter({
-  prefix: "ThreeWest",
-  designator: "Three West",
-  livingRoomId: "LivingQuartersThreeWest",
-  bedRoomId: "ThreeWestBed",
-  bathRoomId: "ThreeWestBath",
-  corridorRoomId: "LevelThreeCorridorFive",
-  corridorDoorId: "DOOR3CW",
-  bathDoorId: "ThreeWestBDoor",
-  dirs: {
-    livingToCorridorDir: "east",
-    livingToBedDir: "west",
-    bedToLivingDir: "east",
-  },
-  livingDescription: `
-This living room feels practiced—arranged for comfort, for rest, for long evenings that came too early.
-The air holds a faint medicinal cleanliness beneath the softer ghost of old fabric and warmed dust.
-Nothing is overturned. Nothing is broken. The absence is the only damage, and it sits everywhere.
-Doors lead west, south, and east.
-`,
-
-  bathDescription: `
-A small bathroom built for function, but adapted by necessity.
-The light is unforgiving, the surfaces wiped down with the discipline of people who couldn’t afford infections or accidents.
-Even so, the stillness here feels staged, like the room is pretending nothing ever happened.
-A door leads back north.
-`,
-
-  bedDescription: `
-The bedroom is tidy in the way people get tidy when sleep comes with conditions.
-The space feels measured: clear paths, reachable surfaces, things placed where a hand would go without thinking.
-The air is thin with detergent and something sterile, as if comfort had to share a room with procedure.
-A doorway leads back west.
-`,
-
-  customItems: LQThreeWestCustomItems,
-
-  fixtureIds: {
-    endTableLiving: "ThreeWestEndtable",
-    sofaLiving: "ThreeWestSofa",
-    loveseatLiving: "ThreeWestLoveseat",
-    entertainmentLiving: "ThreeWestEntertainment",
-
-    bed: "ThreeWestBedding",
-    dresser: "ThreeWestDresser",
-    closet: "ThreeWestCloset",
-    phone: "PHONE5WBed",
-
-    sink: "ThreeWestSink",
-    mirror: "ThreeWestMirror",
-    shower: "ThreeWestShower",
-    washlet: "ThreeWestBowl",
-    medicineChest: "ThreeWestMedicineChest",
-  },
-
-  fixtureText: {
-    endTableLiving: {
-      description: `
-A low end table with a shallow drawer and a surface kept strangely clear.
-The wood bears faint scuffs where something was set down and picked up, again and again.
-`,
-      sceneryDescription: `
-Beside the seating area sits a small end table, positioned like an anchor for habits that mattered.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    sofaLiving: {
-      description: `
-A firm sofa upholstered in muted fabric.
-The seat cushions are subtly shaped by years of careful sitting and slow standing.
-`,
-      sceneryDescription: `
-A sofa faces the entertainment center, arranged for quiet evenings and bodies that needed rest more than excitement.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    loveseatLiving: {
-      description: `
-A matching loveseat angled slightly toward the sofa, like conversation was always the point.
-The fabric is less worn, as if it belonged to the one who could still shift easily.
-`,
-      sceneryDescription: `
-A loveseat sits near the sofa, close enough to share warmth, far enough to breathe.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    entertainmentLiving: {
-      description: `
-An older entertainment unit with a dark television screen and simple audio components.
-The display is blank, reflecting the room back without offering distraction.
-`,
-      sceneryDescription: `
-An entertainment center stands against the wall, a quiet relic of evenings spent counting commercials and minutes.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-    bed: {
-      description: `
-A double bed made with care, the sheets tucked tight.
-It doesn’t look inviting. It looks prepared—like someone expected to need it without delay.
-`,
-      sceneryDescription: `
-The bed dominates the room, made in a way that feels less like comfort and more like readiness.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    dresser: {
-      description: `
-A wooden dresser with drawers that don’t glide smoothly anymore.
-The handles are polished by hands that opened them daily, sometimes in the dark.
-`,
-      sceneryDescription: `
-A dresser rests against the wall, its drawers closed but not quite aligned, as if hurried shut.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    closet: {
-      description: `
-A narrow closet door with a simple handle and a quiet latch.
-The faint smell of clean fabric leaks from the seams.
-`,
-      sceneryDescription: `
-Set into the wall is a closet, closed and patient, as if it expects to be opened again.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    phone: {
-      description: `
-A bedside phone with touch contacts and a small indicator window.
-The plastic is dulled and yellowed, worn smooth in the places fingers returned to most.
-`,
-      sceneryDescription: `
-On the bedside surface sits a phone, the kind kept close when help might need to be called quickly.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-    sink: {
-      description: `
-A compact sink with a spotless basin and a chrome fixture.
-The drain is dry. The metal is cold.
-`,
-      sceneryDescription: `
-A small sink is mounted under the mirror, wiped clean with the care of people who couldn’t risk getting sick.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    mirror: {
-      description: `
-A plain mirror, clean enough to feel accusatory.
-It reflects you too clearly, and for a moment you expect a second shape to settle into frame.
-`,
-      sceneryDescription: `
-A mirror hangs above the sink, spotless and severe under the bathroom light.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    shower: {
-      description: `
-A shower stall with a translucent door and simple controls.
-The interior is dry, the fixtures untouched.
-`,
-      sceneryDescription: `
-A shower occupies the corner, closed up as if it was used on schedule and then suddenly never again.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    washlet: {
-      description: `
-A standard washlet with side-mounted controls.
-A faint discoloration rings the interior, the subtle evidence of ordinary use.
-`,
-      sceneryDescription: `
-The washlet sits against the wall, its control panel dark beneath the harsh bathroom light.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    medicineChest: {
-      description: `
-A small medicine chest with a mirrored face and a shallow latch.
-The hinge is slightly loose, as if it was opened often—sometimes with shaking hands.
-`,
-      sceneryDescription: `
-Above the sink is a medicine chest, the sort of thing that turns a bathroom into a quiet dispensary.
-`,
-      sceneryDescriptionOrder: 0,
-    },
-  },
-});

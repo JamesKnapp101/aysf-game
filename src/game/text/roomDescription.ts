@@ -1,4 +1,5 @@
 import { isRoomSpotlitByAviary } from "@game/engine/ticks/aviaryTick";
+import { getItemSceneryDescription } from "@game/helpers/descriptionHelpers";
 import { getAviaryNextSpotlitRoomId } from "src/world/Items/creatures/aviaryOrganisms";
 import { generateTerminalTpadDescription } from "../helpers/gameHelpers";
 import { isItemOpen } from "../rules/containers";
@@ -24,7 +25,7 @@ type BuildRoomDescriptionOptions = {
 export function buildRoomDescription(
   state: GameState,
   roomId: string,
-  opts: BuildRoomDescriptionOptions = {}
+  opts: BuildRoomDescriptionOptions = {},
 ): string {
   const room = state.world.rooms.find((room) => room.id === roomId);
   if (!room) return "You are nowhere. (Bug: room not found.)";
@@ -32,7 +33,7 @@ export function buildRoomDescription(
   const isDark = Boolean(state.worldState.darkRooms[room.id]);
 
   const nightVisionActive = state.player.statusEffects.some(
-    (se) => se.id === "nightvision-active"
+    (se) => se.id === "nightvision-active",
   );
 
   const flashlightOn = (() => {
@@ -41,11 +42,20 @@ export function buildRoomDescription(
     return Boolean(fs && "isOn" in fs && fs.isOn === true);
   })();
 
+  const damagedFlashlightOn = (() => {
+    if (!state.player.inventory.includes("damagedFlashlight")) return false;
+    const fs = state.itemState.itemSettings["damagedFlashlight"];
+    return Boolean(
+      fs &&
+      "isOn" in fs &&
+      fs.isOn === true &&
+      state.worldState.damagedFlashlight.currentCharge > 1,
+    );
+  })();
+
   const canSee =
-    !isDark ||
-    nightVisionActive ||
-    flashlightOn ||
-    isRoomSpotlitByAviary(state, roomId) ||
+    !isDark || nightVisionActive || flashlightOn || damagedFlashlightOn;
+  isRoomSpotlitByAviary(state, roomId) ||
     getAviaryNextSpotlitRoomId(state) === roomId;
   if (!canSee) return "It's pitch black in here, you can't see a thing.";
 
@@ -60,7 +70,7 @@ export function buildRoomDescription(
 
   const rawItemsHere = getItemsInRoom(state, roomId);
   const itemsHere = Array.from(
-    new Map(rawItemsHere.map((it) => [it.id, it])).values()
+    new Map(rawItemsHere.map((it) => [it.id, it])).values(),
   );
 
   const sceneryItems = itemsHere
@@ -77,7 +87,7 @@ export function buildRoomDescription(
     });
 
   const nonSceneryItems = itemsHere.filter(
-    (item) => item.itemCategory !== "scenery"
+    (item) => item.itemCategory !== "scenery",
   );
 
   const doorsHere = getVisibleDoorsInRoom(state, roomId);
@@ -85,7 +95,9 @@ export function buildRoomDescription(
   const parts: string[] = [];
 
   const sceneryText = sceneryItems
-    .map((it) => it.sceneryDescription)
+    .map((it) =>
+      getItemSceneryDescription(state, it, { kind: "scenery", roomId }),
+    )
     .filter((s): s is string => Boolean(s && s.trim()))
     .map((s) =>
       s
@@ -93,10 +105,10 @@ export function buildRoomDescription(
         .replace(/[ \t]+\n/g, "\n")
         .replace(/\n[ \t]+/g, "\n")
         .replace(/\n{3,}/g, "\n\n")
-        .trim()
+        .trim(),
     )
     .join(" ")
-    .replace("[[newline]]", `\n\n`);
+    .replaceAll("[[newline]]", `\n\n`);
 
   const token = "[[SCENERY]]";
 
@@ -109,10 +121,15 @@ export function buildRoomDescription(
   // - On revisit in the LOG, prefer descriptionShort (if provided)
   // - Otherwise use full description
   const useShortBase = !includeScenery && mode === "log" && !isFirstVisit;
-  let base =
-    (useShortBase && room.descriptionShort
-      ? room.descriptionShort
-      : room.description) ?? "wtf";
+  let base = room.describe
+    ? room.describe(state, room, {
+        kind: "roomBase",
+        roomId: room.id,
+        mode: "panel",
+      })
+    : ((useShortBase && room.descriptionShort
+        ? room.descriptionShort
+        : room.description) ?? "wtf");
   base = base.trim();
 
   // Apply scenery token rules:
@@ -132,7 +149,7 @@ export function buildRoomDescription(
 
   if (doorsHere.length > 0) {
     const doorText = doorsHere
-      .map((door) => getDoorDescriptionForRoom(door, roomId))
+      .map((door) => getDoorDescriptionForRoom(state, door, roomId))
       .filter((t): t is string => Boolean(t && t.trim()))
       .join("");
     if (doorText) parts.push(doorText);
@@ -152,7 +169,7 @@ export function buildRoomDescription(
     const list = formatNameList(names);
 
     containerLines.push(
-      `Inside the ${container.name.toLowerCase()} you can see ${list}.`
+      `Inside the ${container.name.toLowerCase()} you can see ${list}.`,
     );
   }
 
@@ -172,7 +189,7 @@ export function buildRoomDescription(
     const list = formatNameList(names);
 
     surfaceLines.push(
-      `On the ${surface.name.toLowerCase()} you can see ${list}.`
+      `On the ${surface.name.toLowerCase()} you can see ${list}.`,
     );
   }
 
@@ -186,7 +203,7 @@ export function buildRoomDescription(
   // If we're in TPADTerminal, emit one aggregated description and skip per-disk "onPowered" text.
   if (isTpadTerminal) {
     parts.push(
-      generateTerminalTpadDescription(state.worldState.powerRestoredSections)
+      generateTerminalTpadDescription(state.worldState.powerRestoredSections),
     );
   } else {
     for (const sceneryItem of sceneryItems) {
@@ -211,7 +228,7 @@ export function buildRoomDescription(
 
   const seen = state.itemState.pickedUpByPlayer ?? {};
   const freshItems = nonSceneryItems.filter(
-    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id]
+    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id],
   );
 
   if (freshItems.length > 0) {
@@ -222,7 +239,7 @@ export function buildRoomDescription(
   }
 
   const listItems = nonSceneryItems.filter(
-    (it) => !freshItems.some((f) => f.id === it.id)
+    (it) => !freshItems.some((f) => f.id === it.id),
   );
 
   if (listItems.length > 0) {

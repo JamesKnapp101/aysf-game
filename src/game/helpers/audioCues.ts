@@ -15,7 +15,7 @@ type AudioCueRegistry = Record<string, AudioCue>; // keyed by itemId
 
 function resolveAudioCue(
   ctx: AudioCueContext,
-  registry?: AudioCueRegistry
+  registry?: AudioCueRegistry,
 ): string | null {
   const { item, dirFromPlayer } = ctx;
 
@@ -36,6 +36,9 @@ function resolveAudioCue(
   if (item?.id?.toLowerCase()?.includes("bomb")) {
     return `You hear a ticking sound coming from the ${dirFromPlayer}.`;
   }
+  if (item?.id?.toLowerCase()?.includes("organism")) {
+    return `You hear a strange shifting sound coming from the ${dirFromPlayer}. There's something in the darkness there.`;
+  }
   return null;
 }
 
@@ -47,7 +50,7 @@ export function emitAdjacentAudioCues(
     maxLinesPerTick?: number;
     chance?: number;
     region?: Set<string>;
-  }
+  },
 ): GameState {
   const maxLinesPerTick = opts?.maxLinesPerTick ?? 1;
   const chance = opts?.chance ?? 0.65;
@@ -79,7 +82,7 @@ export function emitAdjacentAudioCues(
 
     const text = resolveAudioCue(
       { state, item, dirFromPlayer: c.dirFromPlayer },
-      opts?.registry
+      opts?.registry,
     );
     if (text) candidates.push({ itemId: c.itemId, text });
   }
@@ -128,7 +131,7 @@ export function emitAdjacentAudioCues(
   // let next = state;
   for (let i = 0; i < Math.min(maxLinesPerTick, candidates.length); i++) {
     const idx = Math.floor(
-      (typeof rng === "function" ? rng() : Math.random()) * candidates.length
+      (typeof rng === "function" ? rng() : Math.random()) * candidates.length,
     );
     const [picked] = candidates.splice(idx, 1);
     updatedAudioState = appendLog(updatedAudioState, picked.text);

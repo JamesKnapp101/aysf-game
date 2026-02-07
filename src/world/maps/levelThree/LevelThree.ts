@@ -5,6 +5,7 @@ import {
 import { oneEastRooms } from "src/world/maps/levelThree/LivingQuarters/OneEast";
 import { oneWestRooms } from "src/world/maps/levelThree/LivingQuarters/OneWest";
 
+import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
 import {
   LivingQuartersFourEastItems,
   LivingQuartersFourEastRooms,
@@ -22,25 +23,24 @@ import {
   LivingQuartersThreeEastRooms,
 } from "src/world/maps/levelThree/LivingQuarters/ThreeEast";
 import {
-  LivingQuartersThreeWestItems,
-  LivingQuartersThreeWestRooms,
+  threeWestItems,
+  threeWestRooms,
 } from "src/world/maps/levelThree/LivingQuarters/ThreeWest";
-import { medicalWingRooms } from "src/world/maps/levelThree/MedicalWing";
 import { spaRooms } from "src/world/maps/levelThree/Spa";
 import { barRooms } from "src/world/maps/levelThree/TheHub/Bar";
 import { gymRooms } from "src/world/maps/levelThree/TheHub/Gym";
 import { movieTheaterRooms } from "src/world/maps/levelThree/TheHub/MovieTheater";
 import { parkRooms } from "src/world/maps/levelThree/TheHub/Park";
 import { restaurantRooms } from "src/world/maps/levelThree/TheHub/Restaurant";
-import type { WorldChunk } from "../../game/types/gameTypes";
+import type { WorldChunk } from "../../../game/types/gameTypes";
 import {
   levelThreeHubDoors,
   levelThreeLivingQuartersDoors,
   levelThreeMedicalAndSpaDoors,
-} from "../doors/levelThreeDoors";
-import { drugItems } from "../Items/drugs";
-import { generalItems } from "../Items/general";
-import { levelThreeItems } from "../Items/levelThreeMisc";
+} from "../../doors/levelThreeDoors";
+import { drugItems } from "../../Items/drugs";
+import { generalItems } from "../../Items/general";
+import { levelThreeItems } from "../../Items/levelThreeMisc";
 
 export const LEVEL_THREE: WorldChunk = {
   items: [
@@ -48,11 +48,12 @@ export const LEVEL_THREE: WorldChunk = {
     ...drugItems,
     ...levelThreeItems,
     ...LivingQuartersThreeEastItems,
-    ...LivingQuartersThreeWestItems,
     ...LivingQuartersFourEastItems,
     ...LivingQuartersFiveWestItems,
     ...LivingQuartersSixEastItems,
     ...LivingQuartersSixWestItems,
+    ...livingQuartersThreeWestOrganismItems,
+    ...threeWestItems,
   ],
   doors: [
     ...levelThreeLivingQuartersDoors,
@@ -67,11 +68,10 @@ export const LEVEL_THREE: WorldChunk = {
     ...restaurantRooms,
     ...parkRooms,
     ...spaRooms,
-    ...medicalWingRooms,
     ...oneEastRooms,
     ...oneWestRooms,
+    ...threeWestRooms,
     ...LivingQuartersThreeEastRooms,
-    ...LivingQuartersThreeWestRooms,
     ...LivingQuartersFourEastRooms,
     ...LivingQuartersFiveWestRooms,
     ...LivingQuartersSixEastRooms,
@@ -206,29 +206,29 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Level Three Secondary Corridor",
       description: `This is another T in the corridor, where the corridor branch connects with a secondary corridor. The secondary corridor extends north and south from here. There is also a large, sturdy-looking wooden door to the west, engraved with a leaf and floral pattern. Mounted on the wall next to the door is a metal panel with a thin horizontal slot in it. Just below the slot is a flat metal tray. Mounted over the door is a bronze plaque. The bronze plaque is engraved with the words 'THE HUB'`,
       exits: [
-        { direction: "north", toRoomId: "LevelThreeSecondCorridorThree" },
-        { direction: "south", toRoomId: "LevelThreeSecondCorridorOne" },
+        //{ direction: "north", toRoomId: "LevelThreeSecondCorridorThree" },
+        // { direction: "south", toRoomId: "LevelThreeSecondCorridorOne" },
         { direction: "west", doorId: "HubDoor" },
         { direction: "east", toRoomId: "LevelThreeSecondCorridorConnector" },
       ],
     },
-    {
-      id: "LevelThreeSecondCorridorThree",
-      name: "Level Three Secondary Corridor",
-      description: `The secondary corridor ends here. There is a large glass door with an aluminum frame to the west.`,
-      exits: [
-        { direction: "south", toRoomId: "LevelThreeSecondCorridorTwo" },
-        { direction: "north", doorId: "LevelThreeSecondCorrThreeDoor" },
-      ],
-    },
-    {
-      id: "LevelThreeSecondCorridorOne",
-      name: "Level Three Secondary Corridor",
-      description: `The secondary corridor ends here. There is a set of double doors to the south with a plastic sign mounted overhead. The sign is white with black block lettering which reads 'DeM Main Medical Facility'`,
-      exits: [
-        { direction: "north", toRoomId: "LevelThreeSecondCorridorTwo" },
-        { direction: "south", toRoomId: "MedicalEntrance" },
-      ],
-    },
+    // {
+    //   id: "LevelThreeSecondCorridorThree",
+    //   name: "Level Three Secondary Corridor",
+    //   description: `The secondary corridor ends here. There is a large glass door with an aluminum frame to the west.`,
+    //   exits: [
+    //     { direction: "south", toRoomId: "LevelThreeSecondCorridorTwo" },
+    //     { direction: "north", doorId: "LevelThreeSecondCorrThreeDoor" },
+    //   ],
+    // },
+    // {
+    //   id: "LevelThreeSecondCorridorOne",
+    //   name: "Level Three Secondary Corridor",
+    //   description: `The secondary corridor ends here. There is a set of double doors to the south with a plastic sign mounted overhead. The sign is white with black block lettering which reads 'DeM Main Medical Facility'`,
+    //   exits: [
+    //     { direction: "north", toRoomId: "LevelThreeSecondCorridorTwo" },
+    //     { direction: "south", toRoomId: "MedicalEntrance" },
+    //   ],
+    // },
   ],
 };

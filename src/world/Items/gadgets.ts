@@ -8,7 +8,7 @@ export const specialItems: Item[] = [
     description:
       "A compact LED flashlight with a sturdy metal body and a deeply recessed lens for a tight, bright beam.",
     initialDescription: "A metal LED flashlight rests on the dresser.",
-    location: "INVENTORY", //"MainEngineering",
+    location: "INVENTORY", //"MainReactorPlatform",
     vocab: ["flashlight", "led", "torch"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -175,7 +175,7 @@ export const specialItems: Item[] = [
     description:
       "A sleek blue communications headset that clips over the ear, with a thin boom mic arcing in front of the mouth.",
     initialDescription: undefined,
-    location: "BombChamber",
+    location: "ReactorCore",
     vocab: ["headset", "blue", "earpiece"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -213,21 +213,17 @@ export const specialItems: Item[] = [
     id: "Radio",
     name: "a two-way radio",
     description:
-      "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, and a squat black antenna jutting from the top. The casing is cracked on one corner, but it still works.",
+      "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, and a squat black antenna jutting from the top. The casing is cracked on one corner, but it still works. There's a red call button on one side of it.",
     initialDescription:
       "Laying on the floor near the young man's body is some kind of small, hand-held walkie-talkie.",
     location: "StairSix",
-    vocab: ["radio", "walkie-talkie", "walkie", "cb"],
+    vocab: ["radio", "walkie-talkie", "walkie", "cb", "call", "button"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 3,
     itemSize: 2,
-    isSwitchable: true,
-    isOn: false,
     isContagious: true,
-    meta: {
-      remoteRadio: "RadioTwo",
-    },
+    isPushable: true,
   },
   {
     id: "RadioTwo",

@@ -1,8 +1,8 @@
-import { tryTakeItem } from "../rules/items";
-import { getItemsInCurrentRoom } from "../selectors/roomSelectors";
-import type { ActionResult } from "../types/actionsTypes";
-import type { GameState } from "../types/gameTypes";
-import type { ParsedCommand } from "../types/parserTypes";
+import { tryTakeItem } from "@game/actions/take/tryTakeItem";
+import { getItemsInCurrentRoom } from "../../selectors/roomSelectors";
+import type { ActionResult } from "../../types/actionsTypes";
+import type { GameState } from "../../types/gameTypes";
+import type { ParsedCommand } from "../../types/parserTypes";
 
 export function doTake(state: GameState, cmd: ParsedCommand): ActionResult {
   if (cmd.type !== "action" || cmd.verb !== "take") {

@@ -12,7 +12,7 @@ export const movieTheaterRooms: Room[] = [
       { direction: "southwest", toRoomId: "HubWest" },
       { direction: "east", toRoomId: "HubNorth" },
       { direction: "south", toRoomId: "HubTree" },
-      { direction: "up", toRoomId: "Projection" },
+      // { direction: "up", toRoomId: "Projection" },
     ],
   },
   {
@@ -21,7 +21,7 @@ export const movieTheaterRooms: Room[] = [
     description: `This is the movie theater's projection room, a small, cozy area which looks to have been torn to shreds; The remains of what looks like a wooden chair lies in pieces and the walls and floor have been gouged with what look like deep claw marks. A trail of dried blood heads in the direction of the door then peters out. There is a small window which overlooks the movie theater below, and the projector, looking a bit battered, stares out through this window, the lens dark.`,
     exits: [
       //   { direction: "east", toRoomId: "MovieEntrance" },
-      { direction: "down", toRoomId: "MovieEntrance" },
+      { direction: "west", toRoomId: "MovieTheatreOne" },
     ],
   },
   {
@@ -31,6 +31,7 @@ export const movieTheaterRooms: Room[] = [
     exits: [
       { direction: "southeast", toRoomId: "MovieEntrance" },
       { direction: "north", toRoomId: "MovieTheatreTwo" },
+      { direction: "east", toRoomId: "Projection" },
     ],
   },
   {

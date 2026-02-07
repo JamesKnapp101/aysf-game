@@ -1,4 +1,5 @@
 import { aviaryOrganismItems } from "src/world/Items/creatures/aviaryOrganisms";
+import { bullItems } from "src/world/Items/creatures/bull";
 import { aquariumRooms } from "src/world/maps/levelFour/Aquarium";
 import { aviaryRooms } from "src/world/maps/levelFour/Aviary";
 import { fungalCaveRooms } from "src/world/maps/levelFour/FungalCave";
@@ -7,12 +8,12 @@ import { pondRooms } from "src/world/maps/levelFour/Pond";
 import { preserveRooms } from "src/world/maps/levelFour/Preserve";
 import { seedBankRooms } from "src/world/maps/levelFour/SeedBank";
 import { veterinaryCenterRooms } from "src/world/maps/levelFour/VeterinaryCenter";
-import type { WorldChunk } from "../../game/types/gameTypes";
-import { levelFourDoors } from "../doors/levelFourDoors";
-import { levelFourItems } from "../Items/levelFourMisc";
+import type { WorldChunk } from "../../../game/types/gameTypes";
+import { levelFourDoors } from "../../doors/levelFourDoors";
+import { levelFourItems } from "../../Items/levelFourMisc";
 
 export const LEVEL_FOUR: WorldChunk = {
-  items: [...levelFourItems, ...aviaryOrganismItems],
+  items: [...levelFourItems, ...aviaryOrganismItems, ...bullItems],
   doors: [...levelFourDoors],
   teleportPads: [],
   rooms: [
@@ -43,7 +44,7 @@ export const LEVEL_FOUR: WorldChunk = {
       exits: [
         { direction: "south", toRoomId: "LevelFourCorridorTwo" },
         { direction: "west", doorId: "HydroponicsDoors" },
-        { direction: "north", toRoomId: "ZooOne" },
+        { direction: "north", toRoomId: "ZoologicalDoors" },
       ],
     },
     {
@@ -65,7 +66,7 @@ export const LEVEL_FOUR: WorldChunk = {
       description:
         "This is the zoo zone entryway, from here you can see the Aviary to the northeast, and the Veterenary Center to the northwest. To the south is the main corridor leading back to the power grid and hydroponics sections.",
       exits: [
-        { direction: "south", toRoomId: "LevelFourCorridorOne" },
+        { direction: "south", doorId: "ZoologicalDoors" },
         { direction: "northeast", toRoomId: "OuterRingSouth" },
         { direction: "northwest", toRoomId: "VeterinaryCenter" },
       ],

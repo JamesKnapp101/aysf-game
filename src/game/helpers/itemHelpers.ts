@@ -6,7 +6,7 @@ import type { Exit, Room } from "../types/roomTypes";
 
 export function getRoomById(
   state: GameState,
-  roomId: string
+  roomId: string,
 ): Room | undefined {
   return state.world.rooms.find((r) => r.id === roomId);
 }
@@ -14,7 +14,7 @@ export function getRoomById(
 export function getRandomWanderTarget(
   state: GameState,
   itemId: ItemId,
-  rng: () => number
+  rng: () => number,
 ): string | undefined {
   const from = getItemRoomId(state, itemId);
   if (!from) return undefined;
@@ -32,14 +32,14 @@ export function getRandomWanderTarget(
 
 export function getItemById(
   state: GameState,
-  itemId: string
+  itemId: string,
 ): Item | undefined {
   return state.world.items.find((i) => i.id === itemId);
 }
 
 export function getDoorState(
   state: GameState,
-  doorId: string
+  doorId: string,
 ): DoorState | undefined {
   return state.worldState.doors[doorId];
 }
@@ -53,7 +53,7 @@ export function isExitPassable(state: GameState, exit: Exit): boolean {
     "Cat is checking isExitPassable for ",
     exit.doorId,
     ": ",
-    ds.isOpen && !ds.isLocked
+    ds.isOpen && !ds.isLocked,
   );
   return ds.isOpen && !ds.isLocked;
 }
@@ -61,7 +61,7 @@ export function isExitPassable(state: GameState, exit: Exit): boolean {
 export function getRandomMoveTarget(
   state: GameState,
   itemId: ItemId,
-  rng: () => number
+  rng: () => number,
 ): string | undefined {
   const fromRoomId = getItemRoomId(state, itemId);
   if (!fromRoomId) return undefined;
@@ -97,7 +97,7 @@ export function getRoomExits(state: GameState, roomId: string): Exit[] {
 export function getExitDestinationRoomId(
   state: GameState,
   fromRoomId: string,
-  exit: Exit
+  exit: Exit,
 ): string | undefined {
   // Direct exits
   if (exit.toRoomId) return exit.toRoomId;
@@ -121,7 +121,7 @@ export function getExitDestinationRoomId(
 
 export function getItemRoomId(
   state: GameState,
-  itemId: ItemId
+  itemId: ItemId,
 ): string | undefined {
   if (state.player.inventory.includes(itemId)) return undefined;
 
@@ -131,7 +131,7 @@ export function getItemRoomId(
 export function setItemRoomId(
   state: GameState,
   itemId: string,
-  roomId: string
+  roomId: string,
 ): GameState {
   const locMap = ((state.itemState as any).itemLocations ?? {}) as Record<
     string,
@@ -162,7 +162,7 @@ function getAttachedChildren(state: GameState, hostId: ItemId): ItemId[] {
 export function moveItemToRoom(
   state: GameState,
   itemId: ItemId,
-  roomId: string
+  roomId: string,
 ): GameState {
   // If the player is carrying it, "location" is inventory.
   if (state.player.inventory.includes(itemId)) return state;
@@ -217,7 +217,7 @@ export function isExitBlockedByDoor(state: GameState, exit: Exit): boolean {
 export function canMove(
   state: GameState,
   itemId: ItemId,
-  targetRoomId: string
+  targetRoomId: string,
 ): boolean {
   const fromRoomId = getItemRoomId(state, itemId);
   if (!fromRoomId) return false;
@@ -302,4 +302,20 @@ export function setPlayerBrainActivityValue(state: GameState, value: number) {
     },
   };
   return { state: next, message: `Your mind reels...` };
+}
+
+export function overridePlayerBrainActivityLevel(
+  state: GameState,
+  value: number,
+): GameState {
+  return {
+    ...state,
+    player: {
+      ...state.player,
+      vitals: {
+        ...state.player.vitals,
+        brainActivity: value,
+      },
+    },
+  };
 }

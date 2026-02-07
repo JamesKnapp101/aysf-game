@@ -1,10 +1,13 @@
+import React from "react";
 import { getItemById } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
 
+export type InvSort = "none" | "name-asc" | "name-desc";
 type InventoryTreeProps = {
   state: GameState;
   inventoryItems: Item[];
+  sort?: InvSort;
 };
 
 /**
@@ -18,7 +21,12 @@ type InventoryTreeProps = {
  * - Only shows container contents if the container actually has contents in itemState.containerContents.
  * - If showContentsOnlyIfOpen is true, contents are only shown when the container is open.
  */
-export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
+
+export function InventoryTree({
+  state,
+  inventoryItems,
+  sort,
+}: InventoryTreeProps) {
   const showContentsOnlyIfOpen = true;
 
   const startsWithVowelSound = (word: string) => {
@@ -53,9 +61,45 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
   const isOn = (id: string) => {
     const s = state.itemState.itemSettings?.[id];
     return Boolean(
-      s && typeof (s as any).isOn === "boolean" && (s as any).isOn
+      s && typeof (s as any).isOn === "boolean" && (s as any).isOn,
     );
   };
+
+  // Raw name for sorting (stable) — do NOT use the fancy label.
+  const getSortName = (id: string) => {
+    const it = getItemById(state, id);
+    return (it?.name ?? id).trim().toLowerCase();
+  };
+
+  const isContainerId = (id: string) =>
+    Boolean(getItemById(state, id)?.isContainer);
+
+  const sortIds = React.useCallback(
+    (ids: string[]) => {
+      if (!sort || sort === "none") return ids;
+
+      const dir = sort === "name-asc" ? 1 : -1;
+
+      const copy = [...ids];
+      copy.sort((a, b) => {
+        // Containers first (file-explorer style)
+        const ac = isContainerId(a) ? 0 : 1;
+        const bc = isContainerId(b) ? 0 : 1;
+        if (ac !== bc) return ac - bc;
+
+        const an = getSortName(a);
+        const bn = getSortName(b);
+        if (an < bn) return -1 * dir;
+        if (an > bn) return 1 * dir;
+
+        // tie-breaker for stability
+        return a.localeCompare(b) * dir;
+      });
+
+      return copy;
+    },
+    [sort],
+  );
 
   const getItemLabel = (id: string) => {
     const it = getItemById(state, id);
@@ -74,11 +118,13 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
       }
       annotation = `, which is filled with ${filledWith}`;
     }
+
     if (it?.isWearable && it?.clothingSlot) {
       if (state.itemState.wornByPlayer[it.clothingSlot] === it.id) {
         annotation = ` (worn on your ${it.clothingSlot})`;
       }
     }
+
     if (isSwitchable(id) && isOn(id)) {
       annotation += ` (which is on)`;
     }
@@ -95,6 +141,9 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
 
   const getBranchGlyph = (isLast: boolean) => (isLast ? "└─" : "├─");
 
+  // Sort the top-level inventory by id (so it works even if inventoryItems is Item[])
+  const topIds = sortIds(inventoryItems.map((it) => it.id));
+
   return (
     <div className="inv-tree">
       {inventoryItems.length === 0 ? (
@@ -102,18 +151,23 @@ export function InventoryTree({ state, inventoryItems }: InventoryTreeProps) {
       ) : (
         <>
           <p className="game-line">You are carrying:</p>
+
           <ul className="game-list inv-tree-list">
-            {inventoryItems.map((item) => {
+            {topIds.map((itemId) => {
+              const item = getItemById(state, itemId);
+              if (!item) return null;
+
               const contents = item.isContainer ? getContents(item.id) : [];
+              const sortedContents = sortIds(contents);
 
               return (
                 <li className="inv-tree-item" key={item.id}>
                   <div className="inv-tree-row">{getItemLabel(item.id)}</div>
 
-                  {contents.length > 0 && (
+                  {sortedContents.length > 0 && (
                     <ul className="inv-tree-contents">
-                      {contents.map((childId, idx) => {
-                        const isLast = idx === contents.length - 1;
+                      {sortedContents.map((childId, idx) => {
+                        const isLast = idx === sortedContents.length - 1;
                         const glyph = getBranchGlyph(isLast);
 
                         return (

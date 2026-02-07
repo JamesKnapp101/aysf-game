@@ -43,16 +43,32 @@
     color: var(--crt-color);
     opacity: 0.25;
     transition: opacity 0.15s;
+    /* keeps the icons visually consistent and prevents layout jitter */
+    line-height: 1;
+    display: grid;
+    place-items: center;
 }
 
 .room-compass-label--u {
+    top: 4px;
+    left: 6px;
+    font-size: 18px;
+}
+
+.room-compass-label--i {
     top: 2px;
+    right: 6px;
+    font-size: 18px;
+}
+
+.room-compass-label--o {
+    bottom: 2px;
     left: 6px;
     font-size: 18px;
 }
 
 .room-compass-label--d {
-    bottom: 2px;
+    bottom: 4px;
     right: 6px;
     font-size: 18px;
 }
@@ -70,4 +86,16 @@
     height: 0.9rem;
     color: var(--crt-green, var(--crt-color));
     filter: drop-shadow(0 0 2px currentColor);
+}
+
+.room-compass-label--i .compass-icon,
+.room-compass-label--o .compass-icon {
+    width: 1.55rem;
+    height: 1.55rem;
+}
+
+.room-compass-label--u .compass-icon,
+.room-compass-label--d .compass-icon {
+    width: 1.35rem;
+    height: 1.35rem;
 }

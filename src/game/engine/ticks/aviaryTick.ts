@@ -60,7 +60,7 @@ function getRoomById(state: GameState, roomId: string): Room | undefined {
 function directionFromTo(
   state: GameState,
   fromRoomId: string,
-  toRoomId: string
+  toRoomId: string,
 ): string | null {
   const from = getRoomById(state, fromRoomId);
   if (!from) return null;
@@ -102,7 +102,7 @@ function isAviaryHostileOrganism(item: any): boolean {
 function findNearestDarkAviaryRoom(
   state: GameState,
   startRoomId: string,
-  isRoomDarkFn: (roomId: string) => boolean
+  isRoomDarkFn: (roomId: string) => boolean,
 ): string | null {
   const visited = new Set<string>([startRoomId]);
   const queue: string[] = [startRoomId];
@@ -120,7 +120,6 @@ function findNearestDarkAviaryRoom(
       visited.add(to);
 
       if (to !== startRoomId && isRoomDarkFn(to)) return to;
-
       queue.push(to);
     }
   }
@@ -130,7 +129,6 @@ function findNearestDarkAviaryRoom(
 
 export function tickAviarySpotlight(state: GameState): GameState {
   let next = ensureAviarySpotlight(state);
-
   const spot = next.worldState.aviarySpotlight!;
   const playerRoomId =
     (next as any).player?.roomId ?? (next as any).playerRoomId;
@@ -142,7 +140,6 @@ export function tickAviarySpotlight(state: GameState): GameState {
   const currentRoomId = spot.route[spot.index];
   const nextIndex = (spot.index + 1) % spot.route.length;
   const nextRoomId = spot.route[nextIndex];
-
   const playerIsLit = playerRoomId === currentRoomId;
 
   const maybeEmitNotLitHint = (): void => {
@@ -159,7 +156,7 @@ export function tickAviarySpotlight(state: GameState): GameState {
     if (direct?.direction) {
       next = pushLog(
         next,
-        `A pale cone of light spills in from the ${direct.direction}.`
+        `A pale cone of light spills in from the ${direct.direction}.`,
       );
       next = {
         ...next,
@@ -220,7 +217,7 @@ export function tickAviarySpotlight(state: GameState): GameState {
     if (firstDirToward) {
       next = pushLog(
         next,
-        `A faint moving glow filters through the foliage to the ${firstDirToward}.`
+        `A faint moving glow filters through the foliage to the ${firstDirToward}.`,
       );
       next = {
         ...next,
@@ -228,7 +225,7 @@ export function tickAviarySpotlight(state: GameState): GameState {
           ...next.worldState,
           aviarySpotlight: {
             ...spot,
-            hintCooldown: 2, // throttle
+            hintCooldown: 2,
           },
         },
       };
@@ -270,7 +267,6 @@ export function tickAviarySpotlight(state: GameState): GameState {
     } else {
       maybeEmitNotLitHint();
     }
-
     return next;
   }
 
@@ -283,24 +279,22 @@ export function tickAviarySpotlight(state: GameState): GameState {
         const loc = getItemRoomId(next, it.id);
         return loc === roomBecomingLit;
       });
-
       if (occupants.length > 0) {
         for (const org of occupants) {
           const escapeTo = findNearestDarkAviaryRoom(
             next,
             roomBecomingLit,
-            (rid) => isRoomDark(next, rid)
+            (rid) => isRoomDark(next, rid),
           );
-
           if (escapeTo) {
             next = moveItemToRoom(next, org.id as ItemId, escapeTo);
             next = pushLog(
               next,
-              `Something skitters away as the light approaches.`
+              `Something skitters away as the light approaches.`,
             );
           } else {
             console.log(
-              `Aviary spotlight tick: organism ${org.id} in ${roomBecomingLit} has no dark escape route!`
+              `Aviary spotlight tick: organism ${org.id} in ${roomBecomingLit} has no dark escape route!`,
             );
           }
         }
@@ -332,12 +326,12 @@ export function tickAviarySpotlight(state: GameState): GameState {
         const playerRoom = getRoomById(next, playerRoomId);
         if (playerRoom) {
           const direct = playerRoom.exits.find(
-            (e) => e.toRoomId === litRoomNow
+            (e) => e.toRoomId === litRoomNow,
           );
           if (direct?.direction) {
             next = pushLog(
               next,
-              `Light spills in from the ${direct.direction}.`
+              `Light spills in from the ${direct.direction}.`,
             );
             next = {
               ...next,
@@ -355,7 +349,6 @@ export function tickAviarySpotlight(state: GameState): GameState {
     }
     void oldSpot;
   }
-
   return next;
 }
 
@@ -367,7 +360,7 @@ export function getAviarySpotlitRoomId(state: GameState): string | null {
 
 export function isRoomSpotlitByAviary(
   state: GameState,
-  roomId: string
+  roomId: string,
 ): boolean {
   const lit = getAviarySpotlitRoomId(state);
   return lit === roomId;

@@ -6,9 +6,9 @@ export const corpseItems: Item[] = [
   {
     id: "FallenCorpse",
     name: "fallen corpse",
-    description: `It looks like the poor guy maybe slipped, and fell over the railing from up above. His head is a bit of a mess but his hair, what was left of it, had gone gray and he wore a bushy gray mustache, now hung like a curtain over his open mouth. The patch on his jumpsuit reads "DAMON."`,
+    description: `It looks like the poor guy maybe slipped, and fell over the railing from up above. His misshapen head is completely bald, like a broken dome sticking up from the crumpled wreckage. You don't recognize him, though you get the impression that the jumpsuit might not belong to him, as its too big and baggy for his thin frame.`,
     sceneryDescription:
-      "[[newline]]In the middle of the tiled landing a man's body lay crumpled in a heap, having fallen from somewhere up above. He looks to have landed on his head which, while still in one piece, has cracked like an egg, and his body has been left sprawled at all angles. A pool of blood, tacky but not quite dry, has formed around his head, and you can see part of a name tag sewn onto the breast of his brown jumpsuit.",
+      "[[newline]]In the middle of the tiled landing a man's body lay crumpled in a heap, having fallen from somewhere up above. He looks to have landed on his head which, while still in one piece, has cracked like an egg, and his body has been left sprawled at all angles. A pool of blood, tacky but not quite dry, has formed around his head.",
     location: "StairWellSeven",
     vocab: ["corpse", "body", "man"],
     itemClass: "solid",
@@ -23,6 +23,26 @@ export const corpseItems: Item[] = [
     isContainer: false,
     isContagious: true,
     isSearchable: true,
+  },
+  {
+    id: "HeadlessCorpse",
+    name: "headless corpse",
+    description: `Whatever happened it looks like it happened fast, before he had a chance to struggle or even react. It's hard to say what removed the head, but it doesn't appear to have been cut by a blade. The entire neck is gone, leaving a gory divot between the shoulders.`,
+    initialDescription:
+      "Sprawled on the floor in front of the door, chest down in a pool of blood, is the headless body of a man dressed in nothing but a flimsy, flowered silk robe. His arms are extended, fingertips still touching the door as if he'd knelt down in order to stick his head through the gap, when something on the other side took it clean off of his shoulders.",
+    location: "LevelSixCorridorEnd",
+    vocab: ["corpse", "body", "man", "robe"],
+    itemClass: "solid",
+    itemCategory: "static",
+    meta: {
+      onTake: `It's kind of a mess, just leave it.`,
+    },
+    itemWeight: 80,
+    itemSize: 10,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    isContagious: true,
   },
 
   // LEVEL 7 – Splattered corpse in corridor ---------------------------------
@@ -572,7 +592,7 @@ export const corpseItems: Item[] = [
     initialDescription: undefined,
     sceneryDescription:
       "A fit woman lies where she fell, a gunshot wound having emptied her out onto the deck.",
-    location: "BombChamber",
+    location: "ReactorCore",
     vocab: ["body", "corpse", "woman", "alice", "kreegle"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -592,7 +612,7 @@ export const corpseItems: Item[] = [
     initialDescription: undefined,
     sceneryDescription:
       "A man in bomb squad armor lies dead on the floor, throat opened by a single, decisive cut.",
-    location: "BombChamber",
+    location: "ReactorCore",
     vocab: ["body", "corpse", "man"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -687,14 +707,14 @@ export const corpseItems: Item[] = [
   },
 
   {
-    id: "StairFourBody",
+    id: "StairSixBody",
     name: "dead soldier",
     description:
       "His eyes are widened even in death, pupils dilated into black pools ringed with hazel. It's hard to interpret those eyes, if it's fear alone in them or something else, but the look is frozen on his face. On closer examination you see some ulceration of the skin creeping up from the V in his shirt, and when you lift the fabric for a better look it peels away in silky strands. Beneath the material you see that while his basic shape is intact, the skin is pocked with deep holes that merge together into soft honeycomb patterns. What could have caused it?",
     sceneryDescription:
       "A young man lies on his back in the middle of the landing, lifeless eyes gazing up the stairwell. He looks to have been no older than twenty, fit, and healthy looking but his mouth is frozen open and he's as still as a stone. He's dressed in a blue collared short-sleeve shirt and a pair of khaki pants, the tips of his leather shoes pointing in opposite directions.",
     location: "StairSix",
-    vocab: ["dead", "body", "man", "soldier"],
+    vocab: ["dead", "body", "corpse"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 75,

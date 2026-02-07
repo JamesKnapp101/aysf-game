@@ -473,10 +473,10 @@ export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
     initiallyLocked: false,
   },
   {
-    id: "MassageDoor",
+    id: "NailSalonDoor",
     name: "varnished wooden door",
     descriptionFromA:
-      "To the west is a varnished wooden door with a little sign on it reading 'Massage'.",
+      "To the west is a varnished wooden door with a little sign on it reading 'Nail Salon'.",
     descriptionFromB:
       "To the east is a varnished wooden door leading back to the Spa.",
     kind: "standard",
@@ -488,7 +488,7 @@ export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
     ],
     connects: {
       roomAId: "Spa",
-      roomBId: "Massage",
+      roomBId: "NailSalon",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,

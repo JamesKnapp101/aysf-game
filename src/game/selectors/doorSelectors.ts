@@ -1,25 +1,23 @@
 import type { DoorDefinition, DoorState } from "../types/doorTypes";
 import type { GameState } from "../types/gameTypes";
-import type { Exit } from "../types/roomTypes";
-import { getCurrentRoom } from "./roomSelectors";
 
 export function getDoorById(
   state: GameState,
-  id: string
+  id: string,
 ): DoorDefinition | undefined {
   return state.world.doors.find((d) => d.id === id);
 }
 
 export function getDoorState(
   state: GameState,
-  id: string
+  id: string,
 ): DoorState | undefined {
   return state.worldState.doors[id];
 }
 
 export function getVisibleDoorsInRoom(
   state: GameState,
-  roomId: string
+  roomId: string,
 ): DoorDefinition[] {
   const room = state.world.rooms.find((r) => r.id === roomId);
   if (!room) return [];
@@ -36,17 +34,34 @@ export function getVisibleDoorsInRoom(
 }
 
 export function getDoorDescriptionForRoom(
+  state: GameState,
   doorDef: DoorDefinition,
-  roomId: string
+  roomId: string,
 ): string | undefined {
   const { connects } = doorDef;
 
   if (roomId === connects.roomAId) {
-    return doorDef.descriptionFromA ?? doorDef.description;
+    return (
+      doorDef.describeFromA?.(state, {
+        kind: "door",
+        doorId: doorDef.id,
+        roomId: roomId,
+      }) ??
+      doorDef.descriptionFromA ??
+      doorDef.description
+    );
   }
 
   if (roomId === connects.roomBId) {
-    return doorDef.descriptionFromB ?? doorDef.description;
+    return (
+      doorDef.describeFromB?.(state, {
+        kind: "door",
+        doorId: doorDef.id,
+        roomId: roomId,
+      }) ??
+      doorDef.descriptionFromB ??
+      doorDef.description
+    );
   }
 
   return doorDef.description;

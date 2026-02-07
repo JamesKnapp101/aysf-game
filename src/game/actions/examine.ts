@@ -1,4 +1,4 @@
-import { resolveItemByNoun } from "../rules/scope";
+import { resolveDoorByNoun, resolveItemByNoun } from "../rules/scope";
 import { getItemById } from "../selectors/itemSelectors";
 import type { ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
@@ -20,7 +20,28 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       ? resolveItemByNoun(state, direct)
       : getItemById(state, "water");
   if (!item) {
+    const door = resolveDoorByNoun(state, direct);
+    if (door) {
+      return {
+        state,
+        message:
+          door.def.describe?.(state, {
+            kind: "door",
+            doorId: door.def.id,
+            roomId: state.player.roomId,
+          }) ?? door.def.description,
+      };
+    }
     return { state, message: "You don't see that here." };
+  }
+
+  if (item.id === "TelepadTerminal") {
+    return {
+      state,
+      overlay: {
+        kind: "teleportation-terminal",
+      },
+    };
   }
 
   if (item?.meta?.kind === "phone") {
@@ -96,7 +117,19 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
-  let itemDesc = item.description?.trim() || "You see nothing special.";
+  let itemDesc = item.describe
+    ? item?.describe?.(state, item, {
+        kind: "examine",
+        roomId: item.id,
+      })
+    : item.meta?.conditionalDescription &&
+        (state.worldState.conditionalTriggers?.[`searched-${item.id}`] ===
+          false ||
+          state.worldState.conditionalTriggers?.[`searched-${item.id}`] ===
+            undefined)
+      ? item.meta.conditionalDescription
+      : item.description?.trim() || "You see nothing special.";
+
   if (item.isContainer && state.itemState.containerFilled[item.id]) {
     const containerContents = state.itemState.containerFilled[item.id];
     itemDesc += ` The ${item.name} is filled with ${containerContents}`;

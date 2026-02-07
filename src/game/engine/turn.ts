@@ -1,6 +1,9 @@
 import { audioRegistry } from "@game/audioRegistry";
 import { tickAviarySpotlight } from "@game/engine/ticks/aviaryTick";
+import { tickDamagedFlashlight } from "@game/engine/ticks/damagedFlashlightTick";
+import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
+import { tickRadioConversation } from "@game/helpers/conversationHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { TickContext } from "@game/types/context";
 import { playerMemoryMap, playerScoreMap } from "../constants";
@@ -46,7 +49,7 @@ function sicknessStage(s: number): number {
 
 export function applyStatusEffectTick(
   state: GameState,
-  effect: StatusEffect
+  effect: StatusEffect,
 ): GameState {
   const vitals = state.player.vitals;
   let nextVitals = vitals;
@@ -54,7 +57,7 @@ export function applyStatusEffectTick(
   switch (effect.id) {
     case "regenerationWoozies": {
       const effect = state.player.statusEffects.find(
-        (se) => se.id === "regenerationWoozies"
+        (se) => se.id === "regenerationWoozies",
       );
       if (!effect) return state;
       if (effect.remainingTurns == null) break;
@@ -284,7 +287,7 @@ function tickAnimateActivities(state: GameState): GameState {
       | ((
           ctx: TickContext & {
             triggerPlayerDeath?: (msg: string, cause: string) => void;
-          }
+          },
         ) => GameState | void)
       | undefined;
     if (!tick) continue;
@@ -295,7 +298,7 @@ function tickAnimateActivities(state: GameState): GameState {
 
     const ctxTriggerPlayerDeath = (
       deathMessage: string,
-      cause: string
+      cause: string,
     ): void => {
       next = triggerPlayerDeath(next, deathMessage, cause);
     };
@@ -337,8 +340,8 @@ function tickAttachedItems(state: GameState): GameState {
     const hostRoomId =
       hostId === "INVENTORY"
         ? next.player.roomId
-        : next.itemState.itemRoomId[hostId] ??
-          (hostId === "PLAYER" ? next.player.roomId : undefined);
+        : (next.itemState.itemRoomId[hostId] ??
+          (hostId === "PLAYER" ? next.player.roomId : undefined));
 
     if (!hostRoomId) continue;
 
@@ -361,7 +364,7 @@ function updateCurrentScore(state: GameState): GameState {
   let calculatedScore = 0;
 
   for (const key of Object.keys(
-    playerScoreMap
+    playerScoreMap,
   ) as (keyof typeof playerScoreMap)[]) {
     if (state.worldState.scoresTriggered?.[key]) {
       calculatedScore += playerScoreMap[key].value;
@@ -377,7 +380,7 @@ function updateCurrentMemory(state: GameState): GameState {
   let calculatedMemory = 0;
 
   for (const key of Object.keys(
-    playerMemoryMap
+    playerMemoryMap,
   ) as (keyof typeof playerMemoryMap)[]) {
     if (state.player.memoriesTriggered?.[key]) {
       calculatedMemory += playerMemoryMap[key].value;
@@ -398,12 +401,25 @@ function tickScoreAndMemory(state: GameState): GameState {
 
 export function advanceTurn(state: GameState): GameState {
   let next = state;
+  // after processing the player's command (and only if it was a real turn):
+  const ticked = tickRadioConversation(next);
+  next = ticked.state;
+
+  if (ticked.ended) {
+    next = appendLog(
+      next,
+      "The radio channel collapses into a steady hiss, then goes quiet.",
+    );
+  }
+  next = tickDamagedFlashlight(next);
   next = tickAviarySpotlight(next);
+  next = tickHydroponics(next);
   next = tickAttachedItems(next);
   next = applyEffects(next);
   next = tickStatusEffects(next);
   next = tickSickness(next);
   next = tickAnimateActivities(next);
+
   next = emitAdjacentAudioCues(next, {
     registry: audioRegistry,
     maxLinesPerTick: 1,

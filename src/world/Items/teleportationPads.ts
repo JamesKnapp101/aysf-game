@@ -1,14 +1,68 @@
 import type { Item } from "../../game/types/itemTypes";
 
+type PowerSections = Record<string, boolean>;
+
+const PAD_COLORS = [
+  "green",
+  "blue",
+  "yellow",
+  "violet",
+  "orange",
+  "white",
+  "maroon",
+] as const;
+
+export function describePoweredTeleportPads(
+  powerRestoredSections: PowerSections,
+): string | null {
+  const powered = PAD_COLORS.filter(
+    (color) => powerRestoredSections[`teleport-pads-${color}`],
+  );
+
+  if (powered.length === 0) return null;
+
+  const formatted =
+    powered.length === 1
+      ? powered[0]
+      : powered.length === 2
+        ? `${powered[0]} and ${powered[1]}`
+        : `${powered.slice(0, -1).join(", ")}, and ${
+            powered[powered.length - 1]
+          }`;
+
+  return `The ${formatted} disk${powered.length > 1 ? "s are" : " is"} lit with a sallow glow`;
+}
+
 export const teleportationPadItems: Item[] = [
+  // TERMINAL OBJECT
+  {
+    id: "TelepadTerminal",
+    name: "terminal",
+    description:
+      "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
+    describeScenery(state) {
+      let description = `On the floor of the terminal along the base of the northern wall are a row of different colored glossy disks, each ringed by a shiny metallic band. The disks are large enough, and look sturdy enough, to stand on.`;
+      description += describePoweredTeleportPads(
+        state.worldState.powerRestoredSections,
+      );
+      return description;
+    },
+    location: "TPADTerminal",
+    vocab: ["terminal", "translocation terminal", "teleportation terminal"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      kind: "teleportation-terminal",
+    },
+  },
   // GREEN TELEPORT RING
   {
     id: "GreenTPADTerminal",
     name: "glossy green disk",
     description:
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
-    sceneryDescription:
-      "On the floor of the terminal are a row of different colored glossy disks, each ringed by a shiny metallic band. The disks are large enough, and look sturdy enough, to stand on.", // Since there's several in the same room, have one describe them all instead of five separate items listed, give the others a blank sceneryDescription
     location: "TPADTerminal",
     vocab: ["green disk", "green", "disk", "pad"],
     itemClass: "solid",
@@ -22,7 +76,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-green",
         ring: "green",
         order: 1,
-        requires: ["greenbadge", "greybadge", "blackbadge"],
+        requires: ["greenbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -46,7 +100,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-green",
         ring: "green",
         order: 2,
-        requires: ["greenbadge", "greybadge", "blackbadge"],
+        requires: ["greenbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -70,7 +124,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-green",
         ring: "green",
         order: 3,
-        requires: ["greenbadge", "greybadge", "blackbadge"],
+        requires: ["greenbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -93,7 +147,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-blue",
         ring: "blue",
         order: 1,
-        requires: ["bluebadge", "greybadge", "blackbadge"],
+        requires: ["bluebadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -117,7 +171,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-blue",
         ring: "blue",
         order: 2,
-        requires: ["bluebadge", "greybadge", "blackbadge"],
+        requires: ["bluebadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -141,7 +195,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-blue",
         ring: "blue",
         order: 3,
-        requires: ["bluebadge", "greybadge", "blackbadge"],
+        requires: ["bluebadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -164,7 +218,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-yellow",
         ring: "yellow",
         order: 1,
-        requires: ["yellowbadge", "greybadge", "blackbadge"],
+        requires: ["yellowbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -188,7 +242,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-yellow",
         ring: "yellow",
         order: 2,
-        requires: ["yellowbadge", "greybadge", "blackbadge"],
+        requires: ["yellowbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -212,19 +266,19 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-yellow",
         ring: "yellow",
         order: 3,
-        requires: ["yellowbadge", "greybadge", "blackbadge"],
+        requires: ["yellowbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
   // BROWN TELEPORT RING
   {
-    id: "BrownTPADTerminal",
-    name: "glossy brown disk",
+    id: "VioletTPADTerminal",
+    name: "glossy violet disk",
     description:
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     // Since there's several in the same room, have GREEN describe them all instead of five separate items listed, give the others a blank sceneryDescription
     location: "TPADTerminal",
-    vocab: ["brown disk", "brown", "disk", "pad"],
+    vocab: ["violet disk", "violet", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 1,
@@ -232,22 +286,22 @@ export const teleportationPadItems: Item[] = [
     isSurface: true,
     meta: {
       teleport: {
-        section: "teleport-pads-brown",
-        ring: "brown",
+        section: "teleport-pads-violet",
+        ring: "violet",
         order: 1,
-        requires: ["brownbadge", "greybadge", "blackbadge"],
+        requires: ["violetbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
   {
-    id: "BrownTPADMainEngineering",
-    name: "glossy brown disk",
+    id: "VioletTPADMainEngineering",
+    name: "glossy violet disk",
     description:
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     sceneryDescription:
-      "In one corner of the room you see a slightly raised brown disk, ringed by a shiny metal band.",
-    location: "MainEngineering",
-    vocab: ["brown", "disk", "pad"],
+      "In one corner of the room you see a slightly raised violet disk, ringed by a shiny metal band.",
+    location: "MainReactorPlatform",
+    vocab: ["violet", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 1,
@@ -256,22 +310,22 @@ export const teleportationPadItems: Item[] = [
     meta: {
       onPowered: `The disk emits a soft, serene glow.`,
       teleport: {
-        section: "teleport-pads-brown",
-        ring: "brown",
+        section: "teleport-pads-violet",
+        ring: "violet",
         order: 2,
-        requires: ["brownbadge", "greybadge", "blackbadge"],
+        requires: ["violetbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
   {
-    id: "BrownTPADMaintenanceDuct",
-    name: "glossy brown disk",
+    id: "VioletTPADMaintenanceDuct",
+    name: "glossy violet disk",
     description:
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     sceneryDescription:
-      "In the corner you see a slightly raised brown disk, made of a hard, glossy material.",
+      "In the corner you see a slightly raised violet disk, made of a hard, glossy material.",
     location: "MaintenanceDuct",
-    vocab: ["brown", "disk", "pad"],
+    vocab: ["violet", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 1,
@@ -280,10 +334,10 @@ export const teleportationPadItems: Item[] = [
     meta: {
       onPowered: `The disk emits a soft, serene glow.`,
       teleport: {
-        section: "teleport-pads-brown",
-        ring: "brown",
+        section: "teleport-pads-violet",
+        ring: "violet",
         order: 3,
-        requires: ["brownbadge", "greybadge", "blackbadge"],
+        requires: ["violetbadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -306,7 +360,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-white",
         ring: "white",
         order: 1,
-        requires: ["whitebadge", "greybadge", "blackbadge"],
+        requires: ["whitebadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -330,7 +384,7 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-white",
         ring: "white",
         order: 2,
-        requires: ["whitebadge", "greybadge", "blackbadge"],
+        requires: ["whitebadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -354,19 +408,19 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-white",
         ring: "white",
         order: 3,
-        requires: ["whitebadge", "greybadge", "blackbadge"],
+        requires: ["whitebadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
   // GREY TELEPORT RING
   {
-    id: "GreyTPADTerminal",
-    name: "glossy grey disk",
+    id: "MaroonTPADTerminal",
+    name: "glossy maroon disk",
     description:
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     // Since there's several in the same room, have GREEN describe them all instead of five separate items listed, give the others a blank sceneryDescription
     location: "TPADTerminal",
-    vocab: ["grey disk", "grey", "disk", "pad"],
+    vocab: ["maroon disk", "maroon", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 1,
@@ -374,22 +428,22 @@ export const teleportationPadItems: Item[] = [
     isSurface: true,
     meta: {
       teleport: {
-        section: "teleport-pads-grey",
-        ring: "grey",
+        section: "teleport-pads-maroon",
+        ring: "maroon",
         order: 1,
-        requires: ["greybadge", "blackbadge"],
+        requires: ["maroonbadge", "ultravioletbadge"],
       },
     },
   },
   {
-    id: "GreyTPADBridge",
-    name: "glossy grey disk",
+    id: "MaroonTPADBridge",
+    name: "glossy maroon disk",
     description:
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     sceneryDescription:
-      "In one corner of the room you see a slightly raised grey disk, ringed by a shiny metal band.",
+      "In one corner of the room you see a slightly raised maroon disk, ringed by a shiny metal band.",
     location: "Bridge",
-    vocab: ["grey", "disk", "pad"],
+    vocab: ["maroon", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 1,
@@ -398,10 +452,10 @@ export const teleportationPadItems: Item[] = [
     meta: {
       onPowered: `The disk emits a soft, serene glow.`,
       teleport: {
-        section: "teleport-pads-grey",
-        ring: "grey",
+        section: "teleport-pads-maroon",
+        ring: "maroon",
         order: 2,
-        requires: ["greybadge", "blackbadge"],
+        requires: ["maroonbadge", "ultravioletbadge"],
       },
     },
   },

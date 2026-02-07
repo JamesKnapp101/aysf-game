@@ -5,23 +5,26 @@ import { Item } from "../../types/itemTypes";
 export function tryTurnItem(
   state: GameState,
   prep: string,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   let next: GameState = state;
 
   // Not turning something on or up, but physically turning it
   if (prep === "") {
+    if (item.overrides?.turn) {
+      return { state, message: item.overrides.turn };
+    }
     if (item.id === "PowerStationKey") {
       if (
         !state.itemState.containerContents["PowerStationKeyhole"]?.includes(
-          "PowerStationKey"
+          "PowerStationKey",
         )
       ) {
         return { state, message: "The key isn't in anything." };
       }
       if (
         state.itemState.containerContents["PowerStationKeyhole"]?.includes(
-          "PowerStationKey"
+          "PowerStationKey",
         ) &&
         state.worldState.powerRestoredSections["power-key-turned"]
       ) {
@@ -47,6 +50,9 @@ export function tryTurnItem(
     }
   }
   if (prep === "on") {
+    if (item.overrides?.turn) {
+      return { state, message: item.overrides.turn };
+    }
     if (!item.isSwitchable) {
       return { state, message: "You can't turn that on." };
     }

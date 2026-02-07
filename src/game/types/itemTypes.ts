@@ -8,7 +8,12 @@ import type {
 import type { ItemId } from "./ids";
 
 export type ItemClass = "solid" | "liquid" | "gas";
-export type ItemCategory = "scenery" | "collectable" | "fluid" | "animate";
+export type ItemCategory =
+  | "scenery"
+  | "collectable"
+  | "fluid"
+  | "animate"
+  | "static";
 export type clothingSlots =
   | "head"
   | "face"
@@ -44,6 +49,17 @@ export interface Item {
   capacityOn?: number;
   doses?: number;
   sceneryDescription?: string;
+  describe?: (state: GameState, item: Item, ctx: DescriptionContext) => string;
+  describeScenery?: (
+    state: GameState,
+    item: Item,
+    ctx: DescriptionContext,
+  ) => string;
+  describeInitial?: (
+    state: GameState,
+    item: Item,
+    ctx: DescriptionContext,
+  ) => string;
   hasEffect?: (state: GameState, item: Item) => GameState;
   meta?: Record<string, any>;
   isSwitchable?: boolean;
@@ -67,6 +83,7 @@ export interface Item {
   isSqueezable?: boolean;
   isTurnable?: boolean;
   isPushable?: boolean;
+  isReflective?: boolean;
   scoreId?: PlayerScoreId;
 }
 
@@ -80,6 +97,12 @@ export type LivingMeta = {
   hostility?: "neutral" | "avoidant" | "aggressive";
   homeRegion?: string[];
 };
+
+export type DescriptionContext =
+  | { kind: "roomBase"; roomId: string; mode: "log" | "panel" }
+  | { kind: "scenery"; roomId: string }
+  | { kind: "examine"; roomId: string }
+  | { kind: "door"; roomId: string; doorId: string; side?: "a" | "b" };
 
 export type ItemOverrideVerb =
   | "tick"
@@ -105,6 +128,7 @@ export type ItemOverrideVerb =
   | "pull"
   | "lift"
   | "lower"
+  | "turn"
   | "listen"
   | "touch"
   | "attack"

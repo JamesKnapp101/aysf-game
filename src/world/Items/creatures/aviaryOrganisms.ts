@@ -7,6 +7,26 @@ import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { Exit } from "@game/types/roomTypes";
 
+export function getRandomOrganismAudioCue(dirFromPlayer: string): string {
+  const r = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+  if (r < 10) {
+    return `You hear a faint chittering sound coming from the ${dirFromPlayer}.`;
+  }
+  if (r < 25) {
+    return `You catch the sound of soft, wet slapping noises from the ${dirFromPlayer}.`;
+  }
+  if (r < 45) {
+    return `You hear a low, guttural rustling sound coming from the ${dirFromPlayer}.`;
+  }
+  if (r < 70) {
+    return `You hear a series of quiet, rapid tapping sounds from the ${dirFromPlayer}.`;
+  }
+  if (r < 90) {
+    return `You hear a subtle, rhythmic thudding sound coming from the ${dirFromPlayer}.`;
+  }
+  return `You hear something moving in the darkness to the ${dirFromPlayer}.`;
+}
+
 export const aviaryOrganismItems: Item[] = [
   {
     id: "organism1",
@@ -19,6 +39,8 @@ export const aviaryOrganismItems: Item[] = [
       hostility: "hostile",
       homeRegion: AVIARY_ROOM_IDS,
       memories: [],
+      audioCue: ({ dirFromPlayer }: { dirFromPlayer: string }) =>
+        `${getRandomOrganismAudioCue(dirFromPlayer)}`,
     },
     description: "You can't see it...",
     location: "OuterRingNorth",
@@ -38,8 +60,8 @@ export const aviaryOrganismItems: Item[] = [
         triggerPlayerDeath,
       }: TickContext & {
         triggerPlayerDeath?: (deathMessage: string, cause: string) => void;
-      }): void => {
-        organismOverrideTick(
+      }): GameState | void => {
+        return organismOverrideTick(
           item,
           state,
           rng,
@@ -47,51 +69,7 @@ export const aviaryOrganismItems: Item[] = [
           getRoomExits,
           isRoomDark,
           getPlayerRoomId,
-          triggerPlayerDeath
-        );
-      },
-    },
-  },
-  {
-    id: "organism2",
-    name: "organism",
-    itemCategory: "animate",
-    meta: {
-      isAlive: true,
-      canMove: true,
-      vision: "dark",
-      hostility: "hostile",
-      homeRegion: AVIARY_ROOM_IDS,
-      memories: [],
-    },
-    description: "You can't see it...",
-    location: "OuterRingTopWestBend",
-    vocab: ["organism"],
-    itemClass: "solid",
-    itemWeight: 8,
-    itemSize: 2,
-    overrides: {
-      tick: ({
-        state,
-        item,
-        rng,
-        moveItemToRoom,
-        getRoomExits,
-        isRoomDark,
-        getPlayerRoomId,
-        triggerPlayerDeath,
-      }: TickContext & {
-        triggerPlayerDeath?: (deathMessage: string, cause: string) => void;
-      }): void => {
-        organismOverrideTick(
-          item,
-          state,
-          rng,
-          moveItemToRoom,
-          getRoomExits,
-          isRoomDark,
-          getPlayerRoomId,
-          triggerPlayerDeath
+          triggerPlayerDeath,
         );
       },
     },
@@ -118,7 +96,7 @@ function organismOverrideTick(
   getRoomExits: (roomId: string) => Exit[],
   isRoomDark: (roomId: string) => boolean,
   getPlayerRoomId?: () => string | null,
-  triggerPlayerDeath?: (deathMessage: string, cause: string) => void
+  triggerPlayerDeath?: (deathMessage: string, cause: string) => void,
 ): void {
   if (!AVIARY_ROOM_IDS.has(state.player.roomId)) return; // Don't bother running them if player not in aviary
 
@@ -130,7 +108,7 @@ function organismOverrideTick(
 
   const playerRoomId = getPlayerRoomId
     ? getPlayerRoomId()
-    : (state as any).player?.roomId ?? (state as any).playerRoomId;
+    : ((state as any).player?.roomId ?? (state as any).playerRoomId);
   if (!playerRoomId) return;
 
   const die = () => {

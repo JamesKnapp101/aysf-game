@@ -1,3 +1,6 @@
+import { GameState } from "@game/types/gameTypes";
+import { DescriptionContext } from "@game/types/itemTypes";
+
 export type Direction =
   | "north"
   | "south"
@@ -32,6 +35,7 @@ export interface Room {
   id: string;
   name: string;
   description: string;
+  describe?: (state: GameState, room: Room, ctx: DescriptionContext) => string;
   descriptionShort?: string;
   exits: Exit[];
 }

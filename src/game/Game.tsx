@@ -1,3 +1,6 @@
+import { SplashModal } from "@game/components/SplashModal";
+import { OPENING_SPLASH } from "@game/constants";
+import { overridePlayerBrainActivityLevel } from "@game/helpers/itemHelpers";
 import React, {
   useCallback,
   useEffect,
@@ -37,7 +40,11 @@ export type LayoutPrefs = {
   sidebarWidthRatio: number;
 };
 
-function reducer(state: GameState, action: Action): GameState {
+function reducer(
+  state: GameState,
+  action: Action,
+  setActiveTab: Function,
+): GameState {
   switch (action.type) {
     case "command": {
       const trimmed = action.input.trim();
@@ -45,7 +52,13 @@ function reducer(state: GameState, action: Action): GameState {
 
       const parsed = parseCommand(trimmed);
       const next = handleCommand(state, parsed);
+      if (parsed.type === "inventory") {
+        setActiveTab("inventory");
+      }
 
+      if (parsed.type === "diagnose") {
+        setActiveTab("status");
+      }
       return { ...next };
     }
     default:
@@ -90,12 +103,60 @@ function loadLayoutPrefs(): LayoutPrefs {
 }
 
 export const Game: React.FC = () => {
-  type StateAction = Action | { type: "replaceState"; next: GameState };
+  type StateAction =
+    | Action
+    | { type: "replaceState"; next: GameState }
+    | { type: "setBrainActivity"; val: number };
+  type SidebarTab = "inventory" | "status" | "hints" | "settings";
+  const [activeTab, setActiveTab] = useState<SidebarTab>("status");
 
-  const [gs, dispatchState] = useReducer((s: GameState, a: StateAction) => {
-    if (a.type === "replaceState") return a.next;
-    return reducer(s, a as Action);
-  }, createInitialState(WORLD));
+  const [gs, dispatchState] = useReducer(
+    (s: GameState, a: StateAction): GameState => {
+      if (a.type === "replaceState") return a.next;
+
+      if (a.type === "setBrainActivity") {
+        const result = overridePlayerBrainActivityLevel(s, a.val) as
+          | GameState
+          | { state: GameState; message?: string; overlay?: any };
+        const nextState = "state" in result ? result.state : result;
+        if ("message" in result && result.message) {
+          return appendLog(nextState, result.message);
+        }
+        return nextState;
+      }
+
+      if (a.type === "command") {
+        const trimmed = a.input.trim();
+        if (!trimmed) return s;
+
+        const parsed = parseCommand(trimmed);
+        type CommandResult =
+          | GameState
+          | { state: GameState; message?: string; overlay?: any };
+        const result = handleCommand(s, parsed) as CommandResult;
+        const nextState = "state" in result ? result.state : result;
+
+        if (parsed.type === "inventory") {
+          setActiveTab("inventory");
+        }
+
+        if (parsed.type === "diagnose") {
+          setActiveTab("status");
+        }
+
+        if ("message" in result && result.message) {
+          return appendLog(nextState, result.message);
+        }
+
+        return nextState;
+      }
+
+      return s;
+    },
+    createInitialState(WORLD),
+  );
+
+  const [showSplash, setShowSplash] = useState(true);
 
   const stateRef = useRef(gs);
 
@@ -121,7 +182,6 @@ export const Game: React.FC = () => {
     }
   }, [layout]);
 
-  // const rootRef = useRef<HTMLDivElement>(null);
   const nonce = useUIEffectsStore((s) => s.teleportFlashNonce);
 
   useEffect(() => {
@@ -148,7 +208,7 @@ export const Game: React.FC = () => {
         openOverlay(result.overlay);
       }
     },
-    [openOverlay]
+    [openOverlay],
   );
 
   const runAction = useCallback(
@@ -157,7 +217,7 @@ export const Game: React.FC = () => {
       const result = dispatchAction(current, req);
       applyResult(result);
     },
-    [applyResult]
+    [applyResult],
   );
 
   // -------- horizontal resize: room vs main row -----------------------------
@@ -190,21 +250,24 @@ export const Game: React.FC = () => {
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", onMouseUp);
     },
-    [layout.roomHeightRatio]
+    [layout.roomHeightRatio],
   );
 
   const roomPanelFlexBasis = `${layout.roomHeightRatio * 100}%`;
 
   const currentRoom = getCurrentRoom(gs);
   const exits = getCurrentRoomExits(gs);
-  const desc = buildRoomDescription(gs, currentRoom.id, { mode: "panel" });
+  const desc = buildRoomDescription(gs, currentRoom.id, {
+    mode: "panel",
+    forceFull: true,
+  });
 
   const activeEffects = getActiveStatusEffectIds(gs);
   const rad = getRadiationIntensity(gs);
   const rad01 = Math.max(0, Math.min(1, rad / 100));
 
   const isDrunk = gs.player.statusEffects.find(
-    (eff: StatusEffect) => eff.id === "drunk"
+    (eff: StatusEffect) => eff.id === "drunk",
   );
 
   const roomIsDark = Boolean(gs.worldState.darkRooms[currentRoom.id]);
@@ -224,14 +287,14 @@ export const Game: React.FC = () => {
     roomIsDark && nightVisionActive
       ? "nightvision"
       : roomIsDark && flashlightOn
-      ? "flashlight"
-      : "none";
+        ? "flashlight"
+        : "none";
 
   const overlayRunAction = useCallback(
     (verb: string, payload?: any) => {
       runAction({ verb, payload } as unknown as ActionRequest);
     },
-    [runAction]
+    [runAction],
   );
 
   const setGameState = useCallback(
@@ -249,85 +312,101 @@ export const Game: React.FC = () => {
         });
       }
     },
-    []
+    [],
   );
 
   return (
     <>
-      {/* The OverlayHost handles all the screen effects */}
-      <OverlayHost
-        runAction={overlayRunAction}
-        state={gs}
-        setGameState={setGameState}
+      <SplashModal
+        isOpen={showSplash}
+        onContinue={() => setShowSplash(false)}
+        text={OPENING_SPLASH}
       />
-      <div
-        id={"game-root"}
-        ref={rootRef}
-        className="game-root"
-        style={
-          {
-            "--crt-color": crtColor,
-            "--rad": String(rad01),
-            "--drunk": String((isDrunk?.intensity ?? 0) / 100),
-          } as React.CSSProperties
-        }
-        data-status={activeEffects.join(" ")}
-        data-drunkenness={isDrunk?.intensity ?? 0}
-        data-room-ambient-light={roomAmbientLight ? "true" : "false"}
-        data-room-is-dark={roomIsDark ? "true" : "false"}
-        data-player-can-see={playerCanSee ? "true" : "false"}
-        data-player-light-mode={playerLightMode}
-        data-flashlight-on={flashlightOn ? "true" : "false"}
-        onClick={() => inputRef.current?.focus()}
-      >
-        {/* HEADER */}
-        <div className="game-header">
-          <div className="game-header-location">
-            {currentRoom.name || "Unknown Location"}
+
+      {!showSplash && (
+        <>
+          {/* The OverlayHost handles all the screen effects */}
+          <OverlayHost
+            runAction={overlayRunAction}
+            state={gs}
+            setGameState={setGameState}
+          />
+
+          <div
+            id={"game-root"}
+            ref={rootRef}
+            className="game-root"
+            style={
+              {
+                "--crt-color": crtColor,
+                "--rad": String(rad01),
+                "--drunk": String((isDrunk?.intensity ?? 0) / 100),
+              } as React.CSSProperties
+            }
+            data-status={activeEffects.join(" ")}
+            data-drunkenness={isDrunk?.intensity ?? 0}
+            data-room-ambient-light={roomAmbientLight ? "true" : "false"}
+            data-room-is-dark={roomIsDark ? "true" : "false"}
+            data-player-can-see={playerCanSee ? "true" : "false"}
+            data-player-light-mode={playerLightMode}
+            data-flashlight-on={flashlightOn ? "true" : "false"}
+            onClick={() => inputRef.current?.focus()}
+          >
+            {/* HEADER */}
+            <div className="game-header">
+              <div className="game-header-location">
+                {currentRoom.name || "Unknown Location"}
+              </div>
+              <div className="game-header-stats">
+                <span>Score: {getCurrentScore(gs)}</span>
+                <span>Memory: {getCurrentMemory(gs)}%</span>
+                <span>Rating: {gs.rating}</span>
+                <span>Moves: {gs.moves}</span>
+              </div>
+            </div>
+
+            {/* ROOM DESCRIPTION */}
+            <RoomDescriptionPanel
+              desc={desc}
+              exits={exits}
+              roomPanelFlexBasis={roomPanelFlexBasis}
+              inputRef={inputRef}
+              activeEffects={activeEffects.join(" ")}
+              roomIsDark={roomIsDark}
+              roomAmbientLight={roomAmbientLight}
+              playerCanSee={playerCanSee}
+              playerLightMode={playerLightMode}
+              flashlightOn={flashlightOn ? "true" : "false"}
+              roomId={currentRoom.id}
+              state={gs}
+              setBrainActivityLevel={(val) =>
+                dispatchState({ type: "setBrainActivity", val })
+              }
+            />
+
+            {/* horizontal resizer - between room and main row */}
+            <div
+              className="game-resizer-horizontal"
+              onMouseDown={handleStartResizeHorizontal}
+            />
+
+            {/* MAIN ROW: log + sidebar */}
+            <LogPanel
+              state={gs}
+              dispatch={dispatchState as any}
+              layout={layout}
+              setLayout={setLayout}
+              crtColor={crtColor}
+              setCrtColor={setCrtColor}
+              roomPanelFlexBasis={roomPanelFlexBasis}
+              inputRef={inputRef}
+              rootRef={rootRef}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
           </div>
-          <div className="game-header-stats">
-            <span>Score: {getCurrentScore(gs)}</span>
-            <span>Memory: {getCurrentMemory(gs)}%</span>
-            <span>Rating: {gs.rating}</span>
-            <span>Moves: {gs.moves}</span>
-          </div>
-        </div>
-
-        {/* ROOM DESCRIPTION */}
-        <RoomDescriptionPanel
-          desc={desc}
-          exits={exits}
-          roomPanelFlexBasis={roomPanelFlexBasis}
-          inputRef={inputRef}
-          activeEffects={activeEffects.join(" ")}
-          roomIsDark={roomIsDark}
-          roomAmbientLight={roomAmbientLight}
-          playerCanSee={playerCanSee}
-          playerLightMode={playerLightMode}
-          flashlightOn={flashlightOn ? "true" : "false"}
-          roomId={currentRoom.id}
-          worldState={gs.worldState}
-        />
-
-        {/* horizontal resizer - between room and main row */}
-        <div
-          className="game-resizer-horizontal"
-          onMouseDown={handleStartResizeHorizontal}
-        />
-
-        {/* MAIN ROW: log + sidebar */}
-        <LogPanel
-          state={gs}
-          dispatch={dispatchState as any}
-          layout={layout}
-          setLayout={setLayout}
-          crtColor={crtColor}
-          setCrtColor={setCrtColor}
-          roomPanelFlexBasis={roomPanelFlexBasis}
-          inputRef={inputRef}
-          rootRef={rootRef}
-        />
-      </div>
+        </>
+      )}
     </>
   );
 };

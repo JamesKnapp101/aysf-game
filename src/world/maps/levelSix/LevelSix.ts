@@ -1,6 +1,6 @@
-import type { WorldChunk } from "../../game/types/gameTypes";
-import { levelSixDoors } from "../doors/levelSixDoors";
-import { levelSixItems } from "../Items/levelSixMisc";
+import type { WorldChunk } from "../../../game/types/gameTypes";
+import { levelSixDoors } from "../../doors/levelSixDoors";
+import { levelSixItems } from "../../Items/levelSixMisc";
 
 export const LEVEL_SIX: WorldChunk = {
   items: [...levelSixItems],
@@ -9,12 +9,23 @@ export const LEVEL_SIX: WorldChunk = {
   rooms: [
     {
       id: "LevelSixCorridorBend",
-      name: "Level Six Corridor Bend",
+      name: "Dimly Lit Corridor",
       description:
-        "The corridor forms an L here, heading east toward the elevator lobby and stair access, and south where a heavy-looking steel door blocks further access.",
+        "The corridor has experienced some minor structural damage, with a visible crack along the north wall near the floor, which is scattered with debris. Some but not all of the overhead lights have been broken, leaving the corridor partially lit as it heads east toward the elevator lobby and stair access, and also to the west, continuing on into the gloom. Letters have been stenciled along the south wall read 'Storage Quad Two' with an arrow pointing in that direction. [[SCENERY]]",
       exits: [
         { direction: "east", toRoomId: "LevelSixStairAccess" },
         { direction: "south", doorId: "InnerDoor" },
+        { direction: "west", toRoomId: "LevelSixCorridorEnd" },
+      ],
+    },
+    {
+      id: "LevelSixCorridorEnd",
+      name: "Corridor End",
+      description:
+        "The corridor ends here, the single remaining overhead light casting shadows across the buckled tile floor, where the crack along the north wall is widest. [[SCENERY]]",
+      exits: [
+        { direction: "east", toRoomId: "LevelSixCorridorBend" },
+        { direction: "south", doorId: "HydroponicsDoor" },
       ],
     },
     {

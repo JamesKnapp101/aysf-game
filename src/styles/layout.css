@@ -130,6 +130,7 @@ background:
 display: flex;
     flex-direction: column;
     min-height: 0;
+    width: 100%;
 }
 
 /* RIGHT: sidebar */

@@ -22,6 +22,8 @@ const DIR_MAP: Record<string, Direction> = {
   southwest: "southwest",
   se: "southeast",
   southeast: "southeast",
+  in: "in",
+  out: "out",
 };
 
 const VERB_ALIASES: Record<string, string> = {
@@ -29,7 +31,11 @@ const VERB_ALIASES: Record<string, string> = {
   look: "look",
 
   i: "inventory",
+  inv: "inventory",
   inventory: "inventory",
+
+  diagnose: "diagnose",
+  status: "diagnose",
 
   go: "go",
 
@@ -48,7 +54,7 @@ const VERB_ALIASES: Record<string, string> = {
 
   open: "open",
   close: "close",
-
+  press: "push",
   inject: "inject",
   fill: "fill",
   ask: "ask",
@@ -84,6 +90,7 @@ export function parseCommand(rawInput: string): ParsedCommand {
 
   if (verb === "look") return { type: "look" };
   if (verb === "inventory") return { type: "inventory" };
+  if (verb === "diagnose") return { type: "diagnose" };
 
   if (verb === "go" && rest0.length === 1 && DIR_MAP[rest0[0]]) {
     return { type: "move", direction: DIR_MAP[rest0[0]] };
@@ -128,7 +135,7 @@ export function parseCommand(rawInput: string): ParsedCommand {
   let indirect: string | undefined;
 
   const prepIndex = rest.findIndex((t) =>
-    PREPOSITIONS.includes(t as Preposition)
+    PREPOSITIONS.includes(t as Preposition),
   );
 
   if (prepIndex === -1) {

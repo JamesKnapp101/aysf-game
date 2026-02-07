@@ -1,4 +1,7 @@
 export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
+  ThreeWestGimOneEndTable: ["GimOneJournal", "MensLockerKey2"],
+  ThreeWestGimTwoEndTable: ["GimTwoJournal", "MensLockerKey9"],
+  ThreeWestGimThreeEndTable: ["GimThreeJournal", "MensLockerKey11", "HubPass"],
   FiveEastDresser: ["Syringe"],
   DRUGTIN: ["GroovyCart"],
   SixWestMedicineChest: ["DRUGTIN"],

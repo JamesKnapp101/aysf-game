@@ -5,7 +5,7 @@ import type { Direction, Room } from "../types/roomTypes";
 
 export function getCurrentRoom(state: GameState): Room {
   const room = state.world.rooms.find(
-    (r: Room) => r.id === state.player.roomId
+    (r: Room) => r.id === state.player.roomId,
   );
   if (!room) {
     throw new Error(`Unknown room id: ${state.player.roomId}`);
@@ -31,13 +31,20 @@ export function getItemsInRoom(state: GameState, roomId: string): Item[] {
     for (const id of s) contained.add(id);
   }
 
+  const seen = new Set<string>();
+
   return state.world.items.filter((item) => {
+    if (seen.has(item.id)) return false;
+    seen.add(item.id);
+
     if (inv.has(item.id)) return false;
+
     if (contained.has(item.id)) return false;
 
-    const dynRoomId = state.itemState.itemRoomId[item.id];
-    if (dynRoomId) return dynRoomId === roomId;
-    return item.location === roomId;
+    const dynRoomId = state.itemState.itemRoomId?.[item.id];
+    const loc = dynRoomId ?? item.location;
+
+    return loc === roomId;
   });
 }
 

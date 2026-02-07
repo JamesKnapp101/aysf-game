@@ -1,5 +1,9 @@
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
-import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
+import { drainRadioQueuedLog } from "@game/helpers/conversationHelpers";
+import {
+  movePlayerToRoom,
+  triggerPlayerDeath,
+} from "@game/helpers/gameHelpers";
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { AQUARIUM_ROOM_IDS } from "src/world/Items/creatures/octopus";
 import { ACTION_HANDLERS } from "../actions";
@@ -48,7 +52,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       if (AQUARIUM_ROOM_IDS.has(getPlayerRoomId(state))) {
         if (
           state.worldState.octopusState.occupiedRoomIds.includes(
-            exit.toRoomId ?? ""
+            exit.toRoomId ?? "",
           )
         ) {
           message =
@@ -56,7 +60,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
           if (
             state.worldState.octopusState.tipRoomIds.includes(
-              exit.toRoomId ?? ""
+              exit.toRoomId ?? "",
             )
           ) {
             message =
@@ -64,7 +68,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
             nextState = triggerPlayerDeath(
               nextState,
               message,
-              "aquarium octopus"
+              "aquarium octopus",
             );
             break; // we'll still echo below
           }
@@ -89,7 +93,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
           exit as any,
           doorDef,
           doorState,
-          exit.direction
+          exit.direction,
         );
 
         if (!allowed) {
@@ -109,10 +113,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       }
 
       // Move player first
-      const movedState: GameState = {
-        ...state,
-        player: { ...state.player, roomId: destinationRoomId },
-      };
+      const movedState: GameState = movePlayerToRoom(state, destinationRoomId, {
+        fromRoomId: state.player.roomId,
+        via: cmd.direction,
+      });
 
       // Mark visited before describing (keeps short/full logic consistent)
       const visitedRooms = movedState.worldState.visitedRooms ?? {};
@@ -148,15 +152,18 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       nextState = result.state;
       message = result.message ?? "";
       if (result.overlay) openOverlay(result.overlay as any);
-
-      // If supported:
-      // consumesTurn = result.consumesTurn ?? true;
       break;
     }
 
     case "inventory": {
       consumesTurn = false;
-      // message = buildInventoryText(state);
+      message = `You check your inventory.`;
+      break;
+    }
+
+    case "diagnose": {
+      consumesTurn = false;
+      message = `You consult the bioreader.`;
       break;
     }
 
@@ -168,9 +175,6 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     }
   }
 
-  // --- IMPORTANT: ensure command echo/response is never "pre-dated" by tick logs ---
-  // If the command consumes a turn, ticks may append log entries during advanceTurn().
-  // We capture those entries and re-append them AFTER the command echo/response.
   let tickLogEntries: string[] = [];
   const logBeforeLen = (nextState as any).log?.length ?? 0;
 
@@ -188,7 +192,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   }
 
   // If movement, append the destination room description from the UPDATED world state.
-  if (cmd.type === "move") {
+  if (cmd.type === "move" && nextState.player.roomId !== state.player.roomId) {
     const destRoomId = nextState.player.roomId;
     const roomDesc = buildRoomDescription(nextState, destRoomId, {
       mode: "log",
@@ -198,9 +202,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   const roomName = `${ROOM_NAME_TOKEN_START}${
     getRoomById(nextState, nextState.player.roomId)?.name
   }${ROOM_NAME_TOKEN_END}`;
+
   // Build echo block
   let logWithEcho = "";
-  if (cmd.type === "move") {
+  if (cmd.type === "move" && nextState.player.roomId !== state.player.roomId) {
     logWithEcho = `> ${cmd.direction}\n${roomName}\n${message}`;
   } else if (cmd.type === "inventory") {
     logWithEcho = `> inventory\n${message}`;
@@ -208,18 +213,30 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     logWithEcho = `> ${cmd.raw}\n${message}`;
   } else if (cmd.type === "unknown") {
     logWithEcho = `> ${cmd.raw ?? "?"}\n${message}`;
+  } else if (cmd.type === "diagnose") {
+    logWithEcho = `> diagnose\n${message}`;
   } else {
     // fallback
     logWithEcho = message;
   }
 
-  // Append echo/response FIRST
+  // Append echo/response
   nextState = appendLog(
     nextState,
-    logWithEcho.trim() + (tickLogEntries.length === 0 ? "\n\n" : "")
+    logWithEcho.trim() + (tickLogEntries.length === 0 ? "\n\n" : ""),
   );
 
-  // Then append any tick messages that happened during advanceTurn()
+  {
+    const drained = drainRadioQueuedLog(nextState);
+    nextState = drained.state;
+    for (const entry of drained.entries) {
+      if (entry && entry.trim()) {
+        nextState = appendLog(nextState, entry + "\n\n");
+      }
+    }
+  }
+
+  // append any tick messages that happened during advanceTurn()
   for (const entry of tickLogEntries) {
     if (entry && entry.trim()) {
       nextState = appendLog(nextState, entry + "\n\n");

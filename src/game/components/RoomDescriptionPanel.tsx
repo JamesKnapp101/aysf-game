@@ -6,8 +6,9 @@ import React, {
   useState,
 } from "react";
 import "../../styles/components/mind-gun-overlay.css";
+import "../../styles/organism-death-overlay.css";
 import { useUIEffectsStore } from "../store/store";
-import type { WorldState } from "../types/gameTypes"; // adjust path
+import type { GameState } from "../types/gameTypes"; // adjust path
 import type { Direction } from "../types/roomTypes";
 import { RoomCompass } from "./Compass";
 
@@ -22,9 +23,9 @@ type RoomDescriptionPanelProps = {
   playerCanSee: boolean;
   playerLightMode: string;
   flashlightOn: string;
-
   roomId: string;
-  worldState: WorldState;
+  state: GameState;
+  setBrainActivityLevel?: (val: number) => void;
 };
 
 type Flash = {
@@ -101,30 +102,74 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   playerLightMode,
   flashlightOn,
   roomId,
-  worldState,
+  state,
+  setBrainActivityLevel,
 }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
+  // =========================
+  // UI Effects
+  // =========================
   const mindFlash = useUIEffectsStore((s) => s.mindFlash);
   const clearMindFlash = useUIEffectsStore((s) => s.clearMindFlash);
 
-  const isMindFlash = Boolean(mindFlash);
-  const memoryText = mindFlash?.memory ?? "";
-  const seed = mindFlash?.seed ?? Date.now();
+  // (casts until you add organismDeath to the store type)
+  const organismDeath = useUIEffectsStore((s) => (s as any).organismDeath);
+  const clearOrganismDeath = useUIEffectsStore(
+    (s) => (s as any).clearOrganismDeath,
+  );
 
-  const chunks = useMemo(() => {
+  // Precedence: organism death > mind flash
+  const hijackMode: "none" | "organismDeath" | "mindFlash" = organismDeath
+    ? "organismDeath"
+    : mindFlash
+      ? "mindFlash"
+      : "none";
+
+  // =========================
+  // MindFlash data
+  // =========================
+  const isMindFlash = hijackMode === "mindFlash";
+  const memoryText = mindFlash?.memory ?? "";
+  const mindSeed = mindFlash?.seed ?? Date.now();
+
+  const mindChunks = useMemo(() => {
     if (!isMindFlash) return [];
     return splitMemory(memoryText);
   }, [isMindFlash, memoryText]);
 
-  const [hijacked, setHijacked] = useState(false);
+  const [mindHijacked, setMindHijacked] = useState(false);
   const [flashes, setFlashes] = useState<Flash[]>([]);
-  const runIdRef = useRef(0);
+  const mindRunIdRef = useRef(0);
 
+  // =========================
+  // Organism death data
+  // =========================
+  const isOrganismDeath = hijackMode === "organismDeath";
+
+  const odTitle: string | undefined = organismDeath?.title;
+  const odCipherText: string = organismDeath?.cipherText ?? "";
+  const odSeed: number = organismDeath?.seed ?? Date.now();
+  const odRevealMode: "fade" | "type" =
+    organismDeath?.revealMode === "type" ? "type" : "fade";
+  const odChunkMs: number = Number.isFinite(organismDeath?.chunkMs)
+    ? organismDeath.chunkMs
+    : 28;
+  const odChunkSize: number = Number.isFinite(organismDeath?.chunkSize)
+    ? organismDeath.chunkSize
+    : 14;
+
+  const [odHijacked, setOdHijacked] = useState(false);
+  const [odShown, setOdShown] = useState(0);
+  const odRunIdRef = useRef(0);
+
+  // Always scroll to top on new room desc (normal behavior)
   useLayoutEffect(() => {
+    // If we're hijacked, we generally want top anyway, but keep existing behavior.
     scrollRef.current?.scrollTo({ top: 0 });
   }, [desc]);
 
+  // Overflow/atBottom dataset tracking (unchanged)
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -153,11 +198,18 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     };
   }, [desc, roomPanelFlexBasis]);
 
-  // Mind flash sequence
+  // =========================
+  // Mind flash sequence (stable: does NOT depend on desc)
+  // =========================
   useEffect(() => {
-    if (!isMindFlash) return;
+    if (!isMindFlash) {
+      // If pre-empted (organism death), clear local mind state.
+      setFlashes([]);
+      setMindHijacked(false);
+      return;
+    }
 
-    const myRunId = ++runIdRef.current;
+    const myRunId = ++mindRunIdRef.current;
     let cancelled = false;
 
     const el = scrollRef.current;
@@ -166,42 +218,42 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     el.style.position = el.style.position || "relative";
 
     async function run() {
-      setHijacked(true);
+      setMindHijacked(true);
       setFlashes([]);
       await wait(START_DELAY_MS);
-      if (cancelled || runIdRef.current !== myRunId) return;
+      if (cancelled || mindRunIdRef.current !== myRunId) return;
 
-      const r = makeRand(seed);
-      for (let i = 0; i < chunks.length; i++) {
-        const text = chunks[i];
+      const r = makeRand(mindSeed);
+      for (let i = 0; i < mindChunks.length; i++) {
+        const text = mindChunks[i];
 
         const x = 6 + r() * 72;
         const y = 8 + r() * 72;
 
-        const id = `${seed}-${i}-${Math.floor(r() * 1e9)}`;
+        const id = `${mindSeed}-${i}-${Math.floor(r() * 1e9)}`;
 
         setFlashes([{ id, text, x, y, phase: "enter" }]);
         await wait(FADE_IN_MS);
-        if (cancelled || runIdRef.current !== myRunId) return;
+        if (cancelled || mindRunIdRef.current !== myRunId) return;
 
         setFlashes([{ id, text, x, y, phase: "steady" }]);
         await wait(computeLingerMs(text));
-        if (cancelled || runIdRef.current !== myRunId) return;
+        if (cancelled || mindRunIdRef.current !== myRunId) return;
 
         setFlashes([{ id, text, x, y, phase: "exit" }]);
         await wait(FADE_OUT_MS);
-        if (cancelled || runIdRef.current !== myRunId) return;
+        if (cancelled || mindRunIdRef.current !== myRunId) return;
 
         setFlashes([]);
         await wait(GAP_MS);
-        if (cancelled || runIdRef.current !== myRunId) return;
+        if (cancelled || mindRunIdRef.current !== myRunId) return;
       }
 
       await wait(WIND_DOWN_MS);
-      if (cancelled || runIdRef.current !== myRunId) return;
+      if (cancelled || mindRunIdRef.current !== myRunId) return;
 
       setFlashes([]);
-      setHijacked(false);
+      setMindHijacked(false);
       clearMindFlash();
     }
 
@@ -210,12 +262,123 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     return () => {
       cancelled = true;
       setFlashes([]);
-      setHijacked(false);
+      setMindHijacked(false);
     };
-  }, [isMindFlash, chunks, seed, clearMindFlash, desc]);
+  }, [isMindFlash, mindChunks, mindSeed, clearMindFlash]);
+
+  const odRunKey = useMemo(() => {
+    if (!organismDeath) return "";
+    const seed = organismDeath.seed ?? 0;
+    const mode = organismDeath.revealMode ?? "fade";
+    const chunkMs = organismDeath.chunkMs ?? 0;
+    const chunkSize = organismDeath.chunkSize ?? 0;
+    const title = organismDeath.title ?? "";
+    const len = (organismDeath.cipherText ?? "").length;
+
+    // Stable string => effect runs once per payload
+    return `${seed}|${mode}|${chunkMs}|${chunkSize}|${len}|${title}`;
+  }, [organismDeath]);
+
+  const AUTO_CLEAR_MS = 5000;
+  const brainBoostedRef = useRef(false);
+
+  useEffect(() => {
+    if (!organismDeath) {
+      setOdHijacked(false);
+      setOdShown(0);
+
+      if (brainBoostedRef.current) {
+        setBrainActivityLevel?.(1);
+        brainBoostedRef.current = false;
+      }
+      return;
+    }
+
+    // Pull once per run (stable snapshot)
+    const cipherText: string = organismDeath.cipherText ?? "";
+    const revealMode: "fade" | "type" =
+      organismDeath.revealMode === "type" ? "type" : "fade";
+    const chunkMs: number = Number.isFinite(organismDeath.chunkMs)
+      ? organismDeath.chunkMs
+      : 28;
+    const chunkSize: number = Number.isFinite(organismDeath.chunkSize)
+      ? organismDeath.chunkSize
+      : 14;
+
+    const myRunId = ++odRunIdRef.current;
+    let cancelled = false;
+
+    const el = scrollRef.current;
+    if (!el) return;
+
+    el.style.position = el.style.position || "relative";
+    el.scrollTo({ top: 0 });
+
+    let autoClearTimer: number | undefined;
+
+    if (!brainBoostedRef.current) {
+      brainBoostedRef.current = true;
+      setBrainActivityLevel?.(6);
+    }
+
+    async function run() {
+      setOdHijacked(true);
+      setOdShown(0);
+
+      await wait(120);
+      if (cancelled || odRunIdRef.current !== myRunId) return;
+
+      if (revealMode === "fade") {
+        // show immediately
+        setOdShown(cipherText.length);
+
+        autoClearTimer = window.setTimeout(() => {
+          if (cancelled || odRunIdRef.current !== myRunId) return;
+          clearOrganismDeath?.();
+          setBrainActivityLevel?.(1);
+          brainBoostedRef.current = false;
+        }, AUTO_CLEAR_MS);
+
+        return;
+      }
+
+      // type/chunk reveal
+      const total = cipherText.length;
+      let shown = 0;
+
+      while (!cancelled && odRunIdRef.current === myRunId && shown < total) {
+        shown = Math.min(total, shown + chunkSize);
+        setOdShown(shown);
+        await wait(chunkMs);
+      }
+
+      if (cancelled || odRunIdRef.current !== myRunId) return;
+
+      autoClearTimer = window.setTimeout(() => {
+        if (cancelled || odRunIdRef.current !== myRunId) return;
+        clearOrganismDeath?.();
+        setBrainActivityLevel?.(1);
+        brainBoostedRef.current = false;
+      }, AUTO_CLEAR_MS);
+    }
+
+    run();
+
+    return () => {
+      cancelled = true;
+      if (autoClearTimer) window.clearTimeout(autoClearTimer);
+      setOdHijacked(false);
+      setOdShown(0);
+
+      if (brainBoostedRef.current) {
+        setBrainActivityLevel?.(1);
+        brainBoostedRef.current = false;
+      }
+    };
+  }, [odRunKey, clearOrganismDeath]);
 
   // =========================
-  // Diagnostics
+  // Diagnostics (unchanged)
   // =========================
 
   const lightValue = useMemo(() => {
@@ -235,23 +398,23 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   ]);
 
   const tempValue = useMemo(() => {
-    const t = worldState.roomTemp?.[roomId] ?? "temperate";
+    const t = state.worldState.roomTemp?.[roomId] ?? "temperate";
     return titleize(t);
-  }, [worldState.roomTemp, roomId]);
+  }, [state.worldState.roomTemp, roomId]);
 
   const airValue = useMemo(() => {
-    const a = worldState.roomAirQuality?.[roomId] ?? "clean";
+    const a = state.worldState.roomAirQuality?.[roomId] ?? "clean";
     return titleize(a);
-  }, [worldState.roomAirQuality, roomId]);
+  }, [state.worldState.roomAirQuality, roomId]);
 
   const baseAudioRaw = useMemo(() => {
-    const raw = worldState.roomAudioLevel?.[roomId] ?? 0;
+    const raw = state.worldState.roomAudioLevel?.[roomId] ?? 0;
     return Number.isFinite(raw) ? raw : 0;
-  }, [worldState.roomAudioLevel, roomId]);
+  }, [state.worldState.roomAudioLevel, roomId]);
 
   const baseAudioUnit = useMemo(
     () => audioToUnit(baseAudioRaw),
-    [baseAudioRaw]
+    [baseAudioRaw],
   );
 
   const AUDIO_BARS = 12;
@@ -303,6 +466,16 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     };
   }, [baseBars]);
 
+  // =========================
+  // Render helpers
+  // =========================
+
+  const showMindLayer = mindHijacked && hijackMode === "mindFlash";
+  const showOdLayer = odHijacked && hijackMode === "organismDeath";
+
+  const odVisibleText =
+    odRevealMode === "type" ? odCipherText.slice(0, odShown) : odCipherText;
+
   return (
     <section
       className="game-room-panel"
@@ -314,7 +487,8 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       data-player-can-see={playerCanSee}
       data-player-light-mode={playerLightMode}
       data-flashlight-on={flashlightOn}
-      data-mindflash={hijacked ? "true" : "false"}
+      data-mindflash={showMindLayer ? "true" : "false"}
+      data-organismdeath={showOdLayer ? "true" : "false"}
     >
       <div className="game-room-inner">
         <div className="room-compass-float">
@@ -356,11 +530,17 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
 
         <div className="game-room-textWrap">
           <div ref={scrollRef} className="game-room-text">
-            <div className={`game-room-desc ${hijacked ? "is-hijacked" : ""}`}>
+            <div
+              className={`game-room-desc ${
+                showMindLayer || showOdLayer ? "is-hijacked" : ""
+              }`}
+              aria-hidden={showOdLayer ? "true" : "false"}
+            >
               {desc}
             </div>
 
-            {hijacked && (
+            {/* MindFlash overlay (unchanged visuals) */}
+            {showMindLayer && (
               <div className="mindflash-layer" aria-hidden="true">
                 {flashes.map((f) => (
                   <div
@@ -369,14 +549,44 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
                       f.phase === "enter"
                         ? "is-entering"
                         : f.phase === "exit"
-                        ? "is-exiting"
-                        : ""
+                          ? "is-exiting"
+                          : ""
                     }`}
                     style={{ left: `${f.x}%`, top: `${f.y}%` }}
                   >
                     {f.text}
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Organism death overlay */}
+            {showOdLayer && (
+              <div className="organismdeath-layer" aria-hidden="true">
+                <div className="organismdeath-blackout" />
+                <div className="organismdeath-content">
+                  {odTitle ? (
+                    <div className="organismdeath-title">{odTitle}</div>
+                  ) : null}
+
+                  <div
+                    className={`organismdeath-body ${
+                      odRevealMode === "fade" ? "is-fade" : "is-type"
+                    }`}
+                  >
+                    {odVisibleText}
+                  </div>
+
+                  {/* Optional: if you ever want a click-to-dismiss during dev
+                  <button
+                    className="organismdeath-dismiss"
+                    onClick={() => clearOrganismDeath?.()}
+                    type="button"
+                  >
+                    ...
+                  </button>
+                  */}
+                </div>
               </div>
             )}
           </div>

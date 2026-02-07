@@ -1,3 +1,5 @@
+import { GameState } from "@game/types/gameTypes";
+import { DescriptionContext } from "@game/types/itemTypes";
 import type { Direction } from "./roomTypes";
 
 export type DoorKind =
@@ -12,8 +14,11 @@ export interface DoorDefinition {
   id: string;
   name: string;
   description?: string;
+  describe?: (state: GameState, ctx: DescriptionContext) => string;
   descriptionFromA?: string;
   descriptionFromB?: string;
+  describeFromA?: (state: GameState, ctx: DescriptionContext) => string;
+  describeFromB?: (state: GameState, ctx: DescriptionContext) => string;
   vocab: string[];
   connects: {
     roomAId: string;

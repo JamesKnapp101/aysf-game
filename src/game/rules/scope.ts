@@ -1,3 +1,4 @@
+import { ConversationTarget, RadioVoice } from "@game/types/npcTypes";
 import { getCurrentRoom } from "../selectors/roomSelectors";
 import { getTeleportPadsInCurrentRoom } from "../selectors/teleportationSelectors";
 import type { DoorDefinition, DoorState } from "../types/doorTypes";
@@ -7,21 +8,31 @@ import type { Exit } from "../types/roomTypes";
 import type { TeleportPadDefinition } from "../types/tpadTypes";
 
 /**
+ * Authoritative "where is this item right now?"
+ * item.location is treated as a fallback / seed location only.
+ */
+function getLiveItemLocation(state: GameState, item: Item): string | undefined {
+  return state.itemState.itemRoomId?.[item.id] ?? item.location ?? undefined;
+}
+
+/**
  * Simpler resolver used by inject logic, etc.
  * Scope: inventory + room surface items.
  */
 export function resolveItemInScopeByNoun(
   state: GameState,
-  noun: string
+  noun: string,
 ): Item | null {
   const lower = noun.toLowerCase();
   const room = getCurrentRoom(state);
 
   const invItems = state.world.items.filter((i) =>
-    state.player.inventory.includes(i.id)
+    state.player.inventory.includes(i.id),
   );
 
-  const roomItems = state.world.items.filter((i) => i.location === room.id);
+  const roomItems = state.world.items.filter(
+    (i) => getLiveItemLocation(state, i) === room.id,
+  );
 
   const candidates = [...invItems, ...roomItems];
 
@@ -37,17 +48,32 @@ export function resolveItemInScopeByNoun(
   return null;
 }
 
+export function normalizeTopic(
+  text: string,
+  target?: ConversationTarget,
+): string {
+  const ignoreWords = ["the", "a", "an", "ask", "tell"];
+  if (target?.kind === "radioVoice") {
+    ignoreWords.push(target.voice.name.toLowerCase());
+    for (const v of target.voice?.vocab ?? []) {
+      ignoreWords.push(v);
+    }
+  }
+  const toks = tokenize(text).filter((t) => !ignoreWords.includes(t));
+  return toks.join(" ");
+}
+
 /**
  * Normalization helpers for noun matching
  */
-function normalize(text: string): string {
+export function normalize(text: string): string {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, "")
     .trim();
 }
 
-function tokenize(text: string): string[] {
+export function tokenize(text: string): string[] {
   return normalize(text).split(/\s+/).filter(Boolean);
 }
 
@@ -63,7 +89,7 @@ function tokenize(text: string): string[] {
  */
 export function resolveItemByNoun(
   state: GameState,
-  noun: string
+  noun: string,
 ): Item | undefined {
   const room = getCurrentRoom(state);
   const tokens = tokenize(noun);
@@ -73,12 +99,20 @@ export function resolveItemByNoun(
   const isOpen = (itemId: string): boolean =>
     state.itemState.openItems?.[itemId] === true;
 
+  const liveLocById = (itemId: string): string | undefined => {
+    const it = itemsById.get(itemId);
+    if (!it) return undefined;
+    return getLiveItemLocation(state, it);
+  };
+
   // Build a set of item ids that are in scope.
   const inScopeIds = new Set<string>();
 
   // 1) Base scope: room + inventory
   for (const it of state.world.items) {
-    if (it.location === room.id) inScopeIds.add(it.id);
+    const loc = getLiveItemLocation(state, it);
+
+    if (loc === room.id) inScopeIds.add(it.id);
     if (state.player.inventory.includes(it.id)) inScopeIds.add(it.id);
   }
 
@@ -88,12 +122,10 @@ export function resolveItemByNoun(
 
   // Seed with open items that are physically in the room
   for (const id of inScopeIds) {
-    const it = itemsById.get(id);
-    if (!it) continue;
-
-    if (it.location === room.id && isOpen(it.id)) {
-      queue.push(it.id);
-      visitedContainers.add(it.id);
+    const loc = liveLocById(id);
+    if (loc === room.id && isOpen(id)) {
+      queue.push(id);
+      visitedContainers.add(id);
     }
   }
 
@@ -102,7 +134,8 @@ export function resolveItemByNoun(
     const containerId = queue.shift()!;
 
     for (const child of state.world.items) {
-      if (child.location !== containerId) continue;
+      const childLoc = getLiveItemLocation(state, child);
+      if (childLoc !== containerId) continue;
 
       if (!inScopeIds.has(child.id)) inScopeIds.add(child.id);
 
@@ -118,7 +151,7 @@ export function resolveItemByNoun(
     .filter((x): x is Item => Boolean(x));
 
   const exactId = itemsInScope.find(
-    (it) => normalize(it.id) === normalize(noun)
+    (it) => normalize(it.id) === normalize(noun),
   );
   if (exactId) return exactId;
 
@@ -144,7 +177,7 @@ export function resolveItemByNoun(
  */
 export function resolveDoorByNoun(
   state: GameState,
-  noun: string
+  noun: string,
 ): { def: DoorDefinition; doorState: DoorState } | null {
   const room = getCurrentRoom(state);
   const lower = noun.toLowerCase();
@@ -174,7 +207,7 @@ export function resolveDoorByNoun(
 
 export function resolveTeleportPadByNoun(
   state: GameState,
-  noun: string | null
+  noun: string | null,
 ): TeleportPadDefinition | null {
   const padsHere = getTeleportPadsInCurrentRoom(state);
   if (!padsHere.length) return null;
@@ -190,4 +223,60 @@ export function resolveTeleportPadByNoun(
     padsHere.find((p) => p.label.toLowerCase().includes(lower)) ??
     null
   );
+}
+
+export function getActiveRadioVoice(state: GameState): RadioVoice | undefined {
+  return state.conversation?.radio?.activeVoice;
+}
+
+function normalizeForConversation(t: string): string {
+  // keep it simple: lowercase + trim + basic punctuation handling
+  // (leave your existing normalize() alone if it’s used elsewhere)
+  return t.trim().toLowerCase();
+}
+
+function tokenizeConv(s: string): string[] {
+  return tokenize(s)
+    .map(normalizeForConversation)
+    .filter((t) => t.length > 0); // NOTE: no "drop short words" rule here
+}
+
+function containsTokenSequence(haystack: string[], needle: string[]): boolean {
+  if (needle.length === 0) return false;
+  if (needle.length === 1) return haystack.includes(needle[0]);
+
+  for (let i = 0; i <= haystack.length - needle.length; i++) {
+    let ok = true;
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] !== needle[j]) {
+        ok = false;
+        break;
+      }
+    }
+    if (ok) return true;
+  }
+  return false;
+}
+
+export function resolveConversationTarget(
+  state: GameState,
+  targetText: string,
+): ConversationTarget | undefined {
+  const item = resolveItemByNoun(state, targetText);
+  if (item) return { kind: "item", item };
+
+  const voice = getActiveRadioVoice(state);
+  if (!voice) return undefined;
+
+  const inputTokens = tokenizeConv(targetText);
+
+  const nameNeedle = tokenizeConv(voice.name);
+  const matchesName = containsTokenSequence(inputTokens, nameNeedle);
+  const matchesVocab = (voice.vocab ?? []).some((term) =>
+    containsTokenSequence(inputTokens, tokenizeConv(term)),
+  );
+
+  return matchesName || matchesVocab
+    ? { kind: "radioVoice", voice }
+    : undefined;
 }

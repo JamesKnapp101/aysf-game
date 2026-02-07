@@ -1,4 +1,5 @@
 import { doAsk } from "@game/actions/ask/ask";
+import { doListen } from "@game/actions/listen/listen";
 import { doPush } from "@game/actions/push/push";
 import { doTell } from "@game/actions/tell/tell";
 import { doTurn } from "@game/actions/turn/turn";
@@ -21,7 +22,7 @@ import { doSearch } from "./search";
 import { doSet } from "./set";
 import { doShoot } from "./shoot";
 import { doSwitch } from "./switch";
-import { doTake } from "./take";
+import { doTake } from "./take/take";
 import { doWait } from "./wait";
 import { doWear } from "./wear";
 
@@ -51,4 +52,5 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   push: doPush,
   ask: doAsk,
   tell: doTell,
+  listen: doListen,
 };

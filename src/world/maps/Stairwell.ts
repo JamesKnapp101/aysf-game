@@ -70,19 +70,29 @@ export const STAIRWELL: WorldChunk = {
     {
       id: "StairFive",
       name: "Stairs Level Five",
-      description:
-        "This is the stair landing for Level Five. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the word 'ENGINEERING' printed on it, and mounted over it is a plastic sign labeled '5'. The stairs, flanked by a metal railing, continue up and down.",
+      description: "",
+      describe: (state) => {
+        let desc = `This is the stair landing for the fifth floor, where a set of emergency lights cast the stairwell in a dim glow that flickers every so often. There is a door to the west with the word 'REACTOR PLATFORM' printed on it, and mounted over it is a plastic sign labeled '5'. There is a badge scanner mounted next to the door with a violet strip, but it appears to have been damaged, scorched around the edges and hanging from wires at an odd angle. The door is wide open, `;
+        const levelFiveStairAccessLit =
+          state.worldState.darkRooms["LevelFiveStairAccess"] === true;
+        if (levelFiveStairAccessLit) {
+          desc += `revealing only darkness beyond, and you can hear something moving in there, even if you can't see it. Whatever is there shifts unnaturally, and seems to gravitate toward you whenever you move, as if it were pressed right to the edge of the light. `;
+        } else {
+          desc += `revealing a lit elevator lobby on the other side.`;
+        }
+        return (desc += `\n\nThe stairs, flanked by a metal railing, continue up and down.`);
+      },
       exits: [
         { direction: "up", toRoomId: "StairFour" },
         { direction: "down", toRoomId: "StairSix" },
-        { direction: "west", doorId: "StairDoorFive" },
+        { direction: "west", toRoomId: "LevelFiveStairAccess" },
       ],
     },
     {
       id: "StairSix",
       name: "Stairs Level Six",
       description:
-        "This is the stair landing for Level Six. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the word 'STORAGE' printed on it and mounted over it is a plastic sign labeled '6'. The stairs, flanked by a metal railing, continue up and down, where what looks like blood is spattered across some of the steps.",
+        "This is the stair landing for the sixth floor, where a set of emergency lights cast shadows in the dim glow. The stairs continue up and down, [[SCENERY]]",
       exits: [
         { direction: "up", toRoomId: "StairFive" },
         { direction: "down", toRoomId: "StairSeven" },
@@ -155,7 +165,7 @@ export const STAIRWELL: WorldChunk = {
       id: "TPADTerminal",
       name: "Terminal",
       description:
-        "This is a large room, rectangular in shape, which looks to have been designed to accomodate a large amount of people. The walls  and floor are covered with a white, ceramic tile, and painted on the floor are a series of black lines which seem to mark off areas where queues are  formed. Along the southern wall where the black lines are directed are a series of six colored disks, each about four feet in diameter and evenly spaced  about four feet apart. The disks are colored, from left to right facing the southern wall; green, blue, yellow, brown, white, and grey.",
+        "This is a large room, rectangular in shape, which looks to have been designed to accomodate a large amount of people. The walls  and floor are covered with a white, ceramic tile, and painted on the floor are a series of black lines which seem to mark off areas where queues are  formed. Along the southern wall where the black lines are directed are a series of six colored disks, each about four feet in diameter and evenly spaced  about four feet apart. The disks are colored, from left to right facing the southern wall; green, blue, yellow, violet, white, and maroon.",
       exits: [{ direction: "south", toRoomId: "LevelThreeStairAccess" }],
     },
     {
@@ -182,8 +192,7 @@ export const STAIRWELL: WorldChunk = {
     {
       id: "LevelSixStairAccess",
       name: "Level Six Stair Access",
-      description:
-        "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. The atmosphere here is rather dusty and drab, and it looks as though it might receive a lot of foot-traffic. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
+      description: `This is a small lobby area for accessing an elevator but while there are signs of many people passing through it is eerily quiet now. [[SCENERY]] A corridor heads off to the west, away from the lobby, and you can see that it bends further down.`,
       exits: [
         { direction: "east", doorId: "StairDoorSix" },
         { direction: "west", toRoomId: "LevelSixCorridorBend" },

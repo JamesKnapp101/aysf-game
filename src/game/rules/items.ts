@@ -1,19 +1,11 @@
-import { playerScoreMap } from "../constants";
 import { getItemById, moveItemToRoom } from "../helpers/itemHelpers";
-import { triggerScoreOnce } from "../rules/score";
-import {
-  getContainerContentsIds,
-  getContainerContentsItems,
-} from "../selectors/containerSelectors";
+import { getContainerContentsItems } from "../selectors/containerSelectors";
 import {
   getItemsInInventory,
   getPlayerLiquidContainers,
   getWaterSourcesInRoom,
 } from "../selectors/itemSelectors";
-import {
-  getCurrentRoom,
-  getItemsInCurrentRoom,
-} from "../selectors/roomSelectors";
+import { getCurrentRoom } from "../selectors/roomSelectors";
 import { useUIEffectsStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
@@ -26,13 +18,13 @@ import {
 } from "./liquids";
 import type { RuleResult } from "./result";
 import { resolveItemInScopeByNoun } from "./scope";
-import { addToInventory, removeFromInventory } from "./state";
+import { removeFromInventory } from "./state";
 import { applyStatusEffectToPlayer } from "./status";
 
 export function describeActionResult(
   item: Item,
   verb: ItemOverrideVerb,
-  fallback: string
+  fallback: string,
 ): string {
   return item.overrides?.[verb] ?? fallback;
 }
@@ -47,123 +39,17 @@ export function formatNameList(names: string[]): string {
 export function updateItemLocation(
   state: GameState,
   itemId: string,
-  location: string
+  location: string,
 ): GameState {
   return {
     ...state,
     world: {
       ...state.world,
       items: state.world.items.map((it) =>
-        it.id === itemId ? { ...it, location } : it
+        it.id === itemId ? { ...it, location } : it,
       ),
     },
   };
-}
-
-export function tryTakeItem(
-  state: GameState,
-  noun: string,
-  indirect: string
-): RuleResult {
-  const lower = noun.toLowerCase();
-  const itemsHere = getItemsInCurrentRoom(state);
-  const itemOnFloor = itemsHere.find(
-    (i) => i.vocab.includes(lower) || i.name.toLowerCase() === lower
-  );
-
-  if (itemOnFloor?.id === "PowerStationKey") {
-    if (
-      state.itemState.containerContents["PowerStationKeyhole"]?.includes(
-        "PowerStationKey"
-      ) &&
-      state.worldState.powerRestoredSections["power-key-turned"]
-    ) {
-      return {
-        state,
-        message:
-          "The key appears to be locked in place now, you can't pull it free again.",
-      };
-    }
-  }
-
-  if (noun === "water") {
-    const waterSourcesInRoom = getWaterSourcesInRoom(state);
-    if (waterSourcesInRoom.length === 0) {
-      return { state, message: "There isn't any good source of water here." };
-    }
-    return {
-      state,
-      message: `You can't just scoop it up with your hands, you'll need to find something to fill with it.`,
-    };
-  }
-
-  if (itemOnFloor) {
-    if (itemOnFloor.itemCategory === "scenery") {
-      return { state, message: "You can’t take that." };
-    }
-
-    let next = updateItemLocation(state, itemOnFloor.id, "INVENTORY");
-    next = addToInventory(next, itemOnFloor.id);
-
-    const scoreId = getItemById(next, itemOnFloor.id)?.scoreId ?? "";
-    if (scoreId === "") {
-      return { state: next, message: "Taken." };
-    } else {
-      let msg = `Taken.`;
-      if (next.worldState.scoresTriggered[scoreId] !== true) {
-        next = triggerScoreOnce(
-          next,
-          getItemById(next, itemOnFloor.id)?.scoreId
-        );
-        msg += `\n\nYour score has just went up by ${
-          playerScoreMap[scoreId]?.value ?? 0
-        } points!`;
-      }
-      return { state: next, message: msg };
-    }
-  }
-
-  const room = getCurrentRoom(state);
-  const containersHere = state.world.items.filter(
-    (i) =>
-      i.isContainer &&
-      (i.location === room.id || state.player.inventory.includes(i.id))
-  );
-
-  for (const container of containersHere) {
-    if (!isItemOpen(state, container.id)) continue;
-
-    const contentsItems = getContainerContentsItems(state, container);
-    const found = contentsItems.find(
-      (i) => i.vocab.includes(lower) || i.name.toLowerCase() === lower
-    );
-
-    if (!found) continue;
-
-    if (found.itemCategory === "scenery") {
-      return { state, message: "You can’t take that." };
-    }
-
-    const seededIds = getContainerContentsIds(state, container);
-    const updatedContentsIds = seededIds.filter((id) => id !== found.id);
-
-    let next = updateItemLocation(state, found.id, "INVENTORY");
-    next = addToInventory(next, found.id);
-    next = triggerScoreOnce(next, getItemById(next, found.id)?.scoreId);
-    next = {
-      ...next,
-      itemState: {
-        ...next.itemState,
-        containerContents: {
-          ...next.itemState.containerContents,
-          [container.id]: updatedContentsIds,
-        },
-      },
-    };
-
-    return { state: next, message: "Taken." };
-  }
-  return { state, message: "You don't see that here." };
 }
 
 export function tryDropItem(state: GameState, noun: string): RuleResult {
@@ -171,7 +57,7 @@ export function tryDropItem(state: GameState, noun: string): RuleResult {
   const lower = noun.toLowerCase();
 
   const item = invItems.find(
-    (i) => i.name.toLowerCase() === lower || i.vocab.includes(lower)
+    (i) => i.name.toLowerCase() === lower || i.vocab.includes(lower),
   );
 
   if (!item) {
@@ -192,10 +78,13 @@ export function isItemOpenable(item: Item): boolean {
 
 export function tryOpenItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   if (!isItemOpenable(item)) {
     return { state, message: "You can't open that." };
+  }
+  if (item.meta?.isUnopenableDoor) {
+    return { state, message: item.overrides?.open ?? `It won't budge.` };
   }
   if (isItemOpen(state, item.id)) {
     return { state, message: "It's already open." };
@@ -213,12 +102,12 @@ export function tryOpenItem(
       names.length === 1
         ? names[0]
         : names.length === 2
-        ? `${names[0]} and ${names[1]}`
-        : `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
+          ? `${names[0]} and ${names[1]}`
+          : `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
 
     revealMsg = `, revealing ${joined}`;
   } else {
-    revealMsg = ", but it's empty";
+    revealMsg = item.overrides?.open ? "" : ", but it's empty";
   }
 
   return {
@@ -229,7 +118,7 @@ export function tryOpenItem(
 
 export function tryCloseItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   if (!isItemOpenable(item)) {
     return { state, message: "You can't close that." };
@@ -256,14 +145,14 @@ export function isItemConsumable(item: Item): boolean {
 function setItemDoses(
   state: GameState,
   itemId: string,
-  doses: number
+  doses: number,
 ): GameState {
   return {
     ...state,
     world: {
       ...state.world,
       items: state.world.items.map((it) =>
-        it.id === itemId ? { ...it, doses } : it
+        it.id === itemId ? { ...it, doses } : it,
       ),
     },
   };
@@ -271,7 +160,7 @@ function setItemDoses(
 
 export function tryDrinkItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   if (!isItemConsumable(item)) {
     return { state, message: "You can't drink that." };
@@ -282,7 +171,7 @@ export function tryDrinkItem(
     const msg =
       item.meta?.consumable?.onEmpty
         ?.map((eff: { type: string; text: any }) =>
-          eff.type === "message" ? String(eff.text) : ""
+          eff.type === "message" ? String(eff.text) : "",
         )
         .filter(Boolean)
         .join(" ") || "It's empty.";
@@ -299,7 +188,7 @@ export function tryDrinkItem(
         next,
         effect.id,
         effect.intensity ?? 0,
-        effect.duration ?? 0
+        effect.duration ?? 0,
       );
     } else if (effect.type === "message") {
       baseMsg += String(effect.text);
@@ -317,7 +206,7 @@ export function tryDrinkItem(
 
 export function tryEatItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   if (!isItemConsumable(item)) {
     return { state, message: "You can't eat that." };
@@ -328,7 +217,7 @@ export function tryEatItem(
     const msg =
       item.meta?.consumable?.onEmpty
         ?.map((eff: { type: string; text: any }) =>
-          eff.type === "message" ? String(eff.text) : ""
+          eff.type === "message" ? String(eff.text) : "",
         )
         .filter(Boolean)
         .join(" ") || `That's the last of the ${item.name}`;
@@ -345,7 +234,7 @@ export function tryEatItem(
         next,
         effect.id,
         effect.intensity ?? 0,
-        effect.duration ?? 0
+        effect.duration ?? 0,
       );
     } else if (effect.type === "message") {
       baseMsg += String(effect.text);
@@ -364,7 +253,7 @@ export function tryEatItem(
 export function tryEmptyItem(
   state: GameState,
   item: Item,
-  cmd: ParsedCommand
+  cmd: ParsedCommand,
 ): { state: GameState; message: string } {
   if (cmd.type !== "action") {
     return { state, message: "You can't do that." };
@@ -431,7 +320,7 @@ export function tryEmptyItem(
         next = addLiquidToFillableContainer(
           next,
           indirectItem,
-          liquid2Empty[0]
+          liquid2Empty[0],
         );
         baseMsg += `You carefully pour the ${liquid2Empty[0]} from the ${item.id} to the ${indirect}`;
       }
@@ -448,7 +337,7 @@ export function tryEmptyItem(
 export function tryFillItem(
   state: GameState,
   item: Item,
-  cmd: ParsedCommand
+  cmd: ParsedCommand,
 ): { state: GameState; message: string } {
   if (cmd.type !== "action") {
     return { state, message: "You can't do that." };
@@ -485,7 +374,7 @@ export function tryFillItem(
     }
     const playerLiquidContainers = getPlayerLiquidContainers(state);
     const desiredVessel = playerLiquidContainers.filter(
-      (lc) => lc.name === item.name
+      (lc) => lc.name === item.name,
     )[0];
     if (!desiredVessel) {
       return { state, message: "You don't have that container on you." };
@@ -517,7 +406,7 @@ export function tryFillItem(
 export function tryPourItem(
   state: GameState,
   item: Item,
-  cmd: ParsedCommand
+  cmd: ParsedCommand,
 ): { state: GameState; message: string } {
   if (cmd.type !== "action") {
     return { state, message: "You can't do that." };
@@ -531,7 +420,7 @@ export function tryPourItem(
   if (direct === "water") {
     const playerLiquidContainers = getPlayerLiquidContainers(state);
     const waterContainer = playerLiquidContainers.filter(
-      (lc) => state.itemState.containerFilled[lc.id]?.[0] === "water"
+      (lc) => state.itemState.containerFilled[lc.id]?.[0] === "water",
     );
     if (!waterContainer) {
       return { state, message: `You're not carrying any water at the minute.` };
@@ -588,7 +477,7 @@ export function tryPourItem(
 
 export function tryWearItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   if (!item.isWearable || !item.clothingSlot) {
     return { state, message: "You can't wear that." };
@@ -626,7 +515,7 @@ export function tryWearItem(
 
 export function tryRemoveItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   if (!item.isWearable || !item.clothingSlot) {
     return { state, message: "You can't remove that." };
@@ -663,7 +552,7 @@ export function tryRemoveItem(
 
 export function trySwitchItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   if (!item.isSwitchable) {
     return { state, message: "You can't switch that." };
@@ -673,7 +562,7 @@ export function trySwitchItem(
   const currentlyOn = !!(currentSettings as any)?.isOn;
   const newIsOn = !currentlyOn;
 
-  const next: GameState = {
+  let next: GameState = {
     ...state,
     itemState: {
       ...state.itemState,
@@ -687,7 +576,21 @@ export function trySwitchItem(
     },
   };
 
-  const baseMsg = `You switch the ${item.name} ${newIsOn ? "on" : "off"}`;
+  if (item.id === "damagedFlashlight") {
+    next = {
+      ...next,
+      worldState: {
+        ...next.worldState,
+        damagedFlashlight: {
+          ...next.worldState.damagedFlashlight,
+          isOn: newIsOn,
+        },
+      },
+    };
+  }
+  const baseMsg =
+    item?.overrides?.switch ??
+    `You switch the ${item.name} ${newIsOn ? "on" : "off"}`;
 
   return {
     state: next,
@@ -697,7 +600,7 @@ export function trySwitchItem(
 
 export function trySearchItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   if (!item.isSearchable) {
     return { state, message: "You don't see anything that isn't obvious." };
@@ -737,6 +640,13 @@ export function trySearchItem(
         [item.id]: [],
       },
     },
+    worldState: {
+      ...state.worldState,
+      conditionalTriggers: {
+        ...state.worldState.conditionalTriggers,
+        [`searched-${item.id}`]: true,
+      },
+    },
   };
 
   return {
@@ -748,7 +658,7 @@ export function trySearchItem(
 export function tryShootItem(
   state: GameState,
   shotAtItem: Item,
-  shotWithItem: Item
+  shotWithItem: Item,
 ): { state: GameState; message: string } {
   let next = state;
 
@@ -838,7 +748,7 @@ export function tryShootItem(
 
     // Bind the fired round to the host
     const newInventory = next.player.inventory.filter(
-      (invId) => invId !== firedRoundId
+      (invId) => invId !== firedRoundId,
     );
 
     next = {
@@ -882,7 +792,7 @@ export function tryShootItem(
 export function tryLoadItem(
   state: GameState,
   itemToLoad: Item,
-  itemLoadWith: Item
+  itemLoadWith: Item,
 ): { state: GameState; message: string } {
   let next = state;
   if (!itemToLoad.isShootable) {

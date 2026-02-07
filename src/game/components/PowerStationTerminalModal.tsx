@@ -137,7 +137,7 @@ function buildPowerGridTree(state: GameState): MenuNode {
             kind: "switch",
             label: "Brown Network",
             status: state.worldState.powerRestoredSections[
-              "teleport-pads-brown"
+              "teleport-pads-violet"
             ]
               ? "on"
               : "off",
@@ -146,7 +146,9 @@ function buildPowerGridTree(state: GameState): MenuNode {
             id: "TPADPOWER6",
             kind: "switch",
             label: "Grey Network",
-            status: state.worldState.powerRestoredSections["teleport-pads-grey"]
+            status: state.worldState.powerRestoredSections[
+              "teleport-pads-maroon"
+            ]
               ? "on"
               : "off",
           },
@@ -403,7 +405,7 @@ type Breadcrumb = { node: MenuNode; selectedIndex: number };
 
 function applyPowerFromSwitches(
   worldState: WorldState,
-  switchStates: SwitchStates
+  switchStates: SwitchStates,
 ): WorldState {
   const nextPower = { ...worldState.powerRestoredSections };
 
@@ -519,7 +521,7 @@ export function PowerStationTerminalModal({
     setGameState((prev) => {
       const nextWorldState = applyPowerFromSwitches(
         prev.worldState,
-        switchStates
+        switchStates,
       );
       if (nextWorldState === prev.worldState) return prev;
       return { ...prev, worldState: nextWorldState };

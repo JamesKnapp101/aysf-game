@@ -1,3 +1,4 @@
+import { startRadioCall } from "@game/helpers/conversationHelpers";
 import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 import { Item } from "../../types/itemTypes";
@@ -12,6 +13,36 @@ export function tryPushItem(
     return { state, message: "You can't push that." };
   }
   let pushMsg = "";
+  // Radio call button
+  if (item.id === "Radio") {
+    pushMsg += `You press the radio's call button, and it emits a flat beep.`;
+
+    if (!state.worldState.conditionalTriggers.radioFirstCall) {
+      next = {
+        ...next,
+        worldState: {
+          ...next.worldState,
+          conditionalTriggers: {
+            ...next.worldState.conditionalTriggers,
+            radioFirstCall: true,
+          },
+        },
+      };
+      pushMsg += ` A moment later, the radio crackles and a voice emits from it.`;
+      next = startRadioCall(
+        next,
+        {
+          id: "kevin_1st_contact",
+          name: "Kevin",
+          vocab: ["man", "kevin", "Kevin", "voice", "operator", "man"],
+        },
+        9,
+        {
+          incomingMessage: `*pop* "Yes, I'm here...holy shit I thought I was the last one...(heavy breathing) Look, I don't have much time here so listen up (cough). If I'm right, you're standing somewhere naked, wondering where you are, and what the hell is going on. I wish I had more time to explain but I don't, you're gonna have to trust me (cough). Shit has gone sideways, and we have to set things right before it's too late. I think we might be the last ones. (cough cough) There's something in here with us, but that's the least of your worries...the power is out...and the reactor...is unstable..." The voice goes quite for a few seconds, then you hear him groan. "Sorry...but if you got anything you wanna ask me...or tell me...you better do it quick, pal..." *pop*`,
+        }
+      );
+    }
+  }
   if (item.id === "PowerStationButton") {
     if (
       !state.itemState.containerContents["PowerStationKeyhole"]?.includes(

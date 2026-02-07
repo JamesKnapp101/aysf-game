@@ -1,5 +1,8 @@
 import { tryTell } from "@game/actions/tell/tryTell";
-import { resolveItemByNoun } from "../../rules/scope";
+import {
+  getActiveRadioVoice,
+  resolveConversationTarget,
+} from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
@@ -9,15 +12,23 @@ export function doTell(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "You can't do that." };
   }
 
-  const direct = cmd.direct?.trim();
-  if (!direct) {
-    return { state, message: "Tell what?" };
+  const targetText = cmd.direct?.trim();
+  if (!targetText) {
+    return { state, message: "Tell whom?" };
   }
 
-  const item = resolveItemByNoun(state, direct);
-  if (!item || item?.itemCategory !== "animate") {
-    return { state, message: "That isn't going to respond." };
+  const topicText =
+    cmd.preposition === "about" ? cmd.indirect?.trim() : undefined;
+  if (!topicText) {
+    return { state, message: "Tell them about what?" };
   }
 
-  return tryTell(state, item);
+  const target = resolveConversationTarget(state, targetText);
+  if (!target) {
+    if (!getActiveRadioVoice(state))
+      return { state, message: "No one answers." };
+    return { state, message: "No response." };
+  }
+
+  return tryTell(state, target, topicText);
 }

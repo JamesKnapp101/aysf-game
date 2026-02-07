@@ -1,5 +1,8 @@
 import { appendLog } from "@game/engine/handleCommand";
+import { useUIEffectsStore } from "@game/store/store";
+import { secretOrganismMessage } from "@game/text/secretOrganismMessage";
 import { GameState } from "@game/types/gameTypes";
+import { Item } from "@game/types/itemTypes";
 
 export function triggerTeleportFlash(el: HTMLElement | null) {
   if (!el) return;
@@ -19,20 +22,20 @@ const TPAD_COLORS_IN_ORDER = [
   "green",
   "blue",
   "yellow",
-  "brown",
+  "violet",
   "white",
-  "grey",
+  "maroon",
 ] as const;
 
 export function generateTerminalTpadDescription(
-  power: PowerRestoredSections
+  power: PowerRestoredSections,
 ): string {
   const onColors = TPAD_COLORS_IN_ORDER.filter(
-    (c) => power[`teleport-pads-${c}`] === true
+    (c) => power[`teleport-pads-${c}`] === true,
   );
 
   const base =
-    "Against the wall is a row of colored, glossy disks, side by side, ordered green, blue, yellow, brown, white, and grey. Each of them is large enough to stand on.";
+    "Against the wall is a row of colored, glossy disks, side by side, ordered green, blue, yellow, violet, white, and maroon. Each of them is large enough to stand on.";
 
   const glowTail = "lit, emitting a serene glow.";
 
@@ -58,10 +61,73 @@ function formatColorList(colors: readonly string[]): string {
   return `${colors.slice(0, -1).join(", ")}, and ${colors[colors.length - 1]}`;
 }
 
+export function getItemRoomId(
+  state: GameState,
+  itemOrId: Item | string,
+): string | undefined {
+  const id = typeof itemOrId === "string" ? itemOrId : itemOrId.id;
+
+  // runtime truth first
+  const live = state.itemState.itemRoomId?.[id];
+  if (live) return live;
+
+  // fallback for items not yet “materialized” in itemState
+  if (typeof itemOrId !== "string") return itemOrId.location;
+
+  // if caller passed only an id, you could optionally look up the item def here
+  return undefined;
+}
+
+export const flashlightOn = (state: GameState) => {
+  if (!state.player.inventory.includes("flashlight")) return false;
+  const fs = state.itemState.itemSettings["flashlight"];
+  return Boolean(fs && "isOn" in fs && fs.isOn === true);
+};
+
+const MAX_RECENT_MOVES = 5;
+
+type PlayerMoveEvent = {
+  fromRoomId: string;
+  toRoomId: string;
+  via?: string; // direction like "n", "south", etc.
+  atTurn?: number; // optional, only if you track turns
+};
+
+export function movePlayerToRoom(
+  state: GameState,
+  toRoomId: string,
+  opts?: { fromRoomId?: string; via?: string },
+) {
+  const fromRoomId = opts?.fromRoomId ?? state.player.roomId;
+  const via = opts?.via;
+
+  // If something tries to "move" to same room, don't pollute history.
+  if (fromRoomId === toRoomId) return state;
+
+  const atTurn =
+    (state as any).turnNumber ??
+    (state.worldState as any).turnNumber ??
+    undefined;
+
+  const prevMoves = state.player.recentMoves ?? [];
+  const nextEvent: PlayerMoveEvent = { fromRoomId, toRoomId, via, atTurn };
+  const recentMoves = [nextEvent, ...prevMoves].slice(0, MAX_RECENT_MOVES);
+
+  return {
+    ...state,
+    player: {
+      ...state.player,
+      roomId: toRoomId,
+      prevRoomId: fromRoomId,
+      recentMoves,
+    },
+  };
+}
+
 export function triggerPlayerDeath(
   state: GameState,
   deathMessage: string,
-  cause: string
+  cause: string,
 ): GameState {
   let next = state;
   const roomId = state.player.roomId;
@@ -109,5 +175,82 @@ export function triggerPlayerDeath(
     },
   };
 
+  if (cause === "organism") {
+    const seed = Date.now();
+    const key = "FUNCTIONING"; // hinted in-world later
+
+    const cipher = encryptVigenere(secretOrganismMessage, key);
+    console.log(cipher);
+    const display = formatCipherBlocks(cipher, 5);
+    useUIEffectsStore.getState().playOrganismDeath({
+      title: "SIGNAL RECEIVED",
+      cipherText: encryptVigenere(display, key),
+      seed,
+      revealMode: "type",
+      chunkMs: 22,
+      chunkSize: 28,
+    });
+  }
+
   return nextState;
+}
+
+/**
+ * Classic Vigenère cipher (encryption only)
+ *
+ * - A–Z alphabet
+ * - Non-letters are preserved and do NOT advance the key
+ * - Output is uppercase
+ */
+export function encryptVigenere(plaintext: string, key: string): string {
+  const A = "A".charCodeAt(0);
+
+  const cleanKey = key.toUpperCase().replace(/[^A-Z]/g, "");
+
+  if (!cleanKey.length) {
+    throw new Error("Vigenère key must contain at least one letter A–Z");
+  }
+
+  let keyIndex = 0;
+
+  return plaintext
+    .toUpperCase()
+    .split("")
+    .map((ch) => {
+      const code = ch.charCodeAt(0);
+
+      // Only encrypt A–Z
+      if (code < A || code > A + 25) {
+        return ch;
+      }
+
+      const p = code - A;
+      const k = cleanKey.charCodeAt(keyIndex % cleanKey.length) - A;
+
+      keyIndex++;
+
+      const c = (p + k) % 26;
+      return String.fromCharCode(A + c);
+    })
+    .join("");
+}
+
+export function formatCipherBlocks(
+  text: string,
+  groupSize = 5,
+  groupsPerLine = 9,
+): string {
+  const letters = text;
+
+  const groups: string[] = [];
+  for (let i = 0; i < letters.length; i += groupSize) {
+    groups.push(letters.slice(i, i + groupSize));
+  }
+
+  const lines: string[] = [];
+  for (let i = 0; i < groups.length; i += groupsPerLine) {
+    lines.push(groups.slice(i, i + groupsPerLine).join(" "));
+  }
+
+  return lines.join(" ");
 }

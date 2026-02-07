@@ -1,0 +1,59 @@
+.game-room-text {
+    position: relative;
+}
+
+.game-room-panel[data-organismdeath="true"] .game-room-text {
+    overflow: hidden;
+    scrollbar-gutter: stable both-edges;
+}
+
+.organismdeath-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 60;
+    /* above mindflash */
+    /* pointer-events: none; */
+}
+
+.organismdeath-blackout {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0.94;
+}
+
+.organismdeath-content {
+    position: absolute;
+    inset: 0;
+    padding: 14px 14px;
+    z-index: 2;
+    overflow: auto;
+    /* allow scroll if it overflows */
+}
+
+.organismdeath-title {
+    letter-spacing: 0.16em;
+    opacity: 0.85;
+    margin-bottom: 10px;
+}
+
+.organismdeath-body {
+    white-space: pre-wrap;
+    word-break: break-word;
+    opacity: 0;
+    animation: organismdeathFade 700ms ease-out forwards;
+    animation-delay: 140ms;
+    font-family: var(--mono-font, monospace);
+    letter-spacing: 0.08em;
+}
+
+@keyframes organismdeathFade {
+    to {
+        opacity: 1;
+    }
+}
+
+.game-room-desc.is-hijacked {
+    opacity: 0.25;
+    filter: blur(1px);
+}

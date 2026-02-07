@@ -964,30 +964,7 @@ export const levelThreeItems: Item[] = [
     isOpenable: true,
     capacity: 4,
   },
-  {
-    id: "HubPass",
-    name: "laminated pass",
-    description:
-      "A laminated access pass with a printed code running up one edge and block letters giving its owner limited privileges in the Hub.",
-    sceneryDescription:
-      "The pass is slightly warped from years of being flexed between nervous fingers, the laminate peeling just a bit at the corners. The text inside is perfectly preserved, frozen in flattened plastic—name, clearance, and an expiration date that might as well be a tombstone.",
-    location: "",
-    vocab: ["laminated", "hub", "pass", "card"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    readableText:
-      "K. Danko\n" +
-      "HUB PASS\n" +
-      "24 Hours\n" +
-      "Day: Any\n" +
-      "Exp. 03/07/71\n",
-    isContainer: false,
-    scoreId: "obtained_hub_pass",
-  },
+
   {
     id: "HubPassSlot",
     name: "card slot",
@@ -2693,7 +2670,7 @@ export const levelThreeItems: Item[] = [
       "A large specimen tank, roughly six feet by eight and a few feet deep. Cloudy water sloshes gently inside when you move, but you don’t see anything obvious drifting in it. A brass plaque is mounted on the front of the tank.",
     sceneryDescription:
       "The tank’s thick panels are built from reinforced transparent material, currently fogged and stained by whatever chemical mix is in there. The water has an unhealthy, milky tinge, and faint sediment drifts like ghostly snow. Hoses and cables disappear into the base, humming quietly with a life that outlived its original occupant.",
-    location: "RemoteMedicalThree",
+    location: "XenobiologyLab",
     vocab: ["specimen", "tank", "water", "tube", "tub"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -2718,7 +2695,7 @@ export const levelThreeItems: Item[] = [
       "A small brass plaque mounted on the front of the specimen tank. The etched text looks scientific and faintly smug.",
     sceneryDescription:
       "The plaque is polished to a dull shine, the engraved letters darkened to stand out against the metal. A faint patina is beginning to creep in around the edges, giving it a quietly ancient, museum-piece vibe.",
-    location: "RemoteMedicalThree",
+    location: "XenobiologyLab",
     vocab: ["brass", "plaque", "label", "slug"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -2737,7 +2714,7 @@ export const levelThreeItems: Item[] = [
       "A large wire cage that looks like a cross between a bird cage and a small aviary. A simple perch juts out inside, and the floor is covered in clay granules. Whatever warped this part of the ship buckled several of the bars, leaving a significant gap in one section. The cage now appears empty. A bronze plaque is mounted on the front.",
     sceneryDescription:
       "The bent bars give the cage a twisted, off-kilter shape, like it’s been partially melted and then forced back into service. The interior perch is scuffed where something with claws or talons used to land. The clay granules on the floor are raked into shallow furrows, the last footprints of something that apparently took the express route out.",
-    location: "RemoteMedicalThree",
+    location: "XenobiologyLab",
     vocab: ["large", "wire", "cage", "bird", "aviary"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -2762,7 +2739,7 @@ export const levelThreeItems: Item[] = [
       "The floor of the cage is covered in small clay granules, the sort used to soak up droppings and spills. Whatever lived here used this as its bathroom, but someone cleaned it recently; nothing unsavory remains.",
     sceneryDescription:
       "The granules form a lumpy, uneven layer that crunches softly under any weight. Here and there, faint discolorations mark places that were cleaned in a hurry, leaving a patchwork of slightly darker specks.",
-    location: "RemoteMedicalThree",
+    location: "XenobiologyLab",
     vocab: ["clay", "granules", "litter", "pellets"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -2779,7 +2756,7 @@ export const levelThreeItems: Item[] = [
       "A neat bronze plaque affixed to the front of the cage, bearing a scientific name and a much more honest nickname.",
     sceneryDescription:
       "The bronze has darkened slightly with age and handling, but the lettering is still crisp. Someone took pride in cataloging whatever used to live here, right up until it stopped wanting to be cataloged.",
-    location: "RemoteMedicalThree",
+    location: "XenobiologyLab",
     vocab: ["bronze", "plaque", "label", "screecher"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -2798,7 +2775,7 @@ export const levelThreeItems: Item[] = [
       "A four-foot cube terrarium made of transparent plexiglass. Fine sand covers the interior, with an arrangement of rocks in one corner forming a crude little outcrop. The top is perforated with small air holes and fitted with a single access hatch, which now hangs by one hinge. A copper plaque is mounted on the front.",
     sceneryDescription:
       "Cracks spider across one side of the plexiglass, turning the interior into a fractured reflection of whatever passes by. The sand inside bears shallow troughs and collapsed pits, as if something used to burrow and then decided to upgrade its living arrangements. The hanging hatch sways slightly at the slightest vibration, ticking against the frame in a nervous little rhythm.",
-    location: "RemoteMedicalThree",
+    location: "XenobiologyLab",
     vocab: ["broken", "glass", "cage", "terrarium", "tank"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -2822,7 +2799,7 @@ export const levelThreeItems: Item[] = [
       "A copper plaque set into the front of the terrarium, etched with a taxonomic tag and a much more unsettling common name.",
     sceneryDescription:
       "The copper has taken on a dull, reddish patina, but the text remains legible. The combination of Latin and ominous nickname feels like something out of a field guide for people with terrible survival instincts.",
-    location: "RemoteMedicalThree",
+    location: "XenobiologyLab",
     vocab: ["copper", "plaque", "label", "spider"],
     itemClass: "solid",
     itemCategory: "scenery",

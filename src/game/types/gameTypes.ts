@@ -1,5 +1,6 @@
 import { playerMemoryMap, playerScoreMap } from "@game/constants";
 import { ItemId, RoomId } from "@game/types/ids";
+import { RadioVoice } from "@game/types/npcTypes";
 import type { DoorDefinition, DoorState } from "./doorTypes";
 import type { Item, ItemState } from "./itemTypes";
 import type { Room } from "./roomTypes";
@@ -14,6 +15,18 @@ export interface GameState {
   player: PlayerState;
   worldState: WorldState;
   itemState: ItemState;
+  conversation?: {
+    radio?: {
+      activeVoice?: RadioVoice;
+
+      // how long the connection lasts
+      turnsRemaining?: number;
+
+      // optional: prevents repeat spam
+      topicsUsed?: Record<string, true>;
+      queuedLog?: string[];
+    };
+  };
   rng: () => number;
 }
 
@@ -75,9 +88,10 @@ type PowerSectionId =
   | "teleport-pads-green"
   | "teleport-pads-blue"
   | "teleport-pads-yellow"
-  | "teleport-pads-brown"
+  | "teleport-pads-orange"
+  | "teleport-pads-violet"
   | "teleport-pads-white"
-  | "teleport-pads-grey"
+  | "teleport-pads-maroon"
   | "hub-security"
   | "engine-room-power-lock"
   | "weapons-system"
@@ -88,8 +102,17 @@ type PowerSectionId =
   | "power-key-turned"
   | "power-initialized";
 
+type PlayerMoveEvent = {
+  fromRoomId: string;
+  toRoomId: string;
+  via?: string; // direction or exit id, if you have it
+  atTurn?: number; // if you track turns
+};
+
 export interface PlayerState {
   roomId: string;
+  prevRoomId?: string;
+  recentMoves?: PlayerMoveEvent[];
   inventory: string[];
   vitals: PlayerVitals;
   statusEffects: StatusEffect[];
@@ -121,6 +144,11 @@ export type AviarySpotlightState = {
   hintCooldown: number; // turns until next hint
 };
 
+export type HydroponicsSpiderState = {
+  isAlive: boolean;
+  turnsSinceLastBreath: number;
+};
+
 export interface World {
   rooms: Room[];
   items: Item[];
@@ -135,6 +163,14 @@ export interface WorldChunk {
   doors: DoorDefinition[];
   teleportPads: TeleportPadDefinition[];
 }
+
+export interface DamagedFlashlightState {
+  isOn: boolean;
+  maxCharge: number;
+  currentCharge: number;
+  chargeRate: number;
+}
+
 export interface SyringeState {
   loadedCartridgeId?: string;
 }
@@ -145,6 +181,7 @@ type PlayerDeath = {
 };
 
 export interface WorldState {
+  conditionalTriggers: Record<string, boolean>;
   playerDeaths: Record<RoomId, PlayerDeath>;
   doors: Record<string, DoorState>;
   darkRooms: Record<string, boolean>;
@@ -155,6 +192,8 @@ export interface WorldState {
   scoresTriggered: Record<PlayerScoreId, boolean>;
   octopusState: OctopusState;
   aviarySpotlight: AviarySpotlightState;
+  hydroponicsSpider: HydroponicsSpiderState;
+  damagedFlashlight: DamagedFlashlightState;
   roomTemp: Record<
     string,
     "freezing" | "cold" | "cool" | "temperate" | "warm" | "hot" | "scorching"

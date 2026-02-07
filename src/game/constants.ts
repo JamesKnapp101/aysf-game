@@ -3,6 +3,12 @@ import { SwitchState } from "./types/itemTypes";
 export const ROOM_NAME_TOKEN_START = "[[ROOM_NAME]]";
 export const ROOM_NAME_TOKEN_END = "[[/ROOM_NAME]]";
 
+export const OPENING_SPLASH = `You dream of falling.\n\n
+The sensation of a bump, then a flip, then, for a moment, weightlessness. It's an almost peaceful sensation, for as long as it lasts, a flash of terror followed by an all too brief feeling of resignation, release, and finally, relief.\n\n
+A second later you jolt awake on your back, naked, and gasping for air. The floor is cold and hard beneath you, smooth tile covered in a thin layer of grit, and the stale air is cool, causing your bare skin to prickle.\n\n
+Still dazed, you stand up and put one hand against the wall until you're steady. You try to remember what happened, how you got here, and where here even is, but your mind is in a fog. You remember that you were in the middle of something, something important, but you must have really hit your head because everything is fragmented and at the moment, you can't even remember your own name.\n\n
+You look yourself over. You have no idea why you're nude, but there isn't so much as a scratch or a bruise on you at least, and while you don't seem to be in any sort of immediate danger something in your mind is sounding the alarm.\n\nThere's something you need to be doing, and you're running out of time...`;
+
 export const POWER_SECTION_MAP: Record<
   string,
   { section: string; activeWhen: SwitchState }
@@ -11,8 +17,8 @@ export const POWER_SECTION_MAP: Record<
   TPADPOWER2: { section: "teleport-pads-white", activeWhen: "on" },
   TPADPOWER3: { section: "teleport-pads-blue", activeWhen: "on" },
   TPADPOWER4: { section: "teleport-pads-yellow", activeWhen: "on" },
-  TPADPOWER5: { section: "teleport-pads-brown", activeWhen: "on" },
-  TPADPOWER6: { section: "teleport-pads-grey", activeWhen: "on" },
+  TPADPOWER5: { section: "teleport-pads-violet", activeWhen: "on" },
+  TPADPOWER6: { section: "teleport-pads-maroon", activeWhen: "on" },
   Lvl1Lights: { section: "lights-level-one", activeWhen: "on" },
   Lvl2Lights: { section: "lights-level-two", activeWhen: "on" },
   Lvl3Lights: { section: "lights-level-three", activeWhen: "on" },
@@ -64,9 +70,8 @@ export const playerScoreMap = {
   gorilla_in_cryopod: { value: 5 },
   gorilla_sedated: { value: 5 },
   initiated_shutdown_from_terminal: { value: 5 },
-  obtained_black_badge: { value: 5 },
   obtained_blue_badge: { value: 5 },
-  obtained_brown_badge: { value: 5 },
+  obtained_violet_badge: { value: 5 },
   obtained_code_from_parrot: { value: 5 },
   obtained_coord_finder: { value: 5 },
   obtained_correct_thumb: { value: 5 },
@@ -77,7 +82,7 @@ export const playerScoreMap = {
   obtained_engine_shutdown_code: { value: 5 },
   obtained_gravity_boots: { value: 5 },
   obtained_green_badge: { value: 5 },
-  obtained_grey_badge: { value: 5 },
+  obtained_maroon_badge: { value: 5 },
   obtained_hub_pass: { value: 5 },
   obtained_infection_report: { value: 5 },
   obtained_innoculant: { value: 5 },
@@ -85,11 +90,13 @@ export const playerScoreMap = {
   obtained_music_box: { value: 5 },
   obtained_new_z4_detonator: { value: 5 },
   obtained_nv_goggles: { value: 5 },
+  obtained_orange_badge: { value: 5 },
   obtained_pink_badge: { value: 5 },
   obtained_power_key: { value: 5 },
   obtained_radiation_cure: { value: 5 },
   obtained_secret_phone_number_1: { value: 5 },
   obtained_specimen_report: { value: 5 },
+  obtained_ultraviolet_badge: { value: 5 },
   obtained_white_badge: { value: 5 },
   obtained_yellow_badge: { value: 5 },
   obtained_z4: { value: 5 },
@@ -113,16 +120,13 @@ export const playerScoreMap = {
 
 export const playerMemoryMap = {
   own_name: { value: 5 },
+  own_image: { value: 5 },
   own_occupation: { value: 5 },
   own_voice: { value: 5 },
   own_handwriting: { value: 5 },
   aware_of_reincarnation: { value: 5 },
   aware_of_reincarnation_nature: { value: 5 },
   aware_of_own_role_in_reincarnation: { value: 5 },
-  gorilla_name: { value: 5 },
-  cat_name: { value: 5 },
-  kira_one: { value: 5 },
-  kira_two: { value: 5 },
   pinhole_cause: { value: 5 },
   aware_of_statue_nature: { value: 5 },
   aware_of_innoculant: { value: 5 },

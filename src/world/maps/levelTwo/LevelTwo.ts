@@ -1,12 +1,14 @@
-import type { WorldChunk } from "../../game/types/gameTypes";
-import { levelTwoDoors } from "../doors/levelTwoDoors";
-import { levelTwoItems } from "../Items/levelTwoMisc";
+import { medicalWingRooms } from "src/world/maps/levelTwo/MedicalWing";
+import type { WorldChunk } from "../../../game/types/gameTypes";
+import { levelTwoDoors } from "../../doors/levelTwoDoors";
+import { levelTwoItems } from "../../Items/levelTwoMisc";
 
 export const LEVEL_TWO: WorldChunk = {
   items: [...levelTwoItems],
   doors: [...levelTwoDoors],
   teleportPads: [],
   rooms: [
+    ...medicalWingRooms,
     {
       id: "LevelTwoBurnedArea",
       name: "Burned Area",
@@ -26,7 +28,7 @@ export const LEVEL_TWO: WorldChunk = {
         "This is the westernmost portion of the large, burned-out area of the Level Two living quarters. No one who was here could possibly have survived. All around are the burned remains of what must have been furnishings, reduced to nothing but clusters of ash. Curled among the debris is what looks like the remains of a person. The way is clear back to the east, the way you came, and a clear path winds through the debris to the south.",
       exits: [
         { direction: "east", toRoomId: "LevelTwoBurnedArea" },
-        { direction: "south", toRoomId: "CornerOfBurnedArea" },
+        { direction: "north", toRoomId: "CornerOfBurnedArea" },
       ],
     },
     {
@@ -34,7 +36,7 @@ export const LEVEL_TWO: WorldChunk = {
       name: "Corner of Burned Area",
       description:
         "This is a dead-end corner tucked away in the burned area that has been devastated. Everything here has been charred beyond all recognition; it's impossible to tell what used to stand here. Sitting propped up in the corner are the charred remains of a body which has been reduced to little more than a blackened skeleton. Its legs are splayed out in front of it, and its bony arms hang askew by its sides. The grinning skull seems to look up at you, polished smooth and black by the flames, its mouth hanging grotesquely open as if in a silent scream.",
-      exits: [{ direction: "north", toRoomId: "EdgeOfBurnedArea" }],
+      exits: [{ direction: "south", toRoomId: "EdgeOfBurnedArea" }],
     },
     {
       id: "LevelTwoCorridorFive",
@@ -44,7 +46,7 @@ export const LEVEL_TWO: WorldChunk = {
       exits: [
         { direction: "north", toRoomId: "LevelTwoBurnedArea" },
         { direction: "south", toRoomId: "LevelTwoCorridorFour" },
-        { direction: "west", toRoomId: "LevelTwoCorridorJunction" },
+        { direction: "east", toRoomId: "LevelTwoCorridorJunction" },
       ],
     },
     {
@@ -53,9 +55,16 @@ export const LEVEL_TWO: WorldChunk = {
       description:
         "This is a small connecting corridor which joins the main corridor of the living quarters and another parallel hall to the west. The fire damage seems to have tapered out here; about half of the hallway shows signs of being burned while the other half has some smoke damage but seems otherwise okay.",
       exits: [
-        { direction: "east", toRoomId: "LevelTwoCorridorFive" },
-        { direction: "west", toRoomId: "LevelTwoSecondaryCorridorTwo" },
+        { direction: "west", toRoomId: "LevelTwoCorridorFive" },
+        { direction: "east", toRoomId: "LevelTwoSecondaryCorridorTwo" },
+        { direction: "south", toRoomId: "TheLearnatorium" },
       ],
+    },
+    {
+      id: "TheLearnatorium",
+      name: "Learnatorium",
+      description: "The Learnatorium.",
+      exits: [{ direction: "north", toRoomId: "LevelTwoCorridorJunction" }],
     },
     {
       id: "LevelTwoCorridorFour",
@@ -96,7 +105,7 @@ export const LEVEL_TWO: WorldChunk = {
         "This is the main corridor for accessing the Level Two living quarters, or what's left of them. The entire hallway is covered in black soot, although it's a little less sooty down at this end. There are still no lights, though, and the burned stench still pervades the place. To the west is a door that has been partially charred. You can see a plastic label on it where you can make out '2AW'. There is a door on the east wall as well, with a label indicating '2AE'.",
       exits: [
         { direction: "north", toRoomId: "LevelTwoCorridorTwo" },
-        { direction: "east", doorId: "DOOR2AE" },
+        { direction: "east", doorId: "LevelTwoBurnedQuartersOne" },
       ],
     },
     {
@@ -174,8 +183,8 @@ export const LEVEL_TWO: WorldChunk = {
       name: "Level Two Secondary Corridor One",
       description: "The hallway here ends at a dark doorway leading south.",
       exits: [
-        { direction: "north", toRoomId: "LevelTwoSecondaryCorridorTwo" },
-        { direction: "south", toRoomId: "LevelTwoConferenceRoom" },
+        { direction: "west", toRoomId: "LevelTwoSecondaryCorridorTwo" },
+        { direction: "south", toRoomId: "MedicalEntrance" },
       ],
     },
     {
@@ -184,43 +193,20 @@ export const LEVEL_TWO: WorldChunk = {
       description:
         "There is still a little residual smoke damage here, but the fire seems to have burned itself out in the connecting corridor. The hallway forms a T here, heading east back to the main living quarters corridor, as well as trailing into the darkness to both north and south. Far to the north, in the darkness, you can see a red light flashing at regular intervals. There is a set of double doors on the west wall over which is a soot-streaked sign stating 'OFFICER'S MESS'.",
       exits: [
-        { direction: "south", toRoomId: "LevelTwoSecondaryCorridorOne" },
-        { direction: "east", toRoomId: "LevelTwoCorridorJunction" },
-        { direction: "west", doorId: "MessDoor" },
-        { direction: "north", toRoomId: "LevelTwoSecondaryCorridorThree" },
+        { direction: "east", toRoomId: "LevelTwoSecondaryCorridorOne" },
+        { direction: "west", toRoomId: "LevelTwoCorridorJunction" },
+        // { direction: "south", toRoomId: "LevelTwoSecondaryCorridorThree" },
       ],
     },
-    {
-      id: "LevelTwoSecondaryCorridorThree",
-      name: "Level Two Secondary Corridor Three",
-      description:
-        "The hallway ends here, where a large doorway leads west. Over the doorway is a sign reading 'ARMORY', and over the sign is a panel which is flashing red. Through the doorway, you can see into the storage area beyond where a heavy-set, naked male body lies sprawled face down on the floor. The way inside looks clear.",
-      exits: [
-        { direction: "south", toRoomId: "LevelTwoSecondaryCorridorTwo" },
-        { direction: "west", toRoomId: "ARMORY" },
-      ],
-    },
-    {
-      id: "ARMORY",
-      name: "Armory",
-      description:
-        "This is the ship's armory, a large storage area filled with racks for storing weapons and ammunition. Wire cages used to prevent easy access to the racks are now unlocked and hanging open haphazardly. A metal sign is fastened to the wall above the cages. It looks as though the place has been cleaned out; there don't seem to be any firearms left here. Lying prone on the floor is the body of a man, naked except for some kind of black harness which is fastened around the waist with straps crossing over the shoulders. One hand is still gripping a club or security baton of some sort, and the other is gripping his throat. His tongue hangs part way out of his mouth.",
-      exits: [
-        { direction: "east", toRoomId: "LevelTwoSecondaryCorridorThree" },
-      ],
-    },
-    {
-      id: "MessHall",
-      name: "Officer's Mess Hall",
-      description: "The mess hall.",
-      exits: [{ direction: "east", doorId: "MessDoor" }],
-    },
-    {
-      id: "LevelTwoConferenceRoom",
-      name: "Conference Room",
-      description:
-        "This is a conference room of some kind, dominated by a long, oblong conference table flanked on either side with a series of swivel chairs, with one positioned at the head of the table. There is a large LCD display mounted on the eastern wall for showing slides and drawing notes or diagrams. There are currently some handwritten scribblings displayed. Whatever went on in here, it seems to be over now. You can see a woman's shoe sticking out from under the table...",
-      exits: [{ direction: "north", toRoomId: "LevelTwoSecondaryCorridorOne" }],
-    },
+    // {
+    //   id: "LevelTwoSecondaryCorridorThree",
+    //   name: "Level Two Secondary Corridor Three",
+    //   description:
+    //     "The hallway ends here, where a large doorway leads west. Over the doorway is a sign reading 'ARMORY', and over the sign is a panel which is flashing red. Through the doorway, you can see into the storage area beyond where a heavy-set, naked male body lies sprawled face down on the floor. The way inside looks clear.",
+    //   exits: [
+    //     { direction: "north", toRoomId: "LevelTwoSecondaryCorridorTwo" },
+    //     { direction: "east", toRoomId: "ARMORY" },
+    //   ],
+    // },
   ],
 };
