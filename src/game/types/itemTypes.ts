@@ -28,6 +28,7 @@ export type clothingSlots =
 export interface Item {
   id: string;
   name: string;
+  named?: (state: GameState) => string;
   description: string;
   location: string;
   vocab: string[];
@@ -40,6 +41,8 @@ export interface Item {
   clothingSlot?: clothingSlots;
   isReadable?: boolean;
   readableText?: string;
+  readableTitle?: string;
+  isLoggable?: boolean;
   isOpenable?: boolean;
   capacity?: number;
   isContainer?: boolean;

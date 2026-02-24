@@ -243,10 +243,10 @@ function buildPowerGridTree(state: GameState): MenuNode {
           },
 
           {
-            id: "HubSecurity",
+            id: "ParkSecurity",
             kind: "switch",
-            label: "Hub Security",
-            status: state.worldState.powerRestoredSections["hub-security"]
+            label: "Park Security",
+            status: state.worldState.powerRestoredSections["park-security"]
               ? "on"
               : "off",
           },

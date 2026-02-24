@@ -4,7 +4,7 @@ import { isItemOpen } from "@game/rules/containers";
 import { updateItemLocation } from "@game/rules/items";
 import { RuleResult } from "@game/rules/result";
 import { triggerScoreOnce } from "@game/rules/score";
-import { addToInventory } from "@game/rules/state";
+import { addToInventory, inventoryHas } from "@game/rules/state";
 import {
   getContainerContentsIds,
   getContainerContentsItems,
@@ -24,7 +24,9 @@ export function tryTakeItem(
   const lower = noun.toLowerCase();
   const itemsHere = getItemsInCurrentRoom(state);
   const itemOnFloor = itemsHere.find(
-    (i) => i.vocab.includes(lower) || i.name.toLowerCase() === lower,
+    (i) =>
+      i.vocab.includes(lower) ||
+      (i.named?.(state) ?? i.name.toLowerCase()) === lower,
   );
 
   if (itemOnFloor?.id === "PowerStationKey") {
@@ -92,7 +94,7 @@ export function tryTakeItem(
   const containersHere = state.world.items.filter(
     (i) =>
       i.isContainer &&
-      (i.location === room.id || state.player.inventory.includes(i.id)),
+      (i.location === room.id || inventoryHas(state.player.inventory, i.id)),
   );
 
   for (const container of containersHere) {
@@ -100,7 +102,9 @@ export function tryTakeItem(
 
     const contentsItems = getContainerContentsItems(state, container);
     const found = contentsItems.find(
-      (i) => i.vocab.includes(lower) || i.name.toLowerCase() === lower,
+      (i) =>
+        i.vocab.includes(lower) ||
+        (i.named?.(state) ?? i.name.toLowerCase()) === lower,
     );
 
     if (!found) continue;

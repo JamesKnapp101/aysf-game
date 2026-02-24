@@ -1,7 +1,9 @@
+/* Quantum Tote panel styles (drop-in replacement) */
+
 .qtote {
-    border: 2px solid var(--crt);
+    border: 2px solid var(--crt-color, var(--crt));
     border-radius: 18px;
-    padding: 6px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -23,45 +25,155 @@
 }
 
 .qtote-brand-main {
-    font-size: 36px;
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 30px;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+        "Lucida Sans", Arial, sans-serif;
 }
 
 .qtote-brand-sub {
     font-size: 18px;
     opacity: 0.9;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .qtote-title {
-    font-size: 22px;
+    font-size: 18px;
     text-align: right;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
 .qtote-toolbar {
-    border: 2px solid var(--crt);
-    border-radius: 12px;
-    padding: 10px 14px;
+    border: none;
+    border: 2px solid var(--crt-color, var(--crt));
+    border-radius: 8px;
+    padding: 6px 6px 10px 6px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: nowrap;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+        "Lucida Sans", Arial, sans-serif;
+}
+
+.qtote-toolbar button {
+    all: unset;
+    box-sizing: border-box;
+    color: inherit;
+    font: inherit;
+    opacity: 0.4;
+}
+
+.qtote-tabs {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0;
+    flex: 0 0 auto;
+    min-width: 0;
+}
+
+.qtote-tab {
+    position: relative;
+    cursor: pointer;
+    padding: 2px 10px 3px 10px;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    opacity: 0.85;
+    line-height: 1;
+    display: inline-flex;
+    align-items: baseline;
+}
+
+.qtote-tab+.qtote-tab {
+    margin-left: 6px;
+    padding-left: 16px;
+    opacity: 0.4;
+}
+
+.qtote-tab+.qtote-tab::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    bottom: 2px;
+    width: 1px;
+    background: var(--crt-color, var(--crt));
+    opacity: 0.55;
+}
+
+.qtote-tabCount {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.qtote-tab.isActive {
+    opacity: 1;
+    font-weight: 700;
+}
+
+.qtote-tab.isActive::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    bottom: -6px;
+    height: 4px;
+    background: var(--crt-color, var(--crt));
+    opacity: 0.9;
+    border-radius: 2px;
+}
+
+.qtote-tab.isActive::marker {
+    content: "";
+}
+
+.qtote-tab.isActive {
+    text-shadow: 0 0 0.5px currentColor;
+}
+
+.qtote-tab.isActive>.qtote-tabCount {
+    opacity: 1;
+}
+
+.qtote-tab:hover {
+    opacity: 1;
+}
+
+.qtote-tabsMeta {
+    display: inline-block;
+    margin-left: 14px;
+    white-space: nowrap;
+    font-size: 13px;
+    opacity: 0.85;
+    line-height: 1;
+    align-self: baseline;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
 .qtote-sortBtn {
-    background: transparent;
-    border: none;
-    color: inherit;
     cursor: pointer;
-   
     text-decoration: underline;
     opacity: 0.95;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    white-space: nowrap;
+    line-height: 1;
+    align-self: baseline;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.qtote-sortBtn:hover {
+    opacity: 1;
+}
+
+.qtote-tab:focus-visible,
+.qtote-sortBtn:focus-visible {
+    outline: 2px dashed currentColor;
+    outline-offset: 2px;
 }
 
 .qtote-body {
-    border: 2px solid var(--crt);
+    border: 2px solid var(--crt-color, var(--crt));
     border-radius: 16px;
     padding: 12px;
     flex: 1;
@@ -69,7 +181,7 @@
 }
 
 .qtote-count {
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     font-size: 18px;
 }
 
@@ -77,5 +189,6 @@
     font-size: 14px;
     opacity: 0.9;
     padding: 0 6px;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+        "Lucida Sans", Arial, sans-serif;
 }

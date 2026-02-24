@@ -65,10 +65,9 @@ export function InventoryTree({
     );
   };
 
-  // Raw name for sorting (stable) — do NOT use the fancy label.
   const getSortName = (id: string) => {
     const it = getItemById(state, id);
-    return (it?.name ?? id).trim().toLowerCase();
+    return (it?.named?.(state) ?? it?.name ?? id).trim().toLowerCase();
   };
 
   const isContainerId = (id: string) =>
@@ -103,7 +102,9 @@ export function InventoryTree({
 
   const getItemLabel = (id: string) => {
     const it = getItemById(state, id);
-    const baseName = withIndefiniteArticle(it?.name ?? id);
+    const baseName = withIndefiniteArticle(
+      it?.named?.(state) ?? it?.name ?? id,
+    );
     let annotation = "";
 
     if (state.itemState.containerFilled[id]?.[0]) {
@@ -141,7 +142,6 @@ export function InventoryTree({
 
   const getBranchGlyph = (isLast: boolean) => (isLast ? "└─" : "├─");
 
-  // Sort the top-level inventory by id (so it works even if inventoryItems is Item[])
   const topIds = sortIds(inventoryItems.map((it) => it.id));
 
   return (
@@ -150,8 +150,6 @@ export function InventoryTree({
         <p className="game-line">You are carrying nothing.</p>
       ) : (
         <>
-          <p className="game-line">You are carrying:</p>
-
           <ul className="game-list inv-tree-list">
             {topIds.map((itemId) => {
               const item = getItemById(state, itemId);

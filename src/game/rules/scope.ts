@@ -1,3 +1,4 @@
+import { inventoryHas } from "@game/rules/state";
 import { ConversationTarget, RadioVoice } from "@game/types/npcTypes";
 import { getCurrentRoom } from "../selectors/roomSelectors";
 import { getTeleportPadsInCurrentRoom } from "../selectors/teleportationSelectors";
@@ -27,7 +28,7 @@ export function resolveItemInScopeByNoun(
   const room = getCurrentRoom(state);
 
   const invItems = state.world.items.filter((i) =>
-    state.player.inventory.includes(i.id),
+    inventoryHas(state.player.inventory, i.id),
   );
 
   const roomItems = state.world.items.filter(
@@ -38,7 +39,8 @@ export function resolveItemInScopeByNoun(
 
   for (const item of candidates) {
     if (
-      item.name.toLowerCase() === lower ||
+      (item.named?.(state).toLowerCase() === lower ||
+        item.name.toLowerCase()) === lower ||
       item.vocab.some((v: string) => v.toLowerCase() === lower)
     ) {
       return item;
@@ -113,7 +115,7 @@ export function resolveItemByNoun(
     const loc = getLiveItemLocation(state, it);
 
     if (loc === room.id) inScopeIds.add(it.id);
-    if (state.player.inventory.includes(it.id)) inScopeIds.add(it.id);
+    if (inventoryHas(state.player.inventory, it.id)) inScopeIds.add(it.id);
   }
 
   // 2) Add contents of open containers in the room (recursively)

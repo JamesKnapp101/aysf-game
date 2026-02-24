@@ -1,4 +1,6 @@
 import { appendLog } from "@game/engine/handleCommand";
+import { moveItemToRoom } from "@game/helpers/itemHelpers";
+import { inventoryHas } from "@game/rules/state";
 import { useUIEffectsStore } from "@game/store/store";
 import { secretOrganismMessage } from "@game/text/secretOrganismMessage";
 import { GameState } from "@game/types/gameTypes";
@@ -34,8 +36,7 @@ export function generateTerminalTpadDescription(
     (c) => power[`teleport-pads-${c}`] === true,
   );
 
-  const base =
-    "Against the wall is a row of colored, glossy disks, side by side, ordered green, blue, yellow, violet, white, and maroon. Each of them is large enough to stand on.";
+  const base = `Mounted along the platform are a row of large, glossy disks colored green, blue, yellow, violet, white, and maroon, each ringed by a shiny metallic band. The disks are large enough, and look sturdy enough, to stand on.`;
 
   const glowTail = "lit, emitting a serene glow.";
 
@@ -79,7 +80,7 @@ export function getItemRoomId(
 }
 
 export const flashlightOn = (state: GameState) => {
-  if (!state.player.inventory.includes("flashlight")) return false;
+  if (!inventoryHas(state.player.inventory, "flashlight")) return false;
   const fs = state.itemState.itemSettings["flashlight"];
   return Boolean(fs && "isOn" in fs && fs.isOn === true);
 };
@@ -122,6 +123,32 @@ export function movePlayerToRoom(
       recentMoves,
     },
   };
+}
+
+export function triggerScriptedEvent(state: GameState): GameState {
+  let next: GameState = state;
+  const currentRoom = state.player.roomId;
+  if (
+    currentRoom === "LevelThreeCorridorSeven" &&
+    state.worldState.scriptedEventsTripped["cat_meet"] !== true
+  ) {
+    next = appendLog(
+      next,
+      `As you enter the room, you see a small, black and white short-haired cat come squirming out from the small opening to the north. It shakes its head rapidly, scatting dust, then looks up at you.`,
+    );
+    next = moveItemToRoom(next, "cat", currentRoom);
+    next = {
+      ...next,
+      worldState: {
+        ...next.worldState,
+        scriptedEventsTripped: {
+          ...next.worldState.scriptedEventsTripped,
+          cat_meet: true,
+        },
+      },
+    };
+  }
+  return next;
 }
 
 export function triggerPlayerDeath(

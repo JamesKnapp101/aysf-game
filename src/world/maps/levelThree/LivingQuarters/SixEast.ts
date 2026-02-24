@@ -1,334 +1,600 @@
 import { Item } from "@game/types/itemTypes";
-import { createLivingQuarter } from "src/world/maps/livingQuartersTemplate";
+import { Room } from "@game/types/roomTypes";
 
-const SixEastCustomItems: Item[] = [
+export const sixEastRooms: Room[] = [
+  // LIVING QUARTERS SIX EAST
   {
-    id: "SixEastBoyfriendBody",
-    name: "man's body",
-    description: `
-He lies collapsed in the shower, shoulders hunched as if he tried to disappear into the corner.
-Paint has been smeared across his skin in bright strokes turned ugly under the light.
-His wrists are cut; the blood has dried in layered stains that won’t tell you the order of events.
-Where his eyes should be is only damage, raw and deliberate.`,
-    sceneryDescription: `
-In the shower lies a man’s body, slumped against the tile, streaked with paint and dried blood.`,
-    location: "SixEastBath",
-    vocab: ["man", "body", "corpse", "boyfriend"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 160,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
-
-  {
-    id: "SixEastPaintbrush",
-    name: "paintbrush",
-    description: `
-A paintbrush with bristles clotted hard.
-The handle has been sharpened down to a brutal point.
-Dried paint crusts the wood, and darker stains cling where fingers gripped too tightly.`,
-    sceneryDescription: `
-Near the shower drain lies a paintbrush, its handle whittled into a sharp point and smeared with paint and blood.`,
-    location: "SixEastBath",
-    vocab: ["paintbrush", "brush"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
-
-  {
-    id: "SixEastRazorBlade",
-    name: "razor blade",
-    description: `
-A single razor blade, bare and utilitarian.
-One edge is nicked. The metal is spotted with brown that isn’t rust.`,
-    sceneryDescription: `
-On the bathroom floor, near the shower, a razor blade lies where it fell and stayed.`,
-    location: "SixEastBath",
-    vocab: ["razor", "blade"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
-
-  {
-    id: "SixEastPaintSmears",
-    name: "paint smears",
-    description: `
-Color dragged across tile and glass in wide, impatient swipes.
-Some strokes are thick enough to hold texture; others are smeared thin, wiped nearly away.
-It never resolves into a picture. It only insists something happened.`,
-    sceneryDescription: `
-Paint is smeared across the shower and nearby surfaces, bright strokes turned grim under the bathroom light.`,
-    location: "SixEastBath",
-    vocab: ["paint", "smears", "streaks", "color"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
+    id: "LivingQuartersSixEast",
+    name: "Onche Residence: Living Area",
+    description: `The entryway to this large living space is warmly lit from above by [[SCENERY]]`,
+    exits: [
+      { direction: "west", doorId: "DOOR3FE" },
+      { direction: "south", toRoomId: "SixEastBath" },
+      { direction: "east", toRoomId: "SixEastBed" },
+    ],
   },
   {
-    id: "SixEastElliptical",
-    name: "elliptical machine",
-    description: `
-A compact elliptical with clean grips and a small readout panel.
-The frame is sturdy and quiet, built for repetition.
-A faint saltiness clings to the handles despite the ship’s filtered air.`,
-    sceneryDescription: `
-Near one wall of the living area stands an elliptical machine, positioned like it belonged in the daily rhythm here.`,
-    location: "LivingQuartersSixEast",
-    vocab: ["elliptical", "machine", "trainer"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 180,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isUseable: true,
-  },
-
-  {
-    id: "SixEastFicus",
-    name: "synthetic ficus",
-    description: `
-A tall synthetic ficus with glossy leaves that never curl or brown.
-The trunk is a molded twist meant to look alive.
-Dust has gathered in the upper leaves where no one remembered to reach.`,
-    sceneryDescription: `
-In a large pot stands a synthetic ficus reaching toward the ceiling, too perfect to feel comforting.`,
-    location: "LivingQuartersSixEast",
-    vocab: ["ficus", "plant", "tree", "synthetic"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 60,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
+    id: "SixEastBath",
+    name: "Onche Residence: Bathroom",
+    description: `This is an open space with brilliant white tiling, [[SCENERY]]`,
+    exits: [{ direction: "north", toRoomId: "LivingQuartersSixEast" }],
   },
   {
-    id: "SixEastBlackCanvas",
-    name: "black canvas",
-    description: `
-An oil canvas painted entirely black.
-The surface is matte in places, glossy in others, as if the paint was applied in layers meant to conceal.
-Up close, the finish looks disturbed by faint texture beneath.`,
-    sceneryDescription: `
-Leaning in the bedroom is a canvas painted solid black, propped as if it was set aside rather than displayed.`,
-    location: "SixEastBed",
-    vocab: ["canvas", "painting", "black"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 8,
-    itemSize: 4,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    meta: {
-      kind: "puzzle",
-      puzzleKey: "BlackCanvas",
-      note: "Hidden content under paint; intended to be revealed by scanning.",
-    },
-  },
-  {
-    id: "SixEastGameConsole",
-    name: "game console",
-    description: `
-A compact game console with a dark casing and a single status light.
-The ports are clean. The power button gives no response.`,
-    sceneryDescription: `
-Beneath the entertainment unit sits a small game console, tucked neatly into place.`,
-    location: "LivingQuartersSixEast",
-    vocab: ["console", "game", "system"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 7,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isUseable: true,
+    id: "SixEastBed",
+    name: "Onche Residence: Bedroom",
+    description: `The bedroom is dominated by [[SCENERY]]`,
+    exits: [{ direction: "west", toRoomId: "LivingQuartersSixEast" }],
   },
 ];
 
-export const {
-  rooms: LivingQuartersSixEastRooms,
-  items: LivingQuartersSixEastItems,
-} = createLivingQuarter({
-  prefix: "SixEast",
-  designator: "Six East",
-  livingRoomId: "LivingQuartersSixEast",
-  bedRoomId: "SixEastBed",
-  bathRoomId: "SixEastBath",
-  corridorRoomId: "LevelThreeCorridorSix",
-  corridorDoorId: "DOOR3FE",
-  bathDoorId: "SixEastBDoor",
-  dirs: {
-    livingToCorridorDir: "west",
-    bedToLivingDir: "west",
-    livingToBedDir: "east",
-    livingToBathDir: "north",
-    bathToLivingDir: "south",
-  },
-  livingDescription: `
-The space is kept with practiced care, the kind that turns routine into a shield.
-The air holds a clean edge beneath the ship’s stale breath, like someone fought hard to keep things bright.
-Nothing looks broken. Nothing looks overturned.
-The quiet sits too neatly in the corners.
-Doors lead west, south, and east.`,
-  bathDescription: `
-The bathroom is bright and close, the light flattening every surface.
-The air feels cold here, as if the room never warmed again after being used.
-The ship’s hum is sharper in the silence.
-A door leads back north.`,
-  bedDescription: `
-The bedroom is orderly and spare, arranged as if clutter was an enemy.
-The air smells faintly of fabric and something clean, not quite pleasant.
-Even here, the ship’s stillness feels watched.
-A doorway leads back west.`,
-
-  customItems: SixEastCustomItems,
-
-  fixtureIds: {
-    endTableLiving: "SixEastEndtable",
-    sofaLiving: "SixEastSofa",
-    loveseatLiving: "SixEastLoveseat",
-    entertainmentLiving: "SixEastEntertainment",
-    bed: "SixEastBedding",
-    dresser: "SixEastDresser",
-    closet: "SixEastCloset",
-    phone: "PHONE6EBed",
-    sink: "SixEastSink",
-    mirror: "SixEastMirror",
-    shower: "SixEastShower",
-    washlet: "SixEastBowl",
-    medicineChest: "SixEastMedicineChest",
-  },
-
-  fixtureText: {
-    endTableLiving: {
-      description: `
-A low end table with a smooth top and a shallow drawer.
-The surface has been wiped clean, leaving faint circular marks.`,
-      sceneryDescription: `
-Near the seating area sits a small end table, aligned with careful intent.`,
-      sceneryDescriptionOrder: 0,
-    },
-    sofaLiving: {
-      description: `
-A modern sofa upholstered in dark fabric.
-The cushions are firm and neatly set, showing more maintenance than comfort.`,
-      sceneryDescription: `
-A sofa faces the far wall, kept straight as if alignment mattered.`,
-      sceneryDescriptionOrder: 0,
-    },
-    loveseatLiving: {
-      description: `
-A matching loveseat, compact and clean-lined.
-The fabric is barely worn, the cushions squared and tidy.`,
-      sceneryDescription: `
-Beside the sofa sits a loveseat, positioned close enough for shared evenings.`,
-      sceneryDescriptionOrder: 0,
-    },
-    entertainmentLiving: {
-      description: `
-An entertainment unit with a silent screen and neatly arranged components.
-A game console is housed within the lower bay, its light dark.`,
-      sceneryDescription: `
-Against one wall stands an entertainment center, dormant and watchful.`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    bed: {
-      description: `
-A neatly made bed with tight corners.
-The sheets are cool and undisturbed, left in mid-routine.`,
-      sceneryDescription: `
-The bed sits centered in the room, made with precision.`,
-      sceneryDescriptionOrder: 0,
-    },
-    dresser: {
-      description: `
-A dresser with clean lines and quiet drawers.
-The top is bare, the wood faintly scented with polish.`,
-      sceneryDescription: `
-Along one wall sits a dresser, closed and orderly.`,
-      sceneryDescriptionOrder: 0,
-    },
-    closet: {
-      description: `
-A narrow closet with a sliding door.
-Inside, the air smells faintly of fabric and dry cleaner solvent.`,
-      sceneryDescription: `
-Set into the wall is a closet, its door shut tight.`,
-      sceneryDescriptionOrder: 0,
-    },
-    phone: {
-      description: `
-A bedside phone with a touch pad and a small message indicator.
-Several keys are worn smooth by repeated use.`,
-      sceneryDescription: `
-Near the bed sits a phone, still and dark.`,
-      sceneryDescriptionOrder: 0,
-    },
-
-    sink: {
-      description: `
-A compact sink with a spotless basin and cold chrome fixtures.
-The drain is dry, the surface wiped clean.`,
-      sceneryDescription: `
-A small sink sits beneath the mirror, cleaned to a dull shine.`,
-      sceneryDescriptionOrder: 0,
-    },
-    mirror: {
-      description: `
-A clean mirror that reflects you plainly.
-Your face looks too sharp in the flat light.`,
-      sceneryDescription: `
-Mounted above the sink is a mirror, unmarked and still.`,
-      sceneryDescriptionOrder: 0,
-    },
-    shower: {
-      description: `
-A shower stall with a translucent door and cold metal fixtures.
-The interior is dry where it shouldn’t be.`,
-      sceneryDescription: `
-A shower occupies the corner, the door closed.`,
-      sceneryDescriptionOrder: 0,
-    },
-    washlet: {
-      description: `
-A combination toilet and bidet with a small side-mounted control panel.
-The buttons are clean, the panel dark.`,
-      sceneryDescription: `
-The washlet sits against the wall, pristine and silent.`,
-      sceneryDescriptionOrder: 0,
-    },
-    medicineChest: {
-      description: `
-A wall-mounted medicine chest with a mirrored front and a thin latch.
-It closes with a soft click.`,
-      sceneryDescription: `
-Above the sink is a medicine chest, shut tight.`,
-      sceneryDescriptionOrder: 0,
+export const sixEastItems: Item[] = [
+  // BEDROOM
+  {
+    id: "TrixPen",
+    name: "a vape pen",
+    description: `It's a slim black cylinder with gold trim, and a mouthpiece on one end. The mouthpiece includes a small cylinder, filled with a green liquid.`,
+    sceneryDescription: `Sitting on the end table is slim, black vape pen.`,
+    location: "SixEastBed",
+    vocab: ["pen", "vape pen"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isUseable: true,
+    doses: 100,
+    meta: {
+      consumable: {
+        kind: "use",
+        perDose: [
+          { type: "status", id: "trixophine", intensity: 15, duration: 25 },
+          {
+            type: "message",
+            text: "The vapor is smooth and has a faint pine smell. When you exhale, the cloud has a distinct green color.",
+          },
+        ],
+        onEmpty: [{ type: "message", text: "It's empty." }],
+      },
     },
   },
-});
+  {
+    id: "OncheJournal",
+    name: "leather-bound journal",
+    description: `It's a small, personalized journal with a soft, black leather binding.`,
+    isLoggable: true,
+    readableTitle: `Journal of Isosceles Onche: Water Treatment`,
+    readableText: `
+    [Entry]\nHad an intense encounter with Omark Boulos again in the best and most electric way possible. Is it because he works in Power? Because he controls so much power? I don't know but that man hits the jackpot every time. Am I starting to like this guy?\n\n[Entry]\nHad a very fun encounter with Edwardix Shen again, probably the best yet, totally wild and primal. Is it because he works in Zoology? Because he works with all those dirty, filthy animals? I don't know but he took me to that lab where they keep all the weird crawlies they've found over the years, which I swear sends me into orbit for reasons I don't even fully understand. I think it's because they watch, especially that Witness thing, so many dirty little eyes. The next morning when I woke up I found an old, green rag on the bedroom floor that I must have grabbed while we were there, I don't remember. I need to return that to Edwardix asap, it's disgusting!\n\n[Entry]\nI saw something alarming at the plant today. It wasn't in any key area and nothing of consequence was damaged, but a series of perforations appeared in several spots on the side of the ozone chamber. At first I thought it was rust or some sort of mold but these weren't just surface spots. They were more like clusters of pinholes that didn't fully penetrate but I measured some that were a good fifteen centimeters deep. What troubles me more is that I can't explain what could have caused them.\n\n[Entry]\nHad a marathon encounter with Shanny, Joelson, Lil-Lilly, and Grag today, they're the poly group in unit 1E, when I swung by to say hi and wound up watching the entire six hours and seventeen minutes of "The Depths of Mare Fecunditatis" after I told them I'd never seen it. It was really good, I can see why people never shut up about it.\n\n[Entry]\nSomething is wrong. I'm not sure what, but something is absolutely wrong. I started noticing a few different people here and there looking a little ill yesterday but by today it's not just a few people anymore. At first I thought something must be going around but I've had a couple of people tell me now that they got sent home from the Medical Center after being told it wasn't viral, bacteria, or infection, and it doesn't appear to be radiation sickness, either. I dread to think of it, but my mind can't help but think of the water supply.\n\n[Entry]\nI've looked at it from every angle I can think of, and I still can't find any indication that the water supply has been contaminated but I can't let up. I'll be the first to tell you that I'm not an egotistical person, but I am the single most important person in our current society and I've been entrusted as steward of our most precious commodity. I can't afford to trust anyone else. This is too important.\n\n[Entry]\nI've been getting strange looks, weird glances and sometimes I catch people staring from the corner of my eye. Something is going on, I don't know what, but something. The situation is worsening, with more people getting sick, and the sick getting much worse. Not just sick, either, but different.\n\n[Entry]\nSomething is one-hundred percent going on. That gross green rag I ended up with after a fling with Edwardix? I'd put it in the bathroom and forgot about it and then today I found it in living room, on the floor over by the apartment door. I didn't move it, and it didn't move itself, so that means somebody has been in my apartment, and is going through my things. They could be searching for something.\n\n[Entry]\nPeople have been in my apartment, I know it. It's no accident they're targeting me, whoever they are, and whatever they want, they know I have full access to the water treatment plant. That's why they're after me, but they won't find the security codes here, and they won't find them anywhere else, either. I've changed the code, and deleted all record of the change. Now only one person alive knows the code and can access the water treatment plant, and that's me. I never forget, and so the code only exists in my mind.\n\n
+    `,
+    location: "seeded",
+    vocab: ["journal", "leatherbound"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 3,
+    isReadable: true,
+  },
+  {
+    id: "SixEastBedQueenBed",
+    name: "a queen-sized bed",
+    description: `It looks comfortable, and well used, but while it looks very plush and expensive, it borders on gauche.`,
+    sceneryDescription: `a queen-sized bed, made even larger by the plush bedding, ivory satin sheets draped with heavy blankets that mimic the fur of a tawny mountain cat. `,
+    location: "SixEastBed",
+    vocab: ["bed", "queen", "queen-sized", "queen-sized bed"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+  {
+    id: "SixEastBedEndTable",
+    name: "a mahogany end table",
+    description: `The end table has long legs and a wide, oval top. It has a single drawer in the front, with a shiny brass knob.`,
+    sceneryDescription: `Next to the bed is a mahogany end table with a single drawer in the front, fitted with a brass knob. `,
+    location: "SixEastBed",
+    vocab: ["table", "endtable", "end table", "mahogany"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "SixEastBedDresser",
+    name: "a cherry wood dresser",
+    description: `The dresser is wide, with an oval top, and has six drawers in total, three on each side.`,
+    sceneryDescription: `Across from the bed is a large dresser made from cherry wood, `,
+    location: "SixEastBed",
+    vocab: ["dresser", "cherry wood", "cherry wood dresser"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "SixEastBedAwards",
+    name: "a series of prestigious awards",
+    description: `There are seven different awards in total, of different shapes and sizes, though they all have to do with scientific achievement in the field of water management. Each nameplate bears the name 'Isosceles Onche' but as you look closer you see that there are some large gaps in between when some of them were awarded. Some were awarded only years apart, but then others, like the gap between winning the 'Outstanding Achievement in Porous Membrane Filtration Award' and the 'Skoglund Prize for Advances in Recursive Osmosis' puts them at over one hundred years apart.`,
+    sceneryDescription: `atop which is displayed a row of different awards, seven in total,`,
+    location: "SixEastBed",
+    vocab: ["awards", "award", "prizes", "trophies"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "SixEastBedPhone",
+    name: "phone",
+    description: `It's a phone with an integrated message system.`,
+    sceneryDescription: `and on the opposite side sits a phone with an integrated message machine.`,
+    location: "SixEastBed",
+    vocab: ["message", "system", "message system", "machine", "messages"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    isUseable: true,
+    meta: {
+      sceneryDescriptionOrder: 5,
+      kind: "phone",
+      messages: [
+        {
+          id: "6EM1",
+          title: "CALLER ID: SANYI, CLONE THREE",
+          transcript: `It's Three, have you been out lately? I saw the strangest thing just now; I've still got plenty of time on my Park Pass so I was at the gym, when one of the TVs went out and just then I felt a brief, stabbing pain in my shoulder. There was even a drop of blood, like a needle prick, and that seemed to be the extent of it, but when I hit the showers I noticed something inside the stall, a group of black dots on the wall inside that turned out to be tiny little holes, like pinpricks. It doesn't look like anybody was hurt and nothing besides the TV got damaged, but let me know if either of you notice anything strange.`,
+        },
+        {
+          id: "6EM2",
+          title: "CALLER ID: SANYI, CLONE TWO",
+          transcript: `It's Two, have either of you encountered anything strange? There's some buzz brewing down here about some sort of micro-breach clusters being spotted all over the place, tiny holes in walls, floors, not everywhere but whatever caused them they seem to go clear through everything. Let me know if either of you see anything.`,
+        },
+        {
+          id: "6EM3",
+          title: "CALLER ID: TENDWICK, LIL-LILLY",
+          transcript: `Hi, this is Lil-Lilly Tendwick in One East and I want you three stem-cells to know that I am onto you, vis-a-vis your three-timing with my poly-group's semi-serious-satellite Isosceles, and not even inviting us! She's not a three-man woman, so back off!`,
+        },
+        {
+          id: "6EM4",
+          title: "CALLER ID: SANYI, CLONE ONE",
+          transcript: `Two, it's One; Three's come down with some kind of fever, and it's quite bad so I'm going to take him up to Medical. It shouldn't be a big deal, but I'll call if anything changes.`,
+        },
+        {
+          id: "6EM5",
+          title: "CALLER ID: UMBOLTZ, HENK",
+          transcript: `Guys call me when you get this, I can hear it again, and I'm telling you it's coming from the storage unit between ours. You ought to be able to hear it through your bathroom wall. And before you tell me it's the pipes again, it's not, when I knocked on the wall, it stopped. Something, or somebody, is going in there. Anyway call me.`,
+        },
+        {
+          id: "6EM6",
+          title: "CALLER ID: SANYI, CLONE TWO",
+          transcript: `One, it's Two; I'm with Three in Medical and it's not just him, more and more are coming in and the waiting room is packed. They gave him the full battery; antibiotics, antivirals, the works so whatever it is should clear up soon. We're heading back, they need the space.`,
+        },
+        {
+          id: "6EM7",
+          title: "CALLER ID: SANYI, CLONE ONE",
+          transcript: `Two, it's One; I've managed to get my hands on some equipment, including the acid you asked for, and a good twenty kilos of ice to keep him cool, was there anything else we need? Any idea yet what's causing it? The lab's got no idea so far, and whatever it is, it's affected a lot of people. This is getting scary. I'm headed back now. They say we should shelter at home until they know more.`,
+        },
+      ],
+      unreadCount: 0,
+      redFlashCount: 0,
+    },
+    itemWeight: 0,
+    itemSize: 0,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+  },
+  {
+    id: "SixEastBedPainting",
+    name: "a stylized painting of Isosceles Onche",
+    description: `The painting is huge, taking up a good portion of the north wall, and is styled somewhere between a portrait and a political campaign poster. It displays a stern but not unattractive woman, with steely eyes, thin lips, and an impressive head of wavy platinum hair.`,
+    sceneryDescription: `[[newline]]Hanging on the north wall is a huge painting in a square, wooden frame that measures five feet per side. The painting portrays the head and shoulders of a woman with an intense gaze, and a cascading head of wavy platinum hair.`,
+    location: "SixEastBed",
+    vocab: ["painting", "picture"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 6,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "SixEastCloset",
+    name: "closet",
+    description: `It's very spacious, but it doesn't seem as though fashion was very important to the occupants.`,
+    sceneryDescription: `[[newline]]On the opposite wall is a sliding closet door.`,
+    location: "SixEastBed",
+    vocab: ["closet", "closet door"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 7,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isContainer: true,
+    capacity: 30,
+    isOpenable: true,
+  },
+  // BATHROOM
+  {
+    id: "overhead lights",
+    name: "a series overhead lights",
+    description: `The lights shine from circular recessed panels scattered across the ceiling above, varying in brightness by location to create an overall warm glow that still invites shadows.`,
+    sceneryDescription: `softly lit by a series of circular overhead lights that also emit a soothing warmth. `,
+    location: "SixEastBath",
+    vocab: ["overhead lights", "overhead", "lights", "light", "overhead light"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "roman bathtub",
+    name: "a roman bathtub",
+    description: `The bath is nice and deep, with places to sit and water jets but it's all dry, now.`,
+    sceneryDescription: `To the right, a few steps lead up to a sunken Roman bathtub which is currently empty, and dry. `,
+    location: "SixEastBath",
+    vocab: ["tub", "hot tub", "bathtub", "roman tub", "roman bathtub"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "toilet",
+    name: "a toilet",
+    description: `The toilet is pristine, the brass polished to a shine.`,
+    sceneryDescription: `To the left is a toilet with a solid brass angle stop and fixtures, `,
+    location: "SixEastBath",
+    vocab: ["toilet"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 3,
+      onUse: `You might want to hold off on that, since there's no water in it, and it probably won't flush.`,
+      onFlush: `You push the handle but nothing happens. It's not getting any water.`,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "bidet",
+    name: "a fancy bidet",
+    description: `The bidet is clean and quite elegant, if you don't think about what it's for.`,
+    sceneryDescription: `and next to that a porcelain bidet, also with brass fixtures. `,
+    location: "SixEastBath",
+    vocab: ["bidet"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+      onUse: `It's not getting any water. Bummer.`,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "sink",
+    name: "a fancy sink",
+    description: `It's fancy, with a wide stone basin and brass faucets.`,
+    sceneryDescription: `Against the far wall stands a sink with a smooth stone basin, `,
+    location: "SixEastBath",
+    vocab: ["sink", "basin"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 5,
+      onUse: `You turn the faucet but no water comes out.`,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "SixEastMedicineChest",
+    name: "a medicine chest",
+    description: `It's a shallow medicine chest mounted above the sink.`,
+    sceneryDescription: `and mounted above it is a medicine chest whose door doubles as `,
+    location: "SixEastBath",
+    vocab: [
+      "medicine",
+      "chest",
+      "medicine chest",
+      "cabinet",
+      "medicine cabinet",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 6,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "mirror",
+    name: "an ornate mirror",
+    description: `It's a fancy ornate mirror.`,
+    sceneryDescription: `an ornate mirror. `,
+    location: "SixEastBath",
+    vocab: ["mirror"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 7,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isReflective: true,
+  },
+  {
+    id: "hornychew",
+    name: "a small chewable",
+    description: `It's a small, brick-shaped chewable inside a thin papery wrapper. The wrapper displays a stylized logo for something called 'Stimul-8X.' It also promises, in tiny print, that the wrapper is also edible.`,
+    initialDescription: `an individually wrapped chewable sits on one shelf of the medicine chest.`,
+    location: "seeded",
+    vocab: ["chewable", "gummy"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    meta: {
+      consumable: {
+        kind: "food",
+        perDose: [
+          { type: "status", id: "superhorny", intensity: 69, duration: 69 },
+          {
+            type: "message",
+            text: `You pop the chewable in your mouth and squish it between your back teeth. It yields like gum for a moment, then disolves all at once into a slightly spicy, honey-flavored syrup. Tasty!`,
+          },
+        ],
+        onEmpty: [{ type: "message", text: "It's empty." }],
+      },
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isConsumable: true,
+    doses: 1,
+  },
+  {
+    id: "PheromonePerfume",
+    name: "an elegant perfume bottle",
+    description: `The bottle, which is shaped like a teardrop and is small enough to fit in your hand, has no label. It's filled with a yellowish liquid, and topped with a silky bulb atomizer.`,
+    initialDescription: `a small perfume bottle with a bulb atomizer sits on one of the medicine cabinet's shelves.`,
+    location: "seeded",
+    vocab: ["perfume", "bottle", "bulb", "atomizer"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    meta: {
+      consumable: {
+        kind: "useable",
+        perDose: [
+          { type: "status", id: "pheromones", intensity: 100, duration: 300 }, // Pheromones is an invisible effect, and only affects the bull puzzle
+          {
+            type: "message",
+            text: `You hold the perfume bottle toward yourself and squeeze the bulb, producing a puff of fine mist. It doesn't really smell like anything at all, though.`,
+          },
+        ],
+        onEmpty: [{ type: "message", text: "It's empty." }],
+      },
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isUseable: true,
+    doses: 1000,
+  },
+  // LIVING AREA
+  {
+    id: "overhead light",
+    name: "an overhead light",
+    description: `The light shines down from a recessed panel above.`,
+    sceneryDescription: `a faintly red-tinged light, `,
+    location: "LivingQuartersSixEast",
+    vocab: ["overhead light", "overhead", "light"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ceramic tiles",
+    name: "ceramic tiles",
+    description: `Cold, hard, Mexican tile.`,
+    sceneryDescription: `and the floor is an island of hard ceramic tile, `,
+    location: "LivingQuartersSixEast",
+    vocab: ["tiles", "floor tiles"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "hardwood floor",
+    name: "hardwood floor",
+    description: `The floor is dark with a warm tinge, the wood polished, and shiny.`,
+    sceneryDescription: `surrounded by beautifaul hardwood. The room has been divided into two distinct areas; the right side has been set up almost like a small office, complete with`,
+    location: "LivingQuartersSixEast",
+    vocab: ["floor", "hardwood floor"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "swivel chair",
+    name: "a swivel chair",
+    description: `It's sleek, ergonoic, and very well worn.`,
+    sceneryDescription: ` a swivel chair that sits behind `,
+    location: "LivingQuartersSixEast",
+    vocab: ["chair", "swivel", "swivel chair"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+  {
+    id: "wooden desk",
+    name: "a wooden desk",
+    description: `The desk is made of polished wood with tastefully carved trim. It has a single drawer in the back, which is closed.`,
+    sceneryDescription: `a wooden desk, `,
+    location: "LivingQuartersSixEast",
+    vocab: ["desk", "wooden desk"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 5,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "white board",
+    name: "a white board",
+    description: `The diagrams look highly technical. You're able to glean they have something to do with water treatment, but you can't decipher the meaning of it.`,
+    sceneryDescription: `next to a large whiteboard that's covered in diagrams scribbled in different colored marker,`,
+    location: "LivingQuartersSixEast",
+    vocab: ["board", "white board", "diagrams", "notes", "paper notes"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 6,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "paper notes",
+    name: "paper notes",
+    description: `They have times and dates scribbled on them, but you don't have any context for them.`,
+    sceneryDescription: ` and stuck on paper notes.`,
+    location: "LivingQuartersSixEast",
+    vocab: ["paper notes", "papers", "post its", "post-its", "post-it notes"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 7,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "workstation",
+    name: "a computer workstation",
+    description: `The computer is currently dark, it doesn't seem to be getting any power.`,
+    sceneryDescription: ` Sitting on the desk is a computer workstation, surrounded by clutter.`,
+    location: "LivingQuartersSixEast",
+    vocab: ["workstation", "computer", "computer workstation", "clutter"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 8,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "sofa",
+    name: "a sofa",
+    description: `It's a grand sofa with suede uphoustery, looking soft and well-worn.`,
+    sceneryDescription: `[[newline]]The other side of the room is set up for leisure, with a large, plush sofa positioned in front of `,
+    location: "LivingQuartersSixEast",
+    vocab: ["sofa", "couch"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 9,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSurface: true,
+  },
+  {
+    id: "television",
+    name: "television",
+    description: `The screen is dark. It doesn't look like it's getting a signal at the moment.`,
+    sceneryDescription: `a large television screen, `,
+    location: "LivingQuartersSixEast",
+    vocab: ["television", "tv"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 10,
+      onSwitch: `You toggle it on and off, but nothing happens.`,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isSwitchable: true,
+  },
+  {
+    id: "bearskin rug",
+    name: "a bearskin rug",
+    description: `The bearskin rug is a mood, alright. The fur is plush and silky, but the head's mouth gapes open to expose the teeth, and its eyes glare like marbles in the low light.`,
+    sceneryDescription: `and a bearskin rug sprawled out between them, complete with the head and open mouth.`,
+    location: "LivingQuartersSixEast",
+    vocab: ["rug", "bearskin", "bear skin", "bearskin rug", "bear skin rug"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 11,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "filter demo",
+    name: "a water filtration demo",
+    description: `It's a rectangular box of transparent plastic, containing five equally sized chambers, each of which is filled with water. The chambers are separated by a series of elaborate-looking mesh membranes that billow slightly when the water moves. On the top left corner of the box is a small black button, and the front is adorned with a small brass plate that reads: Advances in Water Engineering.`,
+    initialDescription: `Sitting on the desk in front of the workstation is a technical-looking model of some kind that displays a series of chambers inside a hard plastic housing.`,
+    location: "LivingQuartersSixEast",
+    vocab: ["model", "box", "plastic box", "demo", "button", "black button"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    overrides: {
+      push: `You press the black button on top of the plastic box and some kind of black fluid begins spilling into the first chamber, blooming through the water until it turns completely dark and begins to bleed into the second, then third chambers. When it stops, the box begins to vibrate ever so slightly in your hands as the blackened chambers begin to clear, seemingly just from the gentle rippling of the membranes. In seconds the water is crystal clear again, and the removed material is loaded up for the button to be pressed again.`,
+    },
+    // meta: {
+    //   onPush: `You press the black button on top of the plastic box and some kind of black fluid begins spilling into the first chamber, blooming through the water until it turns completely dark and begins to bleed into the second, then third chambers. When it stops, the box begins to vibrate ever so slightly in your hands as the blackened chambers begin to clear, seemingly just from the gentle rippling of the membranes. In seconds the water is crystal clear again, and the removed material is loaded up for the button to be pressed again.`,
+    // },
+    itemWeight: 2,
+    itemSize: 3,
+    isPushable: true,
+  },
+];

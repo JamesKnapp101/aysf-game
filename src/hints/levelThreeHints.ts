@@ -10,16 +10,16 @@ export const levelThreeHints: HintMenuNode = {
     // ======================================================================
     {
       kind: "menu",
-      id: "l3-hub",
+      id: "l3-park",
       title: "THE HUB",
       children: [
         // ------------------------------------------------------------------
-        // How do I access 'The Hub'?
+        // How do I access 'The Park'?
         // ------------------------------------------------------------------
         {
           kind: "menu",
-          id: "l3-hub-access",
-          title: "How do I access 'The Hub'?",
+          id: "l3-park-access",
+          title: "How do I access 'The Park'?",
           children: [
             {
               kind: "hint",
@@ -80,12 +80,12 @@ export const levelThreeHints: HintMenuNode = {
         },
 
         // ------------------------------------------------------------------
-        // I'm in 'The Hub' and I still need help.
+        // I'm in 'The Park' and I still need help.
         // ------------------------------------------------------------------
         {
           kind: "menu",
-          id: "l3-hub-more-help",
-          title: "I'm in 'The Hub' and I still need help.",
+          id: "l3-park-more-help",
+          title: "I'm in 'The Park' and I still need help.",
           children: [
             // ------------------------ The Library --------------------------
             {
@@ -308,7 +308,7 @@ export const levelThreeHints: HintMenuNode = {
                           id: "L3REST1_2",
                           title: "Hint Two",
                           description:
-                            "Didn't one of the answering machine messages say that a group of people were going to take refuge in The Hub?",
+                            "Didn't one of the answering machine messages say that a group of people were going to take refuge in The Park?",
                         },
                         {
                           kind: "hint",

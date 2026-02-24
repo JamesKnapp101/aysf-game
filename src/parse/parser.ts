@@ -58,6 +58,9 @@ const VERB_ALIASES: Record<string, string> = {
   inject: "inject",
   fill: "fill",
   ask: "ask",
+  eat: "eat",
+  chew: "eat",
+  devour: "eat",
 };
 
 const PREPOSITIONS: Preposition[] = [

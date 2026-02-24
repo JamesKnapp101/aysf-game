@@ -1,5 +1,6 @@
 import { isRoomSpotlitByAviary } from "@game/engine/ticks/aviaryTick";
 import { getItemSceneryDescription } from "@game/helpers/descriptionHelpers";
+import { inventoryHas } from "@game/rules/state";
 import { getAviaryNextSpotlitRoomId } from "src/world/Items/creatures/aviaryOrganisms";
 import { generateTerminalTpadDescription } from "../helpers/gameHelpers";
 import { isItemOpen } from "../rules/containers";
@@ -37,13 +38,14 @@ export function buildRoomDescription(
   );
 
   const flashlightOn = (() => {
-    if (!state.player.inventory.includes("flashlight")) return false;
+    if (!inventoryHas(state.player.inventory, "flashlight")) return false;
     const fs = state.itemState.itemSettings["flashlight"];
     return Boolean(fs && "isOn" in fs && fs.isOn === true);
   })();
 
   const damagedFlashlightOn = (() => {
-    if (!state.player.inventory.includes("damagedFlashlight")) return false;
+    if (!inventoryHas(state.player.inventory, "damagedFlashlight"))
+      return false;
     const fs = state.itemState.itemSettings["damagedFlashlight"];
     return Boolean(
       fs &&

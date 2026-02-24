@@ -279,327 +279,6 @@ export const levelFourItems: Item[] = [
     },
   },
   {
-    id: "AXE",
-    name: "axe",
-    description:
-      "A rugged axe with a wedge-shaped head flaring outward at the blade. Both head and handle are made from a lightweight polymer, clearly designed for emergency use aboard a ship that mostly pretends it doesn’t need axes.",
-    sceneryDescription:
-      "The edge looks serviceable, if not recently sharpened. It’s the kind of tool that solves problems by reducing them to smaller, more scattered problems.",
-    location: "HydroponicsCellar",
-    vocab: ["axe", "ax"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 5,
-    itemSize: 4,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "SPRINKLERS_H1",
-    name: "sprinkler system",
-    description:
-      "Overhead, an array of tubes and large sprinkler heads is mounted along the ceiling, spidering out above the burning hydroponic beds.",
-    sceneryDescription:
-      "The nozzles are blackened at the tips, some of them dripping residue. The system looks like it was built to save the plants, not the people.",
-    location: "HydroponicsOne",
-    vocab: ["sprinkler", "sprinklers", "system", "heads"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 9,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "SPRINKLERS_H2",
-    name: "sprinkler system",
-    description:
-      "The same run of tubes and sprinkler heads continues overhead, branching to cover the intact sections of hydroponics.",
-    sceneryDescription:
-      "Here, the heads are cleaner, metal still bright where the fire hasn’t touched them yet, like they’re still deciding whether they’re going to help.",
-    location: "HydroponicsTwo",
-    vocab: ["sprinkler", "sprinklers", "system", "heads"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 9,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "SPRINKLERS_H3",
-    name: "sprinkler system",
-    description:
-      "The sprinkler tubing snakes across the ceiling here as well, with heads clustered above the surviving trees.",
-    sceneryDescription:
-      "This section looks barely used, as if the fire died down before the system got a chance to drench everything in whatever chemical cocktail it was primed with.",
-    location: "HydroponicsThree",
-    vocab: ["sprinkler", "sprinklers", "system", "heads"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 9,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "SMOKE",
-    name: "smoke",
-    description:
-      "Thick black smoke churns above the burning foliage, slowly rising toward the high ceiling.",
-    sceneryDescription:
-      "The smoke pools and slides across the upper reaches of the room, blotting out lights and eating definition until everything above you looks like a bad idea in gas form.",
-    location: "HydroponicsOne",
-    vocab: ["thick", "black", "smoke"],
-    itemClass: "gas",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "NutTreeSource",
-    name: "walnut source",
-    description:
-      "One scorched tree seems to have escaped the worst of the flames. A few walnuts still cling to branches high overhead, stubborn and probably not worth the effort.",
-    sceneryDescription:
-      "Charred bark and browned leaves cling to life around the remaining nuts. Every intact shell looks like it’s waiting to be pried loose by someone with more optimism than sense.",
-    location: "HydroponicsThree",
-    vocab: ["walnut", "nut", "nuts", "tree"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "NutTree",
-    name: "walnut tree",
-    description:
-      "The walnut tree has been scorched by the fire, its leaves curled and blackened. A few nuts still appear intact on its surviving branches.",
-    sceneryDescription:
-      "The trunk is charred in streaks, and most of the foliage is crisped. The remaining nuts hang on like tiny, carbon-flavored prizes.",
-    location: "HydroponicsThree",
-    vocab: ["tree", "walnut", "nut"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "LargeBurnedTree",
-    name: "large burned tree",
-    description:
-      "You’re not sure what kind of tree it was. What’s left is a large trunk with spindly blackened branches jutting out from about three feet off the ground.",
-    sceneryDescription:
-      "The branches claw at the air like skeletal fingers, ash-flaking whenever the air stirs. Whatever it grew here once, it’s going to stay dead.",
-    location: "HydroponicsThree",
-    vocab: ["burned", "tree", "large"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 250,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "TallBurnedTree",
-    name: "tall burned tree",
-    description:
-      "A tall blackened trunk rises about six feet before the remains of upward-pointing branches appear, continuing up into the darkness.",
-    sceneryDescription:
-      "The charred column disappears into shadow, a vertical scar etched into the artificial sky of the hydroponic bay.",
-    location: "HydroponicsThree",
-    vocab: ["burned", "tree", "tall"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 250,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "ZookeeperBracelet",
-    name: "small metallic bracelet",
-    description:
-      'A small metallic bracelet engraved with the words: "DeM Department of Zoology." The metal is cold, the engraving sharp and official-looking.',
-    initialDescription:
-      "Around the corpse’s wrist is a small metallic bracelet that catches the light.",
-    sceneryDescription:
-      "The bracelet looks like a staff ID band, the sort of thing that gets you into areas full of dangerous animals and terrible insurance policies.",
-    location: "OneEastBed",
-    vocab: ["small", "metallic", "bracelet", "zookeeper"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: true,
-    clothingSlot: "wrist",
-    isReadable: true,
-    readableText: "DeM Department of Zoology",
-    isContainer: false,
-  },
-  {
-    id: "ANIMALPODS",
-    name: "cryopods",
-    description:
-      "Rows upon rows of cryogenic chambers stretch away in all directions—small, medium, large, and huge pods stacked like refrigerated filing cabinets for the galaxy’s stranger lifeforms.",
-    sceneryDescription:
-      "There must be thousands of sealed pods here, each one a cold, silent question about what’s sleeping inside and whether it wakes up hungry.",
-    location: "ZooThree",
-    vocab: [
-      "cryogenic",
-      "chambers",
-      "small",
-      "medium",
-      "large",
-      "huge",
-      "pods",
-      "cryopods",
-    ],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1000,
-    itemSize: 9,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "JintosCryopod",
-    name: "large cryopod",
-    description:
-      "A large cryopod designed to carry something significantly bigger than a person. The pod’s hatch is built to seal tight, and a vital signs monitor is mounted alongside it with dark, empty readouts.",
-    initialDescription:
-      "One cryopod in particular stands out: its vital signs monitor is dark, and the chamber is noticeably larger than the others, clearly meant to hold a massive animal.",
-    sceneryDescription:
-      "The padded interior looks like an oversized coffin lined for comfort. Scratches and impressions in the padding hint that something large and heavy has spent a lot of time in there.",
-    location: "ZooThree",
-    vocab: ["large", "cryopod", "sleep", "chamber", "pod"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 500,
-    itemSize: 9,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: true,
-    capacity: 2,
-  },
-  {
-    id: "Transformers",
-    name: "spare transformers",
-    description:
-      "Beyond the tangle of debris you can see rows of power transformers, some of them cracked and scorched from the explosion.",
-    sceneryDescription:
-      "The boxy housings are dented and blackened where shrapnel and heat hit hardest. They hum with the eerie stillness of equipment that should be buzzing but isn’t.",
-    location: "RemotePowerStation",
-    vocab: ["transformer", "transformers"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 300,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    overrides: {
-      take: "You can see them through the debris, but there’s no way you’re getting to them without a demolition crew and a signed waiver.",
-    },
-  },
-  {
-    id: "Fuses",
-    name: "replacement fuses",
-    description:
-      "Several trays of replacement fuses lie scattered beyond the twisted metal, most of them shattered by the blast.",
-    sceneryDescription:
-      "Glass and ceramic shards glitter faintly among the debris, like someone murdered a box of Christmas lights.",
-    location: "RemotePowerStation",
-    vocab: ["fuse", "fuses"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 10,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    overrides: {
-      take: "They’re broken, out of reach, and buried in wreckage. Even if you could get to them, they’d be about as useful as a glass hammer.",
-    },
-  },
-  {
-    id: "WWires",
-    name: "wire spools",
-    description:
-      "Spools of wire are stacked behind the debris, some of them partially uncoiled, looping out into the wreckage.",
-    sceneryDescription:
-      "The coiled lengths of wire look heavy and stubborn, the kind of thing that promises back problems if you ever tried to haul them out of here.",
-    location: "RemotePowerStation",
-    vocab: ["wire", "wires", "spools"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 150,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    overrides: {
-      take: "Even if you could reach them through the debris—which you can’t—the spools would be too bulky to carry around.",
-    },
-  },
-  {
-    id: "FlashCELLZero",
-    name: "Powergizer battery cell",
-    description:
-      'A black and silver cylindrical battery cell, about an inch in diameter and four inches long. The logo "Powergizer" is printed along the side in confident marketing font.',
-    sceneryDescription:
-      "The casing is scuffed but intact, the contact ends still clean. It looks like it still has some life left in it, unlike a lot of things on this ship.",
-    location: "UNKNOWN",
-    vocab: ["powergizer", "battery", "cell"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    readableText: "Powergizer",
-    isContainer: false,
-    remainingCharge: 50,
-  },
-  {
-    id: "FlashCELLTwo",
-    name: "Robustcell battery cell",
-    description:
-      'A black and gold cylindrical battery cell, about an inch in diameter and four inches long. The logo "Robustcell" is stamped along its side.',
-    initialDescription:
-      "Lying near the debris to the north is a small cylindrical battery, half-hidden among the wreckage.",
-    sceneryDescription:
-      "The gold detailing is chipped but still flashy, like a luxury brand that insists it’s better than the others right up until everything explodes.",
-    location: "RemotePowerStation",
-    vocab: ["robustcell", "battery", "cell"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    readableText: "Robustcell",
-    isContainer: false,
-    remainingCharge: 550,
-  },
-  {
     id: "RemoteYellowIND",
     name: "indicator light",
     description:
@@ -692,6 +371,9 @@ export const levelFourItems: Item[] = [
     overrides: {
       take: "You wrap your hand around the oversized grip. It comes free only if the system isn’t keyed on; otherwise it refuses to budge, like the hardware equivalent of a disapproving look.",
     },
+    meta: {
+      kind: "key",
+    },
     scoreId: "obtained_power_key",
   },
   {
@@ -774,6 +456,9 @@ export const levelFourItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 1,
     itemSize: 1,
+    meta: {
+      kind: "key",
+    },
   },
   {
     id: "ShackCellarKey",
@@ -785,5 +470,8 @@ export const levelFourItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 1,
     itemSize: 1,
+    meta: {
+      kind: "key",
+    },
   },
 ];

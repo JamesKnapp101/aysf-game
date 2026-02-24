@@ -1,8 +1,22 @@
 export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
   ThreeWestGimOneEndTable: ["GimOneJournal", "MensLockerKey2"],
   ThreeWestGimTwoEndTable: ["GimTwoJournal", "MensLockerKey9"],
-  ThreeWestGimThreeEndTable: ["GimThreeJournal", "MensLockerKey11", "HubPass"],
-  FiveEastDresser: ["Syringe"],
+  ThreeWestGimThreeEndTable: ["GimThreeJournal", "MensLockerKey11", "ParkPass"],
+  ThreeWestCloset: [
+    "GimOneShirt",
+    "GimOnePants",
+    "GimOneShoes",
+    "GimTwoShirt",
+    "GimTwoPants",
+    "GimTwoShoes",
+    "GimThreeShirt",
+    "GimThreePants",
+    "GimThreeShoes",
+  ],
+  SixEastMedicineChest: ["hornychew", "PheromonePerfume"],
+  SixEastBedEndTable: ["OncheJournal"],
+  SixEastBedDresser: [],
+  SixEastCloset: [],
   DRUGTIN: ["GroovyCart"],
   SixWestMedicineChest: ["DRUGTIN"],
   SixWestWetBar: ["SixWestBourbon", "SixWestScotch", "SixWestBeer"],
@@ -29,5 +43,5 @@ export const INITIAL_SURFACE_CONTENTS: Record<string, string[]> = {};
 
 export const INITIAL_UNDER_CONTENTS: Record<string, string[]> = {
   SixWestBedding: ["SixWestDiary"],
-  OneEastAreaRug: ["HubPass"],
+  OneEastAreaRug: ["ParkPass"],
 };

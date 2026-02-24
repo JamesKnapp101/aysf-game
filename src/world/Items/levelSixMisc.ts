@@ -75,87 +75,6 @@ export const levelSixItems: Item[] = [
       return desc;
     },
   },
-
-  // {
-  //   id: "HydroponicsDoor",
-  //   name: "door",
-  //   description: `It's a large, flat panel display mounted in the wall over the door.`,
-  //   sceneryDescription: `To the south is a security door with no obvious handle, its frame skewed enough to leave an open gap along the right side. A badge reader is mounted next to the door, but it has scorching around the seam and doesn't appear to be functional. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the dented banner is the word 'HYDROPONICS'`,
-  //   location: "LevelSixCorridorEnd",
-  //   vocab: ["door"],
-  //   itemClass: "solid",
-  //   itemCategory: "scenery",
-  //   itemWeight: 50,
-  //   itemSize: 50,
-  //   meta: {
-  //     sceneryDescriptionOrder: 1,
-  //   },
-  //   describeScenery: (state) => {
-  //     let desc = `To the south is a security door with no obvious handle, its frame skewed enough to leave an open gap along the right side. A badge reader is mounted next to the door, but it has scorching around the seam and doesn't appear to be functional. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the dented banner is the word 'HYDROPONICS'`;
-  //     const greenTpadState =
-  //       state.worldState.powerRestoredSections["teleport-pads-green"];
-  //     if (greenTpadState) {
-  //       desc += `Through the gap along the side of the door, you can see a smooth, glassy green disk on the floor, big enough to stand on. It is lit with a sallow green glow that bathes the shadows of the room beyond.`;
-  //     }
-  //     if (greenTpadState === false) {
-  //       desc += `Through the gap along the side of the door, you can see a smooth, glassy green disk on the floor, big enough to stand on.`;
-  //     }
-  //     return desc;
-  //   },
-  //   describe: (state) => {
-  //     let desc = `The door is damaged, becoming wedged tight in the frame. There's a badge reader next to it, but even if it wasn't damaged I don't think the door is functional. Through the gap along the side you can see a glassy green disk, or platform on the floor, large enough to stand on`;
-  //     const greenTpadState =
-  //       state.worldState.powerRestoredSections["teleport-pads-green"];
-  //     if (greenTpadState) {
-  //       desc += ` and glowing a sallow green color.`;
-  //     }
-  //     if (greenTpadState === false) {
-  //       desc += `.`;
-  //     }
-  //     return desc;
-  //   },
-  // },
-
-  {
-    id: "CannisterOne",
-    name: "cannister of gel",
-    description:
-      "A heavy, pressurized canister about a foot thick and three feet long rests near the wall. The midsection is made of thick, transparent composite, its surface scuffed and clouded by years of handling. Inside, a dense blue gel barely shifts, clinging to the walls as if gravity is something it resents but tolerates.",
-    initialDescription:
-      "A large, heavy-looking pressurized canister rests near one wall.",
-    sceneryDescription:
-      "Near the bulkhead, a squat pressurized canister of blue gel leans against the wall like a piece of industrial detritus nobody quite dared to throw away.",
-    location: "LevelSixCorridor",
-    vocab: ["canister", "cannister", "gel", "thick", "blue"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 30,
-    itemSize: 101,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isOpenable: false,
-  },
-  {
-    id: "CannisterTwo",
-    name: "canister of liquid",
-    description:
-      "A long, narrow pressurized canister lies on its side, about four inches in diameter and three feet from end to end. A transparent midsection reveals a bright orange fluid that clings to the glass with slow, viscous movements, catching the light like something equal parts chemical and hungry.",
-    initialDescription:
-      "Lying on its side is a long, thin pressurized canister.",
-    sceneryDescription:
-      "A thin pressurized canister of bright orange fluid has rolled against the wall, its contents glowing faintly in the corridor gloom.",
-    location: "LevelSixCorridor",
-    vocab: ["canister", "cannister", "liquid", "fluid", "bright", "orange"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 20,
-    itemSize: 101,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isOpenable: false,
-  },
   {
     id: "AirlockPanel",
     name: "airlock panel",
@@ -385,7 +304,9 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-
+    meta: {
+      kind: "key",
+    },
     overrides: {
       take: "You reach out and carefully pluck the spinning key from the air, feeling its weight settle uncomfortably in your hand.",
     },

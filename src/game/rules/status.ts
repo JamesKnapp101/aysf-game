@@ -18,7 +18,7 @@ export function applyStatusEffectToPlayer(
   state: GameState,
   effectId: StatusId,
   intensity: number,
-  turns: number
+  turns: number,
 ): GameState {
   const effects = state.player.statusEffects;
   const idx = effects.findIndex((se) => se.id === effectId);
@@ -28,7 +28,7 @@ export function applyStatusEffectToPlayer(
   if (idx >= 0) {
     const existing = effects[idx];
     const newIntensity = existing.intensity + intensity;
-    const addedTurns = turns * (newIntensity * 0.05);
+    const addedTurns = turns; // * (newIntensity * 0.05);
 
     const updated: StatusEffect = {
       ...existing,
@@ -38,7 +38,7 @@ export function applyStatusEffectToPlayer(
 
     nextEffects = effects.map((se, i) => (i === idx ? updated : se));
   } else {
-    const addedTurns = turns * (intensity * 0.05);
+    const addedTurns = turns; // * (intensity * 0.05);
 
     const newEffect: StatusEffect = {
       id: effectId,
@@ -68,7 +68,7 @@ export function applyStatusEffectToPlayer(
 
 export function removeStatusEffectFromPlayer(
   state: GameState,
-  effectId: StatusId
+  effectId: StatusId,
 ): GameState {
   let changed = false;
 

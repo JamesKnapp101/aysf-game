@@ -1,3 +1,4 @@
+import { inventoryHas } from "@game/rules/state";
 import type { DoorState } from "../types/doorTypes";
 import type { GameState } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
@@ -123,7 +124,7 @@ export function getItemRoomId(
   state: GameState,
   itemId: ItemId,
 ): string | undefined {
-  if (state.player.inventory.includes(itemId)) return undefined;
+  if (inventoryHas(state.player.inventory, itemId)) return undefined;
 
   return state.itemState.itemRoomId[itemId];
 }
@@ -165,7 +166,7 @@ export function moveItemToRoom(
   roomId: string,
 ): GameState {
   // If the player is carrying it, "location" is inventory.
-  if (state.player.inventory.includes(itemId)) return state;
+  if (inventoryHas(state.player.inventory, itemId)) return state;
 
   // Ensure destination room exists.
   if (!state.world.rooms.some((r) => r.id === roomId)) return state;
@@ -181,7 +182,7 @@ export function moveItemToRoom(
 
   const children = getAttachedChildren(state, itemId); // note: use `state` is fine
   for (const childId of children) {
-    if (state.player.inventory.includes(childId)) continue;
+    if (inventoryHas(state.player.inventory, childId)) continue;
     const childCur = state.itemState.itemRoomId[childId];
     if (!childCur) continue; // if not tracked, skip
     if (childCur === roomId) continue;
@@ -265,7 +266,7 @@ export function seedItemRoomLocations(state: GameState): GameState {
     const id = item.id as ItemId;
 
     // carried items are not in rooms
-    if (state.player.inventory.includes(item.id)) continue;
+    if (inventoryHas(state.player.inventory, item.id)) continue;
 
     // items inside other items are not in rooms
     if (contained.has(id)) continue;

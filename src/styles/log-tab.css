@@ -1,0 +1,72 @@
+.logtab {
+    border: 2px solid var(--crt-color);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.logtab-header {
+    font-size: 16px;
+    letter-spacing: 1px;
+    padding: 4px 6px 10px 6px;
+    border-bottom: 2px solid var(--crt-color);
+    margin-bottom: 10px;
+}
+
+.logtab-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-right: 6px;
+}
+
+.logtab-row {
+    border: 2px solid var(--crt-color);
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.logtab-row:hover {
+    background: rgba(0, 255, 0, 0.04);
+}
+
+.logtab-row:focus-visible {
+    outline: 2px dashed var(--crt-color);
+    outline-offset: 3px;
+}
+
+.logtab-rowTop {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.logtab-rowTitle {
+    font-size: 24px;
+    line-height: 1.1;
+    margin-top: 6px;
+    padding-left: 22px;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.logtab-rowPreview {
+    font-size: 16px;
+    margin-top: 4px;
+    padding-left: 22px;
+    opacity: 0.95;
+    font-style: italic;
+}
+
+.logtab-empty {
+    opacity: 0.85;
+    padding: 10px;
+}

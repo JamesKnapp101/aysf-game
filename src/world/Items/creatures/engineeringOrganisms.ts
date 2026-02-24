@@ -1,3 +1,4 @@
+import { inventoryHas } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
@@ -68,7 +69,7 @@ export function organismOverrideTick(
   if (!item.meta?.canMove) return;
 
   const flashlightOn = (() => {
-    if (!state.player.inventory.includes("flashlight")) return false;
+    if (!inventoryHas(state.player.inventory, "flashlight")) return false;
     const fs = state.itemState.itemSettings["flashlight"];
     return Boolean(fs && "isOn" in fs && fs.isOn === true);
   })();

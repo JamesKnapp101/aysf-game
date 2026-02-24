@@ -34,29 +34,6 @@ export function describePoweredTeleportPads(
 }
 
 export const teleportationPadItems: Item[] = [
-  // TERMINAL OBJECT
-  {
-    id: "TelepadTerminal",
-    name: "terminal",
-    description:
-      "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
-    describeScenery(state) {
-      let description = `On the floor of the terminal along the base of the northern wall are a row of different colored glossy disks, each ringed by a shiny metallic band. The disks are large enough, and look sturdy enough, to stand on.`;
-      description += describePoweredTeleportPads(
-        state.worldState.powerRestoredSections,
-      );
-      return description;
-    },
-    location: "TPADTerminal",
-    vocab: ["terminal", "translocation terminal", "teleportation terminal"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    meta: {
-      kind: "teleportation-terminal",
-    },
-  },
   // GREEN TELEPORT RING
   {
     id: "GreenTPADTerminal",
@@ -81,13 +58,13 @@ export const teleportationPadItems: Item[] = [
     },
   },
   {
-    id: "GreenTPADHubCenter",
+    id: "GreenTPADParkCenter",
     name: "glossy green disk",
     description:
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     sceneryDescription:
       "Just off the paved area is a four foot by four foot square stepping stone, upon which is a slightly raised green disk ringed by a shiny metal band.",
-    location: "HubCenter",
+    location: "ParkCenter",
     vocab: ["green", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",

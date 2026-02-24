@@ -5,12 +5,15 @@ import { Item } from "../../types/itemTypes";
 
 export function tryPushItem(
   state: GameState,
-  item: Item
+  item: Item,
 ): { state: GameState; message: string } {
   let next: GameState = state;
 
   if (!item.isPushable) {
     return { state, message: "You can't push that." };
+  }
+  if (item.overrides?.push) {
+    return { state, message: item.overrides.push };
   }
   let pushMsg = "";
   // Radio call button
@@ -39,14 +42,14 @@ export function tryPushItem(
         9,
         {
           incomingMessage: `*pop* "Yes, I'm here...holy shit I thought I was the last one...(heavy breathing) Look, I don't have much time here so listen up (cough). If I'm right, you're standing somewhere naked, wondering where you are, and what the hell is going on. I wish I had more time to explain but I don't, you're gonna have to trust me (cough). Shit has gone sideways, and we have to set things right before it's too late. I think we might be the last ones. (cough cough) There's something in here with us, but that's the least of your worries...the power is out...and the reactor...is unstable..." The voice goes quite for a few seconds, then you hear him groan. "Sorry...but if you got anything you wanna ask me...or tell me...you better do it quick, pal..." *pop*`,
-        }
+        },
       );
     }
   }
   if (item.id === "PowerStationButton") {
     if (
       !state.itemState.containerContents["PowerStationKeyhole"]?.includes(
-        "PowerStationKey"
+        "PowerStationKey",
       ) ||
       !state.worldState.powerRestoredSections["power-key-turned"]
     ) {

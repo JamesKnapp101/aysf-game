@@ -31,13 +31,29 @@ export function OverlayHost({
 
   if (overlay.kind === "none") return null;
 
+  // Wrap close so we can do post-close transcript messages
+  const onClose = () => {
+    // Capture what we're closing *before* closing it.
+    const closed = overlay;
+
+    closeOverlay();
+
+    // If the overlay defines a post-close message, append it to transcript AFTER close.
+    if (closed.kind === "reader" && closed.postCloseMessage) {
+      setGameState((prev) => ({
+        ...prev,
+        log: [...prev.log, closed.postCloseMessage as string],
+      }));
+    }
+  };
+
   switch (overlay.kind) {
     case "reader":
       return (
         <ReaderModal
           title={overlay.title}
           body={overlay.body}
-          onClose={closeOverlay}
+          onClose={onClose}
         />
       );
 
@@ -50,7 +66,7 @@ export function OverlayHost({
         <CoolerModal
           mode={overlay.mode ?? "off"}
           onSetMode={onSetMode}
-          onClose={closeOverlay}
+          onClose={onClose}
         />
       );
     }
@@ -63,19 +79,19 @@ export function OverlayHost({
           onMarkPlayed={(messageId) => {
             runAction("markMessagePlayed", { messageId });
           }}
-          onClose={closeOverlay}
+          onClose={onClose}
         />
       );
     }
 
     case "plt-viewer": {
-      return <PLTModal onClose={closeOverlay} state={state} />;
+      return <PLTModal onClose={onClose} state={state} />;
     }
 
     case "power-station-terminal": {
       return (
         <PowerStationTerminalModal
-          onClose={closeOverlay}
+          onClose={onClose}
           state={state}
           setGameState={setGameState}
         />
@@ -85,7 +101,7 @@ export function OverlayHost({
     case "matter-transmitter": {
       return (
         <MatterTransmitterModal
-          onClose={closeOverlay}
+          onClose={onClose}
           state={state}
           setGameState={setGameState}
         />
@@ -95,7 +111,7 @@ export function OverlayHost({
     case "mens-lockers": {
       return (
         <MensLockerModal
-          onClose={closeOverlay}
+          onClose={onClose}
           state={state}
           setGameState={setGameState}
         />
@@ -105,7 +121,7 @@ export function OverlayHost({
     case "womens-lockers": {
       return (
         <WomensLockerModal
-          onClose={closeOverlay}
+          onClose={onClose}
           state={state}
           setGameState={setGameState}
         />
@@ -126,7 +142,7 @@ export function OverlayHost({
           currentView={overlay.currentViewIndex ?? 0}
           onCycleView={onCycleView}
           onRunCommand={onRunCommand}
-          onClose={closeOverlay}
+          onClose={onClose}
         />
       );
     }
@@ -134,7 +150,7 @@ export function OverlayHost({
     case "teleportation-terminal": {
       return (
         <TeleportationTerminalModal
-          onClose={closeOverlay}
+          onClose={onClose}
           state={state}
           setGameState={setGameState}
         />

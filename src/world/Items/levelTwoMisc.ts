@@ -72,33 +72,7 @@ export const levelTwoItems: Item[] = [
     isContagious: false,
     isRadioactive: false,
   },
-  {
-    id: "dogTag",
-    name: "brass dog tag",
-    location: "LevelTwoBurnedQuartersFour",
-    vocab: ["brass", "dog", "tag"],
-    description:
-      "A soot-streaked brass dog tag, edges dulled by heat but still stubbornly intact. The name stamped into the metal reads: “NUGGET.”",
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: true,
-    clothingSlot: "neck",
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    overrides: {
-      wear: "The collar it used to hang from burned away with the rest of the dog. You’d have to improvise something if you really wanted to wear it.",
-      take: "You pry the tag free from the ash and bone with a soft metallic scrape. Poor Nugget. At least someone is finally carrying his name out of this room.",
-    },
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-    scoreId: "obtained_dogtag",
-  },
+
   {
     id: "burnedUpDresser",
     name: "burned dresser",
@@ -862,6 +836,9 @@ export const levelTwoItems: Item[] = [
     providesLight: false,
     isContagious: false,
     isRadioactive: false,
+    meta: {
+      kind: "key",
+    },
   },
   {
     id: "levelTwoConferenceRoomLCD",

@@ -1,3 +1,4 @@
+import { Item } from "@game/types/itemTypes";
 import type { WorldChunk } from "../../game/types/gameTypes";
 import { badgeScannerDoors } from "../doors/badgeScannerDoors";
 import { stairwellDoors } from "../doors/stairwellDoors";
@@ -153,8 +154,7 @@ export const STAIRWELL: WorldChunk = {
     {
       id: "LevelThreeStairAccess",
       name: "Level Three Stair Access",
-      description:
-        "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. To the south is a long archway leading into another area where different colored circular pads are arranged on the floor. Over the archway is the word 'TERMINAL LQ3'.",
+      description: `You are standing in a dimly lit lobby with an arched ceiling and a tiled floor the color of unpolished ivory.[[SCENERY]]\n\nAn open doorway to the west leads to a corridor with flickering overhead lights.`,
       exits: [
         { direction: "east", doorId: "StairDoorThree" },
         { direction: "west", toRoomId: "LevelThreeCorridorSeven" },
@@ -164,8 +164,7 @@ export const STAIRWELL: WorldChunk = {
     {
       id: "TPADTerminal",
       name: "Terminal",
-      description:
-        "This is a large room, rectangular in shape, which looks to have been designed to accomodate a large amount of people. The walls  and floor are covered with a white, ceramic tile, and painted on the floor are a series of black lines which seem to mark off areas where queues are  formed. Along the southern wall where the black lines are directed are a series of six colored disks, each about four feet in diameter and evenly spaced  about four feet apart. The disks are colored, from left to right facing the southern wall; green, blue, yellow, violet, white, and maroon.",
+      description: `This is a large, open area whose walls and floor are covered in white ceramic tile. The terminal is lit by a series of dimmed overhead lights that cast shadows across a floor marked with queue lines. Everything steers toward a slightly raised platform along the northern wall.`,
       exits: [{ direction: "south", toRoomId: "LevelThreeStairAccess" }],
     },
     {
@@ -271,3 +270,89 @@ export const STAIRWELL: WorldChunk = {
     },
   ],
 };
+
+export const stairwellItems: Item[] = [
+  {
+    id: "TelepadTerminal",
+    name: "terminal",
+    description:
+      "It's a large touchscreen that lets travellers select a destination.",
+    sceneryDescription: `At the gate to access the colored disks is a kiosk that houses a touchpad terminal. A colorful sign over the terminal invites you to 'Select Your Destination.'`,
+    location: "TPADTerminal",
+    vocab: [
+      "kisosk",
+      "terminal",
+      "translocation terminal",
+      "teleportation terminal",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      kind: "teleportation-terminal",
+    },
+  },
+  {
+    id: "levelThreeElevators",
+    name: "elevators",
+    description: `There are little up and down arrows above each door, all dark, along with the call buttons. Something must have lost power, or gotten damaged.`,
+    sceneryDescription: `To the south are a row of three elevator doors, each made of polished steel, all closed, and none of the buttons are lit.`,
+    location: "LevelThreeStairAccess",
+    vocab: ["elevator", "elevators", "doors", "door"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+  },
+  {
+    id: "levelThreeLCD",
+    name: "lcd screen",
+    description: `It displays the message 'ELEVATOR FAILURE.' The screen is speckled with dead pixels.`,
+    sceneryDescription: `An LCD screen mounted above the elevator doors is tinted red, and displays the message 'ELEVATOR FAILURE.'`,
+    readableText: `ELEVATOR FAILURE`,
+    location: "LevelThreeStairAccess",
+    vocab: ["lcd", "screen", "lcd screen", "message"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    isReadable: true,
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+  },
+  {
+    id: "levelThreeTerminalArchway",
+    name: "terminal entrance",
+    description: `The area inside looks very well travelled, and is set up for queueing.`,
+    sceneryDescription: `To the north is a long open archway that looks into what appears to be some sort of transit platform centered around a row of large colored disks along the far wall, each large enough to stand on.`,
+    location: "LevelThreeStairAccess",
+    vocab: ["entrance", "terminal", "terminal entrance", "archway", "arch"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+  },
+  {
+    id: "levelThreeTerminalSign",
+    name: "terminal sign",
+    description: `The 'E' in 'TERMINAL' flickers ever so slightly.`,
+    sceneryDescription: `Over the north archway is a sign in white block letters that glow softly, spelling out the word 'TERMINAL.'`,
+    location: "LevelThreeStairAccess",
+    vocab: ["sign"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
+  },
+];

@@ -13,13 +13,14 @@ export const levelSevenItems: Item[] = [
     itemWeight: 0,
     itemSize: 1,
     isWearable: false,
+    isLoggable: true,
     isReadable: true,
+    readableTitle: `Note Found on Body: Stairwell Bottom`,
     readableText: `Rules:\n\n- Stay in the light, they won't come into the light\n- In time even casual contact will be fatal\n- Can pass through even tiny openings\n- I think they can follow thermal signatures, need to prove.\n\nLocation: some kind of facility or campus. Self contained?\n\nSEARCH EVERY BODY YOU FIND! I'll try to keep notes.\n\nMany dead bodies, cause of death unclear in many cases but at least some have been either eaten, dissolved, or absorbed entirely. No survivors found so far. Whatever happened is widespread and acted fast.\n\nTO DO LIST:\n\n\tHeard warning re: reactor overload, look into that\n\tGet power back on in several areas\n\tAccess lab to find more info on nature of threat\n\tFind out what caused those strange holes\n\n\tOther notes:\n\n\t\t- Wtf was that weird spider thing?\n\t\t- Is anyone left alive?\n\t\t- Watch those stairwell railings, they seem unstable.`,
     meta: {
       onFind: `Tucked in the jumpsuit's pocket you find a folded piece of paper. When you unfold it, you see a bloody thumbprint in the bottom right corner, and several handwritten notes scribbled on it.`,
     },
   },
-
   {
     id: "StoredStairwellSuff",
     name: "stacks of old, dusty boxes",

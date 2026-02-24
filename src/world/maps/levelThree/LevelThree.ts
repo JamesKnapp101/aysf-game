@@ -7,17 +7,9 @@ import { oneWestRooms } from "src/world/maps/levelThree/LivingQuarters/OneWest";
 
 import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
 import {
-  LivingQuartersFourEastItems,
-  LivingQuartersFourEastRooms,
-} from "src/world/maps/levelThree/LivingQuarters/FourEast";
-import {
-  LivingQuartersSixEastItems,
-  LivingQuartersSixEastRooms,
+  sixEastItems,
+  sixEastRooms,
 } from "src/world/maps/levelThree/LivingQuarters/SixEast";
-import {
-  LivingQuartersSixWestItems,
-  LivingQuartersSixWestRooms,
-} from "src/world/maps/levelThree/LivingQuarters/SixWest";
 import {
   LivingQuartersThreeEastItems,
   LivingQuartersThreeEastRooms,
@@ -26,17 +18,18 @@ import {
   threeWestItems,
   threeWestRooms,
 } from "src/world/maps/levelThree/LivingQuarters/ThreeWest";
+import { barRooms } from "src/world/maps/levelThree/Park/Bar";
+import { gymRooms } from "src/world/maps/levelThree/Park/Gym";
+import { movieTheaterRooms } from "src/world/maps/levelThree/Park/MovieTheater";
+import { parkRooms } from "src/world/maps/levelThree/Park/Park";
+import { restaurantRooms } from "src/world/maps/levelThree/Park/Restaurant";
 import { spaRooms } from "src/world/maps/levelThree/Spa";
-import { barRooms } from "src/world/maps/levelThree/TheHub/Bar";
-import { gymRooms } from "src/world/maps/levelThree/TheHub/Gym";
-import { movieTheaterRooms } from "src/world/maps/levelThree/TheHub/MovieTheater";
-import { parkRooms } from "src/world/maps/levelThree/TheHub/Park";
-import { restaurantRooms } from "src/world/maps/levelThree/TheHub/Restaurant";
+import { stairwellItems } from "src/world/maps/Stairwell";
 import type { WorldChunk } from "../../../game/types/gameTypes";
 import {
-  levelThreeHubDoors,
   levelThreeLivingQuartersDoors,
   levelThreeMedicalAndSpaDoors,
+  levelThreeParkDoors,
 } from "../../doors/levelThreeDoors";
 import { drugItems } from "../../Items/drugs";
 import { generalItems } from "../../Items/general";
@@ -48,16 +41,15 @@ export const LEVEL_THREE: WorldChunk = {
     ...drugItems,
     ...levelThreeItems,
     ...LivingQuartersThreeEastItems,
-    ...LivingQuartersFourEastItems,
     ...LivingQuartersFiveWestItems,
-    ...LivingQuartersSixEastItems,
-    ...LivingQuartersSixWestItems,
     ...livingQuartersThreeWestOrganismItems,
     ...threeWestItems,
+    ...sixEastItems,
+    ...stairwellItems,
   ],
   doors: [
     ...levelThreeLivingQuartersDoors,
-    ...levelThreeHubDoors,
+    ...levelThreeParkDoors,
     ...levelThreeMedicalAndSpaDoors,
   ],
   teleportPads: [],
@@ -71,11 +63,9 @@ export const LEVEL_THREE: WorldChunk = {
     ...oneEastRooms,
     ...oneWestRooms,
     ...threeWestRooms,
+    ...sixEastRooms,
     ...LivingQuartersThreeEastRooms,
-    ...LivingQuartersFourEastRooms,
     ...LivingQuartersFiveWestRooms,
-    ...LivingQuartersSixEastRooms,
-    ...LivingQuartersSixWestRooms,
     {
       id: "LevelThreeCorridorOne",
       name: "Level Three Corridor One",
@@ -103,7 +93,7 @@ export const LEVEL_THREE: WorldChunk = {
         { direction: "north", toRoomId: "LevelThreeCorridorFour" },
         { direction: "south", toRoomId: "LevelThreeCorridorTwo" },
         { direction: "east", doorId: "DOOR3CE" },
-        { direction: "west", doorId: "DOOR3CW" },
+        { direction: "west", toRoomId: "LivingQuartersThreeWest" },
       ],
     },
     {
@@ -208,7 +198,7 @@ export const LEVEL_THREE: WorldChunk = {
       exits: [
         //{ direction: "north", toRoomId: "LevelThreeSecondCorridorThree" },
         // { direction: "south", toRoomId: "LevelThreeSecondCorridorOne" },
-        { direction: "west", doorId: "HubDoor" },
+        { direction: "west", doorId: "ParkDoor" },
         { direction: "east", toRoomId: "LevelThreeSecondCorridorConnector" },
       ],
     },

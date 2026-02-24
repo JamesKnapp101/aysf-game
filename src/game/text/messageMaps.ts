@@ -9,6 +9,14 @@ export const PAIN_STATUS_MESSAGES: Record<number, string> = {
   0: "Whatever was causing it, the pain seems to be gone now.",
 };
 
+export const HORNY_STATUS_MESSAGES: Record<number, string> = {
+  68: "Hm, whatever was in that chewable has got you feeling a little hot and bothered...",
+  49: "Whoo, there was definitely something in that chewable! Hot fire down below..!",
+  29: "Wait, the chewable is letting up a little...you feel a little less antsy in your pantsy, but not by much.",
+  19: "You feel manageably horny.",
+  0: "Okay, whew! Your motor has stopped revving, at least to that weird degree...",
+};
+
 export const TRIXOPHINE_MESSAGES: string[] = [
   `Your cat walks into the room and marches up to you. "If you see the dog," it hisses, "tell that bitch I'm looking for her!" It storms out of the room.`,
   `You notice movement out of the corner of your eye, and turn in time to see a small spider monkey scamper over to you. "You have to help me!" it whispers, "The captain is secretly spiking the mess hall's chili con carne with refined dopamine milked from his secret army of monkey slaves! If the plan succeeds, then—" It glances over its shoulder. "...they found me, I have to go!" The monkey scampers away.`,

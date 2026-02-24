@@ -21,7 +21,7 @@ export const medicalWingRooms: Room[] = [
   {
     id: "MainMedical",
     name: "Main Medical",
-    description: `This is the main hub of the medical facility. There is a digital scale here, and a chair which sits next to a small medical station of some kind outfitted with a device that looks like it might measure blood pressure. The walls are painted white, and the floor is done in white tile, which only serves to accent the fact that something horrible has happened here; the floor is streaked with blood. Corridors branch off from this area to the south, and also to the west. The check in station leading back to the waiting area is to the north.`,
+    description: `This is the main park of the medical facility. There is a digital scale here, and a chair which sits next to a small medical station of some kind outfitted with a device that looks like it might measure blood pressure. The walls are painted white, and the floor is done in white tile, which only serves to accent the fact that something horrible has happened here; the floor is streaked with blood. Corridors branch off from this area to the south, and also to the west. The check in station leading back to the waiting area is to the north.`,
     exits: [
       { direction: "north", toRoomId: "MedicalEntrance" },
       { direction: "south", toRoomId: "MedicalCorridorThree" },

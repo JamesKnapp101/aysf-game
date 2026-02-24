@@ -107,7 +107,7 @@ export const Game: React.FC = () => {
     | Action
     | { type: "replaceState"; next: GameState }
     | { type: "setBrainActivity"; val: number };
-  type SidebarTab = "inventory" | "status" | "hints" | "settings";
+  type SidebarTab = "inventory" | "status" | "log" | "hints" | "settings";
   const [activeTab, setActiveTab] = useState<SidebarTab>("status");
 
   const [gs, dispatchState] = useReducer(
@@ -275,7 +275,7 @@ export const Game: React.FC = () => {
   const nightVisionActive = activeEffects.includes("nightvision-active");
 
   const flashlightOn = (() => {
-    if (!gs.player.inventory.includes("flashlight")) return false;
+    if (!gs.player.inventory.general.includes("flashlight")) return false;
     const fs = gs.itemState.itemSettings["flashlight"];
     return Boolean(fs && "isOn" in fs && fs.isOn === true);
   })();
@@ -314,6 +314,8 @@ export const Game: React.FC = () => {
     },
     [],
   );
+
+  console.log("LOGS? ", gs.player.log);
 
   return (
     <>

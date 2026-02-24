@@ -5,29 +5,201 @@ export const threeWestRooms: Room[] = [
   // LIVING QUARTERS THREE WEST
   {
     id: "LivingQuartersThreeWest",
-    name: "Living Quarters Three West",
+    name: "Sanyi Residence: Living Area",
     description: `This is a spacious living area that doubles as an entryway and den, where just inside the doorway is a rectangular gray mat, and against the wall next to it an area for guests to leave their shoes. The interior is carpeted in a warm mocha that looks to be vacuumed regularly, though maybe not recently, which extends into the den area.[[SCENERY]]`,
     exits: [
-      { direction: "east", doorId: "DOOR3CW" },
+      { direction: "east", toRoomId: "LevelThreeCorridorThree" },
       { direction: "south", toRoomId: "ThreeWestBath" },
       { direction: "west", toRoomId: "ThreeWestBed" },
     ],
   },
   {
     id: "ThreeWestBath",
-    name: "Three West Bathroom",
+    name: "Sanyi Residence: Bathroom",
     description: `The unit's bathroom is in disarray, its tiled floor spattered with what looks like a mixture of blood, and something else, something blackish-brown.[[SCENERY]]`,
     exits: [{ direction: "north", toRoomId: "LivingQuartersThreeWest" }],
   },
   {
     id: "ThreeWestBed",
-    name: "Three West Bedroom",
-    description: `The bedroom is large enough to accommodate three twin beds, arranged in the corners of the room.[[SCENERY]]`,
+    name: "Sanyi Residence: Bedroom",
+    description: `The bedroom is large enough to accommodate three twin beds, arranged in the corners of the room. [[SCENERY]]`,
     exits: [{ direction: "east", toRoomId: "LivingQuartersThreeWest" }],
   },
 ];
 
 export const threeWestItems: Item[] = [
+  {
+    id: "GimOneShirt",
+    name: "a red t-shirt",
+    description: `This is a simple, utilitarian red t-shirt with white trim.`,
+    location: "seeded",
+    vocab: ["red t-shirt"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the t-shirt on. A little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "torso",
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "GimOnePants",
+    name: "a pair of red sweatpants",
+    description: `These are a pair of simple, elastic sweatpants, colored red with a pair of white side stripes.`,
+    location: "seeded",
+    vocab: ["red sweatpants"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the sweatpants on. A little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "legs",
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "GimOneShoes",
+    name: "a pair of red canvas shoes",
+    description: `A pair of plain canvas slip ons, colored red with white soles.`,
+    location: "seeded",
+    vocab: ["red shoes", "red canvas shoes"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the canvas shoes on. They're little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "feet",
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "GimTwoShirt",
+    name: "a blue t-shirt",
+    description: `This is a simple, utilitarian blue t-shirt with white trim.`,
+    location: "seeded",
+    vocab: ["blue t-shirt"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the t-shirt on. A little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "torso",
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "GimTwoPants",
+    name: "a pair of blue sweatpants",
+    description: `These are a pair of simple, elastic sweatpants, colored blue with a pair of white side stripes.`,
+    location: "seeded",
+    vocab: ["blue sweatpants"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the sweatpants on. A little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "legs",
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "GimTwoShoes",
+    name: "a pair of blue canvas shoes",
+    description: `A pair of plain canvas slip ons, colored blue with white soles.`,
+    location: "seeded",
+    vocab: ["blue shoes", "blue canvas shoes"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the canvas shoes on. They're little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "feet",
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "GimThreeShirt",
+    name: "a green t-shirt",
+    description: `This is a simple, utilitarian green t-shirt with white trim.`,
+    location: "seeded",
+    vocab: ["green t-shirt"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the t-shirt on. A little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "torso",
+    itemWeight: 2,
+    itemSize: 3,
+    isContagious: true,
+  },
+  {
+    id: "GimThreePants",
+    name: "a pair of green sweatpants",
+    description: `These are a pair of simple, elastic sweatpants, colored green with a pair of white side stripes.`,
+    location: "seeded",
+    vocab: ["green sweatpants"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the sweatpants on. A little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "legs",
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "GimThreeShoes",
+    name: "a pair of green canvas shoes",
+    description: `A pair of plain canvas slip ons, colored green with white soles.`,
+    location: "seeded",
+    vocab: ["green shoes", "green canvas shoes"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isWearable: true,
+    meta: {
+      clothing: {
+        wearMessage:
+          "You slip the canvas shoes on. They're little big, but not a bad fit.",
+      },
+    },
+    clothingSlot: "feet",
+    itemWeight: 2,
+    itemSize: 3,
+  },
   {
     id: "MensLockerKey11",
     name: "blue locker key, labeled '11'",
@@ -42,6 +214,7 @@ export const threeWestItems: Item[] = [
     meta: {
       lockerType: "men",
       lockerIndex: 11,
+      kind: "key",
     },
   },
   {
@@ -58,6 +231,7 @@ export const threeWestItems: Item[] = [
     meta: {
       lockerType: "men",
       lockerIndex: 9,
+      kind: "key",
     },
   },
   {
@@ -74,15 +248,16 @@ export const threeWestItems: Item[] = [
     meta: {
       lockerType: "men",
       lockerIndex: 2,
+      kind: "key",
     },
   },
   {
-    id: "HubPass",
+    id: "ParkPass",
     name: "laminated pass",
     description:
       "It's a laminated access pass with a printed code running up one edge and block letters giving its owner limited privileges in the Park.",
     location: "",
-    vocab: ["laminated", "hub", "pass", "card"],
+    vocab: ["laminated", "park", "pass", "card"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -91,12 +266,14 @@ export const threeWestItems: Item[] = [
     isReadable: true,
     readableText: "HUB PASS\n" + "24 Hours\n" + "Day: Any\n",
     isContainer: false,
-    scoreId: "obtained_hub_pass",
+    scoreId: "obtained_park_pass",
   },
   {
     id: "ResearchNotes",
     name: "research notes",
     description: `It's a wrinkled paper, covered in scribbled notes.`,
+    isLoggable: true,
+    readableTitle: `Research Notes Found in Sanyi Clone Quarters`,
     readableText: `
       - Unknown incident. Has affected everything.
         - Pinholes? Source unknown. 
@@ -118,7 +295,7 @@ export const threeWestItems: Item[] = [
 
       - Despite our best efforts, Three passed today. He regained conscious one last time but couldn't speak. His body went slack, then abruptly plumped significantly, such that his eyes bulged. He stopped breathing, and his body, while looking somewhat inflated, felt unyielding to the touch. 
     `,
-    initialDescription: `Among the mess you see a wrinkled piece of paper with written notes.`,
+    initialDescription: `Included in the mess you see a wrinkled piece of paper with written notes.`,
     location: "ThreeWestBed",
     vocab: ["wrinkled note", "note", "wrinkled", "paper", "wrinkled paper"],
     itemClass: "solid",
@@ -131,6 +308,8 @@ export const threeWestItems: Item[] = [
     id: "GimTwoJournal",
     name: "blue-bound journal",
     description: `It's a small, personalized journal with blue binding.`,
+    isLoggable: true,
+    readableTitle: `Sanyi Clone Journal (Blue)`,
     readableText: `
      [Entry]\nTwo is trying but I fear there's not much either of us can do. He's only spinning his wheels, but I understand. Losing one us feels impossible.\n\n[Entry]\nI couldn't look at Three after he passed. Two took care of it, but it's so horrible. They need to come remove the rest of him, this isn't right.\n\n[Entry]\nAt first I thought I was imagining things but I'm not; at night I can hear something moving inside our unit, there is something in here with us, and it only comes out at night. Am I losing my mind?\n\n[Entry]\nTwo swears he's not sick, but I think he's lying\n\n.
     `,
@@ -146,6 +325,8 @@ export const threeWestItems: Item[] = [
     id: "GimOneJournal",
     name: "red-bound journal",
     description: `It's a small, personalized journal with red binding.`,
+    isLoggable: true,
+    readableTitle: `Sanyi Clone Journal (Red)`,
     readableText: `
     [Entry]\nI don't know who to tell this to. One didn't see it, will he believe me? He is demanding to know where the wall hanging came from. I told him they left it when they picked up the body, but nobody picked up the body, it just went away. Most of it.\n\n[Entry]\nStill haven't told One, but I swear this is true; when Three died, I couldn't sleep, so I got up and realized we'd left the living room and bathroom lights on. I was glad to turn the bathroom light off, I didn't want to look at Three's body, but when I shut the door, I suddenly heard a loud 'snap' from inside the bathroom, followed by a thick, heavy splash. It chilled me to my core, and sounded horrible, but I made myself get up, head over there, and pull the door open. At first it looked like nothing had changed, until I realized Three's body was gone. Mostly gone. And there, on the wall, that strange hanging.\n\n[Entry]\nI make sure the bathroom door stays shut, now, but even so, at night, I can hear something moving in there. What is happening?\n\n[Entry]\nI began to feel sick today. I tried everything I could to talk myself out of it, but it's true. I haven't told One, but like with Three, it seems to be advancing quickly\n\n[Entry]\nI think I'm contagious. I should leave but I'm afraid to. What will we do?\n\n[Entry]\nThe flicker, I see it...\n\n
     `,
@@ -161,6 +342,8 @@ export const threeWestItems: Item[] = [
     id: "GimThreeJournal",
     name: "green-bound journal",
     description: `It's a small, personalized journal with green binding.`,
+    isLoggable: true,
+    readableTitle: `Sanyi Clone Journal (Green)`,
     readableText: `
       [Entry]\nI never get tired of the aviary, that owl is so cool! I already want to go back. I'd trade Park credits for zoo permissions any day.\n\n[Entry]\nThis is like the third day I've been getting weird looks from that Lil-Lilly woman from the poly group. Does she want to sex me?\n\n[Entry]\nI know that it's wrong to exclude the others, but I'd wish on every star in the cosmos if I could sex Isosceles just one time, one on one...\n\n[Entry]\nCan't wait to hit the gym!\n\n
     `,
@@ -174,7 +357,7 @@ export const threeWestItems: Item[] = [
   },
   {
     id: "GimOneCorpse",
-    name: "gimonecorpse",
+    name: "disgusting remains",
     description: `It's just like the remains in the living area, with the same stringy organic material left behind.`,
     sceneryDescription: `A pair of red sweatpants and a red t-shirt lay on the floor, within some sort of reddish-black spatter. A single foot sticks out of the end of one pant leg, the heel pointing upward.`,
     location: "ThreeWestBath",
@@ -269,7 +452,6 @@ export const threeWestItems: Item[] = [
     itemWeight: 2,
     itemSize: 3,
   },
-
   {
     id: "ThreeWestBedPhotos",
     name: "photos",
@@ -292,7 +474,6 @@ export const threeWestItems: Item[] = [
     itemWeight: 2,
     itemSize: 3,
   },
-
   {
     id: "ThreeWestGimThreeEndTable",
     name: "green endtable",
@@ -403,7 +584,24 @@ export const threeWestItems: Item[] = [
     itemSize: 3,
     isSurface: true,
   },
-
+  {
+    id: "ThreeWestCloset",
+    name: "closet",
+    description: `It's very spacious, but it doesn't seem as though fashion was very important to the occupants.`,
+    sceneryDescription: `[[newline]]On the north wall is a sliding closet door.`,
+    location: "ThreeWestBed",
+    vocab: ["closet", "closet door"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 13,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isContainer: true,
+    capacity: 30,
+    isOpenable: true,
+  },
   {
     id: "IceTray",
     name: "ice tray",
@@ -519,6 +717,21 @@ export const threeWestItems: Item[] = [
     isContagious: true,
   },
   {
+    id: "ThreeWestToilet",
+    name: "porcelain toilet",
+    description: `It's been flushed, but it still doesn't smell great, like somebody was sick in it.`,
+    sceneryDescription: `cross from the tub sits a white, porcelain toilet.`,
+    location: "ThreeWestBath",
+    vocab: ["toilet", "bowl", "toilet bowl"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 2,
+    itemSize: 3,
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+  },
+  {
     id: "ThreeWestBathTub",
     name: "bathtub",
     description: `The tub is nice and deep, the inner walls spattered with specks of organic material and the bottom covered with a pair of slimy sweatpants and t-shirt.`,
@@ -546,7 +759,10 @@ export const threeWestItems: Item[] = [
     location: "LivingQuartersThreeWest",
     vocab: ["cardboard", "note", "cardboard note"],
     itemClass: "solid",
-    itemCategory: "collectable",
+    itemCategory: "scenery",
+    overrides: {
+      take: `If you take it how will other people get the warning?`,
+    },
     itemWeight: 2,
     itemSize: 3,
     isReadable: true,
@@ -659,10 +875,10 @@ export const threeWestItems: Item[] = [
   {
     id: "ThreeWestPhone",
     name: "phone",
-    description: ``,
-    sceneryDescription: ``,
+    description: `It's a phone with an integrated message system.`,
+    sceneryDescription: `Mounted on the wall next to the closet is an integrated message system with a small screen.`,
     location: "ThreeWestBed",
-    vocab: ["phone", "handset", "headset", "machine", "messages"],
+    vocab: ["message", "system", "message system", "machine", "messages"],
     itemClass: "solid",
     itemCategory: "scenery",
     isUseable: true,
@@ -670,28 +886,39 @@ export const threeWestItems: Item[] = [
       kind: "phone",
       messages: [
         {
-          id: "6WM1",
-          title: "CALLER ID: MILDRED ZAPATOS",
-          transcript:
-            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+          id: "6EM1",
+          title: "CALLER ID: SANYI, CLONE THREE",
+          transcript: `It's Three, have you been out lately? I saw the strangest thing just now; I've still got plenty of time on my Park Pass so I was at the gym, when one of the TVs went out and just then I felt a brief, stabbing pain in my shoulder. There was even a drop of blood, like a needle prick, and that seemed to be the extent of it, but when I hit the showers I noticed something inside the stall, a group of black dots on the wall inside that turned out to be tiny little holes, like pinpricks. It doesn't look like anybody was hurt and nothing besides the TV got damaged, but let me know if either of you notice anything strange.`,
         },
         {
-          id: "6WM1",
-          title: "CALLER ID: MILDRED ZAPATOS",
-          transcript:
-            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+          id: "6EM2",
+          title: "CALLER ID: SANYI, CLONE TWO",
+          transcript: `It's Two, have either of you encountered anything strange? There's some buzz brewing down here about some sort of micro-breach clusters being spotted all over the place, tiny holes in walls, floors, not everywhere but whatever caused them they seem to go clear through everything. Let me know if either of you see anything.`,
         },
         {
-          id: "6WM1",
-          title: "CALLER ID: MILDRED ZAPATOS",
-          transcript:
-            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+          id: "6EM3",
+          title: "CALLER ID: TENDWICK, LIL-LILLY",
+          transcript: `Hi, this is Lil-Lilly Tendwick in One East and I want you three stem-cells to know that I am onto you, vis-a-vis your three-timing with my poly-group's semi-serious-satellite Isosceles, and not even inviting us! She's not a three-man woman, so back off!`,
         },
         {
-          id: "6WM1",
-          title: "CALLER ID: MILDRED ZAPATOS",
-          transcript:
-            "Edward, this is your mother. I know we've had our differences, but I need you to listen to me now. This is an emergency, Edward, a serious emergency.  Stay in tonight; if you had plans, cancel them, just this one time. Do not go into the ship tonight, keep your door closed and locked. I'll be by late tonight or very early tomorrow...I have something for you, something important. I'll try and get you on the phone again later...if you're there and listening, please do what I say, please.",
+          id: "6EM4",
+          title: "CALLER ID: SANYI, CLONE ONE",
+          transcript: `Two, it's One; Three's come down with some kind of fever, and it's quite bad so I'm going to take him up to Medical. It shouldn't be a big deal, but I'll call if anything changes.`,
+        },
+        {
+          id: "6EM5",
+          title: "CALLER ID: UMBOLTZ, HENK",
+          transcript: `Guys call me when you get this, I can hear it again, and I'm telling you it's coming from the storage unit between ours. You ought to be able to hear it through your bathroom wall. And before you tell me it's the pipes again, it's not, when I knocked on the wall, it stopped. Something, or somebody, is going in there. Anyway call me.`,
+        },
+        {
+          id: "6EM6",
+          title: "CALLER ID: SANYI, CLONE TWO",
+          transcript: `One, it's Two; I'm with Three in Medical and it's not just him, more and more are coming in and the waiting room is packed. They gave him the full battery; antibiotics, antivirals, the works so whatever it is should clear up soon. We're heading back, they need the space.`,
+        },
+        {
+          id: "6EM7",
+          title: "CALLER ID: SANYI, CLONE ONE",
+          transcript: `Two, it's One; I've managed to get my hands on some equipment, including the acid you asked for, and a good twenty kilos of ice to keep him cool, was there anything else we need? Any idea yet what's causing it? The lab's got no idea so far, and whatever it is, it's affected a lot of people. This is getting scary. I'm headed back now. They say we should shelter at home until they know more.`,
         },
       ],
       unreadCount: 0,

@@ -43,6 +43,7 @@ export const levelThreeItems: Item[] = [
     meta: {
       lockerType: "men",
       lockerIndex: 5,
+      kind: "key",
     },
   },
   {
@@ -59,6 +60,7 @@ export const levelThreeItems: Item[] = [
     meta: {
       lockerType: "women",
       lockerIndex: 12,
+      kind: "key",
     },
   },
   {
@@ -75,8 +77,6 @@ export const levelThreeItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
-    isReadable: true,
-    readableText: "BIOHAZARD - DO NOT ENTER",
     isContainer: false,
   },
   {
@@ -127,8 +127,6 @@ export const levelThreeItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
-    isReadable: true,
-    readableText: "BIOHAZARD - DO NOT ENTER",
     isContainer: false,
   },
   {
@@ -145,8 +143,6 @@ export const levelThreeItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
-    isReadable: true,
-    readableText: "BIOHAZARD - DO NOT ENTER",
     isContainer: false,
   },
   {
@@ -163,8 +159,6 @@ export const levelThreeItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
-    isReadable: true,
-    readableText: "BIOHAZARD - DO NOT ENTER",
     isContainer: false,
   },
   {
@@ -321,25 +315,6 @@ export const levelThreeItems: Item[] = [
     isContainer: true,
   },
   {
-    id: "gorillanote",
-    name: "small piece of paper",
-    description:
-      "A small piece of note paper, edges slightly curled and one corner smudged with what might be graphite or grime. Something has been written on it in a hurried hand.",
-    sceneryDescription:
-      "The paper looks like it was torn from a cheap notepad, the perforated edge still rough. The handwriting slants hard to the right, letters crowding each other as if the writer ran out of time before they ran out of things to say.",
-    location: "OneEastBed",
-    vocab: ["small", "piece", "paper", "note"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    readableText:
-      'The note is short and to the point, half message and half attitude:\n\n"DON\'T TOUCH MY STUFF.\nI KNOW EXACTLY HOW I LEFT IT.\n- G"',
-    isContainer: false,
-  },
-  {
     id: "Guitar",
     name: "electric guitar",
     description:
@@ -352,40 +327,6 @@ export const levelThreeItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 10,
     itemSize: 10,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "JintosToy",
-    name: "stuffed toy cat",
-    description:
-      "A very worn stuffed black cat, its fur matted and thin in places. Several seams have been repaired by hand, and the tail is missing completely.",
-    sceneryDescription:
-      "The toy cat slumps on its side, the fabric faded to a charcoal gray where countless small hands have squeezed it over the years. Thread of a slightly different shade traces along the patched seams, a quiet history of repairs that all say the same thing: someone refused to throw this away.",
-    location: "LivingQuartersOneEast",
-    vocab: ["stuffed", "toy", "cat"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 3,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "JintosBlanket",
-    name: "blue flannel blanket",
-    description:
-      "A threadbare blue flannel blanket, its edges frayed and curling. Coarse black hairs cling stubbornly to the fabric.",
-    sceneryDescription:
-      "The blanket is the exact shade of blue that used to mean comfort and warmth to somebody. Now it’s gone thin in the middle, with little islands of worn fabric surrounded by fuzz. The black hair woven into it in clumps says its last job was more about keeping a creature warm than a person.",
-    location: "OneEastBed",
-    vocab: ["blue", "flannel", "blanket", "worn"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 2,
-    itemSize: 2,
     isWearable: false,
     isReadable: false,
     isContainer: false,
@@ -527,23 +468,6 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "BUTT",
-    name: "cigar butt",
-    description:
-      "An old, chewed-on cigar butt. One end is a ragged, gnawed nub; the other is flattened and dusted with ash. From a certain angle it does look uncomfortably like a dead bug.",
-    sceneryDescription:
-      "The stub lies abandoned near the drain, its wrapper split and stained. Tar has seeped out in sticky dark patches, and a ring of ash flakes marks where someone ground it out with finality.",
-    location: "OneWestBath",
-    vocab: ["butt", "bug", "dead", "cigar"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
     id: "OneWestMATTRESS",
     name: "distressed mattress",
     description:
@@ -595,30 +519,6 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "NoteToYou",
-    name: "burnt piece of paper",
-    description:
-      "A charred scrap of paper that looks like it was salvaged from a fire. The upper portion is blackened and flaked away; only part of the message remains legible.",
-    sceneryDescription:
-      "The edges of the paper are crisped and curled, the burn pattern eating down from the top as if someone pulled it out of the flames just in time to save the last few lines. The ink near the bottom has bled and blurred but is still readable with a little effort.",
-    location: "TwoWestBed",
-    vocab: ["burnt", "burned", "piece", "paper", "note"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    isContainer: false,
-    readableText:
-      "Only the bottom portion is legible...\n\n" +
-      "...anyway. It's not that I don't love you. You know I do.\n" +
-      "If it means anything now, I'm really sorry I did what I did,\n" +
-      "I was just angry...I didn't mean it, I swear, and I'm sorry\n" +
-      "it all went wrong. Meet me later upstairs, we should talk.\n\n" +
-      "Dana\n",
-  },
-  {
     id: "KibbleBOX",
     name: "box of cat kibbles",
     description:
@@ -632,11 +532,6 @@ export const levelThreeItems: Item[] = [
     itemWeight: 3,
     itemSize: 2,
     isWearable: false,
-    isReadable: true,
-    readableText:
-      "DEUS PET NUTRITION™\n" +
-      "SHIP-SAFE FELINE KIBBLES\n" +
-      "Now with 30% more 'real' protein and mood-stabilizing aminos.\n",
     isContainer: true,
     isOpenable: true,
     capacity: 10,
@@ -777,6 +672,8 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: true,
     isContainer: false,
+    isLoggable: true,
+    readableTitle: `Random Poem`,
     readableText:
       "They went to the Moon and to Venus and Mars,\n" +
       "And they went to Europa and Io,\n" +
@@ -800,21 +697,19 @@ export const levelThreeItems: Item[] = [
       "The Deus Ex Machina sucks.\n",
   },
   {
-    id: "HubPlaque",
+    id: "ParkPlaque",
     name: "bronze plaque",
     description:
       "A polished bronze plaque mounted at eye level, the words “THE HUB” engraved into its surface in heavy, confident lettering.",
     sceneryDescription:
       "The plaque catches the ambient light with a soft, warm sheen, every stroke of the letters burnished smooth by years of incidental contact. Small scratches and scuffs surround the mounting bolts, hinting at how often people have leaned on it, tapped it for luck, or just used it as a landmark before moving on.",
     location: "LevelThreeSecondCorridorTwo",
-    vocab: ["bronze", "plaque", "hub"],
+    vocab: ["bronze", "plaque", "park"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 3,
     itemSize: 2,
     isWearable: false,
-    isReadable: true,
-    readableText: "THE HUB",
     isContainer: false,
   },
   {
@@ -938,6 +833,8 @@ export const levelThreeItems: Item[] = [
     itemSize: 3,
     isWearable: false,
     isReadable: true,
+    isLoggable: true,
+    readableTitle: `Faded Massage Check-In Whiteboard`,
     readableText:
       "The board is mostly wiped clean, but you can pick out a few lingering traces:\n" +
       "10:30  DT / K.D.\n" +
@@ -966,7 +863,7 @@ export const levelThreeItems: Item[] = [
   },
 
   {
-    id: "HubPassSlot",
+    id: "ParkPassSlot",
     name: "card slot",
     description:
       "A thin horizontal slot in a mounted electronic reader. It looks like it takes some sort of card.",
@@ -979,23 +876,16 @@ export const levelThreeItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
-    isReadable: true,
-    readableText:
-      "K. Danko\n" +
-      "HUB PASS\n" +
-      "24 Hours\n" +
-      "Day: Any\n" +
-      "Exp. 03/07/71\n",
     isContainer: false,
   },
   {
-    id: "MetalPanelHubEast",
+    id: "MetalPanelParkEast",
     name: "metal panel",
     description:
       "A shiny silver metal panel set flush into the wall, interrupted only by a thin horizontal slot about three inches wide.",
     sceneryDescription:
       "The panel looks deliberately featureless, the kind of anonymity you usually reserve for things that read credentials and silently judge you. Tiny scratches around the slot suggest a long history of passes, cards, and desperate objects being shoved in with varying degrees of success.",
-    location: "HubEast",
+    location: "ParkEast",
     vocab: ["metal", "panel", "slot"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1029,7 +919,7 @@ export const levelThreeItems: Item[] = [
       "A small security camera mounted high on the wall, angled toward the toll panel to catch anyone thinking about getting creative.",
     sceneryDescription:
       "The camera’s black lens stares down from its swiveling housing, an unblinking eye in a white plastic shell. You can’t tell if it’s receiving power or not—no indicator light, no hum—just the cold possibility that somewhere, something might still be watching.",
-    location: "HubEast",
+    location: "ParkEast",
     vocab: ["video", "surveillance", "security", "camera"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1040,13 +930,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "hubsouthparkbench",
+    id: "parksouthparkbench",
     name: "park bench",
     description:
       "A curved wooden park bench built from varnished boards set into a wrought iron frame.",
     sceneryDescription:
       "The boards gleam with an aging coat of varnish, their surfaces worn smooth in the middle where countless people have sat, waited, and stared at nothing in particular. The wrought iron arms and legs curl into decorative flourishes that were probably meant to make the place feel less like a station and more like a park, at least on paper.",
-    location: "HubSouth",
+    location: "ParkSouth",
     vocab: ["bench", "park", "park bench"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1065,7 +955,7 @@ export const levelThreeItems: Item[] = [
       "A block-letter marquee above the theater entrance, currently displaying the name of whatever was playing when everything stopped.",
     sceneryDescription:
       "Interchangeable black plastic letters slot into white tracks, forming the movie title in a rigid, mechanical font. A few letters are slightly crooked, either from haste or boredom, but together they still manage to project that old familiar promise: step inside, forget everything outside.",
-    location: "HubWest",
+    location: "ParkWest",
     vocab: ["marquee", "block", "lettering"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1077,13 +967,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "hubwestparkbench",
+    id: "parkwestparkbench",
     name: "park bench",
     description:
       "A curved wooden park bench, its varnished boards set into a dark wrought iron frame. A woman’s corpse sits on it, her glazed eyes still fixed in the direction of the obelisk.",
     sceneryDescription:
       "The bench itself is sturdy and almost comfortable-looking, but the occupant ruins the effect. The woman’s body is slumped slightly to one side, hands loose in her lap, hair frozen mid-fall. Her eyes are fixed on the obelisk with an intensity that hasn’t left just because she has.",
-    location: "HubWest",
+    location: "ParkWest",
     vocab: ["bench", "park", "park bench"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1111,6 +1001,8 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: true,
     isContainer: false,
+    isLoggable: true,
+    readableTitle: `Rendezvous Note`,
     readableText: "MEET ME BY THE TREE\n" + "DON'T TELL ANYONE\n" + "- K\n",
   },
   {
@@ -1120,7 +1012,7 @@ export const levelThreeItems: Item[] = [
       "Another theater marquee, this one facing north, its block letters spelling out a title for an audience that isn’t coming.",
     sceneryDescription:
       "The white backing panels are slightly yellowed from age and recycled air, but the black letters stand out sharp and clear. Someone took care to center the title perfectly, like that mattered more than anything else going on at the time.",
-    location: "HubNorth",
+    location: "ParkNorth",
     vocab: ["marquee", "block", "lettering"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1132,13 +1024,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "hubnorthparkbench",
+    id: "parknorthparkbench",
     name: "park bench",
     description:
       "A curved wooden park bench, built from varnished planks in a heavy wrought iron frame.",
     sceneryDescription:
       "This bench is unoccupied, the boards showing only the shallow dents and scuffs of normal use. A small scatter of dust and grit in the corner where the seat meets the back is the only sign that time has passed without anyone bothering to clean up.",
-    location: "HubNorth",
+    location: "ParkNorth",
     vocab: ["bench", "park", "park bench"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1157,7 +1049,7 @@ export const levelThreeItems: Item[] = [
       "A tall, healthy-looking tree, its trunk straight and strong, its crown of leaves a vivid, almost artificial green high above you.",
     sceneryDescription:
       "The tree stands at the center of its little patch of curated soil like it knows it’s the main event. Its bark is smooth in places where people have reached out to touch it, rough and ridged in others where nobody quite dared. The leaves shimmer faintly in the filtered air currents, their color so bright it almost looks digitally enhanced.",
-    location: "HubTree",
+    location: "ParkTree",
     vocab: ["tree"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1185,83 +1077,13 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "TRUNK",
-    name: "felled tree",
-    description:
-      "A tall, lanky tree that has been cut down recently, its trunk lying along the ground like a fallen column.",
-    sceneryDescription:
-      "The trunk is stripped of most of its smaller branches, leaving only thicker limbs jutting out at odd angles. The cut at one end is almost surgically clean, the other still tangled in a mess of roots and dirt. Sap has begun to bead along some of the exposed grain, shining amber in the light.",
-    location: "UNKNOWN",
-    vocab: ["felled", "tree", "trunk", "log"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 150,
-    itemSize: 10,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "DisturbedEarth",
-    name: "disturbed earth",
-    description:
-      "A small mound of freshly disturbed earth, darker and looser than the soil around it, as if something has been buried here recently.",
-    sceneryDescription:
-      "The pile is just high enough to be noticeable, the ground around it still showing the faint marks of fingers or tools. The soil hasn’t had time to settle or blend back into its surroundings; it sits on the surface like a guilty conscience.",
-    location: "UNKNOWN",
-    vocab: ["disturbed", "earth", "dirt", "pile", "hole"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 5,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "Hole",
-    name: "small hole",
-    description:
-      "A small hole nestled between two thick tree roots, just large enough to hide something you could hold in one hand.",
-    sceneryDescription:
-      "The roots arch up and away from the trunk, forming a natural frame for the little pocket of earth they shelter. The hole is cleanly scooped, its edges compacted and smooth, the bottom darker where the soil has been compressed by something recently resting there.",
-    location: "UNKNOWN",
-    vocab: ["small", "hole"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: false,
-    capacity: 2,
-  },
-  {
-    id: "NutCache",
-    name: "cache of nuts",
-    description:
-      "A small stash of nuts and acorns, collected and piled together with obsessive precision.",
-    sceneryDescription:
-      "The nuts are arranged in a tight cluster, some still in their caps, others bare and smooth. A few have tiny tooth marks along the shell where something tested them and decided they were worth keeping. It’s the kind of careful hoard that only makes sense if winter is still a problem in your life.",
-    location: "UNKNOWN",
-    vocab: ["small", "group", "nuts", "acorns", "cache"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
     id: "dias",
     name: "dias",
     description:
-      "A circular raised dais made from the same tan brick used for the Hub’s footpaths, serving as the base for a massive granite obelisk.",
+      "A circular raised dais made from the same tan brick used for the Park’s footpaths, serving as the base for a massive granite obelisk.",
     sceneryDescription:
       "The dais rises only a step above the surrounding paths, but the change in elevation is enough to give the obelisk an extra sense of importance. The bricks are laid in a tight radial pattern converging on the monument, their edges slightly rounded by countless footsteps circling and approaching and circling again.",
-    location: "HubCenter",
+    location: "ParkCenter",
     vocab: ["dias", "platform", "base"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1278,7 +1100,7 @@ export const levelThreeItems: Item[] = [
       "A large, polished granite obelisk, perfectly smooth on all sides. It stands about eight feet high above the dais, four feet by four feet at the base, its top foot tapering inward to a point in darker stone. Near the base, a plaque is carved directly into the granite with a short inscription.",
     sceneryDescription:
       "The obelisk feels engineered more than sculpted, its planes so precise they almost look rendered. The darker stone at the peak catches the light in a way the rest of it doesn’t, drawing the eye upward before dropping it back down to the carved words near the base: SEEK AND YE SHALL FIND. The letters are deep and crisp, as if someone expected them to be read for a very, very long time.",
-    location: "HubCenter",
+    location: "ParkCenter",
     vocab: ["obelisk", "monument", "stone"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -1536,7 +1358,7 @@ export const levelThreeItems: Item[] = [
     description:
       "From this side, the automatic glass door looks like a transparent wall, separating the restaurant from the outside world.",
     sceneryDescription:
-      "The interior light reflects faintly off the glass, layering ghost images of tables and chairs over the view of the Hub beyond. The motion sensors are dead, but the door still sits there with the silent confidence of machinery that expects people to keep coming through.",
+      "The interior light reflects faintly off the glass, layering ghost images of tables and chairs over the view of the Park beyond. The motion sensors are dead, but the door still sits there with the silent confidence of machinery that expects people to keep coming through.",
     location: "Restaurant",
     vocab: ["glass", "door", "automatic"],
     itemClass: "solid",
@@ -1783,29 +1605,6 @@ export const levelThreeItems: Item[] = [
     },
   },
   {
-    id: "CLOVES",
-    name: "cloves",
-    description:
-      "A hanging sphere of something organic is studded all over with cloves, forming a ruddy little planet of spice.",
-    sceneryDescription:
-      "The clove-studded ball swings gently from a bit of twine, radiating a warm, sharp scent into the air. Each clove is pressed deep into the underlying fruit, forming irregular constellations across its surface. It looks like someone’s idea of old-fashioned kitchen charm, left here long enough to become part of the architecture.",
-    location: "Kitchen",
-    vocab: ["cloves", "ball", "sphere", "spice"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    overrides: {
-      smell:
-        "It smells warmly spicy—cloves, a hint of citrus underneath, and a nostalgia for winters that weren’t like this.",
-      taste:
-        "You pluck at one of the cloves, then decide crunching dry spice straight from the decor isn’t your best plan today.",
-    },
-  },
-  {
     id: "PHONENUMBERS",
     name: "plastic plaque",
     description:
@@ -1821,6 +1620,8 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: true,
     isContainer: false,
+    isLoggable: true,
+    readableTitle: `Phone Numbers Found in Restaurant`,
     readableText:
       "Police..............9111\n" +
       "Poison Control......0000\n" +
@@ -1932,73 +1733,6 @@ export const levelThreeItems: Item[] = [
     overrides: {
       lookunder:
         "You lean down and peer under the stall. The boots are attached to a body that is very much done with this whole experience.",
-    },
-  },
-  {
-    id: "DeathThreat",
-    name: "scrawled note",
-    description: "A crumpled note written in a shaky, anxious hand.",
-    sceneryDescription:
-      "The note is on cheap, thin paper, creased and damp at the edges. The handwriting lurches across the surface in jagged, uneven lines, like the author couldn’t decide whether to run or finish the message first.",
-    location: "MensRoom",
-    vocab: ["note", "scrawl", "paper"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    isContainer: false,
-    readableText:
-      "\n\n   ALIEN   INVADERS\n" +
-      "     YOU'LL\n\n" +
-      "           NEVER TAKE\n" +
-      "             ME\n\n" +
-      "          ALIVE",
-  },
-  {
-    id: "MedBracelet",
-    name: "medical bracelet",
-    description:
-      "A slim, silvery medical bracelet with a small tag stamped with the words “JZ Syndrome.”",
-    sceneryDescription:
-      "The bracelet is made from a lightweight, hypoallergenic metal, the surface brushed to a soft sheen. The tag sits flat against the imaginary wrist, its lettering deep and utilitarian rather than decorative. It’s the kind of jewelry you wear not for fashion, but in case things go wrong.",
-    location: "WomensRoom",
-    vocab: ["bracelet", "medical", "silvery", "silver"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: true,
-    clothingSlot: "wrist",
-    isReadable: true,
-    isContainer: false,
-    readableText: "JZ Syndrome",
-    overrides: {
-      wear: "You slip the bracelet on. Congratulations, you now officially have someone else’s medical problem on your wrist.",
-    },
-  },
-  {
-    id: "ShitterCorpseHandbag",
-    name: "handbag",
-    description:
-      "A slim woman’s handbag made of shiny white material. Its once-pristine surface is flecked with dried blood.",
-    sceneryDescription:
-      "The bag looks expensive in a quiet way—minimal hardware, clean lines, a color chosen by someone who believed they’d never get dirty. Blood has spattered across one side in a constellation of dark spots, each one a tiny, irreversible downgrade in resale value.",
-    location: "WomensRoom",
-    vocab: ["handbag", "purse", "bag", "white"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 2,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: true,
-    capacity: 4,
-
-    overrides: {
-      open: "You ease the handbag open, half-expecting something to leap out. It doesn’t—but whatever’s inside has its own story.",
     },
   },
   {
@@ -2181,23 +1915,6 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "KeyRing",
-    name: "keyring",
-    description:
-      "A large, silver keyring built from a single loop of metal. Several keys could easily hang from it; right now, it’s ominously empty.",
-    location: "UNKNOWN",
-    vocab: ["keyring", "ring"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: false,
-    capacity: 10,
-  },
-  {
     id: "BrokenLamp",
     name: "elephant lamp",
     description:
@@ -2229,6 +1946,8 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: true,
     isContainer: false,
+    isLoggable: true,
+    readableTitle: `Angry Resignation Letter`,
     readableText:
       "To whom it may concern,\n\n" +
       "This letter is to inform you of my resignation, effective immediately.\n" +
@@ -2285,6 +2004,8 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: true,
     isContainer: false,
+    isLoggable: true,
+    readableTitle: `Word Scrawled in Lipstick`,
     readableText: "ffektagga",
   },
   {
@@ -2317,6 +2038,8 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: true,
     isContainer: false,
+    isLoggable: true,
+    readableTitle: `Phone Number Found in Gym Locker`,
     readableText: "X7239",
     scoreId: "obtained_secret_phone_number_1",
   },
@@ -2611,57 +2334,6 @@ export const levelThreeItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
-  },
-  {
-    id: "BloodBag",
-    name: "blood bag",
-    description:
-      "A clear medical blood bag made from flexible plastic, half-filled with dark red blood. A length of tubing snakes out from one end, clamped shut with a simple clip. Dried smears and faint fingerprints stain the surface, suggesting it’s been handled more than once in a hurry.",
-    sceneryDescription:
-      "The blood bag hangs limply, its translucent sides bulging slightly under the weight of the blood inside. Tiny air bubbles cling to the interior, drifting lazily whenever the bag shifts. The tubing dangles from the bottom like a vein cut loose from a body.",
-    location: "PatientCareOne",
-    vocab: ["blood", "bag", "bloodbag", "transfusion"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 2,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: false,
-    capacity: 1,
-    //contains: ["BloodBagBlood"],
-    overrides: {
-      smell:
-        "You bring the bag closer and immediately regret it. The scent is a mix of iron and antiseptic, like a hospital hallway after a bad night.",
-      taste:
-        "You seriously consider taste-testing medical blood. Then, mercifully, you don’t.",
-      open: "There’s no neat way to open the bag without compromising the whole thing. Any attempt is going to end in a sticky, crimson mess.",
-    },
-  },
-  {
-    id: "BloodBagBlood",
-    name: "bagged blood",
-    description:
-      "A quantity of dark, thick blood contained inside the plastic bag. It shifts sluggishly when the bag is moved, leaving slow streaks along the inner surface.",
-    sceneryDescription:
-      "Through the plastic, the blood looks almost black, with only the barest suggestion of red where the light catches the edges. It clings to the sides in slow, heavy trails before sliding back down to rejoin the rest of the pool.",
-    location: "BloodBag",
-    vocab: ["blood", "bagged", "red", "fluid"],
-    itemClass: "liquid",
-    itemCategory: "fluid",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 1,
-    overrides: {
-      smell:
-        "It smells metallic and faintly sour, the iron tang cutting through even the lingering antiseptic.",
-      taste:
-        "You get the distinct sense that drinking random medical blood is how horror stories start. You pass.",
-    },
   },
   {
     id: "SlugTank",

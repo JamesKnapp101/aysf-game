@@ -19,7 +19,8 @@ export function getCurrentRoomExits(state: GameState): Direction[] {
 }
 
 export function getItemsInRoom(state: GameState, roomId: string): Item[] {
-  const inv = new Set(state.player.inventory);
+  const inv = state.player.inventory;
+  const invSet = new Set<string>([...inv.general, ...inv.badges, ...inv.keys]);
 
   const contained = new Set<string>();
   for (const s of [
@@ -37,8 +38,10 @@ export function getItemsInRoom(state: GameState, roomId: string): Item[] {
     if (seen.has(item.id)) return false;
     seen.add(item.id);
 
-    if (inv.has(item.id)) return false;
+    // Don't show carried items as "in room"
+    if (invSet.has(item.id)) return false;
 
+    // Don't show items that are inside/under/on/etc another item
     if (contained.has(item.id)) return false;
 
     const dynRoomId = state.itemState.itemRoomId?.[item.id];
@@ -57,7 +60,7 @@ export function describeRoomWithItems(state: GameState): string {
   const room = getCurrentRoom(state);
   const itemsHere = getItemsInCurrentRoom(state);
 
-  const itemNames = itemsHere.map((i) => i.name);
+  const itemNames = itemsHere.map((i) => i.named?.(state) || i.name);
   const itemsText = itemNames.length
     ? `\n\nYou can see ${itemNames.join(", ")} here.`
     : "";

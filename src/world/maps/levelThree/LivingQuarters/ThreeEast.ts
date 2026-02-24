@@ -272,7 +272,7 @@ A couple of the touch pads are more worn than others.
           id: "5EM3",
           title: "CALLER ID: PAGE RIPLEY",
           transcript:
-            "- and stay together! Alice, if you're there, pick up the phone! Alice!? The lights went out on all of three and all hell is breaking loose! Damn...I hope you're alright...a group of us are going to try and hole up in the Hub, we think it's safe there! I'll...look for you...if you get this message, meet us there!",
+            "- and stay together! Alice, if you're there, pick up the phone! Alice!? The lights went out on all of three and all hell is breaking loose! Damn...I hope you're alright...a group of us are going to try and hole up in the Park, we think it's safe there! I'll...look for you...if you get this message, meet us there!",
         },
       ],
     },

@@ -4,7 +4,11 @@ import { tickDamagedFlashlight } from "@game/engine/ticks/damagedFlashlightTick"
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
 import { tickRadioConversation } from "@game/helpers/conversationHelpers";
-import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
+import {
+  triggerPlayerDeath,
+  triggerScriptedEvent,
+} from "@game/helpers/gameHelpers";
+import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
 import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
@@ -20,6 +24,7 @@ import {
 import { getAnimateItems } from "../selectors/itemSelectors";
 import {
   describeSicknessLevel,
+  getHornyStatusMessage,
   getPainStatusMessage,
 } from "../selectors/statusSelectors";
 import {
@@ -68,6 +73,37 @@ export function applyStatusEffectTick(
         const nextState: GameState = {
           ...state,
           player: { ...state.player },
+        };
+        return appendLog(nextState, msg);
+      }
+
+      break;
+    }
+    case "superhorny": {
+      const effect = state.player.statusEffects.find(
+        (se) => se.id === "superhorny",
+      );
+      if (!effect) return state;
+      if (effect.remainingTurns == null) break;
+
+      const msg = getHornyStatusMessage(effect.remainingTurns);
+      let tempIncrease = 0;
+      if (effect.remainingTurns === 68 || effect.remainingTurns === 49) {
+        tempIncrease = 1;
+      }
+      if (effect.remainingTurns === 29 || effect.remainingTurns === 19) {
+        tempIncrease = -1;
+      }
+      if (msg) {
+        const nextState: GameState = {
+          ...state,
+          player: {
+            ...state.player,
+            vitals: {
+              ...state.player.vitals,
+              temperature: state.player.vitals.temperature + tempIncrease,
+            },
+          },
         };
         return appendLog(nextState, msg);
       }
@@ -303,6 +339,10 @@ function tickAnimateActivities(state: GameState): GameState {
       next = triggerPlayerDeath(next, deathMessage, cause);
     };
 
+    const ctxTriggerScriptedEvent = (): void => {
+      next = triggerScriptedEvent(next);
+    };
+
     const result = tick({
       state: next,
       item,
@@ -315,6 +355,7 @@ function tickAnimateActivities(state: GameState): GameState {
       // IMPORTANT: these now update `next`
       moveItemToRoom: ctxMoveItemToRoom,
       triggerPlayerDeath: ctxTriggerPlayerDeath,
+      triggerScriptedEvent: ctxTriggerScriptedEvent,
 
       // readers use latest `next`
       getRoomExits: (roomId: string) => getRoomExits(next, roomId),
@@ -345,15 +386,16 @@ function tickAttachedItems(state: GameState): GameState {
 
     if (!hostRoomId) continue;
 
-    if (next.player.inventory.includes(childId)) {
+    if (inventoryHas(next.player.inventory, childId)) {
       next = {
         ...next,
         player: {
           ...next.player,
-          inventory: next.player.inventory.filter((id) => id !== childId),
+          inventory: removeFromAllBuckets(next.player.inventory, childId),
         },
       };
     }
+
     next = moveItemToRoom(next, childId as ItemId, hostRoomId);
   }
 
@@ -411,6 +453,7 @@ export function advanceTurn(state: GameState): GameState {
       "The radio channel collapses into a steady hiss, then goes quiet.",
     );
   }
+  next = triggerScriptedEvent(next);
   next = tickDamagedFlashlight(next);
   next = tickAviarySpotlight(next);
   next = tickHydroponics(next);

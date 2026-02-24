@@ -47,7 +47,7 @@ const RINGS: RingConfig[] = [
     label: "BOTANICAL",
     sectionKey: "teleport-pads-green",
     ringColor: "#00ff4a",
-    destinations: ["HubCenter", "HydroponicsOne", "BotanicalOne"],
+    destinations: ["ParkCenter", "HydroponicsOne", "BotanicalOne"],
   },
   {
     id: "medical",
@@ -94,7 +94,7 @@ const RINGS: RingConfig[] = [
 ];
 
 const destinationLabelMap = {
-  HubCenter: "Hub Center",
+  ParkCenter: "Park Center",
   HydroponicsOne: "Hydroponics",
   BotanicalOne: "Botanical",
   Lab: "Medical Lab",

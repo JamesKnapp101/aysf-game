@@ -8,13 +8,18 @@ type UIOverlayState = {
   closeOverlay: () => void;
 };
 
-export const useUIOverlayStore = create<UIOverlayState>((set) => ({
+export type UIOverlayClosedEvent = {
+  closed: Overlay;
+};
+
+export const useUIOverlayStore = create<UIOverlayState>((set, get) => ({
   overlay: { kind: "none" },
   openOverlay: (overlay) => set({ overlay }),
-  closeOverlay: () =>
-    set({
-      overlay: { kind: "none" },
-    }),
+  closeOverlay: () => {
+    const closed = get().overlay;
+    set({ overlay: { kind: "none" } });
+    return { closed };
+  },
 }));
 
 export type MindFlashPayload = {

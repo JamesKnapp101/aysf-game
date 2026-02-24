@@ -8,7 +8,8 @@ export function getItemById(state: GameState, id: string): Item | undefined {
 }
 
 export function getItemsInInventory(state: GameState): Item[] {
-  const invIds = new Set(state.player.inventory);
+  const inv = state.player.inventory;
+  const invIds = new Set<string>([...inv.general, ...inv.badges, ...inv.keys]);
   return state.world.items.filter((it) => invIds.has(it.id));
 }
 
@@ -20,13 +21,13 @@ export function getWaterSourcesInRoom(state: GameState): Item[] {
 export function getPlayerLiquidContainers(state: GameState): Item[] {
   const inventoryItems = getItemsInInventory(state);
   return inventoryItems.filter(
-    (ii) => ii.isContainer && ii.meta?.container?.holds?.includes("liquid")
+    (ii) => ii.isContainer && ii.meta?.container?.holds?.includes("liquid"),
   );
 }
 
 export function getRoomForItemId(
   state: GameState,
-  itemId: string
+  itemId: string,
 ): Room | undefined {
   const item = state.world.items.find((it: Item) => it.id === itemId);
   if (!item) return undefined;
@@ -38,7 +39,12 @@ export function getRoomForItemId(
 }
 
 export function getAnimateItems(state: GameState): Item[] {
-  const inventory = new Set(state.player.inventory);
+  const inv = state.player.inventory;
+  const inventory = new Set<string>([
+    ...inv.general,
+    ...inv.badges,
+    ...inv.keys,
+  ]);
 
   return state.world.items.filter((item) => {
     if (item.meta?.isAlive !== true) return false;

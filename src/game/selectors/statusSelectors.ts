@@ -1,19 +1,22 @@
-import { PAIN_STATUS_MESSAGES } from "../text/messageMaps";
+import {
+  HORNY_STATUS_MESSAGES,
+  PAIN_STATUS_MESSAGES,
+} from "../text/messageMaps";
 import type { GameState, StatusEffect } from "../types/gameTypes";
 import { getCurrentRoom } from "./roomSelectors";
 
 export function getActiveStatusEffectIds(state: GameState): string[] {
   return state.player.statusEffects.map(
-    (statusEffect: StatusEffect) => statusEffect.id
+    (statusEffect: StatusEffect) => statusEffect.id,
   );
 }
 
 export function getStatusEffectById(
   state: GameState,
-  effectId: string
+  effectId: string,
 ): StatusEffect[] {
   return state.player.statusEffects.filter(
-    (status: StatusEffect) => status.id === effectId
+    (status: StatusEffect) => status.id === effectId,
   );
 }
 
@@ -32,6 +35,10 @@ export function getRadiationIntensity(state: GameState): number {
 
 export function getPainStatusMessage(remainingTurns: number): string | null {
   return PAIN_STATUS_MESSAGES[remainingTurns] ?? null;
+}
+
+export function getHornyStatusMessage(remainingTurns: number): string | null {
+  return HORNY_STATUS_MESSAGES[remainingTurns] ?? null;
 }
 
 export function describeSicknessLevel(state: GameState): string {
@@ -178,6 +185,18 @@ export function describeCurrentEffects(state: GameState): string {
         break;
       case "drunk":
         effectsMsg += "You are feeling a little tipsy from the alcohol.\n\n";
+        break;
+      case "superhorny":
+        const remainingTurns = statusEffect.remainingTurns ?? 0;
+        if (remainingTurns > 49) {
+          effectsMsg += "You're feeling a bit horny.\n";
+        } else if (remainingTurns > 29) {
+          effectsMsg += "You are really, REALLY horny.\n";
+        } else if (remainingTurns > 19) {
+          effectsMsg += "You're back to feeling just a bit horny.";
+        } else if (remainingTurns > 2) {
+          effectsMsg += "The horniness is leaving you...";
+        }
         break;
       case "trixophine":
         effectsMsg +=

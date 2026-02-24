@@ -16,6 +16,7 @@ export type Overlay =
       title: string;
       body: string;
       sourceItemId?: string;
+      postCloseMessage?: string;
     }
   | { kind: "cooler"; mode: CoolerMode }
   | {

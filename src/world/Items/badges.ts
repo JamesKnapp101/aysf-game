@@ -2,22 +2,22 @@ import type { Item } from "../../game/types/itemTypes";
 
 export const badgeItems: Item[] = [
   {
-    id: "pinkbadge",
-    name: "pink plastic badge",
+    id: "inframaroonbadge",
+    name: "inframaroon plastic badge",
     description:
-      "This is a slim, rectangular plastic badge that is entirely pink. It doesn't have any insignia, name, rank, or bar code.",
+      "This is a slim, rectangular plastic badge that is entirely inframaroon. It doesn't have any insignia, name, rank, or bar code.",
     location: "INVENTORY",
-    vocab: ["badge", "pink", "plastic", "pink badge"],
+    vocab: ["badge", "inframaroon", "plastic", "inframaroon badge"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
-    isReadable: true,
     isContainer: false,
-    readableText:
-      "This pink badge entitles the carrier to one free pink badge.",
-    scoreId: "obtained_pink_badge",
+    scoreId: "obtained_inframaroon_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
 
   {
@@ -37,6 +37,9 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_ultraviolet_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
 
   {
@@ -54,6 +57,9 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_maroon_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
 
   {
@@ -73,6 +79,9 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_violet_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
 
   {
@@ -90,6 +99,9 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_blue_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
   {
     id: "orangebadge",
@@ -106,6 +118,9 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_orange_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
   {
     id: "greenbadge",
@@ -122,6 +137,9 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_green_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
 
   {
@@ -140,6 +158,9 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_yellow_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
 
   {
@@ -157,5 +178,8 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_white_badge",
+    meta: {
+      kind: "security-badge",
+    },
   },
 ];

@@ -1,3 +1,4 @@
+import { appendLog } from "@game/engine/handleCommand";
 import { getExitDestinationRoomId } from "@game/helpers/itemHelpers";
 import { TickContext } from "@game/types/context";
 import { ItemId } from "@game/types/ids";
@@ -38,7 +39,7 @@ export const catItems: Item[] = [
         getRoomExits,
         isRoomDark,
       }: TickContext) => {
-        if (rng() < 0.1) return;
+        if (rng() < 0.6) return;
 
         const itemId = item.id as ItemId;
         const currentRoomId = state.itemState.itemRoomId[itemId];
@@ -63,19 +64,34 @@ export const catItems: Item[] = [
 
         if (!exits.length) return;
 
-        const darkTargets: string[] = [];
-        const lightTargets: string[] = [];
+        const darkTargets: { toRoomId: string; exit: Exit }[] = [];
+        const lightTargets: { toRoomId: string; exit: Exit }[] = [];
 
-        for (const { toRoomId } of exits) {
-          if (isRoomDark(toRoomId)) darkTargets.push(toRoomId);
-          else lightTargets.push(toRoomId);
+        for (const { toRoomId, exit } of exits) {
+          if (isRoomDark(toRoomId))
+            darkTargets.push({ toRoomId: toRoomId, exit: exit });
+          else lightTargets.push({ toRoomId: toRoomId, exit: exit });
         }
 
         const targets = darkTargets.length ? darkTargets : lightTargets;
         if (!targets.length) return;
 
-        const nextRoomId = targets[Math.floor(rng() * targets.length)];
-        return moveItemToRoom(itemId, nextRoomId);
+        const catExit = targets[Math.floor(rng() * targets.length)];
+
+        if (currentRoomId === state.player.roomId) {
+          appendLog(
+            state,
+            `The cat scampers off to the ${catExit.exit.direction}`,
+          );
+        }
+        let next = moveItemToRoom(itemId, catExit.toRoomId);
+        if (currentRoomId === state.player.roomId) {
+          next = appendLog(
+            state,
+            `The cat scampers off to the ${catExit.exit.direction}`,
+          );
+        }
+        return next;
       },
     },
   },

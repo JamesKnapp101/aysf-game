@@ -47,9 +47,18 @@ export const createInitialState = (world: World): GameState => {
 
   // Seed all the containers with their starting contents
   // Anything defined with location === "INVENTORY" should start in the player's inventory
-  const startingInventoryIds = worldWithMeta.items
+  const startingInventory = worldWithMeta.items
     .filter((it) => it.location === "INVENTORY")
-    .map((it) => it.id);
+    .reduce(
+      (acc, it) => {
+        const kind = it.meta?.kind;
+        if (kind === "security-badge") acc.badges.push(it.id);
+        else if (kind === "key") acc.keys.push(it.id);
+        else acc.general.push(it.id);
+        return acc;
+      },
+      { general: [] as string[], badges: [] as string[], keys: [] as string[] },
+    );
 
   const initialGameState: GameState = {
     rng: () => Math.random(),
@@ -59,13 +68,15 @@ export const createInitialState = (world: World): GameState => {
     rating: 0,
     moves: 0,
     player: {
-      roomId: "LevelThreeCorridorThree",
-      inventory: startingInventoryIds,
+      roomId: "StairThree",
+      inventory: startingInventory,
+      log: [],
       memoriesTriggered: {
         own_name: false,
         own_image: false,
         own_occupation: false,
         own_voice: false,
+        seen_self: false,
         own_handwriting: false,
         aware_of_reincarnation: false,
         aware_of_reincarnation_nature: false,
@@ -82,15 +93,12 @@ export const createInitialState = (world: World): GameState => {
         brainActivity: 1,
         theSickness: undefined,
       },
-      statusEffects: [
-        {
-          id: "regenerationWoozies",
-          intensity: 1,
-          remainingTurns: 1,
-        },
-      ],
+      statusEffects: [],
     },
     worldState: {
+      scriptedEventsTripped: {
+        cat_meet: false,
+      },
       doors,
       darkRooms: {
         LivingQuartersThreeWest: true,
@@ -147,7 +155,7 @@ export const createInitialState = (world: World): GameState => {
         "gravity-level-six": true,
         "gravity-level-seven": true,
         "library-power": false,
-        "hub-security": true,
+        "park-security": true,
         "teleport-pads-green": true,
         "teleport-pads-blue": true,
         "teleport-pads-yellow": true,
@@ -220,7 +228,7 @@ export const createInitialState = (world: World): GameState => {
         obtained_gravity_boots: false,
         obtained_green_badge: false,
         obtained_maroon_badge: false,
-        obtained_hub_pass: false,
+        obtained_park_pass: false,
         obtained_infection_report: false,
         obtained_innoculant: false,
         obtained_lotto_ticket: false,
@@ -228,7 +236,7 @@ export const createInitialState = (world: World): GameState => {
         obtained_new_z4_detonator: false,
         obtained_nv_goggles: false,
         obtained_orange_badge: false,
-        obtained_pink_badge: false,
+        obtained_inframaroon_badge: false,
         obtained_power_key: false,
         obtained_radiation_cure: false,
         obtained_secret_phone_number_1: false,
@@ -334,6 +342,10 @@ export const createInitialState = (world: World): GameState => {
         retreatTicks: 0,
         lastSeenPlayerRoomId: undefined,
         trailQueue: [],
+      },
+      brainSlug: {
+        isHydrated: false,
+        attachedTo: "none",
       },
       playerDeaths: {},
       aviarySpotlight: {

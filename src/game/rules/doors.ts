@@ -6,7 +6,7 @@ import type { Exit } from "../types/roomTypes";
 
 export function resolveDoorDestination(
   doorDef: DoorDefinition,
-  fromRoomId: string
+  fromRoomId: string,
 ): string | undefined {
   const { roomAId, roomBId } = doorDef.connects;
 
@@ -21,7 +21,7 @@ export function canMoveThroughExit(
   exit: Exit,
   doorDef?: DoorDefinition,
   doorState?: DoorState,
-  direction?: string
+  direction?: string,
 ): { allowed: boolean; message?: string } {
   if (!doorDef) {
     return { allowed: true };
@@ -98,12 +98,12 @@ export function canMoveThroughExit(
 }
 
 export function playerHasBadge(state: GameState, badgeId: string): boolean {
-  return state.player.inventory.includes(badgeId);
+  return state.player.inventory.badges.includes(badgeId);
 }
 
 export function upsertDoorState(
   state: GameState,
-  updated: DoorState
+  updated: DoorState,
 ): GameState {
   return {
     ...state,
@@ -122,7 +122,7 @@ export function upsertDoorState(
 export function tryOpenDoor(
   state: GameState,
   doorDef: DoorDefinition,
-  doorState: DoorState
+  doorState: DoorState,
 ): { state: GameState; message: string } {
   if (doorState.isOpen) {
     return { state, message: "The door is already open." };
@@ -154,7 +154,9 @@ export function tryOpenDoor(
           return { state, message: "It's locked." };
         }
 
-        const hasKey = nextState.player.inventory.includes(doorDef.keyItemId);
+        const hasKey = nextState.player.inventory.keys.includes(
+          doorDef.keyItemId,
+        );
         if (!hasKey) {
           return {
             state,
@@ -171,8 +173,8 @@ export function tryOpenDoor(
           return { state, message: "The scanner flashes red." };
         }
 
-        const hasBadge = nextState.player.inventory.includes(
-          doorDef.badgeItemId
+        const hasBadge = nextState.player.inventory.badges.includes(
+          doorDef.badgeItemId,
         );
         if (!hasBadge) {
           return {
@@ -206,7 +208,7 @@ export function tryOpenDoor(
 export function tryCloseDoor(
   state: GameState,
   doorDef: DoorDefinition,
-  doorState: DoorState
+  doorState: DoorState,
 ): { state: GameState; message: string } {
   if (!doorState.isOpen) {
     return { state, message: "It's already closed." };

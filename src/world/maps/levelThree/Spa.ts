@@ -6,7 +6,7 @@ export const spaRooms: Room[] = [
     name: "Spa",
     description: `This appears to be some kind of recreational spa. It is a wide, open area with pristine white ceramic tiling covering the floor and walls. The center of the spa is predominated by a what looks like a very large jaquzzi which has a sort of 'four leaf clover' shape, effectively providing four separate areas to congregate. The jets in the tub are currently inactive, and the glow of the overhead light twinkles off the jaquzzi's tiles. There is a check in station to the right which is unoccupied, and racks with towels and facecloths are located just to the left of that. The room is large with a high ceiling, and the wide open space gives the whole room excellent acoustics, causing even your footsteps to echo slightly. There is a wooden door on the opposite wall to the west with a check-in board next to it. To the north is another wooden door which appears to be made of cedar, with a small glass porthole in it at about head's height. The the south is a white metal door with an aluminum handle.^^A light switch is visible on the east wall next to the exit.`,
     exits: [
-      { direction: "east", toRoomId: "HubWest" },
+      { direction: "east", toRoomId: "ParkWest" },
 
       { direction: "south", doorId: "SteamRoomDoor" },
       { direction: "north", doorId: "CedarDoor" },

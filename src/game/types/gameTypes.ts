@@ -58,7 +58,9 @@ export type StatusId =
   | "possessed"
   | "nightvision-active"
   | "dreaming"
-  | "death";
+  | "death"
+  | "superhorny"
+  | "pheromoned";
 
 export interface StatusEffect {
   id: StatusId;
@@ -92,7 +94,7 @@ type PowerSectionId =
   | "teleport-pads-violet"
   | "teleport-pads-white"
   | "teleport-pads-maroon"
-  | "hub-security"
+  | "park-security"
   | "engine-room-power-lock"
   | "weapons-system"
   | "loading-dock-door"
@@ -105,15 +107,27 @@ type PowerSectionId =
 type PlayerMoveEvent = {
   fromRoomId: string;
   toRoomId: string;
-  via?: string; // direction or exit id, if you have it
-  atTurn?: number; // if you track turns
+  via?: string;
+  atTurn?: number;
+};
+
+export type PlayerLogEntry = {
+  source: string;
+  title: string;
+  loggedAtTurn: number;
+  body: string;
 };
 
 export interface PlayerState {
   roomId: string;
   prevRoomId?: string;
   recentMoves?: PlayerMoveEvent[];
-  inventory: string[];
+  inventory: {
+    general: string[];
+    badges: string[];
+    keys: string[];
+  };
+  log: PlayerLogEntry[];
   vitals: PlayerVitals;
   statusEffects: StatusEffect[];
   memoriesTriggered: Record<PlayerMemoryId, boolean>;
@@ -149,6 +163,11 @@ export type HydroponicsSpiderState = {
   turnsSinceLastBreath: number;
 };
 
+export type BrainSlugState = {
+  isHydrated: boolean;
+  attachedTo: string;
+};
+
 export interface World {
   rooms: Room[];
   items: Item[];
@@ -181,6 +200,7 @@ type PlayerDeath = {
 };
 
 export interface WorldState {
+  scriptedEventsTripped: Record<string, boolean>;
   conditionalTriggers: Record<string, boolean>;
   playerDeaths: Record<RoomId, PlayerDeath>;
   doors: Record<string, DoorState>;
@@ -193,6 +213,7 @@ export interface WorldState {
   octopusState: OctopusState;
   aviarySpotlight: AviarySpotlightState;
   hydroponicsSpider: HydroponicsSpiderState;
+  brainSlug: BrainSlugState;
   damagedFlashlight: DamagedFlashlightState;
   roomTemp: Record<
     string,

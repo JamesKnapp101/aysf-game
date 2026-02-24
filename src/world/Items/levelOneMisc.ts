@@ -482,30 +482,6 @@ export const levelOneItems: Item[] = [
     },
   },
   {
-    id: "TactCorpseHolster",
-    name: "holster",
-    description:
-      "A holster made of tough synthetic fiber, shaped to fit a sidearm. It still bears the faint impression of the weapon it used to carry.",
-    sceneryDescription:
-      "The holster hangs at the dead officer’s side, secured to the uniform in a way that strongly implies it was never meant to be empty.",
-    location: "BridgeTact",
-    vocab: ["holster"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 2,
-    itemSize: 3,
-    isWearable: true,
-    clothingSlot: "torso",
-    isReadable: false,
-    isContainer: true,
-    isOpenable: false,
-    capacity: 1,
-
-    overrides: {
-      take: "You work the holster free from the dead man’s belt. He doesn’t complain.",
-    },
-  },
-  {
     id: "BridgeCommConsole",
     name: "communications console",
     description:

@@ -1,12 +1,13 @@
+import { inventoryHas } from "@game/rules/state";
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
 
 export function addLiquidToFillableContainer(
   state: GameState,
   container: Item,
-  liquidId: string
+  liquidId: string,
 ): GameState {
-  if (!state.player.inventory.includes(container.id)) return state;
+  if (!inventoryHas(state.player.inventory, container.id)) return state;
   let next = state;
   return {
     ...next,
@@ -22,9 +23,9 @@ export function addLiquidToFillableContainer(
 
 export function removeLiquidFromFillableContainer(
   state: GameState,
-  container: Item
+  container: Item,
 ): GameState {
-  if (!state.player.inventory.includes(container.id)) return state;
+  if (!inventoryHas(state.player.inventory, container.id)) return state;
   let next = state;
   const { [container.id]: _, ...rest } = state.itemState.containerFilled;
 

@@ -2,6 +2,7 @@ import { InventoryTree } from "@game/components/InventoryTree";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import * as React from "react";
+import "../../styles/quantum-folder.css";
 
 export type InvSort = "none" | "name-asc" | "name-desc";
 
@@ -13,8 +14,25 @@ export function QuantumTotePanel({
   inventoryItems: Item[];
 }) {
   const [sort, setSort] = React.useState<InvSort>("none");
+  const [activeTab, setActiveTab] = React.useState<
+    "general" | "badges" | "keys"
+  >("general");
 
-  const itemCount = inventoryItems.length;
+  const activeIds = state.player.inventory[activeTab] ?? [];
+  const activeItems: Item[] = React.useMemo(() => {
+    const itemsById = new Map(
+      state.world.items.map((it) => [it.id, it] as const),
+    );
+    return activeIds.map((id) => itemsById.get(id)).filter(Boolean) as Item[];
+  }, [state.world.items, activeIds]);
+
+  const counts = {
+    general: state.player.inventory.general.length,
+    badges: state.player.inventory.badges.length,
+    keys: state.player.inventory.keys.length,
+  };
+
+  const totalCount = counts.general + counts.badges + counts.keys;
 
   const cycleSort = () => {
     setSort((s) =>
@@ -24,6 +42,12 @@ export function QuantumTotePanel({
 
   const sortLabel =
     sort === "none" ? "Sort" : sort === "name-asc" ? "Name ↑" : "Name ↓";
+
+  const tabLabel = (t: typeof activeTab) => {
+    if (t === "general") return "General";
+    if (t === "badges") return "Badges";
+    return "Keys";
+  };
 
   return (
     <div
@@ -69,7 +93,7 @@ export function QuantumTotePanel({
               display: "flex",
               justifyContent: "space-between",
               alignItems: "baseline",
-              gap: 12,
+              gap: 8,
             }}
           >
             <div
@@ -82,7 +106,10 @@ export function QuantumTotePanel({
                 whiteSpace: "nowrap",
               }}
             >
-              <span className="qtote-brand-main" style={{ fontWeight: 700 }}>
+              <span
+                className="qtote-brand-main"
+                style={{ fontWeight: 700, padding: "2px", paddingLeft: "2px" }}
+              >
                 OMNI
               </span>
               <span
@@ -105,43 +132,39 @@ export function QuantumTotePanel({
           </div>
 
           {/* Toolbar pill */}
-          <div
-            className="qtote-toolbar"
-            style={{
-              border: "2px solid currentColor",
-              borderRadius: 12,
-              padding: "5px 7px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 12,
-              flex: "0 0 auto",
-            }}
-          >
-            <div className="qtote-count" style={{ whiteSpace: "nowrap" }}>
-              Item Count: {itemCount}
+          <div className="qtote-toolbar">
+            <div className="qtote-tabRow">
+              <div
+                className="qtote-tabs"
+                role="tablist"
+                aria-label="Inventory tabs"
+              >
+                {(["general", "badges", "keys"] as const).map((t) => {
+                  const isActive = t === activeTab;
+                  const count = counts[t];
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      className={`qtote-tab ${isActive ? "isActive" : ""}`}
+                      onClick={() => setActiveTab(t)}
+                      title={`${tabLabel(t)} (${count})`}
+                    >
+                      {tabLabel(t)}{" "}
+                      <span className="qtote-tabCount">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="qtote-tabsMeta" aria-hidden="true">
+                Total: {totalCount}
+              </div>
             </div>
 
-            <button
-              className="qtote-sortBtn"
-              onClick={cycleSort}
-              type="button"
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "inherit",
-                font: "inherit",
-                cursor: "pointer",
-                textDecoration: "underline",
-                padding: 0,
-                opacity: 0.95,
-                whiteSpace: "nowrap",
-                marginRight: "13px",
-                fontSize: "14px",
-              }}
-              aria-label="Change inventory sort order"
-              title="Cycle sort: none → name ascending → name descending"
-            >
+            <button className="qtote-sortBtn" onClick={cycleSort} type="button">
               {sortLabel}
             </button>
           </div>
@@ -169,7 +192,7 @@ export function QuantumTotePanel({
             >
               <InventoryTree
                 state={state}
-                inventoryItems={inventoryItems}
+                inventoryItems={activeItems}
                 sort={sort}
               />
             </div>
@@ -185,7 +208,7 @@ export function QuantumTotePanel({
               whiteSpace: "nowrap",
             }}
           >
-            Infinite Space. &nbsp;Zero Weight. &nbsp;OmniTote.
+            Infinite Space. &nbsp;Zero Weight.
           </div>
         </div>
       </div>

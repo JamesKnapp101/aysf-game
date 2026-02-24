@@ -1,4 +1,5 @@
 import { CrtModal } from "@game/components/CrtModal";
+import { inventoryHas } from "@game/rules/state";
 import { useUIEffectsStore } from "@game/store/store";
 import { GameState } from "@game/types/gameTypes";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -103,7 +104,7 @@ export function MatterTransmitterModal({
 
   const itemCurrentRoomId = (
     itemId: string,
-    s: GameState
+    s: GameState,
   ): string | undefined => {
     const overridden = s.itemState.itemRoomId?.[itemId];
     if (overridden) return overridden;
@@ -136,7 +137,7 @@ export function MatterTransmitterModal({
       const id = it.id;
 
       if (plateItemIds.includes(id)) continue;
-      if (state.player.inventory.includes(id)) continue;
+      if (inventoryHas(state.player.inventory, id)) continue;
 
       const curRoom = itemCurrentRoomId(id, state);
       if (curRoom !== targetRoomId) continue;
@@ -144,10 +145,10 @@ export function MatterTransmitterModal({
       if (!isCollectable(id, state)) continue;
 
       const inAnySurface = Object.values(
-        state.itemState.surfaceContents ?? {}
+        state.itemState.surfaceContents ?? {},
       ).some((arr) => (arr ?? []).includes(id));
       const inAnyContainer = Object.values(
-        state.itemState.containerContents ?? {}
+        state.itemState.containerContents ?? {},
       ).some((arr) => (arr ?? []).includes(id));
       if (inAnySurface || inAnyContainer) continue;
 
@@ -155,8 +156,8 @@ export function MatterTransmitterModal({
     }
 
     return ids.sort((a, b) => {
-      const an = getItemById(a)?.name ?? a;
-      const bn = getItemById(b)?.name ?? b;
+      const an = getItemById(a)?.named?.(state) ?? getItemById(a)?.name ?? a;
+      const bn = getItemById(b)?.named?.(state) ?? getItemById(b)?.name ?? b;
       return an.localeCompare(bn);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -232,8 +233,21 @@ export function MatterTransmitterModal({
         const nextItemRoomId = { ...(prev.itemState.itemRoomId ?? {}) };
         nextItemRoomId[prevPlateItemId] = targetRoomId;
 
-        const nextInventory = prev.player.inventory.includes(prevPlateItemId)
-          ? prev.player.inventory.filter((id) => id !== prevPlateItemId)
+        const nextInventory = inventoryHas(
+          prev.player.inventory,
+          prevPlateItemId,
+        )
+          ? {
+              general: prev.player.inventory.general.filter(
+                (id) => id !== prevPlateItemId,
+              ),
+              badges: prev.player.inventory.badges.filter(
+                (id) => id !== prevPlateItemId,
+              ),
+              keys: prev.player.inventory.keys.filter(
+                (id) => id !== prevPlateItemId,
+              ),
+            }
           : prev.player.inventory;
 
         const cleanFromLists = (lists?: Record<string, string[]>) => {
@@ -349,7 +363,7 @@ export function MatterTransmitterModal({
     if (e.key === "End") {
       e.preventDefault();
       setSelectedItemId(
-        targetRoomCollectables[targetRoomCollectables.length - 1] ?? ""
+        targetRoomCollectables[targetRoomCollectables.length - 1] ?? "",
       );
       return;
     }
@@ -523,7 +537,10 @@ export function MatterTransmitterModal({
                 </div>
 
                 {targetRoomCollectables.map((id) => {
-                  const name = getItemById(id)?.name ?? id;
+                  const name =
+                    getItemById(id)?.named?.(state) ??
+                    getItemById(id)?.name ??
+                    id;
                   const selected = selectedItemId === id;
 
                   return (

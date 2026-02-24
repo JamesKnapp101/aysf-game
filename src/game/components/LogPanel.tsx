@@ -2,13 +2,14 @@ import { CRT_COLOR_STORAGE_KEY, type LayoutPrefs } from "../Game";
 import { getItemsInInventory } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 
+import { LogTab } from "@game/components/LogTab";
 import { QuantumTotePanel } from "@game/components/QuantumTotePanel";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HintsTab } from "../../hints/HintMenu";
 import { allHintsRoot } from "../../hints/allHintsRoot";
 import { StatusTab } from "./StatusTab";
 
-type SidebarTab = "inventory" | "status" | "hints" | "settings";
+type SidebarTab = "inventory" | "status" | "log" | "hints" | "settings";
 type LogPanelProps = {
   state: GameState;
   dispatch: React.Dispatch<any>;
@@ -236,6 +237,15 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           <button
             type="button"
             className={
+              "game-tab" + (activeTab === "log" ? " game-tab-active" : "")
+            }
+            onClick={() => setActiveTab("log")}
+          >
+            Log
+          </button>
+          <button
+            type="button"
+            className={
               "game-tab" + (activeTab === "hints" ? " game-tab-active" : "")
             }
             onClick={() => setActiveTab("hints")}
@@ -259,6 +269,8 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           )}
 
           {activeTab === "status" && <StatusTab gameState={state} />}
+
+          {activeTab === "log" && <LogTab gameState={state} />}
 
           {activeTab === "hints" && (
             <div>

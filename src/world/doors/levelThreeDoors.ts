@@ -307,7 +307,7 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     id: "DOOR3FE",
     name: "living quarters door 3FE",
     descriptionFromA:
-      "To the east is a door affixed with a neat black plastic label indicating '3FE'. A strip of yellow and black tape has been stretched across the eastern door.",
+      "To the east is a door affixed with an engraved sign that reads 'Onche Residence.'",
     descriptionFromB: "To the west is the unit's front door.",
     kind: "standard",
     vocab: ["east door", "door 3fe"],
@@ -381,20 +381,20 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
   },
 ];
 
-export const levelThreeHubDoors: DoorDefinition[] = [
+export const levelThreeParkDoors: DoorDefinition[] = [
   // THE HUB
   {
-    id: "HubDoor",
+    id: "ParkDoor",
     name: "engraved wooden door",
     descriptionFromA:
       "To the west is a large, heavy-looking wooden door, engraved with a leaf and floral pattern.",
     descriptionFromB:
-      "To the east is a large, heavy wooden door that exits The Hub.",
+      "To the east is a large, heavy wooden door that exits The Park.",
     kind: "keyed",
     vocab: ["wooden door", "engraved door", "engraved wooden door"],
     connects: {
       roomAId: "LevelThreeSecondCorridorTwo",
-      roomBId: "HubEast",
+      roomBId: "ParkEast",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: true,
