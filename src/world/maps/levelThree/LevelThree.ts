@@ -5,6 +5,7 @@ import {
 import { oneEastRooms } from "src/world/maps/levelThree/LivingQuarters/OneEast";
 import { oneWestRooms } from "src/world/maps/levelThree/LivingQuarters/OneWest";
 
+import { Item } from "@game/types/itemTypes";
 import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
 import {
   sixEastItems,
@@ -35,6 +36,25 @@ import { drugItems } from "../../Items/drugs";
 import { generalItems } from "../../Items/general";
 import { levelThreeItems } from "../../Items/levelThreeMisc";
 
+const corridorItems: Item[] = [
+  {
+    id: "TightSqueeze",
+    name: "a narrow opening",
+    description:
+      "The gap is pretty small, not even a child could squeeze through it.",
+    sceneryDescription: `leaving only a very narrow gap near the floor that's much too small to squeeze under.`,
+    location: "LevelThreeCorridorSeven",
+    vocab: ["opening", "gap"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+  },
+];
+
 export const LEVEL_THREE: WorldChunk = {
   items: [
     ...generalItems,
@@ -46,6 +66,7 @@ export const LEVEL_THREE: WorldChunk = {
     ...threeWestItems,
     ...sixEastItems,
     ...stairwellItems,
+    ...corridorItems,
   ],
   doors: [
     ...levelThreeLivingQuartersDoors,
@@ -122,7 +143,7 @@ export const LEVEL_THREE: WorldChunk = {
       name: "Level Three Corridor Six",
       description: `This is the main corridor for accessing the Level Three Living Quarters. To the east and west are doors affixed with neat black plastic labels indicating '3FE' and '3FW' respectively.`,
       exits: [
-        { direction: "north", toRoomId: "LevelThreeCorridorSixPointSix" },
+        { direction: "north", toRoomId: "LevelThreeCorridorSeven" },
         { direction: "south", toRoomId: "LevelThreeCorridorFive" },
         { direction: "east", doorId: "DOOR3FE" },
       ],
@@ -140,10 +161,10 @@ export const LEVEL_THREE: WorldChunk = {
     {
       id: "LevelThreeCorridorSeven",
       name: "Ruined Corridor",
-      description: `This is the main corridor for accessing the Level Three Living Quarters. Only one of the lights remains on here, providing just a flickering, weak electric strobe. The way north has been cut off by a violent buckle in the deck which has caused the huge metal floor plating to wrinkle, actually piercing the ceiling above it in spots. A huge amount of debris has settled in the upheaval. A small gap near the ceiling is the only way through, but it's much too small to fit through. To the west is a door affixed with neat black plastic labels reading '3GW' and a strip of yellow and black warning tape stretched across it. There is no door to the east; instead the corridor bends and heads off in that direction.`,
+      description: `This is a long corridor that would extend north and south, except some sort of accident has caused the ceiling to collapse to the north, pitching down at a steep angle and [[SCENERY]] A row of emergency lights provide a flickering, weak electric strobe down the length of the southern corridor, where doors are visible to either side, and another corridor branches east, toward the Terminal platform.`,
       exits: [
-        { direction: "south", toRoomId: "LevelThreeCorridorSixPointSix" },
-        { direction: "north", doorId: "CubbySqueeze" },
+        { direction: "south", toRoomId: "LevelThreeCorridorSix" },
+        { direction: "north", toRoomId: "LevelThreeCubby" },
         { direction: "east", toRoomId: "LevelThreeStairAccess" },
       ],
     },

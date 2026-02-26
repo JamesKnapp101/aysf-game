@@ -57,13 +57,13 @@
 
 .room-compass-label--i {
     top: 2px;
-    right: 6px;
+    right: 3px;
     font-size: 18px;
 }
 
 .room-compass-label--o {
     bottom: 2px;
-    left: 6px;
+    left: 4px;
     font-size: 18px;
 }
 
@@ -98,4 +98,12 @@
 .room-compass-label--d .compass-icon {
     width: 1.35rem;
     height: 1.35rem;
+}
+
+.compass-icon {
+    shape-rendering: geometricPrecision;
+}
+
+.room-compass .compass-icon * {
+    vector-effect: non-scaling-stroke;
 }

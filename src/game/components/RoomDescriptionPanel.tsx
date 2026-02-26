@@ -199,12 +199,13 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   }, [desc, roomPanelFlexBasis]);
 
   // =========================
-  // Mind flash sequence (stable: does NOT depend on desc)
+  // Mind flash sequence
   // =========================
   useEffect(() => {
     if (!isMindFlash) {
-      // If pre-empted (organism death), clear local mind state.
-      setFlashes([]);
+      if (flashes.length > 0) {
+        setFlashes([]);
+      }
       setMindHijacked(false);
       return;
     }

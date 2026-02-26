@@ -1,3 +1,4 @@
+import { TickEvent } from "@game/engine/turn";
 import type { GameState } from "./gameTypes";
 import type { Item } from "./itemTypes";
 import type { Exit } from "./roomTypes";
@@ -10,7 +11,7 @@ export type TickContext = {
   turn: number;
 
   rng: () => number;
-  emit: (ev: GamepadEvent) => void;
+  emit: (ev: TickEvent) => void;
 
   moveItemToRoom: (itemId: string, roomId: string) => GameState;
   getRoomExits: (roomId: string) => Exit[];

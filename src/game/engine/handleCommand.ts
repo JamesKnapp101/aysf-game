@@ -1,10 +1,14 @@
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
 import { drainRadioQueuedLog } from "@game/helpers/conversationHelpers";
+import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import {
+  drainAfterRoomDescription,
   movePlayerToRoom,
+  runScriptedEvents,
   triggerPlayerDeath,
 } from "@game/helpers/gameHelpers";
 import { getRoomById } from "@game/helpers/itemHelpers";
+import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
 import { AQUARIUM_ROOM_IDS } from "src/world/Items/creatures/octopus";
 import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
@@ -70,8 +74,9 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
               message,
               "aquarium octopus",
             );
-            break; // we'll still echo below
+            break;
           }
+
           break;
         }
       }
@@ -111,34 +116,46 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         message = "You can't go that way.";
         break;
       }
+      // YOU SHALL NOT PASS - put any exceptions here for now
+      if (destinationRoomId === "LevelThreeCubby") {
+        message = `There's no way you'll be able to squeeze through that tiny opening.`;
+        break;
+      }
 
-      // Move player first
-      const movedState: GameState = movePlayerToRoom(state, destinationRoomId, {
+      // Otherwise...
+      let next = movePlayerToRoom(state, destinationRoomId, {
         fromRoomId: state.player.roomId,
         via: cmd.direction,
       });
 
-      // Mark visited before describing (keeps short/full logic consistent)
-      const visitedRooms = movedState.worldState.visitedRooms ?? {};
-      const nextVisitedRooms = { ...visitedRooms, [destinationRoomId]: true };
+      if (destinationRoomId !== state.player.roomId) {
+        next = runScriptedEvents(
+          next,
+          {
+            kind: "onEnterRoom",
+            roomId: destinationRoomId,
+            fromRoomId: state.player.roomId,
+          },
+          SCRIPTED_EVENTS,
+        );
+      }
 
-      nextState = {
-        ...movedState,
+      const visitedRooms = next.worldState.visitedRooms ?? {};
+      const nextVisitedRooms = { ...visitedRooms, [destinationRoomId]: true };
+      next = {
+        ...next,
         worldState: {
-          ...movedState.worldState,
+          ...next.worldState,
           visitedRooms: nextVisitedRooms,
         },
       };
 
-      // We'll build the room description AFTER advanceTurn so ticks (spotlight/evict/etc)
-      // are reflected in the log output.
+      nextState = next;
       message = moveMessage.trim();
       break;
     }
 
     case "action": {
-      // Most actions should consume time. If you have some that shouldn't,
-      // teach the handler to return consumesTurn and honor it here.
       consumesTurn = true;
 
       const handler = ACTION_HANDLERS[cmd.verb];
@@ -194,10 +211,27 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   // If movement, append the destination room description from the UPDATED world state.
   if (cmd.type === "move" && nextState.player.roomId !== state.player.roomId) {
     const destRoomId = nextState.player.roomId;
-    const roomDesc = buildRoomDescription(nextState, destRoomId, {
+
+    const roomDescNoItems = buildRoomDescription(nextState, destRoomId, {
       mode: "log",
+      omitItems: true,
     });
-    message = [message.trim(), roomDesc.trim()].filter(Boolean).join("\n");
+
+    const drained = drainAfterRoomDescription(nextState);
+    nextState = drained.state;
+
+    const scripted = drained.lines.map((s) => s.trim()).filter(Boolean);
+
+    const itemsDesc = buildRoomItemsDescription(nextState, destRoomId);
+
+    message = [
+      message.trim(),
+      roomDescNoItems.trim(),
+      ...scripted,
+      itemsDesc.trim(),
+    ]
+      .filter(Boolean)
+      .join("\n\n");
   }
   const roomName = `${ROOM_NAME_TOKEN_START}${
     getRoomById(nextState, nextState.player.roomId)?.name

@@ -355,7 +355,7 @@ export function tickAviarySpotlight(state: GameState): GameState {
 export function getAviarySpotlitRoomId(state: GameState): string | null {
   const spot = state.worldState.aviarySpotlight as any;
   if (!spot) return null;
-  return spot.route[spot.index] ?? null;
+  return spot.route[spot.index];
 }
 
 export function isRoomSpotlitByAviary(

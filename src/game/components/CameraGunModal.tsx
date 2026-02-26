@@ -10,11 +10,6 @@ type CameraGunViewerModalProps = {
   currentView: number;
   onCycleView: (currentViewIndex: number) => void;
   onClose: () => void;
-
-  /**
-   * Optional: lets the modal fire raw parser commands.
-   * For WATCH we call onRunCommand("wait").
-   */
   onRunCommand?: (rawCommand: string) => void;
 };
 
@@ -154,8 +149,8 @@ export function CameraGunViewerModal({
                     !canView
                       ? "No active cameras"
                       : !onRunCommand
-                      ? "No command handler wired"
-                      : "WATCH (wait one turn)"
+                        ? "No command handler wired"
+                        : "WATCH (wait one turn)"
                   }
                 />
                 <div className="cgv-viewLabel">WATCH</div>

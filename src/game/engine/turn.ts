@@ -4,10 +4,7 @@ import { tickDamagedFlashlight } from "@game/engine/ticks/damagedFlashlightTick"
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
 import { tickRadioConversation } from "@game/helpers/conversationHelpers";
-import {
-  triggerPlayerDeath,
-  triggerScriptedEvent,
-} from "@game/helpers/gameHelpers";
+import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
 import { playerMemoryMap, playerScoreMap } from "../constants";
@@ -34,6 +31,10 @@ import {
 import type { GameState, StatusEffect } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
 import { appendLog } from "./handleCommand";
+
+export type TickEvent =
+  | { kind: "log"; text: string }
+  | { kind: "afterRoomDescription"; text: string };
 
 function sicknessStage(s: number): number {
   if (s > 1900) return 0;
@@ -328,8 +329,9 @@ function tickAnimateActivities(state: GameState): GameState {
       | undefined;
     if (!tick) continue;
 
-    const ctxMoveItemToRoom = (itemId: string, toRoomId: string): void => {
+    const ctxMoveItemToRoom = (itemId: string, toRoomId: string): GameState => {
       next = moveItemToRoom(next, itemId as ItemId, toRoomId);
+      return next;
     };
 
     const ctxTriggerPlayerDeath = (
@@ -339,25 +341,20 @@ function tickAnimateActivities(state: GameState): GameState {
       next = triggerPlayerDeath(next, deathMessage, cause);
     };
 
-    const ctxTriggerScriptedEvent = (): void => {
-      next = triggerScriptedEvent(next);
-    };
-
     const result = tick({
       state: next,
       item,
       turn: next.moves,
       rng: next.rng,
-      emit: (_ev: any) => {
-        // optional
+      emit: (ev: TickEvent) => {
+        if (!ev) return;
+        if (ev.kind === "log") {
+          next = appendLog(next, ev.text);
+        }
       },
 
-      // IMPORTANT: these now update `next`
       moveItemToRoom: ctxMoveItemToRoom,
       triggerPlayerDeath: ctxTriggerPlayerDeath,
-      triggerScriptedEvent: ctxTriggerScriptedEvent,
-
-      // readers use latest `next`
       getRoomExits: (roomId: string) => getRoomExits(next, roomId),
       canEnter: (it: { id: string }, roomId: any) =>
         canMove(next, it.id as ItemId, roomId),
@@ -443,7 +440,6 @@ function tickScoreAndMemory(state: GameState): GameState {
 
 export function advanceTurn(state: GameState): GameState {
   let next = state;
-  // after processing the player's command (and only if it was a real turn):
   const ticked = tickRadioConversation(next);
   next = ticked.state;
 
@@ -453,7 +449,6 @@ export function advanceTurn(state: GameState): GameState {
       "The radio channel collapses into a steady hiss, then goes quiet.",
     );
   }
-  next = triggerScriptedEvent(next);
   next = tickDamagedFlashlight(next);
   next = tickAviarySpotlight(next);
   next = tickHydroponics(next);

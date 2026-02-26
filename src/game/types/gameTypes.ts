@@ -69,6 +69,10 @@ export interface StatusEffect {
   source?: string;
 }
 
+type PendingNarration = {
+  afterRoomDescription: string[];
+};
+
 export type PlayerScoreId = keyof typeof playerScoreMap;
 export type PlayerMemoryId = keyof typeof playerMemoryMap;
 type PowerSectionId =
@@ -200,6 +204,7 @@ type PlayerDeath = {
 };
 
 export interface WorldState {
+  pendingNarration?: PendingNarration;
   scriptedEventsTripped: Record<string, boolean>;
   conditionalTriggers: Record<string, boolean>;
   playerDeaths: Record<RoomId, PlayerDeath>;

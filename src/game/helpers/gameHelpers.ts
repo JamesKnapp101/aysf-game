@@ -1,8 +1,8 @@
 import { appendLog } from "@game/engine/handleCommand";
-import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import { inventoryHas } from "@game/rules/state";
 import { useUIEffectsStore } from "@game/store/store";
 import { secretOrganismMessage } from "@game/text/secretOrganismMessage";
+import { ScriptContext, ScriptedEvent } from "@game/types/eventTypes";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 
@@ -125,30 +125,74 @@ export function movePlayerToRoom(
   };
 }
 
-export function triggerScriptedEvent(state: GameState): GameState {
-  let next: GameState = state;
-  const currentRoom = state.player.roomId;
-  if (
-    currentRoom === "LevelThreeCorridorSeven" &&
-    state.worldState.scriptedEventsTripped["cat_meet"] !== true
-  ) {
-    next = appendLog(
-      next,
-      `As you enter the room, you see a small, black and white short-haired cat come squirming out from the small opening to the north. It shakes its head rapidly, scatting dust, then looks up at you.`,
-    );
-    next = moveItemToRoom(next, "cat", currentRoom);
-    next = {
-      ...next,
-      worldState: {
-        ...next.worldState,
-        scriptedEventsTripped: {
-          ...next.worldState.scriptedEventsTripped,
-          cat_meet: true,
-        },
+function isTripped(state: GameState, id: string) {
+  return state.worldState.scriptedEventsTripped?.[id] === true;
+}
+
+function markTripped(state: GameState, id: string): GameState {
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      scriptedEventsTripped: {
+        ...state.worldState.scriptedEventsTripped,
+        [id]: true,
       },
-    };
+    },
+  };
+}
+
+export function runScriptedEvents(
+  state: GameState,
+  ctx: ScriptContext,
+  events: ScriptedEvent[],
+): GameState {
+  let next = state;
+
+  for (const ev of events) {
+    const once = ev.once !== false;
+    if (once && isTripped(next, ev.id)) continue;
+    if (!ev.when(next, ctx)) continue;
+
+    next = ev.run(next, ctx);
+    if (once) next = markTripped(next, ev.id);
   }
+
   return next;
+}
+
+export function queueAfterRoomDescription(state: GameState, text: string) {
+  const existing =
+    state.worldState.pendingNarration?.afterRoomDescription ?? [];
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      pendingNarration: {
+        ...state.worldState.pendingNarration,
+        afterRoomDescription: [...existing, text],
+      },
+    },
+  };
+}
+
+export function flushAfterRoomDescription(state: GameState): GameState {
+  const lines = state.worldState.pendingNarration?.afterRoomDescription ?? [];
+  if (lines.length === 0) return state;
+
+  let next = state;
+  for (const line of lines) next = appendLog(next, line);
+
+  return {
+    ...next,
+    worldState: {
+      ...next.worldState,
+      pendingNarration: {
+        ...next.worldState.pendingNarration,
+        afterRoomDescription: [],
+      },
+    },
+  };
 }
 
 export function triggerPlayerDeath(
@@ -220,6 +264,24 @@ export function triggerPlayerDeath(
   }
 
   return nextState;
+}
+
+export function drainAfterRoomDescription(state: GameState): {
+  state: GameState;
+  lines: string[];
+} {
+  const lines = state.worldState.pendingNarration?.afterRoomDescription ?? [];
+  const nextState: GameState = {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      pendingNarration: {
+        ...state.worldState.pendingNarration,
+        afterRoomDescription: [],
+      },
+    },
+  };
+  return { state: nextState, lines };
 }
 
 /**

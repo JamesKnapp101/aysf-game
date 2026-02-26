@@ -17,7 +17,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
       {/* Up (upper-left) */}
       <div
         className={`room-compass-label room-compass-label--u ${labelClass(
-          "up"
+          "up",
         )}`}
       >
         <svg viewBox="0 0 10 10" className="compass-icon" aria-hidden="true">
@@ -35,30 +35,35 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
       {/* In (upper-right) */}
       <div
         className={`room-compass-label room-compass-label--i ${labelClass(
-          "in"
+          "in",
         )}`}
         title={active.has("in") ? "In" : undefined}
       >
         <svg viewBox="0 0 10 10" className="compass-icon" aria-hidden="true">
-          {/* Door frame */}
-          <path
-            d="M8 2.2v5.6"
+          {/* Door */}
+          <rect
+            x="1.4"
+            y="1.6"
+            width="5.4"
+            height="7"
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
-            strokeLinecap="round"
-          />
-          {/* Arrow pointing into the frame (to the right) */}
-          <polyline
-            points="2.2,5 6.2,5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            strokeLinecap="round"
             strokeLinejoin="round"
           />
+
+          {/* Arrow shaft (extends out to the right) */}
+          <path
+            d="M9.2 5 H4.1"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+          />
+
+          {/* Arrow head (point centered in door) */}
           <polyline
-            points="5.2,3.8 6.8,5 5.2,6.2"
+            points="5.2,3.8 4.1,5 5.2,6.2"
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
@@ -71,30 +76,35 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
       {/* Out (lower-left) */}
       <div
         className={`room-compass-label room-compass-label--o ${labelClass(
-          "out"
+          "out",
         )}`}
         title={active.has("out") ? "Out" : undefined}
       >
         <svg viewBox="0 0 10 10" className="compass-icon" aria-hidden="true">
-          {/* Door frame */}
-          <path
-            d="M2 2.2v5.6"
+          {/* Door (slightly narrower + left for breathing room) */}
+          <rect
+            x="2.0"
+            y="1.4"
+            width="5.4"
+            height="7"
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
-            strokeLinecap="round"
-          />
-          {/* Arrow pointing out of the frame (to the left) */}
-          <polyline
-            points="7.8,5 3.8,5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            strokeLinecap="round"
             strokeLinejoin="round"
           />
+
+          {/* Arrow shaft (starts center-ish, extends well past door) */}
+          <path
+            d="M4.7 5 H9.9"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+          />
+
+          {/* Arrow head (clearly outside door) */}
           <polyline
-            points="4.8,3.8 3.2,5 4.8,6.2"
+            points="9.0,3.7 10,5 9.0,6.3"
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
@@ -107,7 +117,7 @@ export const RoomCompass: React.FC<CompassProps> = ({ exits }) => {
       {/* Down (lower-right) */}
       <div
         className={`room-compass-label room-compass-label--d ${labelClass(
-          "down"
+          "down",
         )}`}
       >
         <svg viewBox="0 0 10 10" className="compass-icon" aria-hidden="true">

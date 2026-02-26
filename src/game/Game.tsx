@@ -315,8 +315,6 @@ export const Game: React.FC = () => {
     [],
   );
 
-  console.log("LOGS? ", gs.player.log);
-
   return (
     <>
       <SplashModal

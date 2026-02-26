@@ -1,3 +1,10 @@
+import { isItemOpen } from "@game/rules/containers";
+import { formatNameList } from "@game/rules/items";
+import {
+  getContainerContentsItems,
+  getSurfaceItems,
+} from "@game/selectors/containerSelectors";
+import { getItemsInRoom } from "@game/selectors/roomSelectors";
 import { GameState } from "@game/types/gameTypes";
 import { DescriptionContext, Item } from "@game/types/itemTypes";
 
@@ -26,4 +33,87 @@ export function getItemInitialDescription(
 ): string {
   if (item.describeInitial) return item.describeInitial(state, item, ctx);
   return item.initialDescription ?? "";
+}
+
+export function buildRoomItemsDescription(
+  state: GameState,
+  roomId: string,
+): string {
+  const rawItemsHere = getItemsInRoom(state, roomId);
+  const itemsHere = Array.from(
+    new Map(rawItemsHere.map((it) => [it.id, it])).values(),
+  );
+
+  const sceneryItems = itemsHere.filter(
+    (item) => item.itemCategory === "scenery",
+  );
+  const nonSceneryItems = itemsHere.filter(
+    (item) => item.itemCategory !== "scenery",
+  );
+
+  const parts: string[] = [];
+
+  // Things in other things
+  const containersHere = itemsHere.filter((item) => item.isContainer);
+  const containerLines: string[] = [];
+
+  for (const container of containersHere) {
+    if (!isItemOpen(state, container.id)) continue;
+
+    const contents = getContainerContentsItems(state, container);
+    if (contents.length === 0) continue;
+
+    const names = contents.map((c) => c.name);
+    const list = formatNameList(names);
+    containerLines.push(
+      `Inside the ${container.name.toLowerCase()} you can see ${list}.`,
+    );
+  }
+
+  if (containerLines.length > 0) parts.push(containerLines.join(" "));
+
+  // Things on other things
+  const surfacesHere = itemsHere.filter((item) => item.isSurface);
+  const surfaceLines: string[] = [];
+
+  for (const surface of surfacesHere) {
+    const contents = getSurfaceItems(state, surface);
+    if (contents.length === 0) continue;
+
+    const names = contents.map((c) => c.name);
+    const list = formatNameList(names);
+    surfaceLines.push(
+      `On the ${surface.name.toLowerCase()} you can see ${list}.`,
+    );
+  }
+
+  if (surfaceLines.length > 0) parts.push(surfaceLines.join(" "));
+
+  // Fresh initial descriptions (non-scenery)
+  const seen = state.itemState.pickedUpByPlayer ?? {};
+  const freshItems = nonSceneryItems.filter(
+    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id],
+  );
+
+  if (freshItems.length > 0) {
+    parts.push(
+      freshItems.map((it) => it.initialDescription!.trim()).join("\n\n"),
+    );
+  }
+
+  // Basic listing
+  const listItems = nonSceneryItems.filter(
+    (it) => !freshItems.some((f) => f.id === it.id),
+  );
+
+  if (listItems.length > 0) {
+    if (listItems.length === 1) {
+      parts.push(`There is ${listItems[0].name} here.`);
+    } else {
+      const names = formatNameList(listItems.map((it) => it.name));
+      parts.push(`There are ${names} here.`);
+    }
+  }
+
+  return parts.join("\n\n");
 }

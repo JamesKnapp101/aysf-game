@@ -21,6 +21,7 @@ type RoomDescriptionMode = "log" | "panel";
 type BuildRoomDescriptionOptions = {
   mode?: RoomDescriptionMode;
   forceFull?: boolean;
+  omitItems?: boolean;
 };
 
 export function buildRoomDescription(
@@ -56,9 +57,13 @@ export function buildRoomDescription(
   })();
 
   const canSee =
-    !isDark || nightVisionActive || flashlightOn || damagedFlashlightOn;
-  isRoomSpotlitByAviary(state, roomId) ||
+    !isDark ||
+    nightVisionActive ||
+    flashlightOn ||
+    damagedFlashlightOn ||
+    isRoomSpotlitByAviary(state, roomId) ||
     getAviaryNextSpotlitRoomId(state) === roomId;
+
   if (!canSee) return "It's pitch black in here, you can't see a thing.";
 
   const visitedRooms = state.worldState.visitedRooms ?? {};
@@ -66,8 +71,6 @@ export function buildRoomDescription(
 
   const mode: RoomDescriptionMode = opts.mode ?? "log";
 
-  // Panel should always be "full" (include scenery every time)
-  // LOOK should always be "full" (even in log)
   const forceFull = Boolean(opts.forceFull) || mode === "panel";
 
   const rawItemsHere = getItemsInRoom(state, roomId);
@@ -114,14 +117,8 @@ export function buildRoomDescription(
 
   const token = "[[SCENERY]]";
 
-  // Decide whether this render should include scenery:
-  // - full if first visit
-  // - OR forced full (panel, or explicit LOOK)
   const includeScenery = forceFull || isFirstVisit;
 
-  // Decide base description text for this render:
-  // - On revisit in the LOG, prefer descriptionShort (if provided)
-  // - Otherwise use full description
   const useShortBase = !includeScenery && mode === "log" && !isFirstVisit;
   let base = room.describe
     ? room.describe(state, room, {
@@ -134,9 +131,6 @@ export function buildRoomDescription(
         : room.description) ?? "wtf");
   base = base.trim();
 
-  // Apply scenery token rules:
-  // - If we include scenery: inject/append it
-  // - If we don't: strip token (and do NOT append scenery)
   if (includeScenery) {
     if (base.includes(token)) {
       base = base.replace(token, sceneryText ? `${sceneryText}` : " ");
@@ -228,6 +222,9 @@ export function buildRoomDescription(
     }
   }
 
+  if (opts.omitItems) {
+    return parts.join("\n\n");
+  }
   const seen = state.itemState.pickedUpByPlayer ?? {};
   const freshItems = nonSceneryItems.filter(
     (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id],

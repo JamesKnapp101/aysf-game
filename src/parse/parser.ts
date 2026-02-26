@@ -43,7 +43,8 @@ const VERB_ALIASES: Record<string, string> = {
   examine: "examine",
   inspect: "examine",
   check: "examine",
-
+  wait: "wait",
+  z: "wait",
   read: "read",
   scan: "read",
 

@@ -159,14 +159,16 @@ export function QuantumTotePanel({
                 })}
               </div>
 
-              <div className="qtote-tabsMeta" aria-hidden="true">
+              {/* <div className="qtote-tabsMeta" aria-hidden="true">
                 Total: {totalCount}
-              </div>
+              </div> */}
             </div>
-
-            <button className="qtote-sortBtn" onClick={cycleSort} type="button">
+            <div className="qtote-total" aria-hidden="true">
+              Total: {totalCount}
+            </div>
+            {/* <button className="qtote-sortBtn" onClick={cycleSort} type="button">
               {sortLabel}
-            </button>
+            </button> */}
           </div>
 
           {/* Screen frame */}

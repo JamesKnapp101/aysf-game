@@ -1,5 +1,3 @@
-/* Quantum Tote panel styles (drop-in replacement) */
-
 .qtote {
     border: 2px solid var(--crt-color, var(--crt));
     border-radius: 18px;
@@ -164,6 +162,14 @@
 
 .qtote-sortBtn:hover {
     opacity: 1;
+}
+
+.qtote-total {
+    opacity: 0.95;
+    white-space: nowrap;
+    line-height: 1;
+    align-self: baseline;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
 .qtote-tab:focus-visible,
