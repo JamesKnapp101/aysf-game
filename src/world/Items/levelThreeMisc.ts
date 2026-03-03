@@ -130,22 +130,6 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "TAPE3EE",
-    name: "warning tape",
-    description:
-      "A run of yellow plastic tape bars the way, printed with industrial-grade block letters and small biohazard symbols marching in sequence.",
-    sceneryDescription:
-      "The tape looks newer here, less abused than in other sections. BIOHAZARD - DO NOT ENTER repeats over and over, bracketed by neat, standardized hazard icons that make the whole thing feel less like a warning and more like a polite suggestion from the legal department.",
-    location: "LevelThreeCorridorFive",
-    vocab: ["warning", "tape", "yellow", "black"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isContainer: false,
-  },
-  {
     id: "DOLL",
     name: "tattered doll",
     description:

@@ -8,12 +8,11 @@ export type InvSort = "none" | "name-asc" | "name-desc";
 
 export function QuantumTotePanel({
   state,
-  inventoryItems,
 }: {
   state: GameState;
   inventoryItems: Item[];
 }) {
-  const [sort, setSort] = React.useState<InvSort>("none");
+  const sort: InvSort = "none";
   const [activeTab, setActiveTab] = React.useState<
     "general" | "badges" | "keys"
   >("general");
@@ -33,16 +32,6 @@ export function QuantumTotePanel({
   };
 
   const totalCount = counts.general + counts.badges + counts.keys;
-
-  const cycleSort = () => {
-    setSort((s) =>
-      s === "none" ? "name-asc" : s === "name-asc" ? "name-desc" : "none",
-    );
-  };
-
-  const sortLabel =
-    sort === "none" ? "Sort" : sort === "name-asc" ? "Name ↑" : "Name ↓";
-
   const tabLabel = (t: typeof activeTab) => {
     if (t === "general") return "General";
     if (t === "badges") return "Badges";
@@ -217,3 +206,4 @@ export function QuantumTotePanel({
     </div>
   );
 }
+

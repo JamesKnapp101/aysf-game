@@ -2,14 +2,13 @@ import { CRT_COLOR_STORAGE_KEY, type LayoutPrefs } from "../Game";
 import { getItemsInInventory } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 
+import { DNASampleTab } from "@game/components/DNASampleTab";
 import { LogTab } from "@game/components/LogTab";
 import { QuantumTotePanel } from "@game/components/QuantumTotePanel";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { HintsTab } from "../../hints/HintMenu";
-import { allHintsRoot } from "../../hints/allHintsRoot";
 import { StatusTab } from "./StatusTab";
 
-type SidebarTab = "inventory" | "status" | "log" | "hints" | "settings";
+type SidebarTab = "inventory" | "status" | "log" | "dna" | "hints" | "settings";
 type LogPanelProps = {
   state: GameState;
   dispatch: React.Dispatch<any>;
@@ -81,6 +80,9 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   setActiveTab,
 }) => {
   const [input, setInput] = useState("");
+  const [commandHistory, setCommandHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const [historyDraft, setHistoryDraft] = useState("");
   const inventoryItems = getItemsInInventory(state);
   const shouldStickToBottomRef = useRef(true);
   const logRef = useRef<HTMLDivElement | null>(null);
@@ -99,8 +101,49 @@ export const LogPanel: React.FC<LogPanelProps> = ({
     e.preventDefault();
     const trimmed = input.trim();
     if (!trimmed) return;
+    setCommandHistory((prev) =>
+      prev.length >= 200 ? [...prev.slice(1), trimmed] : [...prev, trimmed],
+    );
+    setHistoryIndex(null);
+    setHistoryDraft("");
     dispatch({ type: "command", input: trimmed });
     setInput("");
+  };
+
+  const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (commandHistory.length === 0) return;
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+
+      if (historyIndex === null) {
+        setHistoryDraft(input);
+        const nextIndex = commandHistory.length - 1;
+        setHistoryIndex(nextIndex);
+        setInput(commandHistory[nextIndex]);
+        return;
+      }
+
+      const nextIndex = Math.max(0, historyIndex - 1);
+      setHistoryIndex(nextIndex);
+      setInput(commandHistory[nextIndex]);
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      if (historyIndex === null) return;
+      e.preventDefault();
+
+      if (historyIndex >= commandHistory.length - 1) {
+        setHistoryIndex(null);
+        setInput(historyDraft);
+        return;
+      }
+
+      const nextIndex = historyIndex + 1;
+      setHistoryIndex(nextIndex);
+      setInput(commandHistory[nextIndex]);
+    }
   };
 
   // -------- vertical resize: log vs sidebar ---------------------------------
@@ -199,6 +242,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
             className="game-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={onInputKeyDown}
             autoFocus
           />
         </form>
@@ -246,12 +290,21 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           <button
             type="button"
             className={
+              "game-tab" + (activeTab === "dna" ? " game-tab-active" : "")
+            }
+            onClick={() => setActiveTab("dna")}
+          >
+            DNA
+          </button>
+          {/* <button
+            type="button"
+            className={
               "game-tab" + (activeTab === "hints" ? " game-tab-active" : "")
             }
             onClick={() => setActiveTab("hints")}
           >
             Hints
-          </button>
+          </button> */}
           <button
             type="button"
             className={
@@ -271,13 +324,14 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           {activeTab === "status" && <StatusTab gameState={state} />}
 
           {activeTab === "log" && <LogTab gameState={state} />}
+          {activeTab === "dna" && <DNASampleTab gameState={state} />}
 
-          {activeTab === "hints" && (
+          {/* {activeTab === "hints" && (
             <div>
-              {/* <p className="crt-color-header">HINTS</p> */}
+              <p className="crt-color-header">HINTS</p>
               <HintsTab rootMenu={allHintsRoot} />
             </div>
-          )}
+          )} */}
           {activeTab === "settings" && (
             <div className="settings-panel">
               <p className="crt-color-header">CRT Color</p>

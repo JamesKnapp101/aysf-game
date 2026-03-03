@@ -1,4 +1,5 @@
 import { updateItemLocation } from "@game/rules/items";
+import { removeFromAllBuckets } from "@game/rules/state";
 import { isSerumCartridge } from "../selectors/containerSelectors";
 import { getItemById } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
@@ -71,7 +72,7 @@ export function tryPutItemInContainer(
       ...state,
       player: {
         ...state.player,
-        inventory: state.player.inventory.filter((id) => id !== item.id),
+        inventory: removeFromAllBuckets(state.player.inventory, item.id),
       },
       itemState: {
         ...state.itemState,
@@ -100,7 +101,7 @@ export function tryPutItemInContainer(
     ...next,
     player: {
       ...next.player,
-      inventory: next.player.inventory.filter((id) => id !== item.id),
+      inventory: removeFromAllBuckets(next.player.inventory, item.id),
     },
     itemState: {
       ...next.itemState,

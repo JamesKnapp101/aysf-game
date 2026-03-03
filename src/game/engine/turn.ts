@@ -426,9 +426,9 @@ function updateCurrentMemory(state: GameState): GameState {
     }
   }
 
-  return calculatedMemory === state.score
+  return calculatedMemory === state.rating
     ? state
-    : { ...state, score: calculatedMemory };
+    : { ...state, rating: calculatedMemory };
 }
 
 function tickScoreAndMemory(state: GameState): GameState {

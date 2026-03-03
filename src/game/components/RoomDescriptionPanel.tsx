@@ -145,19 +145,10 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   // =========================
   // Organism death data
   // =========================
-  const isOrganismDeath = hijackMode === "organismDeath";
-
   const odTitle: string | undefined = organismDeath?.title;
   const odCipherText: string = organismDeath?.cipherText ?? "";
-  const odSeed: number = organismDeath?.seed ?? Date.now();
   const odRevealMode: "fade" | "type" =
     organismDeath?.revealMode === "type" ? "type" : "fade";
-  const odChunkMs: number = Number.isFinite(organismDeath?.chunkMs)
-    ? organismDeath.chunkMs
-    : 28;
-  const odChunkSize: number = Number.isFinite(organismDeath?.chunkSize)
-    ? organismDeath.chunkSize
-    : 14;
 
   const [odHijacked, setOdHijacked] = useState(false);
   const [odShown, setOdShown] = useState(0);

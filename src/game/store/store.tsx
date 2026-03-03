@@ -1,4 +1,3 @@
-import { GameState } from "@game/types/gameTypes";
 import { create } from "zustand";
 import type { OrganismDeathPayload, Overlay } from "../types/uiTypes";
 
@@ -72,9 +71,3 @@ export const useUIEffectsStore = create<UIEffectsState>((set) => ({
   triggerTeleportFlash: () =>
     set((s) => ({ teleportFlashNonce: s.teleportFlashNonce + 1 })),
 }));
-function setPlayerBrainActivityLevel(
-  state: GameState,
-  val: number,
-): GameState | undefined {
-  throw new Error("Function not implemented.");
-}

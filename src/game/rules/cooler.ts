@@ -3,7 +3,6 @@ import type { ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
 import { setItemFrozen } from "./liquids";
-import { resolveItemInScopeByNoun } from "./scope";
 
 type SettableMessage = { type: "message"; text: string };
 

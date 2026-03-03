@@ -148,25 +148,25 @@ export const corpseItems: Item[] = [
     isContagious: true,
   },
 
-  {
-    id: "StairWellThreeBurnedBody",
-    name: "burned corpse",
-    description:
-      "The body is so thoroughly burned you can’t even be sure of its sex. Charred scraps of clothing cling like brittle parchment, and the remains look as though whoever it was collapsed here while already on fire and finished burning where they fell.",
-    initialDescription: undefined,
-    sceneryDescription:
-      "A badly burned corpse lies crumpled on the stairs, little more than char and ash-wrapped bone.",
-    location: "StairFour",
-    vocab: ["burned", "body", "corpse"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 70,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
+  // {
+  //   id: "StairWellThreeBurnedBody",
+  //   name: "burned corpse",
+  //   description:
+  //     "The body is so thoroughly burned you can’t even be sure of its sex. Charred scraps of clothing cling like brittle parchment, and the remains look as though whoever it was collapsed here while already on fire and finished burning where they fell.",
+  //   initialDescription: undefined,
+  //   sceneryDescription:
+  //     "A badly burned corpse lies crumpled on the stairs, little more than char and ash-wrapped bone.",
+  //   location: "StairFour",
+  //   vocab: ["burned", "body", "corpse"],
+  //   itemClass: "solid",
+  //   itemCategory: "scenery",
+  //   itemWeight: 70,
+  //   itemSize: 8,
+  //   isWearable: false,
+  //   isReadable: false,
+  //   isContainer: false,
+  //   isContagious: true,
+  // },
 
   // LEVEL 1 – Bridge ---------------------------------------------------------
   {

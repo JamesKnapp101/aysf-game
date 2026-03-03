@@ -7,6 +7,32 @@ import { Exit } from "@game/types/roomTypes";
 
 export const catItems: Item[] = [
   {
+    id: "IggyCollar",
+    name: "a fancy leather cat collar",
+    description: `It's a fancy cat collar, made from black leather, with a dangling oval pendant in the front. The pendant is onyx, and inscribed with the name 'Iggy Onche.' It's got a tiny clasp in the back that can swivel it open and closed.`,
+    location: "seeded",
+    vocab: ["collar", "leather", "onyx", "pendant"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 0,
+    itemSize: 1,
+    isWearable: true,
+    clothingSlot: "wrist",
+    isContainer: true,
+    isOpenable: true,
+  },
+  {
+    id: "OncheSecurityRec",
+    name: "a small storage drive",
+    description: `It's a tiny black card, no bigger than your thumbnail, for storing data on.`,
+    location: "seeded",
+    vocab: ["card", "tiny", "black"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 0,
+    itemSize: 1,
+  },
+  {
     id: "cat",
     name: "black and white cat",
     itemCategory: "animate",
@@ -38,8 +64,14 @@ export const catItems: Item[] = [
         "You see two transitioning images. One of a woman. One a pile of star-shaped kibbles. Kibbles. Kibbles. Kibbles. Kibbles.",
       ],
     },
-    description:
-      "It's a smallish male black and white shorthaired cat, with a nick on one ear.",
+    description: `It's a smallish male black and white short-haired cat, with a nick on his right ear.`,
+    describe: (state, item) => {
+      if (state.worldState.catState.isWearingCollar) {
+        return `It's a smallish male black and white short-haired cat, with a nick on his right ear. Around his neck is a fancy leather collar, with a dangling, silver-rimmed onyx pendant inscribed with the name 'Iggy Onche'`;
+      } else {
+        return `It's a smallish male black and white short-haired cat, with a nick on his right ear.`;
+      }
+    },
     location: "seeded",
     vocab: ["cat", "kitten", "kitty"],
     itemClass: "solid",
@@ -67,13 +99,25 @@ export const catItems: Item[] = [
 
         const home = (item.meta?.homeRegion ?? []) as string[];
         const inHome = (roomId: string) => home.includes(roomId);
+        const moveCatToRoom = (base: typeof state, toRoomId: string) => {
+          const moved = moveItemToRoom(itemId, toRoomId);
+          return {
+            ...moved,
+            world: {
+              ...moved.world,
+              items: moved.world.items.map((it) =>
+                it.id === itemId ? { ...it, location: toRoomId } : it,
+              ),
+            },
+          };
+        };
 
         // Safety clamp: cat should never be outside homeRegion
         if (!inHome(currentRoomId)) {
           const safe = home.includes("LevelThreeSecretRoom")
             ? "LevelThreeSecretRoom"
             : home[0];
-          if (safe) return moveItemToRoom(itemId, safe);
+          if (safe) return moveCatToRoom(state, safe);
           return;
         }
 
@@ -213,7 +257,7 @@ export const catItems: Item[] = [
         }
 
         // Move
-        next = moveItemToRoom(itemId, destRoomId);
+        next = moveCatToRoom(next, destRoomId);
         return next;
       },
     },

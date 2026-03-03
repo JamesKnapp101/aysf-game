@@ -57,15 +57,17 @@ export function tryTakeItem(
 
   if (itemOnFloor) {
     if (itemOnFloor.itemCategory === "scenery") {
-      return { state, message: "You can’t take that." };
+      const msg = itemOnFloor.overrides?.take ?? "You can't take that.";
+      return { state, message: msg };
     }
     if (
       itemOnFloor.itemCategory === "static" ||
       itemOnFloor.itemCategory === "animate"
     ) {
+      const msg = itemOnFloor.overrides?.take ?? "You can't take that.";
       return {
         state,
-        message: itemOnFloor.meta?.onTake ?? "You can’t take that.",
+        message: msg,
       };
     }
 
@@ -110,7 +112,8 @@ export function tryTakeItem(
     if (!found) continue;
 
     if (found.itemCategory === "scenery" || found.itemCategory === "static") {
-      return { state, message: "You can’t take that." };
+      const msg = found.overrides?.take ?? "You can't take that.";
+      return { state, message: msg };
     }
 
     const seededIds = getContainerContentsIds(state, container);

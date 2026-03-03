@@ -7,6 +7,7 @@ import { oneWestRooms } from "src/world/maps/levelThree/LivingQuarters/OneWest";
 
 import { Item } from "@game/types/itemTypes";
 import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
+import { rangerBotItems } from "src/world/Items/robots/rangerBot";
 import {
   sixEastItems,
   sixEastRooms,
@@ -24,7 +25,11 @@ import { gymRooms } from "src/world/maps/levelThree/Park/Gym";
 import { movieTheaterRooms } from "src/world/maps/levelThree/Park/MovieTheater";
 import { parkRooms } from "src/world/maps/levelThree/Park/Park";
 import { restaurantRooms } from "src/world/maps/levelThree/Park/Restaurant";
-import { spaRooms } from "src/world/maps/levelThree/Spa";
+import { spaRooms } from "src/world/maps/levelThree/Park/Spa";
+import {
+  warehouseItems,
+  warehouseRooms,
+} from "src/world/maps/levelThree/Warehouse";
 import { stairwellItems } from "src/world/maps/Stairwell";
 import type { WorldChunk } from "../../../game/types/gameTypes";
 import {
@@ -67,6 +72,8 @@ export const LEVEL_THREE: WorldChunk = {
     ...sixEastItems,
     ...stairwellItems,
     ...corridorItems,
+    ...rangerBotItems,
+    ...warehouseItems,
   ],
   doors: [
     ...levelThreeLivingQuartersDoors,
@@ -75,6 +82,7 @@ export const LEVEL_THREE: WorldChunk = {
   ],
   teleportPads: [],
   rooms: [
+    ...warehouseRooms,
     ...barRooms,
     ...gymRooms,
     ...movieTheaterRooms,
@@ -120,44 +128,44 @@ export const LEVEL_THREE: WorldChunk = {
     {
       id: "LevelThreeCorridorFour",
       name: "Level Three Corridor Junction",
-      description: `This is a junction in the main corridor for accessing the Level Three Living Quarters. To the east is a door affixed with a neat black plastic label indicating '3DE'. Another corridor branches off to the west.`,
+      description: `This is a junction in the residential corridor, where it branches off to the west down a smaller corridor, and also continues north, and south.`,
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorFive" },
         { direction: "south", toRoomId: "LevelThreeCorridorThree" },
-        { direction: "east", doorId: "DOOR3DE" },
+        { direction: "east", doorId: "WarehouseDoor" },
         { direction: "west", toRoomId: "LevelThreeCorridorBranch" },
       ],
     },
     {
       id: "LevelThreeCorridorFive",
       name: "Level Three Corridor Five",
-      description: `This is a dimly lit corridor stretching off to the north and south. To the east and west are doors affixed with neat black plastic labels reading '3EE' and '3EW' respectively. Hanging on either side of the eastern door are the ends of a broken strip of yellow and black warning tape.`,
+      description: `This is a dimly lit corridor stretching off to the north and south.`,
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorSix" },
         { direction: "south", toRoomId: "LevelThreeCorridorFour" },
-        { direction: "west", doorId: "DOOR3EW" },
+        { direction: "west", doorId: "BoulosResidenceDoor" },
       ],
     },
     {
       id: "LevelThreeCorridorSix",
       name: "Level Three Corridor Six",
-      description: `This is the main corridor for accessing the Level Three Living Quarters. To the east and west are doors affixed with neat black plastic labels indicating '3FE' and '3FW' respectively.`,
+      description: `This is toward the northern end of the main corridor, near the entrance of a residential apartment unit. Off to the north you can see broken and flickering lights, where to corridor eventually ends in a collapse, and to the south the hallway continues.`,
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorSeven" },
         { direction: "south", toRoomId: "LevelThreeCorridorFive" },
-        { direction: "east", doorId: "DOOR3FE" },
+        { direction: "east", doorId: "OncheResidenceDoor" },
       ],
     },
-    {
-      id: "LevelThreeCorridorSixPointSix",
-      name: "Damaged Corridor",
-      description: `This section of the corridor begins to show signs of significant damage up ahead to the north.`,
-      exits: [
-        { direction: "north", toRoomId: "LevelThreeCorridorSeven" },
-        { direction: "south", toRoomId: "LevelThreeCorridorSix" },
-        { direction: "west", doorId: "DOOR3FW" },
-      ],
-    },
+    // {
+    //   id: "LevelThreeCorridorSixPointSix",
+    //   name: "Damaged Corridor",
+    //   description: `This section of the corridor begins to show signs of significant damage up ahead to the north.`,
+    //   exits: [
+    //     { direction: "north", toRoomId: "LevelThreeCorridorSeven" },
+    //     { direction: "south", toRoomId: "LevelThreeCorridorSix" },
+    //     { direction: "west", doorId: "DOOR3FW" },
+    //   ],
+    // },
     {
       id: "LevelThreeCorridorSeven",
       name: "Ruined Corridor",
@@ -198,7 +206,7 @@ export const LEVEL_THREE: WorldChunk = {
       description: `This is a branch off the main corridor for accessing the Level Three Living Quarters. The hall continues to the west.`,
       exits: [
         { direction: "east", toRoomId: "LevelThreeCorridorFour" },
-        { direction: "west", toRoomId: "LevelThreeSecondCorridorConnector" },
+        { direction: "west", toRoomId: "ParkEntrance" },
       ],
     },
 
@@ -213,14 +221,14 @@ export const LEVEL_THREE: WorldChunk = {
       ],
     },
     {
-      id: "LevelThreeSecondCorridorTwo",
+      id: "ParkEntrance",
       name: "Level Three Secondary Corridor",
       description: `This is another T in the corridor, where the corridor branch connects with a secondary corridor. The secondary corridor extends north and south from here. There is also a large, sturdy-looking wooden door to the west, engraved with a leaf and floral pattern. Mounted on the wall next to the door is a metal panel with a thin horizontal slot in it. Just below the slot is a flat metal tray. Mounted over the door is a bronze plaque. The bronze plaque is engraved with the words 'THE HUB'`,
       exits: [
         //{ direction: "north", toRoomId: "LevelThreeSecondCorridorThree" },
         // { direction: "south", toRoomId: "LevelThreeSecondCorridorOne" },
-        { direction: "west", doorId: "ParkDoor" },
-        { direction: "east", toRoomId: "LevelThreeSecondCorridorConnector" },
+        { direction: "west", toRoomId: "ParkEast" },
+        { direction: "east", toRoomId: "LevelThreeCorridorBranch" },
       ],
     },
     // {

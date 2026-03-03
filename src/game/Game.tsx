@@ -30,8 +30,6 @@ import { buildRoomDescription } from "./text/roomDescription";
 import type { ActionRequest } from "./types/actionsTypes";
 import type { GameState, StatusEffect } from "./types/gameTypes";
 
-type Action = { type: "command"; input: string };
-
 const LAYOUT_STORAGE_KEY = "aysf-layout-v1";
 export const CRT_COLOR_STORAGE_KEY = "aysf-crt-color-v1";
 
@@ -39,32 +37,6 @@ export type LayoutPrefs = {
   roomHeightRatio: number;
   sidebarWidthRatio: number;
 };
-
-function reducer(
-  state: GameState,
-  action: Action,
-  setActiveTab: Function,
-): GameState {
-  switch (action.type) {
-    case "command": {
-      const trimmed = action.input.trim();
-      if (!trimmed) return state;
-
-      const parsed = parseCommand(trimmed);
-      const next = handleCommand(state, parsed);
-      if (parsed.type === "inventory") {
-        setActiveTab("inventory");
-      }
-
-      if (parsed.type === "diagnose") {
-        setActiveTab("status");
-      }
-      return { ...next };
-    }
-    default:
-      return state;
-  }
-}
 
 function loadInitialCrtColor(): string {
   if (typeof window === "undefined") return "#00ff00";
@@ -104,7 +76,7 @@ function loadLayoutPrefs(): LayoutPrefs {
 
 export const Game: React.FC = () => {
   type StateAction =
-    | Action
+    | { type: "command"; input: string }
     | { type: "replaceState"; next: GameState }
     | { type: "setBrainActivity"; val: number };
   type SidebarTab = "inventory" | "status" | "log" | "hints" | "settings";

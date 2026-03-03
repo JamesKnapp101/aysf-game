@@ -1,9 +1,10 @@
 import { playerMemoryMap, playerScoreMap } from "@game/constants";
+import { DNAResult } from "@game/rules/dnaReader";
 import { ItemId, RoomId } from "@game/types/ids";
 import { RadioVoice } from "@game/types/npcTypes";
 import type { DoorDefinition, DoorState } from "./doorTypes";
 import type { Item, ItemState } from "./itemTypes";
-import type { Room } from "./roomTypes";
+import type { Direction, Room } from "./roomTypes";
 import type { TeleportPadDefinition } from "./tpadTypes";
 
 export interface GameState {
@@ -132,6 +133,7 @@ export interface PlayerState {
     keys: string[];
   };
   log: PlayerLogEntry[];
+  dnaBank: DNAResult[];
   vitals: PlayerVitals;
   statusEffects: StatusEffect[];
   memoriesTriggered: Record<PlayerMemoryId, boolean>;
@@ -172,6 +174,10 @@ export type BrainSlugState = {
   attachedTo: string;
 };
 
+export type CatState = {
+  isWearingCollar: boolean;
+};
+
 export interface World {
   rooms: Room[];
   items: Item[];
@@ -203,7 +209,16 @@ type PlayerDeath = {
   bodyDescription?: string;
 };
 
+type ConditionalExit = {
+  roomId: string;
+  direction: Direction;
+  unlockTriggers: string[];
+  blockMsg: string;
+  passMsg: string;
+};
+
 export interface WorldState {
+  conditionalExits: Record<RoomId, ConditionalExit>;
   pendingNarration?: PendingNarration;
   scriptedEventsTripped: Record<string, boolean>;
   conditionalTriggers: Record<string, boolean>;
@@ -216,6 +231,7 @@ export interface WorldState {
   visitedRooms: Record<string, boolean>;
   scoresTriggered: Record<PlayerScoreId, boolean>;
   octopusState: OctopusState;
+  catState: CatState;
   aviarySpotlight: AviarySpotlightState;
   hydroponicsSpider: HydroponicsSpiderState;
   brainSlug: BrainSlugState;

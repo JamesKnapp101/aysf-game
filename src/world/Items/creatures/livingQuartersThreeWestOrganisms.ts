@@ -275,7 +275,12 @@ export function organismLQOverrideTick(
       "Something stirs in the darkness—too close. You feel it before you understand it.",
       "organism",
     );
+    return;
   }
 
   if (nextState !== state) return nextState;
 }
+
+
+
+

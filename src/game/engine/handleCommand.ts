@@ -9,6 +9,7 @@ import {
 } from "@game/helpers/gameHelpers";
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
+import { inventoryHasAll } from "@game/rules/state";
 import { AQUARIUM_ROOM_IDS } from "src/world/Items/creatures/octopus";
 import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
@@ -26,6 +27,7 @@ export function appendLog(state: GameState, text: string): GameState {
 
 export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   const { openOverlay } = useUIOverlayStore.getState();
+  const DEATH_MARKER = "*** You have died ***";
 
   const room = getCurrentRoom(state);
 
@@ -50,6 +52,27 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       if (!exit) {
         message = "You can't go that way.";
         break;
+      }
+      let moveMessage = "";
+
+      if (state.worldState.conditionalExits[state.player.roomId]) {
+        const conditionalExit =
+          state.worldState.conditionalExits[state.player.roomId];
+        if (conditionalExit.direction === cmd.direction) {
+          if (
+            inventoryHasAll(
+              state.player.inventory,
+              conditionalExit.unlockTriggers,
+            )
+          ) {
+            // play the pass message
+            moveMessage += conditionalExit.passMsg;
+          } else {
+            // play the block message and block
+            message = conditionalExit.blockMsg;
+            break;
+          }
+        }
       }
 
       // Aquarium special-case
@@ -82,7 +105,6 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       }
 
       let destinationRoomId: string | undefined;
-      let moveMessage = "";
 
       if (exit.doorId) {
         const doorDef = getDoorById(state, exit.doorId);
@@ -116,13 +138,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         message = "You can't go that way.";
         break;
       }
-      // YOU SHALL NOT PASS - put any exceptions here for now
-      if (destinationRoomId === "LevelThreeCubby") {
-        message = `There's no way you'll be able to squeeze through that tiny opening.`;
-        break;
-      }
 
-      // Otherwise...
       let next = movePlayerToRoom(state, destinationRoomId, {
         fromRoomId: state.player.roomId,
         via: cmd.direction,
@@ -192,7 +208,32 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     }
   }
 
+  if (cmd.type === "action" && nextState.player.roomId !== state.player.roomId) {
+    nextState = runScriptedEvents(
+      nextState,
+      {
+        kind: "onEnterRoom",
+        roomId: nextState.player.roomId,
+        fromRoomId: state.player.roomId,
+      },
+      SCRIPTED_EVENTS,
+    );
+
+    const visitedRooms = nextState.worldState.visitedRooms ?? {};
+    nextState = {
+      ...nextState,
+      worldState: {
+        ...nextState.worldState,
+        visitedRooms: {
+          ...visitedRooms,
+          [nextState.player.roomId]: true,
+        },
+      },
+    };
+  }
+
   let tickLogEntries: string[] = [];
+  let diedThisTurn = false;
   const logBeforeLen = (nextState as any).log?.length ?? 0;
 
   if (consumesTurn) {
@@ -200,6 +241,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
     const logAfter: string[] = (nextState as any).log ?? [];
     tickLogEntries = logAfter.slice(logBeforeLen);
+    diedThisTurn = tickLogEntries.some((entry) => entry.includes(DEATH_MARKER));
 
     // Roll back log to the pre-advanceTurn state so we can append echo first.
     nextState = {
@@ -208,9 +250,12 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     } as any;
   }
 
-  // If movement, append the destination room description from the UPDATED world state.
-  if (cmd.type === "move" && nextState.player.roomId !== state.player.roomId) {
+  // If room changed, append destination room details from the UPDATED world state.
+  if (nextState.player.roomId !== state.player.roomId && !diedThisTurn) {
     const destRoomId = nextState.player.roomId;
+    const destRoomName = `${ROOM_NAME_TOKEN_START}${
+      getRoomById(nextState, destRoomId)?.name
+    }${ROOM_NAME_TOKEN_END}`;
 
     const roomDescNoItems = buildRoomDescription(nextState, destRoomId, {
       mode: "log",
@@ -224,14 +269,26 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
     const itemsDesc = buildRoomItemsDescription(nextState, destRoomId);
 
-    message = [
-      message.trim(),
-      roomDescNoItems.trim(),
-      ...scripted,
-      itemsDesc.trim(),
-    ]
-      .filter(Boolean)
-      .join("\n\n");
+    if (cmd.type === "action") {
+      message = [
+        message.trim(),
+        destRoomName,
+        roomDescNoItems.trim(),
+        ...scripted,
+        itemsDesc.trim(),
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+    } else {
+      message = [
+        message.trim(),
+        roomDescNoItems.trim(),
+        ...scripted,
+        itemsDesc.trim(),
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+    }
   }
   const roomName = `${ROOM_NAME_TOKEN_START}${
     getRoomById(nextState, nextState.player.roomId)?.name
@@ -239,8 +296,18 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
   // Build echo block
   let logWithEcho = "";
-  if (cmd.type === "move" && nextState.player.roomId !== state.player.roomId) {
-    logWithEcho = `> ${cmd.direction}\n${roomName}\n${message}`;
+  if (cmd.type === "move") {
+    if (nextState.player.roomId !== state.player.roomId) {
+      if (diedThisTurn) {
+        logWithEcho = [`> ${cmd.direction}`, message.trim()]
+          .filter(Boolean)
+          .join("\n");
+      } else {
+        logWithEcho = `> ${cmd.direction}\n${roomName}\n${message}`;
+      }
+    } else {
+      logWithEcho = `> ${cmd.direction}\n${message}`;
+    }
   } else if (cmd.type === "inventory") {
     logWithEcho = `> inventory\n${message}`;
   } else if (cmd.type === "action") {
@@ -275,6 +342,24 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     if (entry && entry.trim()) {
       nextState = appendLog(nextState, entry + "\n\n");
     }
+  }
+
+  if (diedThisTurn) {
+    const respawnRoomName = `${ROOM_NAME_TOKEN_START}${
+      getRoomById(nextState, nextState.player.roomId)?.name
+    }${ROOM_NAME_TOKEN_END}`;
+    const respawnRoomDesc = buildRoomDescription(
+      nextState,
+      nextState.player.roomId,
+      {
+        mode: "log",
+      },
+    );
+
+    nextState = appendLog(
+      nextState,
+      `${respawnRoomName}\n${respawnRoomDesc}`.trim() + "\n\n",
+    );
   }
 
   return nextState;

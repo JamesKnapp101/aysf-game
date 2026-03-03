@@ -1,0 +1,188 @@
+.dna-tab {
+    border: 2px solid var(--crt-color);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 96%;
+    overflow: hidden;
+}
+
+.dna-tab-header {
+    flex: 0 0 auto;
+    font-size: 16px;
+    letter-spacing: 1px;
+    padding: 4px 6px 10px 6px;
+    border-bottom: 2px solid var(--crt-color);
+    margin-bottom: 10px;
+}
+
+.dna-tab-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-right: 6px;
+}
+
+.dna-tab-empty {
+    opacity: 0.85;
+    padding: 10px;
+}
+
+.dna-tab-row {
+    border: 2px solid var(--crt-color);
+    border-radius: 12px;
+    padding: 12px 18px;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.1s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dna-tab-row:hover {
+    background: rgba(0, 255, 0, 0.04);
+}
+
+.dna-tab-row:focus-visible {
+    outline: 2px dashed var(--crt-color);
+    outline-offset: 3px;
+}
+
+.dna-tab-rowTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    line-height: 1.1;
+}
+
+.dna-tab-topTitle {
+    min-width: 0;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.dna-tab-topTurn {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.dna-tab-rowMain {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: start;
+}
+
+.dna-tab-left {
+    position: relative;
+    padding-left: 46px;
+    min-width: 0;
+}
+
+.dna-tab-helixIcon {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 52px;
+    border-left: 2px solid var(--crt-color);
+    border-right: 2px solid var(--crt-color);
+    opacity: 0.9;
+}
+
+.dna-tab-helixIcon::before,
+.dna-tab-helixIcon::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    width: 8px;
+    height: 1px;
+    background: var(--crt-color);
+}
+
+.dna-tab-helixIcon::before {
+    top: 4px;
+    transform: skewY(25deg);
+    box-shadow:
+        0 10px 0 var(--crt-color),
+        0 20px 0 var(--crt-color),
+        0 30px 0 var(--crt-color),
+        0 40px 0 var(--crt-color);
+}
+
+.dna-tab-helixIcon::after {
+    top: 9px;
+    transform: skewY(-25deg);
+    box-shadow:
+        0 10px 0 var(--crt-color),
+        0 20px 0 var(--crt-color),
+        0 30px 0 var(--crt-color),
+        0 40px 0 var(--crt-color);
+}
+
+@supports ((-webkit-mask-image: url("")) or (mask-image: url(""))) {
+    .dna-tab-helixIcon {
+        border: 0;
+        background: var(--crt-color);
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 128'%3E%3Cg fill='none' stroke='black' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M16 8 C20 42 25 54 36 64 C25 74 20 86 16 120'/%3E%3Cpath d='M48 8 C44 42 39 54 28 64 C39 74 44 86 48 120'/%3E%3C/g%3E%3Cg stroke='black' stroke-width='5' stroke-linecap='round'%3E%3Cline x1='22' y1='20' x2='42' y2='20'/%3E%3Cline x1='23' y1='33' x2='41' y2='33'/%3E%3Cline x1='24' y1='46' x2='39' y2='46'/%3E%3Cline x1='26' y1='58' x2='36' y2='58'/%3E%3Cline x1='28' y1='70' x2='38' y2='70'/%3E%3Cline x1='25' y1='82' x2='40' y2='82'/%3E%3Cline x1='23' y1='95' x2='41' y2='95'/%3E%3Cline x1='22' y1='108' x2='42' y2='108'/%3E%3C/g%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 128'%3E%3Cg fill='none' stroke='black' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M16 8 C20 42 25 54 36 64 C25 74 20 86 16 120'/%3E%3Cpath d='M48 8 C44 42 39 54 28 64 C39 74 44 86 48 120'/%3E%3C/g%3E%3Cg stroke='black' stroke-width='5' stroke-linecap='round'%3E%3Cline x1='22' y1='20' x2='42' y2='20'/%3E%3Cline x1='23' y1='33' x2='41' y2='33'/%3E%3Cline x1='24' y1='46' x2='39' y2='46'/%3E%3Cline x1='26' y1='58' x2='36' y2='58'/%3E%3Cline x1='28' y1='70' x2='38' y2='70'/%3E%3Cline x1='25' y1='82' x2='40' y2='82'/%3E%3Cline x1='23' y1='95' x2='41' y2='95'/%3E%3Cline x1='22' y1='108' x2='42' y2='108'/%3E%3C/g%3E%3C/svg%3E");
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-position: center;
+        mask-position: center;
+        filter: drop-shadow(0 0 1px rgba(var(--crt-color-rgb), 0.7));
+    }
+
+    .dna-tab-helixIcon::before,
+    .dna-tab-helixIcon::after {
+        content: none;
+    }
+}
+
+.dna-tab-nameLine {
+    font-size: 22px;
+    font-family: "Lucida Console", "Courier New", monospace;
+    line-height: 1.05;
+}
+
+.dna-tab-causeLine {
+    margin-top: 2px;
+    font-size: 16px;
+    line-height: 1.05;
+}
+
+.dna-tab-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 2px;
+}
+
+.dna-tab-metaLine {
+    font-size: 14px;
+    line-height: 1.05;
+    white-space: nowrap;
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+@media (max-width: 820px) {
+    .dna-tab-rowMain {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .dna-tab-right {
+        padding-top: 0;
+        gap: 6px;
+    }
+}

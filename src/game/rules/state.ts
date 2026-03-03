@@ -13,6 +13,24 @@ export function inventoryHas(
   );
 }
 
+export function inventoryHasAll(
+  inv: GameState["player"]["inventory"],
+  itemIds: string[],
+): boolean {
+  for (const id of itemIds) {
+    if (
+      !(
+        inv.general.includes(id) ||
+        inv.badges.includes(id) ||
+        inv.keys.includes(id)
+      )
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function bucketForItem(
   item: Item | undefined,
 ): "general" | "badges" | "keys" {

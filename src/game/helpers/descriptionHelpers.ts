@@ -7,6 +7,7 @@ import {
 import { getItemsInRoom } from "@game/selectors/roomSelectors";
 import { GameState } from "@game/types/gameTypes";
 import { DescriptionContext, Item } from "@game/types/itemTypes";
+import { canPlayerSeeInRoom } from "./visibilityHelpers";
 
 export function getItemDescription(
   state: GameState,
@@ -39,14 +40,13 @@ export function buildRoomItemsDescription(
   state: GameState,
   roomId: string,
 ): string {
+  if (!canPlayerSeeInRoom(state, roomId)) return "";
+
   const rawItemsHere = getItemsInRoom(state, roomId);
   const itemsHere = Array.from(
     new Map(rawItemsHere.map((it) => [it.id, it])).values(),
   );
 
-  const sceneryItems = itemsHere.filter(
-    (item) => item.itemCategory === "scenery",
-  );
   const nonSceneryItems = itemsHere.filter(
     (item) => item.itemCategory !== "scenery",
   );

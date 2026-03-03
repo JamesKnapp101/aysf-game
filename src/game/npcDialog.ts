@@ -18,6 +18,7 @@ const RADIO_ASK_ALIASES: Record<string, string[]> = {
     "stairwell noise",
     "stairwell sound",
   ],
+  pass: ["park pass"],
 };
 
 export function resolveAskTopic(raw: string) {
@@ -67,5 +68,17 @@ export const RADIO_DIALOG: RadioDialog = {
       `"Hey...can you still hear me..?`,
     ],
     signOff: `(cough) (cough) ...looks like you're gonna be on your own from here out...(cough) wish I could help you more...(cough) good luck, man...`,
+  },
+};
+
+export const RANGERBOT_DIALOG: RadioDialog = {
+  RangerBot: {
+    ask: {
+      ["hours"]: `The park is available around the clock, the only requirement being a valid park pass.`,
+      ["pass"]: `If you don't have a valid park pass, you can request one from Park Services. Current wait time is estimated to be: *Infinite Number*`,
+    },
+    tell: {},
+    ping: [],
+    signOff: "",
   },
 };

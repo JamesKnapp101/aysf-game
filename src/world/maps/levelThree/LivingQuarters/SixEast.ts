@@ -8,7 +8,7 @@ export const sixEastRooms: Room[] = [
     name: "Onche Residence: Living Area",
     description: `The entryway to this large living space is warmly lit from above by [[SCENERY]]`,
     exits: [
-      { direction: "west", doorId: "DOOR3FE" },
+      { direction: "west", doorId: "OncheResidenceDoor" },
       { direction: "south", toRoomId: "SixEastBath" },
       { direction: "east", toRoomId: "SixEastBed" },
     ],

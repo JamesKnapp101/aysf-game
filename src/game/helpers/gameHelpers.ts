@@ -1,4 +1,8 @@
 import { appendLog } from "@game/engine/handleCommand";
+import {
+  getExitDestinationRoomId,
+  getRoomExits,
+} from "@game/helpers/itemHelpers";
 import { inventoryHas } from "@game/rules/state";
 import { useUIEffectsStore } from "@game/store/store";
 import { secretOrganismMessage } from "@game/text/secretOrganismMessage";
@@ -207,23 +211,63 @@ export function triggerPlayerDeath(
 
   next = appendLog(next, rebootMessage);
 
-  const potentialRegenRoomIds = state.worldState.visitedRooms;
-  console.log("Potential regen rooms:", potentialRegenRoomIds);
-  // Pick one of those at random, and move the player, husk, etc there.
+  const adjacentRoomIds = getRoomExits(state, roomId)
+    .map((exit) => getExitDestinationRoomId(state, roomId, exit))
+    .filter((id): id is string => Boolean(id));
+
+  const uniqueAdjacentRoomIds = Array.from(new Set(adjacentRoomIds));
+
+  const potentialRegenRoomIds = uniqueAdjacentRoomIds.filter(
+    (candidateRoomId) => {
+      const isVisited = state.worldState.visitedRooms[candidateRoomId] === true;
+      const isLit = !state.worldState.darkRooms[candidateRoomId];
+      return isVisited && isLit && candidateRoomId !== roomId;
+    },
+  );
+
+  const fallbackRegenRoomIds = Object.entries(state.worldState.visitedRooms)
+    .filter(([candidateRoomId, visited]) => {
+      if (!visited) return false;
+      if (candidateRoomId === roomId) return false;
+      return !state.worldState.darkRooms[candidateRoomId];
+    })
+    .map(([candidateRoomId]) => candidateRoomId);
+
+  const regenPool =
+    potentialRegenRoomIds.length > 0
+      ? potentialRegenRoomIds
+      : fallbackRegenRoomIds;
+
+  const randomIndex =
+    regenPool.length > 0 ? Math.floor(next.rng() * regenPool.length) : -1;
+  const selectedRegenRoom =
+    randomIndex >= 0 ? regenPool[randomIndex] : "PowerGrid";
+
+  const selectedRoomIsValid =
+    selectedRegenRoom !== roomId &&
+    state.worldState.visitedRooms[selectedRegenRoom] === true &&
+    !state.worldState.darkRooms[selectedRegenRoom];
+
+  const finalRegenRoom = selectedRoomIsValid ? selectedRegenRoom : "PowerGrid";
+  const finalRoomIsDark = !!state.worldState.darkRooms[finalRegenRoom];
+
+  // Absolute safety: never respawn into the death room or a dark room.
+  const safeRegenRoom =
+    finalRegenRoom !== roomId && !finalRoomIsDark ? finalRegenRoom : "PowerGrid";
 
   const nextState: GameState = {
     ...next,
     player: {
       ...state.player,
-      roomId: "PowerGrid",
+      roomId: safeRegenRoom,
     },
     world: {
       ...state.world,
       items: [
         ...state.world.items,
         {
-          id: `playerRegenHusk${next.worldState.playerDeaths.length}`,
-          location: "PowerGrid",
+          id: `playerRegenHusk${Object.keys(next.worldState.playerDeaths).length}`,
+          location: safeRegenRoom,
           name: "a lifeless husk",
           description:
             "It's identical to the one you found when you first woke up.",

@@ -54,16 +54,44 @@
     font-size: 22px;
     line-height: 1.1;
     margin-top: 6px;
-    padding-left: 22px;
     font-family: "Lucida Console", "Courier New", monospace;
 }
 
 .logtab-rowPreview {
     font-size: 16px;
     margin-top: 4px;
-    padding-left: 22px;
     opacity: 0.95;
     font-style: italic;
+}
+
+.logtab-rowBody {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 30px;
+}
+
+.logtab-rowIcon {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    width: 14px;
+    height: 18px;
+    border: 2px solid var(--crt-color);
+    border-radius: 2px;
+    opacity: 0.9;
+}
+
+.logtab-rowIcon::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 4px;
+    width: 8px;
+    height: 2px;
+    background: var(--crt-color);
+    box-shadow: 0 4px 0 var(--crt-color), 0 8px 0 var(--crt-color);
 }
 
 .logtab-empty {

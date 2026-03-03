@@ -17,6 +17,7 @@ export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
   SixEastBedEndTable: ["OncheJournal"],
   SixEastBedDresser: [],
   SixEastCloset: [],
+  IggyCollar: ["OncheSecurityRec"],
   DRUGTIN: ["GroovyCart"],
   SixWestMedicineChest: ["DRUGTIN"],
   SixWestWetBar: ["SixWestBourbon", "SixWestScotch", "SixWestBeer"],

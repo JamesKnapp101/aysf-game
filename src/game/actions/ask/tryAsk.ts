@@ -3,6 +3,7 @@ import {
   askRadioDevice,
   askRadioVoice,
   isRadioTargetItem,
+  isRangerBotTargetItem,
 } from "@game/helpers/conversationHelpers";
 import { normalizeTopic } from "@game/rules/scope";
 import { ActionResult } from "@game/types/actionsTypes";
@@ -13,7 +14,7 @@ import { GameState } from "../../types/gameTypes";
 export function tryAsk(
   state: GameState,
   target: ConversationTarget,
-  topicRaw: string
+  topicRaw: string,
 ): ActionResult {
   const topic = normalizeTopic(topicRaw, target);
 
@@ -25,9 +26,12 @@ export function tryAsk(
   // Asking an in-world item or NPC
   const item = target.item;
 
-  // Asking the radio device (ASK RADIO ABOUT ...)
   if (isRadioTargetItem(item)) {
     return askRadioDevice(state, topic);
+  }
+
+  if (isRangerBotTargetItem(item)) {
+    return askNpc(state, item, topic);
   }
 
   if (item.itemCategory !== "animate") {

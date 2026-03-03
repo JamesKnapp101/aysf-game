@@ -36,7 +36,7 @@ export const POWER_SECTION_MAP: Record<
   Lvl3Terminal: { section: "library-power", activeWhen: "on" },
   ParkSecurity: { section: "park-security", activeWhen: "on" },
   Lvl1Weapons: { section: "weapons-system", activeWhen: "on" },
-  ECore: { section: "engine-core-power-lock", activeWhen: "on" },
+  ECore: { section: "engine-room-power-lock", activeWhen: "on" },
   LoadDockDoor: { section: "loading-dock-door", activeWhen: "on" },
   LoadGrid: { section: "loading-grid", activeWhen: "on" },
   CryoLabs: { section: "cryo-labs", activeWhen: "on" },

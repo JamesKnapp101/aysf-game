@@ -1,5 +1,9 @@
 import { appendLog } from "@game/engine/handleCommand";
-import { RADIO_DIALOG, resolveAskTopic } from "@game/radioDialog";
+import {
+  RADIO_DIALOG,
+  RANGERBOT_DIALOG,
+  resolveAskTopic,
+} from "@game/npcDialog";
 import { normalize } from "@game/rules/scope";
 import { ActionResult } from "@game/types/actionsTypes";
 import { GameState } from "@game/types/gameTypes";
@@ -150,6 +154,19 @@ export function isRadioTargetItem(item: Item): boolean {
   );
 }
 
+export function isRangerBotTargetItem(item: Item): boolean {
+  if (normalize(item.id) === "RangerBot") return true;
+
+  // Optional extra robustness: match vocab too
+  const vocab = (item.vocab ?? []).map(normalize);
+  return (
+    vocab.includes("robot") ||
+    vocab.includes("rangerbot") ||
+    vocab.includes("parkbot") ||
+    vocab.includes("bot")
+  );
+}
+
 // ----------------
 // Radio behavior
 // ----------------
@@ -190,11 +207,7 @@ export function askRadioVoice(
       message: `*pop* "I don't know anything more about that (cough)..." *pop*`,
     };
   }
-
   const nextState = markTopicUsed(state, topic);
-
-  console.log("parsed topic is: ", topic);
-
   const line = `*pop* ${
     RADIO_DIALOG[voice.id]?.ask?.[resolveAskTopic(topic)] ??
     defaultRadioAskLine(voice, topic)
@@ -230,6 +243,14 @@ export function askNpc(
   npc: Item,
   topic: string,
 ): ActionResult {
+  if (npc.name === "Ranger Rick") {
+    const line = `"${
+      RANGERBOT_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)] ??
+      defaultRangerAskLine(npc, topic)
+    }"`;
+
+    return { state, message: line };
+  }
   return { state, message: `${npc.name} has nothing to say about that.` };
 }
 
@@ -238,6 +259,14 @@ export function tellNpc(
   npc: Item,
   topic: string,
 ): ActionResult {
+  if (npc.name === "Ranger Rick") {
+    const line = `"${
+      RANGERBOT_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ??
+      defaultRangerTellLine(npc, topic)
+    }"`;
+
+    return { state, message: line };
+  }
   return { state, message: `${npc.name} doesn't seem to care.` };
 }
 
@@ -245,6 +274,14 @@ function defaultRadioAskLine(voice: RadioVoice, topic: string): string {
   return `*pop* "I (cough) don't really know anything about any ${topic}..." *pop*`;
 }
 
+function defaultRangerAskLine(voice: Item, topic: string): string {
+  return `Does that relate in some way to a park pass?`;
+}
+
 function defaultRadioTellLine(voice: RadioVoice, topic: string): string {
   return `"Roger that (cough)..."`;
+}
+
+function defaultRangerTellLine(voice: Item, topic: string): string {
+  return `Roger that, sir!`;
 }

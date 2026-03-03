@@ -71,7 +71,7 @@ export const medicalWingRooms: Room[] = [
     description: `This is a walk-in supply closet filled with shelving and boxes. It looks like it was recently ransacked; everything is in disaray, and it looks like it has been pretty much cleaned out. On one wall you can see a large white-board which acts as a sign-out sheet, and you can see the writing grow more and more frantic the further down the list you read until it stops altogether.`,
     exits: [
       { direction: "north", doorId: "MedStorageDoor" },
-      { direction: "down", doorId: "TissueVats" },
+      { direction: "down", toRoomId: "TissueVats" },
     ],
   },
   {

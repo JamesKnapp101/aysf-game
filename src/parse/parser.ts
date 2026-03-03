@@ -52,7 +52,7 @@ const VERB_ALIASES: Record<string, string> = {
   get: "take",
 
   drop: "drop",
-
+  ["get on"]: "ride",
   open: "open",
   close: "close",
   press: "push",
@@ -62,6 +62,10 @@ const VERB_ALIASES: Record<string, string> = {
   eat: "eat",
   chew: "eat",
   devour: "eat",
+};
+
+const PHRASAL_VERB_ALIASES: Record<string, string> = {
+  "get on": "ride",
 };
 
 const PREPOSITIONS: Preposition[] = [
@@ -89,8 +93,19 @@ export function parseCommand(rawInput: string): ParsedCommand {
     return { type: "move", direction: DIR_MAP[tokens[0]] };
   }
 
-  const [rawVerb, ...rest0] = tokens;
-  const verb = VERB_ALIASES[rawVerb] ?? rawVerb;
+  let rawVerb = tokens[0];
+  let rest0 = tokens.slice(1);
+
+  if (tokens.length >= 2) {
+    const maybePhrasalVerb = `${tokens[0]} ${tokens[1]}`;
+    if (PHRASAL_VERB_ALIASES[maybePhrasalVerb]) {
+      rawVerb = maybePhrasalVerb;
+      rest0 = tokens.slice(2);
+    }
+  }
+
+  const verb =
+    PHRASAL_VERB_ALIASES[rawVerb] ?? VERB_ALIASES[rawVerb] ?? rawVerb;
 
   if (verb === "look") return { type: "look" };
   if (verb === "inventory") return { type: "inventory" };

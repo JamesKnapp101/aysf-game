@@ -72,18 +72,13 @@ export const specialItems: Item[] = [
     description:
       "A slim electronic wand about a foot long, ending in a small porous bulb for collecting and analyzing trace samples.",
     initialDescription:
-      "A slender wand lies on one of the shelves, about a foot long.",
-    location: "MedicalStorage",
+      "A slender electronic wand of some kind lies on one of the shelves, out of its packaging.",
+    location: "L3Warehouse",
     vocab: ["dna", "sampler", "analyzer", "reader", "wand"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
     itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isSwitchable: false,
-    isOn: false,
   },
 
   // 5. Scalpel ---------------------------------------------------------------

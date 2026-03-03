@@ -5,7 +5,7 @@ export const stairwellDoors: DoorDefinition[] = [
     id: "StairDoorTwo",
     name: "stairwell access door",
     descriptionFromA:
-      "There is a door to the west with the words 'LIVING QUARTERS' printed on it and mounted over it is a plastic sign labeled '2'.",
+      "There is a door to the west with the words 'COMMUNITY/MEDICAL' printed on it and mounted over it is a plastic sign labeled '2'.",
     descriptionFromB:
       "To the east is a plain metal door labeled 'STAIRS', warped, and marred with soot.",
     kind: "standard",
@@ -19,7 +19,7 @@ export const stairwellDoors: DoorDefinition[] = [
     id: "StairDoorThree",
     name: "stairwell access door",
     descriptionFromA:
-      "There is a door to the west with the words 'LIVING QUARTERS/MEDICAL/RECREATION' printed on it and mounted over it is a plastic sign labeled '3'.",
+      "There is a door to the west with the words 'COMMUNITY/RECREATIONAL' printed on it and mounted over it is a plastic sign labeled '3'.",
     descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
     kind: "standard",
     vocab: ["door"],

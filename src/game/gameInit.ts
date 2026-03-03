@@ -71,6 +71,7 @@ export const createInitialState = (world: World): GameState => {
       roomId: "StairThree",
       inventory: startingInventory,
       log: [],
+      dnaBank: [],
       memoriesTriggered: {
         own_name: false,
         own_image: false,
@@ -96,8 +97,26 @@ export const createInitialState = (world: World): GameState => {
       statusEffects: [],
     },
     worldState: {
+      conditionalExits: {
+        ParkEntrance: {
+          roomId: "ParkEntrance",
+          unlockTriggers: ["ParkPass"],
+          direction: "west",
+          blockMsg: `The robot scans you then repositions itself gently, but firmly, between you and the park entrance.\n\n"Sorry to be a stickler, but I will need to see that park pass." it says.`,
+          passMsg: `The robot scans you, then the rendered face lights up with a smile.\n\n"You park pass is valid, enjoy your time in Trinity Park!"`,
+        },
+        LevelThreeCorridorSeven: {
+          roomId: "LevelThreeCorridorSeven",
+          unlockTriggers: ["unobtainium"],
+          direction: "north",
+          blockMsg: `There's no way you'll be able to squeeze through that tiny opening.`,
+          passMsg: `[no pass condition]`,
+        },
+      },
       scriptedEventsTripped: {
         cat_meet: false,
+        parkbot_meet: false,
+        l3warehouse_visit: false,
       },
       doors,
       darkRooms: {
@@ -342,6 +361,9 @@ export const createInitialState = (world: World): GameState => {
         retreatTicks: 0,
         lastSeenPlayerRoomId: undefined,
         trailQueue: [],
+      },
+      catState: {
+        isWearingCollar: true,
       },
       brainSlug: {
         isHydrated: false,

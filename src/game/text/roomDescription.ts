@@ -1,7 +1,5 @@
-import { isRoomSpotlitByAviary } from "@game/engine/ticks/aviaryTick";
 import { getItemSceneryDescription } from "@game/helpers/descriptionHelpers";
-import { inventoryHas } from "@game/rules/state";
-import { getAviaryNextSpotlitRoomId } from "src/world/Items/creatures/aviaryOrganisms";
+import { canPlayerSeeInRoom } from "../helpers/visibilityHelpers";
 import { generateTerminalTpadDescription } from "../helpers/gameHelpers";
 import { isItemOpen } from "../rules/containers";
 import { formatNameList } from "../rules/items";
@@ -32,37 +30,7 @@ export function buildRoomDescription(
   const room = state.world.rooms.find((room) => room.id === roomId);
   if (!room) return "You are nowhere. (Bug: room not found.)";
 
-  const isDark = Boolean(state.worldState.darkRooms[room.id]);
-
-  const nightVisionActive = state.player.statusEffects.some(
-    (se) => se.id === "nightvision-active",
-  );
-
-  const flashlightOn = (() => {
-    if (!inventoryHas(state.player.inventory, "flashlight")) return false;
-    const fs = state.itemState.itemSettings["flashlight"];
-    return Boolean(fs && "isOn" in fs && fs.isOn === true);
-  })();
-
-  const damagedFlashlightOn = (() => {
-    if (!inventoryHas(state.player.inventory, "damagedFlashlight"))
-      return false;
-    const fs = state.itemState.itemSettings["damagedFlashlight"];
-    return Boolean(
-      fs &&
-      "isOn" in fs &&
-      fs.isOn === true &&
-      state.worldState.damagedFlashlight.currentCharge > 1,
-    );
-  })();
-
-  const canSee =
-    !isDark ||
-    nightVisionActive ||
-    flashlightOn ||
-    damagedFlashlightOn ||
-    isRoomSpotlitByAviary(state, roomId) ||
-    getAviaryNextSpotlitRoomId(state) === roomId;
+  const canSee = canPlayerSeeInRoom(state, roomId);
 
   if (!canSee) return "It's pitch black in here, you can't see a thing.";
 

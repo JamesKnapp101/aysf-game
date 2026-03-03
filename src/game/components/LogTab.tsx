@@ -20,8 +20,6 @@ export function LogTab({ gameState }: { gameState: GameState }) {
         kind: "reader",
         title: e.title || "Log Entry",
         body: e.body || "",
-        // sourceItemId is part of the reader overlay for "read item" flows.
-        // For log entries, omit it (make it optional in the type) or set undefined.
         sourceItemId: undefined,
       } as any);
     },
@@ -128,28 +126,30 @@ export function LogTab({ gameState }: { gameState: GameState }) {
                     </div>
                   </div>
 
-                  {/* Title */}
-                  <div
-                    className="logtab-rowTitle"
-                    style={{
-                      fontSize: 28,
-                      lineHeight: 1.05,
-                      paddingLeft: 26,
-                    }}
-                  >
-                    {e.title || "Untitled"}
-                  </div>
+                  <div className="logtab-rowBody">
+                    <span className="logtab-rowIcon" aria-hidden="true" />
 
-                  {/* Preview */}
-                  <div
-                    className="logtab-rowPreview"
-                    style={{
-                      fontSize: 16,
-                      opacity: 0.95,
-                      paddingLeft: 26,
-                    }}
-                  >
-                    {previewText(e.body, 90)}
+                    {/* Title */}
+                    <div
+                      className="logtab-rowTitle"
+                      style={{
+                        fontSize: 20,
+                        lineHeight: 1.05,
+                      }}
+                    >
+                      {e.title || "Untitled"}
+                    </div>
+
+                    {/* Preview */}
+                    <div
+                      className="logtab-rowPreview"
+                      style={{
+                        fontSize: 14,
+                        opacity: 0.95,
+                      }}
+                    >
+                      {previewText(e.body, 50)}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -2,7 +2,9 @@ import { doAsk } from "@game/actions/ask/ask";
 import { doEat } from "@game/actions/eat/eat";
 import { doListen } from "@game/actions/listen/listen";
 import { doPush } from "@game/actions/push/push";
+import { doRide } from "@game/actions/ride/ride";
 import { doTell } from "@game/actions/tell/tell";
+import { doTouch } from "@game/actions/touch/touch";
 import { doTurn } from "@game/actions/turn/turn";
 import { doUse } from "@game/actions/use/use";
 import { doStand } from "../actions/stand/stand";
@@ -57,4 +59,6 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   tell: doTell,
   listen: doListen,
   use: doUse,
+  ride: doRide,
+  touch: doTouch,
 };

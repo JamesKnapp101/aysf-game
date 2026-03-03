@@ -37,7 +37,13 @@ export function tryStandItem(
           message: "You stand on the disk, but nothing happens.",
         };
       }
-      if (!anyIn(state.player.inventory, item.meta?.teleport?.requires)) {
+      const required = item.meta?.teleport?.requires ?? [];
+      const inventoryIds = [
+        ...state.player.inventory.general,
+        ...state.player.inventory.badges,
+        ...state.player.inventory.keys,
+      ];
+      if (!anyIn(inventoryIds, required)) {
         return {
           state,
           message: `You stand on the disk and feel a tingle of energy at your scalp before a buzzer sounds, followed by a deep electronic voice.\n\n"Unauthorized."`,
@@ -50,9 +56,8 @@ export function tryStandItem(
           getRoomById(next, nextDisk?.location)?.name
         }${ROOM_NAME_TOKEN_END}`;
 
-        teleportMsg += `${roomName}\n${buildRoomDescription(next, next.player.roomId, { mode: "log" })}`;
-
         next = movePlayerToRoom(next, nextDisk.location);
+        teleportMsg += `${roomName}\n${buildRoomDescription(next, next.player.roomId, { mode: "log" })}`;
         useUIEffectsStore.getState().triggerTeleportFlash();
 
         return { state: next, message: teleportMsg };

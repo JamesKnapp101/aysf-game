@@ -208,16 +208,16 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
   },
   // LQ 3D
   {
-    id: "DOOR3DE",
-    name: "living quarters door 3DE",
+    id: "WarehouseDoor",
+    name: "warehouse door",
     descriptionFromA:
-      "To the east is a door affixed with a neat black plastic label indicating '3CE'. A strip of yellow and black tape has been stretched across the eastern door.",
-    descriptionFromB: "To the west is the unit's front door.",
+      "To the east is a door affixed with a neat black plastic label that reads 'Warehouse.'",
+    descriptionFromB: "To the west is a door that leads back to the corridor.",
     kind: "standard",
-    vocab: ["east door", "door 3de"],
+    vocab: ["east door", "warehouse door", "door"],
     connects: {
       roomAId: "LevelThreeCorridorFour",
-      roomBId: "LivingQuartersFourEast",
+      roomBId: "L3Warehouse",
     },
     directions: { fromA: "east", fromB: "west" },
     initiallyOpen: false,
@@ -257,10 +257,11 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     initiallyLocked: false,
   },
   {
-    id: "DOOR3EW",
+    id: "BoulosResidenceDoor",
     name: "living quarters door 3EW",
     descriptionFromA:
-      "To the west is a door affixed with a neat black plastic label indicating '3EW'. A strip of yellow and black tape has been stretched across the western door.",
+      "To the west is a door affixed with a wooden placard that reads 'Boulos Residence.'",
+    descriptionFromB: `To the east is the unit's front door.`,
     kind: "standard",
     vocab: ["west door", "door 3ew"],
     connects: {
@@ -304,13 +305,13 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
   },
   // LQ 3F
   {
-    id: "DOOR3FE",
+    id: "OncheResidenceDoor",
     name: "living quarters door 3FE",
     descriptionFromA:
       "To the east is a door affixed with an engraved sign that reads 'Onche Residence.'",
     descriptionFromB: "To the west is the unit's front door.",
     kind: "standard",
-    vocab: ["east door", "door 3fe"],
+    vocab: ["east door", "door", "apartment", "onche"],
     connects: {
       roomAId: "LevelThreeCorridorSix",
       roomBId: "LivingQuartersSixEast",

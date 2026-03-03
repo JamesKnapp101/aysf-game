@@ -14,7 +14,7 @@ import "./styles/components/compass.css";
 import "./styles/components/vitals.css";
 import "./styles/components/hints.css";
 import "./styles/status-effects.css";
-import App from "./App.tsx";
+import App from "./App";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
