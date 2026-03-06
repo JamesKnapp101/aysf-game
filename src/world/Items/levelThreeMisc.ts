@@ -704,6 +704,8 @@ export const levelThreeItems: Item[] = [
     name: "porthole",
     description:
       "A round porthole set into the cedar door at about head height, its glass slightly fogged by the humid air of the spa.",
+    lookThroughDescription:
+      "Through the fogged porthole you can just make out the dark sauna beyond. Weak light from the spa slips in far enough to catch the edges of simple benches and the deep claw marks that gouge the wood inside.",
     sceneryDescription:
       "The porthole’s metal frame bites cleanly into the wood, sealing the glass in a neat circle. Condensation beads and slowly crawls down the inside surface, blurring whatever lies beyond into soft shapes and diffuse light. It’s just wide enough to make you want to look through, and just small enough to make you feel like you’re spying.",
     location: "Spa",
@@ -721,6 +723,8 @@ export const levelThreeItems: Item[] = [
     name: "porthole",
     description:
       "A circular glass porthole set into the sauna door, clouded by layers of steam and heat.",
+    lookThroughDescription:
+      "Through the clouded glass you can see the brighter spa beyond in softened shapes: white tile, the broad central jacuzzi, and light diffused by drifting steam.",
     sceneryDescription:
       "From the sauna side, the porthole is mostly a glowing blur. The glass is hot to the touch, a thin barrier between the dense, wet heat inside and the cooler corridor beyond. Occasional droplets of condensation run down in lazy, crooked paths, distorting the view even further.",
     location: "Sauna",
@@ -738,6 +742,8 @@ export const levelThreeItems: Item[] = [
     name: "porthole",
     description:
       "A small round porthole looking out from the portal area, offering a controlled view of the spa complex.",
+    lookThroughDescription:
+      "Through the clear porthole you get a tidy view into the spa complex beyond: bright tile, softened moisture, and the calm, overdesigned look of a place built for relaxation that has clearly failed at it.",
     sceneryDescription:
       "Here the porthole feels less decorative and more intentional: a sanctioned line-of-sight into the spa environment. The glass is clearer on this side, ringed by a reinforced frame that suggests monitoring or access control was once someone’s full-time job.",
     location: "portal",

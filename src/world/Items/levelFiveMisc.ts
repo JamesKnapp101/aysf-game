@@ -379,6 +379,8 @@ export const levelFiveItems: Item[] = [
     name: "observation window",
     description:
       "Set into one wall is a thick, slightly curved observation window made from some heavy, transparent composite. It frames a limited, almost claustrophobic view of the engine core beyond: an intense column of white light that pulses with a slow, mechanical heartbeat. The glare forces you to squint, and staring at it too long leaves ghost images burned into your vision. A spray of dried blood has been flung across the interior side of the window, turning parts of the view into a smeared, reddish haze.",
+    lookThroughDescription:
+      "Through the thick observation window, the engine core resolves into a glaring white column pulsing with slow, mechanical regularity. Dried blood smeared across the far side of the glass turns parts of the view into a reddish blur, but there is still more than enough light to make your eyes ache.",
     sceneryDescription:
       "A thick observation window stares into the engine core, its view smeared by a fan of dried blood.",
     location: "ReactorCore",

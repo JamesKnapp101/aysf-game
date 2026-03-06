@@ -31,15 +31,6 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
   const room = getCurrentRoom(state);
 
-  // LOOK should always print the full description to the log, and NOT advance time.
-  if (cmd.type === "look") {
-    const desc = buildRoomDescription(state, state.player.roomId, {
-      mode: "panel",
-      forceFull: true,
-    });
-    return appendLog(state, desc);
-  }
-
   let nextState = state;
   let message = "I don't understand that.";
   let consumesTurn = false;
@@ -190,6 +181,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       const result = handler(state, cmd);
       nextState = result.state;
       message = result.message ?? "";
+      consumesTurn = result.consumesTurn ?? true;
       if (result.overlay) openOverlay(result.overlay as any);
       break;
     }

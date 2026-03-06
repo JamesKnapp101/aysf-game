@@ -63,6 +63,12 @@ export interface Item {
     item: Item,
     ctx: DescriptionContext,
   ) => string;
+  lookThroughDescription?: string;
+  describeLookThrough?: (
+    state: GameState,
+    item: Item,
+    ctx: DescriptionContext,
+  ) => string;
   hasEffect?: (state: GameState, item: Item) => GameState;
   meta?: Record<string, any>;
   isSwitchable?: boolean;
@@ -105,6 +111,7 @@ export type DescriptionContext =
   | { kind: "roomBase"; roomId: string; mode: "log" | "panel" }
   | { kind: "scenery"; roomId: string }
   | { kind: "examine"; roomId: string }
+  | { kind: "lookThrough"; roomId: string }
   | { kind: "door"; roomId: string; doorId: string; side?: "a" | "b" };
 
 export type ItemOverrideVerb =
@@ -121,6 +128,7 @@ export type ItemOverrideVerb =
   | "taste"
   | "wear"
   | "lookunder"
+  | "lookthrough"
   | "knock"
   | "light"
   | "siton"

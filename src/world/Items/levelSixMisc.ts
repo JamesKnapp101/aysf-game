@@ -2,6 +2,22 @@ import type { Item } from "../../game/types/itemTypes";
 
 export const levelSixItems: Item[] = [
   {
+    id: "LevelSixCorridorEndDoorGap",
+    name: "gap",
+    description: "It's a gap.",
+    lookThroughDescription: `OMG there's a giant spider in there!`,
+    sceneryDescription: "",
+    location: "LevelSixCorridorEnd",
+    vocab: ["gap", "door", "opening"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 30,
+    itemSize: 101,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+  },
+  {
     id: "LevelSixStairRailing",
     name: "metal railing",
     description:

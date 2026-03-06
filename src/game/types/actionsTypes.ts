@@ -6,6 +6,7 @@ export type ActionResult = {
   state: GameState;
   message?: string;
   overlay?: Overlay;
+  consumesTurn?: boolean;
 };
 
 export type ActionHandler = (

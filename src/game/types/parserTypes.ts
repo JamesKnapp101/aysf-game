@@ -9,10 +9,10 @@ export type Preposition =
   | "at"
   | "about"
   | "over"
-  | "to";
+  | "to"
+  | "through";
 
 export type ParsedCommand =
-  | { type: "look" }
   | { type: "inventory" }
   | { type: "diagnose" }
   | { type: "wait" }

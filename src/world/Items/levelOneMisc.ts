@@ -709,6 +709,8 @@ export const levelOneItems: Item[] = [
     name: "observation window",
     description:
       "You approach the curved observation window and peer out into the darkness. The outer hull of the ship stretches away from the deck, dipping low in the distance where another massive object looms. It takes you a moment to realize the object is another ship, at least as large as the Deus Ex Machina, though it doesn’t look like any design you recognize. Even in the dark you can tell its hull is pitted or honeycombed. From the angle, it appears to have collided with the Machina, the two vessels now locked together.",
+    lookThroughDescription:
+      "Through the curved observation window, the outer hull of the ship stretches away into the dark until another massive vessel looms into view. It is at least as large as the Deus Ex Machina, but its pitted, honeycombed hull looks nothing like any design you recognize. From this angle, the two ships appear fused together by the collision.",
     sceneryDescription:
       "The window arcs overhead in a broad curve of reinforced transparent material, framing a view that feels too big and too wrong. The other ship clings to the Machina’s hull like a tumor—full of holes, shadows, and bad intentions.",
     location: "Observation",
