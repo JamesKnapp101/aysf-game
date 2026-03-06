@@ -59,12 +59,18 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         const conditionalExit =
           state.worldState.conditionalExits[state.player.roomId];
         if (conditionalExit.direction === cmd.direction) {
-          if (
-            inventoryHasAll(
-              state.player.inventory,
-              conditionalExit.unlockTriggers,
-            )
-          ) {
+          const hasAllUnlockTriggers = inventoryHasAll(
+            state.player.inventory,
+            conditionalExit.unlockTriggers,
+          );
+          const hasAllConditionalTriggers = (
+            conditionalExit.conditionalTriggers ?? []
+          ).every(
+            (triggerId) =>
+              state.worldState.conditionalTriggers?.[triggerId] === true,
+          );
+
+          if (hasAllUnlockTriggers && hasAllConditionalTriggers) {
             // play the pass message
             moveMessage += conditionalExit.passMsg;
           } else {
@@ -218,6 +224,21 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       },
       SCRIPTED_EVENTS,
     );
+  }
+
+  if (cmd.type === "action") {
+    nextState = runScriptedEvents(
+      nextState,
+      {
+        kind: "onCommand",
+        commandText: cmd.raw?.trim().toLowerCase(),
+        commandVerb: cmd.verb,
+        commandDirect: cmd.direct?.trim().toLowerCase(),
+        roomId: nextState.player.roomId,
+        fromRoomId: state.player.roomId,
+      },
+      SCRIPTED_EVENTS,
+    );
 
     const visitedRooms = nextState.worldState.visitedRooms ?? {};
     nextState = {
@@ -286,6 +307,18 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         ...scripted,
         itemsDesc.trim(),
       ]
+        .filter(Boolean)
+        .join("\n\n");
+    }
+  }
+
+  // Surface scripted narration queued by onCommand events even if no room change.
+  if (cmd.type === "action" && nextState.player.roomId === state.player.roomId) {
+    const drained = drainAfterRoomDescription(nextState);
+    nextState = drained.state;
+
+    if (drained.lines.length > 0) {
+      message = [message.trim(), ...drained.lines.map((s) => s.trim())]
         .filter(Boolean)
         .join("\n\n");
     }

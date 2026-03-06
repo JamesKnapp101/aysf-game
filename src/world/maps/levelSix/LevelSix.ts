@@ -1,3 +1,4 @@
+import { hydroponicsRooms } from "src/world/maps/levelSix/Hydroponics";
 import type { WorldChunk } from "../../../game/types/gameTypes";
 import { levelSixDoors } from "../../doors/levelSixDoors";
 import { levelSixItems } from "../../Items/levelSixMisc";
@@ -7,6 +8,7 @@ export const LEVEL_SIX: WorldChunk = {
   doors: [...levelSixDoors],
   teleportPads: [],
   rooms: [
+    ...hydroponicsRooms,
     {
       id: "LevelSixCorridorBend",
       name: "Dimly Lit Corridor",

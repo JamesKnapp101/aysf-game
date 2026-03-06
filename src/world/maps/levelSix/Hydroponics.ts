@@ -15,7 +15,7 @@ export const hydroponicsRooms: Room[] = [
     name: "Hydroponics: Central Platform Middle",
     description: `.`,
     exits: [
-      { direction: "up", doorId: "HydroponicsPlatform" },
+      { direction: "up", toRoomId: "HydroponicsPlatform" },
       { direction: "down", toRoomId: "HydroponicsPlatformBottom" },
     ],
   },
@@ -25,7 +25,7 @@ export const hydroponicsRooms: Room[] = [
     name: "Hydroponics: Underneath Web",
     description: `.`,
     exits: [
-      { direction: "up", doorId: "HydroponicsPlatformMid" },
+      { direction: "up", toRoomId: "HydroponicsPlatformMid" },
       { direction: "northwest", toRoomId: "UnderWebOne" },
       { direction: "northeast", toRoomId: "UnderWebTwo" },
       { direction: "southwest", toRoomId: "UnderWebThree" },

@@ -5,6 +5,8 @@ export type ScriptContext = {
   roomId?: string;
   fromRoomId?: string;
   commandText?: string;
+  commandVerb?: string;
+  commandDirect?: string;
 };
 
 export type ScriptedEvent = {

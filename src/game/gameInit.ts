@@ -112,11 +112,28 @@ export const createInitialState = (world: World): GameState => {
           blockMsg: `There's no way you'll be able to squeeze through that tiny opening.`,
           passMsg: `[no pass condition]`,
         },
+        L3Warehouse: {
+          roomId: "L3Warehouse",
+          unlockTriggers: [],
+          conditionalTriggers: ["RobotRefugeAccess"],
+          direction: "east",
+          blockMsg: `You can't go that way.`,
+          passMsg: `You duck underneath the lowest rack and climb through the opening.`,
+        },
+        LevelSixCorridorEnd: {
+          roomId: "LevelSixCorridorEnd",
+          unlockTriggers: [],
+          conditionalTriggers: ["HydroponicsDoorUnblocked"],
+          direction: "south",
+          blockMsg: `The door is jammed tight in the damaged metal frame, with or without a security badge, you'll never get it open.`,
+          passMsg: `You step through the large gap that has been burned through the metal.`,
+        },
       },
       scriptedEventsTripped: {
         cat_meet: false,
         parkbot_meet: false,
         l3warehouse_visit: false,
+        l3warehouse_whistle: false,
       },
       doors,
       darkRooms: {
@@ -383,6 +400,8 @@ export const createInitialState = (world: World): GameState => {
       },
       conditionalTriggers: {
         MysteriousNoteFound: false,
+        RobotRefugeAccess: false,
+        HydroponicsDoorUnblocked: false,
       },
       damagedFlashlight: {
         isOn: false,

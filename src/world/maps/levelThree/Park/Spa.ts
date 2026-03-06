@@ -1,3 +1,4 @@
+import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
 
 export const spaRooms: Room[] = [
@@ -31,5 +32,19 @@ export const spaRooms: Room[] = [
     name: "Nail Salon",
     description: `This is a cozy, clean little room dominated by a comfortable-looking padded massage table. The room smells faintly of a pleasant mixture of scented oils.`,
     exits: [{ direction: "east", doorId: "NailSalonDoor" }],
+  },
+];
+
+export const spaItems: Item[] = [
+  {
+    id: "RobotWhistle",
+    name: "a small metal whistle",
+    description: `It's a small, pipe-shaped metal whistle, about the length of your index finger.`,
+    location: "INVENTORY", //"seeded"
+    vocab: ["whistle", "robot", "metal"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 0,
+    itemSize: 1,
   },
 ];

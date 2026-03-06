@@ -48,4 +48,33 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       return next;
     },
   },
+  {
+    id: "l3warehouse_whistle",
+    when: (state, ctx) =>
+      ctx.kind === "onCommand" &&
+      ctx.commandVerb === "blow" &&
+      Boolean(
+        ctx.commandDirect?.includes("whistle") ||
+        ctx.commandDirect?.includes("robot"),
+      ) &&
+      ctx.roomId === "L3Warehouse",
+    run: (state, ctx) => {
+      let next = state;
+      next = {
+        ...next,
+        worldState: {
+          ...next.worldState,
+          conditionalTriggers: {
+            ...next.worldState.conditionalTriggers,
+            RobotRefugeAccess: true,
+          },
+        },
+      };
+      next = queueAfterRoomDescription(
+        next,
+        `Something heard it though, because a second later you hear an electronic beep from the east side of the warehouse. A thump follows, then, on the east wall behind the lowest storage rack, a hidden panel slides up to reveal a two meter high doorway that leads to a dimly lit room.`,
+      );
+      return next;
+    },
+  },
 ];

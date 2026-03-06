@@ -30,7 +30,7 @@ export function LogTab({ gameState }: { gameState: GameState }) {
     <div
       className="logtab"
       style={{
-        height: "95%",
+        height: "96%",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",

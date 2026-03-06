@@ -21,7 +21,7 @@ export const DNA_DATABASE: Record<string, DNAResult> = {
     gender: "Male",
     age: 27,
     occupation: "3D Printer Technician",
-    info: "Joelson Dend is a reliable citizen, and is in good standing with a respectable social score.\nHe has worked at the 3D Printing Facility for over twenty rotations with no major incidents.\nMinor social infractions include: Public Intoxication. Unwanted Sexual Advances. Unwanted Sexual Demotions. Public Discussion of Urination.\n",
+    info: "Joelson Dend is a reliable citizen, and is in good standing with a respectable social score.\nHe has worked at the 3D Printing Facility for over twenty rotations with no major incidents.\nMinor social infractions include: Public Intoxication. Unwanted Sexual Advances. Unwanted Sexual Retreats.\n",
   },
   HeadlessCorpse: {
     id: "headlessHydroponicsCorpse",

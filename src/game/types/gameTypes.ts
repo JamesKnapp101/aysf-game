@@ -213,6 +213,7 @@ type ConditionalExit = {
   roomId: string;
   direction: Direction;
   unlockTriggers: string[];
+  conditionalTriggers?: string[];
   blockMsg: string;
   passMsg: string;
 };

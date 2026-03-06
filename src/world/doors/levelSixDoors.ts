@@ -62,7 +62,7 @@ export const levelSixDoors: DoorDefinition[] = [
       return desc;
     },
     descriptionFromB: "To the north is a a heavy steel door.",
-    kind: "blocked",
+    kind: "standard",
     blockMsg: `The door doesn't respond at all when you approach, it's jammed tight in the damaged metal frame.`,
     vocab: ["door", "damaged door", "hydroponics door", "gap"],
     connects: {

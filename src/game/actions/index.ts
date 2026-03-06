@@ -1,4 +1,5 @@
 import { doAsk } from "@game/actions/ask/ask";
+import { doBlow } from "@game/actions/blow/blow";
 import { doEat } from "@game/actions/eat/eat";
 import { doListen } from "@game/actions/listen/listen";
 import { doPush } from "@game/actions/push/push";
@@ -61,4 +62,5 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   use: doUse,
   ride: doRide,
   touch: doTouch,
+  blow: doBlow,
 };
