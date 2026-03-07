@@ -167,6 +167,10 @@ export type AviarySpotlightState = {
 export type HydroponicsSpiderState = {
   isAlive: boolean;
   turnsSinceLastBreath: number;
+  sensitivity: number;
+  pendingAcidTarget: "none" | "door" | "player" | "gapPlayer";
+  doorHealth: number;
+  lastTrackedHydroponicsRoomId?: string;
 };
 
 export type BrainSlugState = {

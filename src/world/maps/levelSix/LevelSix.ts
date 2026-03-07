@@ -1,10 +1,11 @@
 import { hydroponicsRooms } from "src/world/maps/levelSix/Hydroponics";
 import type { WorldChunk } from "../../../game/types/gameTypes";
 import { levelSixDoors } from "../../doors/levelSixDoors";
+import { giantSpiderItems } from "../../Items/creatures/giantSpider";
 import { levelSixItems } from "../../Items/levelSixMisc";
 
 export const LEVEL_SIX: WorldChunk = {
-  items: [...levelSixItems],
+  items: [...levelSixItems, ...giantSpiderItems],
   doors: [...levelSixDoors],
   teleportPads: [],
   rooms: [

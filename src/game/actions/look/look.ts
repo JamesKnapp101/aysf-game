@@ -6,30 +6,45 @@ import type { Item } from "../../types/itemTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
 import { doExamine } from "../examine/examine";
 
-function getLookThroughText(state: GameState, item: Item): string | undefined {
-  if (item.describeLookThrough) {
-    return item.describeLookThrough(state, item, {
-      kind: "lookThrough",
-      roomId: state.player.roomId,
-    });
-  }
-
-  if (typeof item.lookThroughDescription === "string") {
-    return item.lookThroughDescription;
-  }
-
+function getLookThroughResult(state: GameState, item: Item): ActionResult {
   const override = item.overrides?.lookthrough;
   if (typeof override === "string") {
-    return override;
+    return { state, message: override, consumesTurn: false };
   }
 
   if (typeof override === "function") {
     const out = override({ item, state });
-    if (typeof out === "string") return out;
-    return out?.message;
+    if (typeof out === "string") {
+      return { state, message: out, consumesTurn: false };
+    }
+
+    return {
+      state: out?.state ?? state,
+      message: out?.message,
+      consumesTurn: out?.consumesTurn ?? false,
+    };
   }
 
-  return undefined;
+  if (item.describeLookThrough) {
+    return {
+      state,
+      message: item.describeLookThrough(state, item, {
+        kind: "lookThrough",
+        roomId: state.player.roomId,
+      }),
+      consumesTurn: false,
+    };
+  }
+
+  if (typeof item.lookThroughDescription === "string") {
+    return { state, message: item.lookThroughDescription, consumesTurn: false };
+  }
+
+  return {
+    state,
+    message: "You can't see anything useful through that.",
+    consumesTurn: false,
+  };
 }
 
 export function doLook(state: GameState, cmd: ParsedCommand): ActionResult {
@@ -40,7 +55,7 @@ export function doLook(state: GameState, cmd: ParsedCommand): ActionResult {
   const direct = cmd.direct?.trim();
   const indirect = cmd.indirect?.trim();
   const preposition = cmd.preposition?.trim();
-  let next = state;
+  const next = state;
 
   if (preposition === "through") {
     const target = indirect ?? direct;
@@ -50,11 +65,10 @@ export function doLook(state: GameState, cmd: ParsedCommand): ActionResult {
 
     const item = resolveItemByNoun(state, target);
     if (item) {
-      const text = getLookThroughText(state, item)?.trim();
+      const result = getLookThroughResult(next, item);
       return {
-        state: next,
-        message: text || "You can't see anything useful through that.",
-        consumesTurn: false,
+        ...result,
+        message: result.message?.trim(),
       };
     }
 

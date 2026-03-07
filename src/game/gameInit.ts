@@ -397,6 +397,10 @@ export const createInitialState = (world: World): GameState => {
       hydroponicsSpider: {
         isAlive: true,
         turnsSinceLastBreath: 0,
+        sensitivity: 0,
+        pendingAcidTarget: "none",
+        doorHealth: 3,
+        lastTrackedHydroponicsRoomId: undefined,
       },
       conditionalTriggers: {
         MysteriousNoteFound: false,

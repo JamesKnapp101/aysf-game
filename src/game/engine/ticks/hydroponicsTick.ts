@@ -1,5 +1,6 @@
 import { appendLog } from "@game/engine/handleCommand";
 import { GameState } from "@game/types/gameTypes";
+import { tickHydroponicsSpiderThreat } from "src/world/Items/creatures/giantSpider";
 
 export function tickHydroponics(state: GameState): GameState {
   const spiderIsAlive = state.worldState.hydroponicsSpider.isAlive;
@@ -39,7 +40,7 @@ export function tickHydroponics(state: GameState): GameState {
     next = appendLog(next, moanMessage);
   }
 
-  return next;
+  return tickHydroponicsSpiderThreat(next);
 }
 
 type MoanSetting = {

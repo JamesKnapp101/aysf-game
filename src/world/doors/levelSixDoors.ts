@@ -38,6 +38,10 @@ export const levelSixDoors: DoorDefinition[] = [
     id: "HydroponicsDoor",
     name: "damaged door",
     describe: (state) => {
+      if (state.worldState.conditionalTriggers.HydroponicsDoorUnblocked) {
+        return `The damaged security door has been melted open down the middle. The remaining metal has sagged and curled away from a blackened opening large enough to step through. Beyond it you can see the hydroponics platform and its glassy green disk.`;
+      }
+
       let desc = `The door is damaged, becoming wedged tight in the frame. There's a badge reader next to it, but even if it wasn't damaged you don't think the door is functional. Through the gap along the side you can see a glassy green disk, or platform on the floor, large enough to stand on`;
       const greenTpadState =
         state.worldState.powerRestoredSections["teleport-pads-green"];
@@ -50,6 +54,10 @@ export const levelSixDoors: DoorDefinition[] = [
       return desc;
     },
     describeFromA: (state) => {
+      if (state.worldState.conditionalTriggers.HydroponicsDoorUnblocked) {
+        return `To the south, the damaged Hydroponics door has been melted open down the middle. Blackened metal curls away from a ragged opening, and beyond it you can see the hydroponics platform with its smooth, glassy green disk on the floor.`;
+      }
+
       let desc = `To the south is a security door with no obvious handle, its frame skewed enough to leave an open gap along the right side. A badge reader is mounted next to the door, but it has scorching around the seam and doesn't appear to be functional. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the dented banner is the word 'HYDROPONICS.' `;
       const greenTpadState =
         state.worldState.powerRestoredSections["teleport-pads-green"];

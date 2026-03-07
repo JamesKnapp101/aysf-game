@@ -1,12 +1,15 @@
+import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
+import { lookThroughSpiderGap } from "./creatures/giantSpider";
 
 export const levelSixItems: Item[] = [
   {
     id: "LevelSixCorridorEndDoorGap",
     name: "gap",
-    description: "It's a gap.",
-    lookThroughDescription: `OMG there's a giant spider in there!`,
-    sceneryDescription: "",
+    description:
+      "The damaged door has warped just enough to leave a narrow gap along one side. The metal around it is scorched and pitted, and something about the darkness beyond feels attentive.",
+    sceneryDescription:
+      "A narrow gap runs along the damaged door's edge, exposing only darkness and the occasional twitch of shadow beyond.",
     location: "LevelSixCorridorEnd",
     vocab: ["gap", "door", "opening"],
     itemClass: "solid",
@@ -15,6 +18,10 @@ export const levelSixItems: Item[] = [
     itemSize: 101,
     meta: {
       sceneryDescriptionOrder: 1,
+    },
+    overrides: {
+      lookthrough: ({ state }: { state: GameState }) =>
+        lookThroughSpiderGap(state),
     },
   },
   {

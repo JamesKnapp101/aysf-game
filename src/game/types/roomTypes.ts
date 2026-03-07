@@ -38,6 +38,7 @@ export interface Room {
   describe?: (state: GameState, room: Room, ctx: DescriptionContext) => string;
   descriptionShort?: string;
   exits: Exit[];
+  meta?: Record<string, any>;
 }
 
 export type Coord = { x: number; y: number; z: number };
