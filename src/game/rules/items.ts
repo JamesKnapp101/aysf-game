@@ -33,7 +33,7 @@ export function updateItemLocation(
 }
 
 export function isItemOpenable(item: Item): boolean {
-  return !!item.isContainer;
+  return !!item.isContainer && item.isOpenable !== false;
 }
 
 export function isItemConsumable(item: Item): boolean {

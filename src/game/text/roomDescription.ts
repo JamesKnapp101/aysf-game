@@ -13,6 +13,7 @@ import {
 } from "../selectors/doorSelectors";
 import { getItemsInRoom } from "../selectors/roomSelectors";
 import type { GameState } from "../types/gameTypes";
+import { getVisibleHydroponicsSpider } from "src/world/Items/creatures/giantSpider";
 
 type RoomDescriptionMode = "log" | "panel";
 
@@ -42,8 +43,17 @@ export function buildRoomDescription(
   const forceFull = Boolean(opts.forceFull) || mode === "panel";
 
   const rawItemsHere = getItemsInRoom(state, roomId);
-  const itemsHere = Array.from(
+  const baseItemsHere = Array.from(
     new Map(rawItemsHere.map((it) => [it.id, it])).values(),
+  );
+  const visibleSpider = getVisibleHydroponicsSpider(state, roomId);
+  const itemsHere = Array.from(
+    new Map(
+      [...baseItemsHere, ...(visibleSpider ? [visibleSpider] : [])].map((it) => [
+        it.id,
+        it,
+      ]),
+    ).values(),
   );
 
   const sceneryItems = itemsHere
@@ -74,7 +84,6 @@ export function buildRoomDescription(
     .filter((s): s is string => Boolean(s && s.trim()))
     .map((s) =>
       s
-        .replace(/\n\n/g, "\n")
         .replace(/[ \t]+\n/g, "\n")
         .replace(/\n[ \t]+/g, "\n")
         .replace(/\n{3,}/g, "\n\n")

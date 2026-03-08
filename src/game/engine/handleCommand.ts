@@ -11,6 +11,14 @@ import { getRoomById } from "@game/helpers/itemHelpers";
 import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
 import { inventoryHasAll } from "@game/rules/state";
 import { AQUARIUM_ROOM_IDS } from "src/world/Items/creatures/octopus";
+import {
+  HYDROPONICS_SPIDER_ITEM_ID,
+  HYDROPONICS_SPIDER_REACHABILITY_MESSAGE,
+  canReachHydroponicsSpiderFromRoom,
+  isHydroponicsSpiderNoun,
+  isHydroponicsSpiderRoom,
+  isHydroponicsSpiderVisibleFromRoom,
+} from "src/world/Items/creatures/giantSpider";
 import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";
@@ -23,6 +31,26 @@ import { advanceTurn } from "./turn";
 
 export function appendLog(state: GameState, text: string): GameState {
   return { ...state, log: [...state.log, text] };
+}
+
+function isRemoteHydroponicsSpiderInteraction(
+  state: GameState,
+  cmd: ParsedCommand,
+): boolean {
+  if (cmd.type !== "action") return false;
+  if (cmd.verb === "examine" || cmd.verb === "look") return false;
+  if (!isHydroponicsSpiderRoom(state.player.roomId)) return false;
+  if (!isHydroponicsSpiderVisibleFromRoom(state.player.roomId)) return false;
+  if (canReachHydroponicsSpiderFromRoom(state, state.player.roomId)) return false;
+
+  const spider = state.world.items.find((item) => item.id === HYDROPONICS_SPIDER_ITEM_ID);
+  if (!spider) return false;
+
+  const targets = [cmd.direct, cmd.indirect].filter(
+    (noun): noun is string => Boolean(noun?.trim()),
+  );
+
+  return targets.some((noun) => isHydroponicsSpiderNoun(spider, noun));
 }
 
 export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
@@ -170,6 +198,12 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
     case "action": {
       consumesTurn = true;
+
+      if (isRemoteHydroponicsSpiderInteraction(state, cmd)) {
+        message = HYDROPONICS_SPIDER_REACHABILITY_MESSAGE;
+        consumesTurn = false;
+        break;
+      }
 
       const handler = ACTION_HANDLERS[cmd.verb];
       if (!handler) {

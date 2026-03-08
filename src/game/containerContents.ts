@@ -38,6 +38,7 @@ export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
     "alice_sneakers",
   ],
   SixWestCloset: ["ed_white_shirt", "ed_pressed_pants", "wool_vest"],
+  AdminOfficeWastebin: ["AdminOfficeWastebinNote"],
 };
 
 export const INITIAL_SURFACE_CONTENTS: Record<string, string[]> = {};

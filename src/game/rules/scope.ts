@@ -1,5 +1,11 @@
 import { inventoryHas } from "@game/rules/state";
 import { ConversationTarget, RadioVoice } from "@game/types/npcTypes";
+import {
+  HYDROPONICS_SPIDER_ITEM_ID,
+  isHydroponicsSpiderNoun,
+  isHydroponicsSpiderRoom,
+  isHydroponicsSpiderVisibleFromRoom,
+} from "src/world/Items/creatures/giantSpider";
 import { getCurrentRoom } from "../selectors/roomSelectors";
 import { getTeleportPadsInCurrentRoom } from "../selectors/teleportationSelectors";
 import type { DoorDefinition, DoorState } from "../types/doorTypes";
@@ -86,6 +92,7 @@ export function tokenize(text: string): string[] {
  *   - items inside open containers that are in the current room (recurses)
  *
  * Container open state:
+ *   non-openable containers                      -> implicitly open
  *   state.itemState.openItems[item.id] === true  -> open
  *   false/undefined                              -> closed
  */
@@ -169,6 +176,18 @@ export function resolveItemByNoun(
     return tokens.every((t) => vocabTokens.has(t));
   });
   if (byVocab) return byVocab;
+
+  if (
+    isHydroponicsSpiderRoom(room.id) &&
+    isHydroponicsSpiderVisibleFromRoom(room.id)
+  ) {
+    const spider = state.world.items.find(
+      (it) => it.id === HYDROPONICS_SPIDER_ITEM_ID,
+    );
+    if (spider && isHydroponicsSpiderNoun(spider, noun)) {
+      return spider;
+    }
+  }
 
   return undefined;
 }

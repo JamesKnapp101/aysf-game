@@ -68,7 +68,7 @@ export const createInitialState = (world: World): GameState => {
     rating: 0,
     moves: 0,
     player: {
-      roomId: "StairThree",
+      roomId: "HydroponicsPlatform",
       inventory: startingInventory,
       log: [],
       dnaBank: [],

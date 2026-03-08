@@ -5,6 +5,11 @@ import { getItemById } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 
 export function isItemOpen(state: GameState, itemId: string): boolean {
+  const item = getItemById(state, itemId);
+  if (item?.isContainer && item.isOpenable === false) {
+    return true;
+  }
+
   return !!state.itemState.openItems[itemId];
 }
 

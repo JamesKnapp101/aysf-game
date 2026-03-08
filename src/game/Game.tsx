@@ -38,6 +38,14 @@ export type LayoutPrefs = {
   sidebarWidthRatio: number;
 };
 
+export type SidebarTab =
+  | "inventory"
+  | "status"
+  | "log"
+  | "hints"
+  | "settings"
+  | "dna";
+
 function loadInitialCrtColor(): string {
   if (typeof window === "undefined") return "#00ff00";
   try {
@@ -79,7 +87,6 @@ export const Game: React.FC = () => {
     | { type: "command"; input: string }
     | { type: "replaceState"; next: GameState }
     | { type: "setBrainActivity"; val: number };
-  type SidebarTab = "inventory" | "status" | "log" | "hints" | "settings";
   const [activeTab, setActiveTab] = useState<SidebarTab>("status");
 
   const [gs, dispatchState] = useReducer(
@@ -374,7 +381,7 @@ export const Game: React.FC = () => {
               inputRef={inputRef}
               rootRef={rootRef}
               activeTab={activeTab}
-              setActiveTab={setActiveTab}
+              setActiveTab={(tab: SidebarTab) => setActiveTab(tab)}
             />
           </div>
         </>

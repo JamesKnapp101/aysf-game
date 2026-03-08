@@ -1,3 +1,4 @@
+import { isItemOpen } from "@game/rules/containers";
 import { resolveDoorByNoun, resolveItemByNoun } from "../../rules/scope";
 import { getItemById } from "../../selectors/itemSelectors";
 import type { ActionResult } from "../../types/actionsTypes";
@@ -160,7 +161,7 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   let itemDesc = item.describe
     ? item?.describe?.(next, item, {
         kind: "examine",
-        roomId: item.id,
+        roomId: next.player.roomId,
       })
     : item.meta?.conditionalDescription &&
         (next.worldState.conditionalTriggers?.[`searched-${item.id}`] ===
@@ -173,7 +174,7 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   if (item.isContainer && next.itemState.containerFilled[item.id]) {
     const containerContents = next.itemState.containerFilled[item.id];
     itemDesc += ` The ${item.name} is filled with ${containerContents}`;
-  } else if (item.isContainer && next.itemState.openItems[item.id]) {
+  } else if (item.isContainer && isItemOpen(next, item.id)) {
     const containerContents = next.itemState.containerContents[item.id] ?? [];
     let containerItems: Item[] = [];
     for (const itemId of containerContents) {

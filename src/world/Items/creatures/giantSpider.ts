@@ -1,15 +1,20 @@
-import { appendLog } from "@game/engine/handleCommand";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import { hydroponicsRooms } from "src/world/maps/levelSix/Hydroponics";
 
+export const HYDROPONICS_SPIDER_ITEM_ID = "spider";
 export const HYDROPONICS_SPIDER_ROOM_IDS = new Set(
   hydroponicsRooms.map((room) => room.id),
 );
 
 export const HYDROPONICS_SPIDER_DOOR_MAX_HP = 3;
+export const HYDROPONICS_SPIDER_REACHABILITY_MESSAGE =
+  "You can't reach it from where you are.";
+const HYDROPONICS_SPIDER_BLIND_SPOT_ROOM_IDS = new Set([
+  "HydroponicsPlatformAdmin",
+]);
 
 const GAP_PEEK_MESSAGES = [
   "Through the narrow gap you can only make out webbing and a churn of shifting shadows deeper inside. Something in there goes still, as if it heard you.",
@@ -23,11 +28,21 @@ const DOOR_ACID_MESSAGES = [
   "The next blast hits with enough force to eat straight through the ruined seam. The damaged door softens, buckles, and melts down the middle, opening the way into Hydroponics.",
 ];
 
+const HYDROPONICS_TRACKING_MESSAGES = [
+  "The massive spider's eight glossy eyes flick in your direction. It's spotted you.",
+  "The spider shifts its position to face you, several long legs drawing tight against the webbing as it reorients.",
+  "The spider rears back, its webbing creaking under the weight as it opens its mouthparts wide, preparing to spit.",
+];
+
 const GAP_FATAL_MESSAGE =
   "You lean in for one look too many. Something on the far side convulses, and a stream of acid lashes through the gap, splashing across your face and chest before you can recoil.";
 
 const HYDROPONICS_FATAL_MESSAGE =
   "The giant spider rears and convulses. A pressurized stream of acid erupts from its mouthparts and catches you before you can move, burning straight through skin, muscle, and bone.";
+
+function appendSpiderLog(state: GameState, text: string): GameState {
+  return { ...state, log: [...state.log, text] };
+}
 
 function updateSpiderState(
   state: GameState,
@@ -47,6 +62,141 @@ function updateSpiderState(
 
 export function isHydroponicsSpiderRoom(roomId: string): boolean {
   return HYDROPONICS_SPIDER_ROOM_IDS.has(roomId);
+}
+
+export function isHydroponicsSpiderBlindSpot(roomId: string): boolean {
+  return HYDROPONICS_SPIDER_BLIND_SPOT_ROOM_IDS.has(roomId);
+}
+
+export function isHydroponicsSpiderVisibleFromRoom(roomId: string): boolean {
+  return isHydroponicsSpiderRoom(roomId) && !isHydroponicsSpiderBlindSpot(roomId);
+}
+
+export function getHydroponicsSpiderRoomId(state: GameState): string {
+  return (
+    state.itemState.itemRoomId[HYDROPONICS_SPIDER_ITEM_ID] ??
+    "HydroponicsPlatformMid"
+  );
+}
+
+export function canReachHydroponicsSpiderFromRoom(
+  state: GameState,
+  roomId: string,
+): boolean {
+  return roomId === getHydroponicsSpiderRoomId(state);
+}
+
+export function getVisibleHydroponicsSpider(
+  state: GameState,
+  roomId: string,
+): Item | undefined {
+  if (!isHydroponicsSpiderVisibleFromRoom(roomId)) return undefined;
+
+  return state.world.items.find(
+    (item) => item.id === HYDROPONICS_SPIDER_ITEM_ID,
+  );
+}
+
+export function isHydroponicsSpiderNoun(item: Item, noun: string): boolean {
+  const lower = noun.trim().toLowerCase();
+  if (!lower) return false;
+  const tokens = lower.split(/\s+/).filter(Boolean);
+
+  if (item.id.toLowerCase() === lower) return true;
+  if (item.name.toLowerCase() === lower) return true;
+  if (item.vocab.some((term) => term.toLowerCase() === lower)) return true;
+
+  const nameTokens = new Set(
+    item.name.toLowerCase().split(/\s+/).filter(Boolean),
+  );
+  if (tokens.every((token) => nameTokens.has(token))) return true;
+
+  return item.vocab.some((term) => {
+    const vocabTokens = new Set(
+      term.toLowerCase().split(/\s+/).filter(Boolean),
+    );
+    return tokens.every((token) => vocabTokens.has(token));
+  });
+}
+
+function getHydroponicsSpiderSceneryText(
+  roomId: string,
+  isAlive: boolean,
+): string {
+  switch (roomId) {
+    case "HydroponicsPlatform":
+      return isAlive
+        ? "Through the grating you can see a spider which has somehow grown so large that its eight long legs now span the circumference of the platform, a good fifty meters, converging at its spiny carapace whose abdomen is swollen to the size of a parade float, straining at the seams. It hangs from layers of thick webbing, casting shadows across the floor beneath it."
+        : "Below the grated opening, the massive spider hangs motionless in its webbing sling, a dead weight sagging over the middle platform.";
+    case "HydroponicsPlatformMid":
+      return isAlive
+        ? "A massive spider sprawls across the middle platform, its bloated abdomen half-cradled in a glistening cradle of webbing while its long legs rest over the metal grating."
+        : "The massive spider lies collapsed across the middle platform, its distended abdomen sunk deep into the webbing that still clings to it.";
+    case "HydroponicsPlatformBottom":
+      return isAlive
+        ? "Above you, the web canopy bows under the weight of a massive spider suspended near the center, its silhouette shifting whenever the whole structure creaks."
+        : "Above you, the web canopy sags around the massive spider's still bulk, the whole structure drooping without the creature's restless adjustments.";
+    case "UnderWebOne":
+      return isAlive
+        ? "Through the layered strands overhead, you can make out the massive spider near the canopy's center, one side of its body more visible through the sagging web."
+        : "Through the layered strands overhead, the massive spider hangs inert near the canopy's center, dimly outlined through the silk.";
+    case "UnderWebTwo":
+      return isAlive
+        ? "From this corner the massive spider is partly obscured by overlapping strands, but its swollen body is still visible above the web canopy's central dip."
+        : "From this corner the massive spider is partly obscured by overlapping strands, its dead bulk barely visible above the canopy's central dip.";
+    case "UnderWebThree":
+      return isAlive
+        ? "The webbing overhead thins just enough here for you to glimpse the massive spider looming beyond it, several legs braced against the silk near the middle."
+        : "The webbing overhead thins just enough here for you to glimpse the massive spider hanging slack beyond it, several legs frozen where they last braced.";
+    case "UnderWebFour":
+      return isAlive
+        ? "Seen through the glistening lattice overhead, the massive spider hangs off-center from your angle, its body swaying faintly whenever the canopy flexes."
+        : "Seen through the glistening lattice overhead, the massive spider hangs off-center from your angle, swaying only when the canopy itself shifts.";
+    default:
+      return isAlive
+        ? "The massive spider is visible somewhere within the Hydroponics webbing."
+        : "The massive spider's corpse is visible somewhere within the Hydroponics webbing.";
+  }
+}
+
+function getHydroponicsSpiderExamineText(
+  roomId: string,
+  isAlive: boolean,
+): string {
+  switch (roomId) {
+    case "HydroponicsPlatform":
+      return isAlive
+        ? "From up here you can look down onto the creature's distended body where it sags in the webbing below. The spider looks enormous even at this angle, but what stands out most is how labored it seems, as if every breath costs it effort."
+        : "From up here you can see the spider's huge body slumped into the webbing below. Without the slow heave of its abdomen, it looks less like a predator than a grotesque carcass left to dry in its own trap.";
+    case "HydroponicsPlatformMid":
+      return isAlive
+        ? "Up close, the creature is equal parts hideous and pitiable. Its abdomen is swollen to painful proportions, the webbing around it trembling whenever air rasps through its spiracles, and its long, slender legs look barely strong enough to manage the burden."
+        : "Up close, the spider has collapsed into itself. The swollen abdomen is still grotesquely distended, but the weak shifting and miserable breathing have stopped, leaving only a huge, spent body tangled in silk.";
+    case "HydroponicsPlatformBottom":
+      return isAlive
+        ? "From directly underneath, the spider is mostly a looming mass above the translucent canopy, its weight bowing the silk into a pale, glistening ceiling. Every movement sends small ripples through the web over your head."
+        : "From directly underneath, the spider is a dim, swollen shape trapped above the translucent canopy. With the creature still, the web hangs heavy and quiet over the open space.";
+    case "UnderWebOne":
+      return isAlive
+        ? "From this angle you only get a partial view through the webbing, but it is more than enough. The spider's body hangs near the center of the canopy, and the occasional flex of one long leg makes the surrounding strands shiver."
+        : "From this angle you only get a partial view through the webbing. The spider hangs near the center of the canopy without moving, the surrounding strands no longer trembling with its efforts.";
+    case "UnderWebTwo":
+      return isAlive
+        ? "The overlapping silk here obscures the spider in pieces: a pale swell of abdomen, a dark jointed leg, a faint shift deeper in the canopy. The fragmented view somehow makes it worse."
+        : "The overlapping silk here breaks the spider into pale, motionless fragments: a swollen abdomen behind one sheet of web, a folded leg behind another.";
+    case "UnderWebThree":
+      return isAlive
+        ? "The spider is visible through a thinner patch of web from here, close enough that you can track the slow rise and fall of its huge abdomen and the deliberate tension in its legs."
+        : "The spider is visible through a thinner patch of web from here, close enough to make out the full, ugly shape now hanging completely still.";
+    case "UnderWebFour":
+      return isAlive
+        ? "From this side the spider appears slightly askew in the canopy, suspended in a slanted nest of silk. It sways faintly whenever the web flexes, but the movement never looks healthy or natural."
+        : "From this side the spider appears slightly askew in the canopy, suspended in a slanted nest of silk that now moves only when the structure around it shifts.";
+    default:
+      return isAlive
+        ? "The spider is immense, bloated, and miserable-looking."
+        : "The spider is immense, bloated, and very dead.";
+  }
 }
 
 export function lookThroughSpiderGap(state: GameState): ActionResult {
@@ -87,7 +237,7 @@ export function lookThroughSpiderGap(state: GameState): ActionResult {
   const nextState = updateSpiderState(state, {
     sensitivity: nextSensitivity,
     pendingAcidTarget:
-      nextSensitivity >= 3 ? "door" : spider.pendingAcidTarget ?? "none",
+      nextSensitivity >= 3 ? "door" : (spider.pendingAcidTarget ?? "none"),
   });
 
   return {
@@ -102,8 +252,10 @@ export function tickHydroponicsSpiderThreat(state: GameState): GameState {
   if (!spider.isAlive) return state;
 
   const inHydroponics = isHydroponicsSpiderRoom(state.player.roomId);
+  const exposedToSpider =
+    inHydroponics && !isHydroponicsSpiderBlindSpot(state.player.roomId);
 
-  if (inHydroponics) {
+  if (exposedToSpider) {
     if (spider.lastTrackedHydroponicsRoomId !== state.player.roomId) {
       return updateSpiderState(state, {
         sensitivity: 0,
@@ -112,14 +264,9 @@ export function tickHydroponicsSpiderThreat(state: GameState): GameState {
       });
     }
   } else if (spider.lastTrackedHydroponicsRoomId) {
-    const shouldClearHydroThreat =
-      spider.pendingAcidTarget === "none" || spider.pendingAcidTarget === "player";
-
     return updateSpiderState(state, {
-      sensitivity: shouldClearHydroThreat ? 0 : spider.sensitivity,
-      pendingAcidTarget: shouldClearHydroThreat
-        ? "none"
-        : spider.pendingAcidTarget,
+      sensitivity: 0,
+      pendingAcidTarget: "none",
       lastTrackedHydroponicsRoomId: undefined,
     });
   }
@@ -163,16 +310,19 @@ export function tickHydroponicsSpiderThreat(state: GameState): GameState {
     }
 
     const damageIndex = HYDROPONICS_SPIDER_DOOR_MAX_HP - nextDoorHealth - 1;
-    return appendLog(next, DOOR_ACID_MESSAGES[damageIndex] ?? DOOR_ACID_MESSAGES[2]);
+    return appendSpiderLog(
+      next,
+      DOOR_ACID_MESSAGES[damageIndex] ?? DOOR_ACID_MESSAGES[2],
+    );
   }
 
-  const nextSensitivity = inHydroponics
+  const nextSensitivity = exposedToSpider
     ? Math.min(3, spider.sensitivity + 1)
     : Math.max(0, spider.sensitivity - 1);
 
   const nextPendingAcidTarget =
     !spider.pendingAcidTarget || spider.pendingAcidTarget === "none"
-      ? inHydroponics && nextSensitivity >= 3
+      ? exposedToSpider && nextSensitivity >= 3
         ? "player"
         : "none"
       : spider.pendingAcidTarget;
@@ -184,20 +334,29 @@ export function tickHydroponicsSpiderThreat(state: GameState): GameState {
     return state;
   }
 
-  return updateSpiderState(state, {
+  let next = updateSpiderState(state, {
     sensitivity: nextSensitivity,
     pendingAcidTarget: nextPendingAcidTarget,
-    lastTrackedHydroponicsRoomId: inHydroponics
+    lastTrackedHydroponicsRoomId: exposedToSpider
       ? state.player.roomId
       : spider.lastTrackedHydroponicsRoomId,
   });
+
+  if (exposedToSpider && nextSensitivity > spider.sensitivity) {
+    const warning =
+      HYDROPONICS_TRACKING_MESSAGES[nextSensitivity - 1] ??
+      HYDROPONICS_TRACKING_MESSAGES[2];
+    next = appendSpiderLog(next, warning);
+  }
+
+  return next;
 }
 
 export const giantSpiderItems: Item[] = [
   {
-    id: "spider",
+    id: HYDROPONICS_SPIDER_ITEM_ID,
     name: "massive spider",
-    itemCategory: "animate",
+    itemCategory: "scenery",
     meta: {
       isAlive: true,
       canMove: false,
@@ -205,6 +364,7 @@ export const giantSpiderItems: Item[] = [
       hostility: "neutral",
       homeRegion: [...HYDROPONICS_SPIDER_ROOM_IDS],
       memories: [],
+      sceneryDescriptionOrder: 99,
     },
     description:
       "The creature is equal parts hideous and pitiable, its abdomen swollen to painful proportions and its long, slender legs barely able to move.",
@@ -213,6 +373,16 @@ export const giantSpiderItems: Item[] = [
     itemClass: "solid",
     itemWeight: 200,
     itemSize: 200,
+    describe: (state) =>
+      getHydroponicsSpiderExamineText(
+        state.player.roomId,
+        state.worldState.hydroponicsSpider.isAlive,
+      ),
+    describeScenery: (state, _item, ctx) =>
+      getHydroponicsSpiderSceneryText(
+        ctx.roomId,
+        state.worldState.hydroponicsSpider.isAlive,
+      ),
     overrides: {
       tick: () => {},
     },

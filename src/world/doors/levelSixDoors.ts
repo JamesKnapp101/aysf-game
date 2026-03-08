@@ -69,7 +69,8 @@ export const levelSixDoors: DoorDefinition[] = [
       }
       return desc;
     },
-    descriptionFromB: "To the north is a a heavy steel door.",
+    descriptionFromB:
+      "To the north is a heavy steel door which has been almost completely corroded away by acid, leaving a rough-edged opening. In the center of the floor is an opening with a spiral stairway leading down to the next platform.",
     kind: "standard",
     blockMsg: `The door doesn't respond at all when you approach, it's jammed tight in the damaged metal frame.`,
     vocab: ["door", "damaged door", "hydroponics door", "gap"],
