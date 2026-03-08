@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/components/plt-modal.css";
 import type { GameState } from "../types/gameTypes";
 import { CrtModal } from "./CrtModal";
-import { buildPltIndex, type PltEntry } from "./plt-entries";
+import { buildPltIndex, type PltEntry } from "./plt-index";
 
 type PLTModalProps = {
   onClose: () => void;
@@ -37,20 +37,48 @@ function renderLibraryText(raw: string) {
 
 export function PLTModal({ onClose, state, entries }: PLTModalProps) {
   const [query, setQuery] = useState("");
+  const [loadedEntries, setLoadedEntries] = useState<PltEntry[] | null>(
+    entries ?? null,
+  );
   const [display, setDisplay] = useState<string>(() => {
     if (!(state.itemState.itemSettings["PLT"] as any)?.isOn)
       return "The PLT is off.";
     if (!state.worldState.powerRestoredSections["library-power"])
       return "No link. The LINK indicator remains dark.";
-    return "Enter a search term to consult the Central Library.";
+    return entries
+      ? "Enter a search term to consult the Central Library."
+      : "Link established. Loading library index...";
   });
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { entryList, index } = useMemo(() => {
-    const entryList = entries ?? buildPltIndex().entryList;
-    return buildPltIndex(entryList);
+  useEffect(() => {
+    if (entries) {
+      setLoadedEntries(entries);
+      return;
+    }
+
+    let cancelled = false;
+
+    import("./plt-entries").then((mod) => {
+      if (cancelled) return;
+      setLoadedEntries(mod.DEFAULT_PLT_ENTRIES);
+      setDisplay((prev) =>
+        prev === "Link established. Loading library index..."
+          ? "Enter a search term to consult the Central Library."
+          : prev,
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [entries]);
+
+  const { entryList, index } = useMemo(() => {
+    const entryList = loadedEntries ?? [];
+    return buildPltIndex(entryList);
+  }, [loadedEntries]);
 
   const [flashKey, setFlashKey] = useState<string | null>(null);
   useEffect(() => {
@@ -82,6 +110,10 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
     }
     if (!state.worldState.powerRestoredSections["library-power"]) {
       setDisplay("No link. The LINK indicator remains dark.");
+      return;
+    }
+    if (!loadedEntries) {
+      setDisplay("The PLT is still indexing the Central Library.");
       return;
     }
 
@@ -204,7 +236,8 @@ export function PLTModal({ onClose, state, entries }: PLTModalProps) {
             }
             disabled={
               !(state.itemState.itemSettings["PLT"] as any)?.isOn ||
-              !state.worldState.powerRestoredSections["library-power"]
+              !state.worldState.powerRestoredSections["library-power"] ||
+              !loadedEntries
             }
           />
         </form>

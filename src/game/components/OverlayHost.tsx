@@ -1,22 +1,67 @@
-import {
-  MensLockerModal,
-  WomensLockerModal,
-} from "@game/components/LockerModal";
-import { MatterTransmitterModal } from "@game/components/MatterTransmitterModal";
-import { TeleportationTerminalModal } from "@game/components/TeleportationTerminalModal";
+import { lazy, Suspense } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { HydroponicsAdminTerminalModal } from "../components/HydroponicsAdminTerminalModal";
-import { PowerStationTerminalModal } from "../components/PowerStationTerminalModal";
 import { useUIOverlayStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
-import { CameraGunViewerModal } from "./CameraGunModal";
 import { CoolerModal } from "./CoolerModal";
+import { CrtModal } from "./CrtModal";
 import { MessageMachineModal } from "./MessageMachineModal";
-import { PLTModal } from "./PLTModal";
 import { ReaderModal } from "./ReaderModal";
 
 type RunAction = (verb: string, args?: Record<string, unknown>) => void;
+
+const LazyPLTModal = lazy(() =>
+  import("./PLTModal").then((mod) => ({ default: mod.PLTModal })),
+);
+const LazyPowerStationTerminalModal = lazy(() =>
+  import("./PowerStationTerminalModal").then((mod) => ({
+    default: mod.PowerStationTerminalModal,
+  })),
+);
+const LazyHydroponicsAdminTerminalModal = lazy(() =>
+  import("./HydroponicsAdminTerminalModal").then((mod) => ({
+    default: mod.HydroponicsAdminTerminalModal,
+  })),
+);
+const LazyMatterTransmitterModal = lazy(() =>
+  import("@game/components/MatterTransmitterModal").then((mod) => ({
+    default: mod.MatterTransmitterModal,
+  })),
+);
+const LazyMensLockerModal = lazy(() =>
+  import("@game/components/LockerModal").then((mod) => ({
+    default: mod.MensLockerModal,
+  })),
+);
+const LazyWomensLockerModal = lazy(() =>
+  import("@game/components/LockerModal").then((mod) => ({
+    default: mod.WomensLockerModal,
+  })),
+);
+const LazyCameraGunViewerModal = lazy(() =>
+  import("./CameraGunModal").then((mod) => ({
+    default: mod.CameraGunViewerModal,
+  })),
+);
+const LazyTeleportationTerminalModal = lazy(() =>
+  import("@game/components/TeleportationTerminalModal").then((mod) => ({
+    default: mod.TeleportationTerminalModal,
+  })),
+);
+
+function OverlayLoadingModal({
+  onClose,
+  title = "Loading",
+}: {
+  onClose: () => void;
+  title?: string;
+}) {
+  return (
+    <CrtModal title={title} onClose={onClose} width={420}>
+      <div style={{ padding: "1rem", textAlign: "center" }}>Loading...</div>
+    </CrtModal>
+  );
+}
 
 export function OverlayHost({
   runAction,
@@ -86,50 +131,92 @@ export function OverlayHost({
     }
 
     case "plt-viewer": {
-      return <PLTModal onClose={onClose} state={state} />;
+      return (
+        <Suspense fallback={<OverlayLoadingModal onClose={onClose} title="Loading PLT" />}>
+          <LazyPLTModal onClose={onClose} state={state} />
+        </Suspense>
+      );
     }
 
     case "power-station-terminal": {
       return (
-        <PowerStationTerminalModal
-          onClose={onClose}
-          state={state}
-          setGameState={setGameState}
-        />
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Terminal" />
+          }
+        >
+          <LazyPowerStationTerminalModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
+        </Suspense>
       );
     }
 
     case "hydroponics-admin-terminal": {
-      return <HydroponicsAdminTerminalModal onClose={onClose} state={state} />;
+      return (
+        <Suspense
+          fallback={
+            <OverlayLoadingModal
+              onClose={onClose}
+              title="Loading Hydroponics Terminal"
+            />
+          }
+        >
+          <LazyHydroponicsAdminTerminalModal onClose={onClose} state={state} />
+        </Suspense>
+      );
     }
 
     case "matter-transmitter": {
       return (
-        <MatterTransmitterModal
-          onClose={onClose}
-          state={state}
-          setGameState={setGameState}
-        />
+        <Suspense
+          fallback={
+            <OverlayLoadingModal
+              onClose={onClose}
+              title="Loading Transmitter"
+            />
+          }
+        >
+          <LazyMatterTransmitterModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
+        </Suspense>
       );
     }
 
     case "mens-lockers": {
       return (
-        <MensLockerModal
-          onClose={onClose}
-          state={state}
-          setGameState={setGameState}
-        />
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Lockers" />
+          }
+        >
+          <LazyMensLockerModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
+        </Suspense>
       );
     }
 
     case "womens-lockers": {
       return (
-        <WomensLockerModal
-          onClose={onClose}
-          state={state}
-          setGameState={setGameState}
-        />
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Lockers" />
+          }
+        >
+          <LazyWomensLockerModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
+        </Suspense>
       );
     }
 
@@ -142,23 +229,35 @@ export function OverlayHost({
       };
 
       return (
-        <CameraGunViewerModal
-          state={state}
-          currentView={overlay.currentViewIndex ?? 0}
-          onCycleView={onCycleView}
-          onRunCommand={onRunCommand}
-          onClose={onClose}
-        />
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Viewer" />
+          }
+        >
+          <LazyCameraGunViewerModal
+            state={state}
+            currentView={overlay.currentViewIndex ?? 0}
+            onCycleView={onCycleView}
+            onRunCommand={onRunCommand}
+            onClose={onClose}
+          />
+        </Suspense>
       );
     }
 
     case "teleportation-terminal": {
       return (
-        <TeleportationTerminalModal
-          onClose={onClose}
-          state={state}
-          setGameState={setGameState}
-        />
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Terminal" />
+          }
+        >
+          <LazyTeleportationTerminalModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
+        </Suspense>
       );
     }
 
