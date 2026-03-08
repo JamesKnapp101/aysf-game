@@ -28,6 +28,7 @@ import { buildRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
 import type { ParsedCommand } from "../types/parserTypes";
 import { advanceTurn } from "./turn";
+import { maybeInitializeHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 export function appendLog(state: GameState, text: string): GameState {
   return { ...state, log: [...state.log, text] };
@@ -190,6 +191,8 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
           visitedRooms: nextVisitedRooms,
         },
       };
+
+      next = maybeInitializeHydroponicsCocoonPuzzle(next, destinationRoomId);
 
       nextState = next;
       message = moveMessage.trim();

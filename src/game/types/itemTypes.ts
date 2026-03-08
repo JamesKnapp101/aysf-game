@@ -40,7 +40,7 @@ export interface Item {
   isWearable?: boolean;
   clothingSlot?: clothingSlots;
   isReadable?: boolean;
-  readableText?: string;
+  readableText?: string | ((state: GameState, item: Item) => string);
   readableTitle?: string;
   isLoggable?: boolean;
   isOpenable?: boolean;

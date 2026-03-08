@@ -148,7 +148,7 @@ export const badgeItems: Item[] = [
     initialDescription: "Lying in the damp grass is a sooty yellow badge",
     description:
       "This is a slim, rectangular plastic badge that is entirely yellow except for a black insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'JOHN RAWLINS, EE2' and beneath that a bar code of some kind.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["yellow", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",

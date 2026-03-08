@@ -93,6 +93,15 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
+  if (item?.meta?.kind === "hydroponics-admin-terminal") {
+    return {
+      state,
+      overlay: {
+        kind: "hydroponics-admin-terminal",
+      },
+    };
+  }
+
   if (item?.meta?.kind === "plt-viewer") {
     return {
       state,

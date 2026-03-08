@@ -6,5 +6,9 @@ export function readReadable(state: GameState, noun: string): string {
   if (!item?.isReadable) {
     return "There's nothing to read.";
   }
-  return `You read the ${item.name}...\n\n    "${item.readableText}"`;
+  const readableText =
+    typeof item.readableText === "function"
+      ? item.readableText(state, item)
+      : item.readableText;
+  return `You read the ${item.name}...\n\n    "${readableText}"`;
 }

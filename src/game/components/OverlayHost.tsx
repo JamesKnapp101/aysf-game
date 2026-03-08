@@ -5,6 +5,7 @@ import {
 import { MatterTransmitterModal } from "@game/components/MatterTransmitterModal";
 import { TeleportationTerminalModal } from "@game/components/TeleportationTerminalModal";
 import type { Dispatch, SetStateAction } from "react";
+import { HydroponicsAdminTerminalModal } from "../components/HydroponicsAdminTerminalModal";
 import { PowerStationTerminalModal } from "../components/PowerStationTerminalModal";
 import { useUIOverlayStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
@@ -96,6 +97,10 @@ export function OverlayHost({
           setGameState={setGameState}
         />
       );
+    }
+
+    case "hydroponics-admin-terminal": {
+      return <HydroponicsAdminTerminalModal onClose={onClose} state={state} />;
     }
 
     case "matter-transmitter": {

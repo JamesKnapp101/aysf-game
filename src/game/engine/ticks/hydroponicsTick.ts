@@ -1,46 +1,61 @@
 import { appendLog } from "@game/engine/handleCommand";
+import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { GameState } from "@game/types/gameTypes";
 import { tickHydroponicsSpiderThreat } from "src/world/Items/creatures/giantSpider";
+import { tickHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 export function tickHydroponics(state: GameState): GameState {
   const spiderIsAlive = state.worldState.hydroponicsSpider.isAlive;
-  if (!spiderIsAlive) return state;
+  let next = state;
 
-  const rangeRoomIds = Object.keys(Moan);
+  if (spiderIsAlive) {
+    const rangeRoomIds = Object.keys(Moan);
 
-  const turn = state.worldState.hydroponicsSpider.turnsSinceLastBreath % 6;
-  const nextTurn = (turn + 1) % 6;
+    const turn = state.worldState.hydroponicsSpider.turnsSinceLastBreath % 6;
+    const nextTurn = (turn + 1) % 6;
 
-  const isMoanTurn = turn >= 3;
+    const isMoanTurn = turn >= 3;
 
-  const nextRoomAudioLevel = { ...state.worldState.roomAudioLevel };
-  for (const roomId of rangeRoomIds) {
-    const level = isMoanTurn ? (Moan[roomId]?.[turn]?.audioLevel ?? 0) : 0;
-    nextRoomAudioLevel[roomId] = level;
-  }
+    const nextRoomAudioLevel = { ...state.worldState.roomAudioLevel };
+    for (const roomId of rangeRoomIds) {
+      const level = isMoanTurn ? (Moan[roomId]?.[turn]?.audioLevel ?? 0) : 0;
+      nextRoomAudioLevel[roomId] = level;
+    }
 
-  let next = {
-    ...state,
-    worldState: {
-      ...state.worldState,
-      hydroponicsSpider: {
-        ...state.worldState.hydroponicsSpider,
-        turnsSinceLastBreath: nextTurn,
+    next = {
+      ...state,
+      worldState: {
+        ...state.worldState,
+        hydroponicsSpider: {
+          ...state.worldState.hydroponicsSpider,
+          turnsSinceLastBreath: nextTurn,
+        },
+        roomAudioLevel: nextRoomAudioLevel,
       },
-      roomAudioLevel: nextRoomAudioLevel,
-    },
-  };
+    };
 
-  // Only emit text when the player is actually in range, and only during moan turns.
-  if (isMoanTurn && rangeRoomIds.includes(state.player.roomId)) {
-    const moanMessage = `\n${
-      Moan[state.player.roomId]?.[turn]?.moanMsg ??
-      "A long, low moan reverberates through the air."
-    }`;
-    next = appendLog(next, moanMessage);
+    // Only emit text when the player is actually in range, and only during moan turns.
+    if (isMoanTurn && rangeRoomIds.includes(state.player.roomId)) {
+      const moanMessage = `\n${
+        Moan[state.player.roomId]?.[turn]?.moanMsg ??
+        "A long, low moan reverberates through the air."
+      }`;
+      next = appendLog(next, moanMessage);
+    }
+
+    next = tickHydroponicsSpiderThreat(next);
   }
 
-  return tickHydroponicsSpiderThreat(next);
+  const cocoonTick = tickHydroponicsCocoonPuzzle(next);
+  if (cocoonTick.deathMessage) {
+    return triggerPlayerDeath(
+      cocoonTick.state,
+      cocoonTick.deathMessage,
+      cocoonTick.deathCause ?? "hydroponics cocoon trap",
+    );
+  }
+
+  return cocoonTick.state;
 }
 
 type MoanSetting = {

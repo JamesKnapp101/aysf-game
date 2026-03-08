@@ -19,7 +19,11 @@ export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "There's nothing to read." };
   }
 
-  const text = item.readableText?.trim();
+  const readableText =
+    typeof item.readableText === "function"
+      ? item.readableText(state, item)
+      : item.readableText;
+  const text = readableText?.trim();
   if (!text) {
     return { state, message: `The ${item.name} doesn't say anything useful.` };
   }

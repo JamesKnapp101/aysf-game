@@ -5,6 +5,7 @@ import {
   INITIAL_UNDER_CONTENTS,
 } from "./containerContents";
 import { seedItemRoomLocations } from "./helpers/itemHelpers";
+import { maybeInitializeHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 import { AVIARY_SPOTLIGHT_ROUTE } from "@game/engine/ticks/aviaryTick";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
@@ -402,6 +403,13 @@ export const createInitialState = (world: World): GameState => {
         doorHealth: 3,
         lastTrackedHydroponicsRoomId: undefined,
       },
+      hydroponicsCocoonPuzzle: {
+        initialized: false,
+        powerWorkerBodyId: undefined,
+        graceTurnsRemaining: 0,
+        resolved: false,
+        openedBodyIds: {},
+      },
       conditionalTriggers: {
         MysteriousNoteFound: false,
         RobotRefugeAccess: false,
@@ -471,7 +479,11 @@ export const createInitialState = (world: World): GameState => {
     },
   };
 
-  return seedInitialPlacements(initialGameState);
+  const seededState = seedInitialPlacements(initialGameState);
+  return maybeInitializeHydroponicsCocoonPuzzle(
+    seededState,
+    seededState.player.roomId,
+  );
 };
 
 function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {

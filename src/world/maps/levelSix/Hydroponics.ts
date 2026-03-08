@@ -1,5 +1,10 @@
 import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+import {
+  HYDROPONICS_EMPLOYEE_PROFILES,
+  describeHydroponicsSignIn,
+  openHydroponicsCocoon,
+} from "./hydroponicsPuzzle";
 
 export const hydroponicsRooms: Room[] = [
   {
@@ -82,6 +87,37 @@ export const hydroponicsRooms: Room[] = [
     ],
   },
 ];
+
+const cocoonBodyItems: Item[] = HYDROPONICS_EMPLOYEE_PROFILES.map((profile) => {
+  const nameTokens = profile.name
+    .toLowerCase()
+    .replace(/-/g, "")
+    .split(/\s+/)
+    .map((token) => token.toLowerCase())
+    .filter(Boolean);
+
+  return {
+    id: profile.id,
+    name: "cocooned body",
+    description: `${profile.name}.`,
+    location: "seeded",
+    vocab: [
+      "cocoon",
+      "cocooned body",
+      "body",
+      "webbed body",
+      profile.name.toLowerCase(),
+      ...nameTokens,
+    ],
+    itemClass: "solid",
+    itemCategory: "static",
+    itemWeight: 40,
+    itemSize: 40,
+    overrides: {
+      open: ({ state }: { state: any }) => openHydroponicsCocoon(state, profile.id),
+    },
+  };
+});
 
 export const hydroponicsItems: Item[] = [
   // Platform top
@@ -217,6 +253,7 @@ export const hydroponicsItems: Item[] = [
     itemWeight: 30,
     itemSize: 101,
     meta: {
+      kind: "hydroponics-admin-terminal",
       sceneryDescriptionOrder: 2,
     },
   },
@@ -241,7 +278,7 @@ export const hydroponicsItems: Item[] = [
     name: "waste bin",
     description: "It's a black plastic waste bin, with no liner.",
     sceneryDescription:
-      "[[newline]]Next to the desk is a plastic waste bin with no liner.",
+      "Next to the desk is a plastic waste bin with no liner.",
     location: "HydroponicsPlatformAdmin",
     vocab: ["trash", "waste", "bin", "wastebin"],
     itemClass: "solid",
@@ -256,7 +293,8 @@ export const hydroponicsItems: Item[] = [
   },
   {
     id: "AdminOfficeWastebinNote",
-    name: "Crumpled Note",
+    name: "a crumpled note",
+    readableTitle: `Crumpled Note`,
     description: "It's a wrinkled piece of paper with writing on it.",
     readableText: `This is a note found in the trash of the admin office`,
     location: "seeded",
@@ -269,17 +307,22 @@ export const hydroponicsItems: Item[] = [
     isLoggable: true,
   },
   {
-    id: "AdminOfficeBinder",
-    name: "three-ring binder",
-    description: "It's a binder that holds a small stack of papers.",
-    initialDescription: `Sitting on the desk next to the terminal is a binder containing a thin stack of papers.`,
-    readableText: `This is all the juicy binder data.`,
+    id: "AdminOfficeSignIn",
+    name: "sign in tablet",
+    description: "It's a slim tablet, tethered to the desk by a thin chain.",
+    describe: (state) => describeHydroponicsSignIn(state),
+    sceneryDescription: `Sitting next to the terminal is a slim sign-in tablet, tethered to the desk by a thin chain.`,
+    readableText: (state) => describeHydroponicsSignIn(state),
     location: "HydroponicsPlatformAdmin",
-    vocab: ["binder", "three-ring"],
+    vocab: ["tablet", "sign-in", "signin", "sheet", "sign in tablet"],
     itemClass: "solid",
-    itemCategory: "collectable",
+    itemCategory: "scenery",
     itemWeight: 2,
     itemSize: 2,
     isReadable: true,
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
   },
+  ...cocoonBodyItems,
 ];

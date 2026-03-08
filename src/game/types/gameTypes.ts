@@ -173,6 +173,14 @@ export type HydroponicsSpiderState = {
   lastTrackedHydroponicsRoomId?: string;
 };
 
+export type HydroponicsCocoonPuzzleState = {
+  initialized: boolean;
+  powerWorkerBodyId?: string;
+  graceTurnsRemaining: number;
+  resolved: boolean;
+  openedBodyIds: Record<string, boolean>;
+};
+
 export type BrainSlugState = {
   isHydrated: boolean;
   attachedTo: string;
@@ -239,6 +247,7 @@ export interface WorldState {
   catState: CatState;
   aviarySpotlight: AviarySpotlightState;
   hydroponicsSpider: HydroponicsSpiderState;
+  hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;
   brainSlug: BrainSlugState;
   damagedFlashlight: DamagedFlashlightState;
   roomTemp: Record<
