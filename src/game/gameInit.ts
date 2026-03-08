@@ -1,4 +1,5 @@
 import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
+import { bucketForItem, inventoryHas } from "@game/rules/state";
 import {
   INITIAL_CONTAINER_CONTENTS,
   INITIAL_SURFACE_CONTENTS,
@@ -6,10 +7,11 @@ import {
 } from "./containerContents";
 import { seedItemRoomLocations } from "./helpers/itemHelpers";
 import { maybeInitializeHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
+import { mergeWorldChunks, type WorldChunkId } from "../world/World";
 
 import { AVIARY_SPOTLIGHT_ROUTE } from "@game/engine/ticks/aviaryTick";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
-import type { GameState, World } from "./types/gameTypes";
+import type { GameState, World, WorldChunk } from "./types/gameTypes";
 
 export const createInitialState = (world: World): GameState => {
   const uniqueItems = Array.from(
@@ -40,11 +42,7 @@ export const createInitialState = (world: World): GameState => {
   };
 
   // Initialize doorStates as a map keyed by door id
-  const initialDoorStatesArray = initDoorStates(worldWithMeta.doors);
-  const doors: Record<string, DoorState> = {};
-  for (const ds of initialDoorStatesArray) {
-    doors[ds.id] = ds;
-  }
+  const doors = buildDoorStateMap(worldWithMeta.doors);
 
   // Seed all the containers with their starting contents
   // Anything defined with location === "INVENTORY" should start in the player's inventory
@@ -494,6 +492,12 @@ function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {
   }));
 }
 
+function buildDoorStateMap(
+  doorDefs: DoorDefinition[],
+): Record<string, DoorState> {
+  return Object.fromEntries(initDoorStates(doorDefs).map((ds) => [ds.id, ds]));
+}
+
 function mergeContents(
   existing: Record<string, string[]>,
   seeds: Record<string, string[]>,
@@ -560,4 +564,82 @@ export function seedInitialPlacements(state: GameState): GameState {
   next = seedUnderContents(next, INITIAL_UNDER_CONTENTS);
   next = seedItemRoomLocations(next);
   return next;
+}
+
+export function mergeWorldChunkIntoState(
+  state: GameState,
+  chunkId: WorldChunkId,
+  chunk: WorldChunk,
+): GameState {
+  const loadedChunkIds = Array.isArray(state.world.meta?.loadedChunkIds)
+    ? state.world.meta.loadedChunkIds
+    : [];
+  const requestedChunkIds = Array.isArray(state.world.meta?.requestedChunkIds)
+    ? state.world.meta.requestedChunkIds
+    : [];
+
+  if (loadedChunkIds.includes(chunkId)) {
+    return state;
+  }
+
+  const mergedWorldBase = mergeWorldChunks(state.world, chunk);
+  const { coordByRoomId, roomIdByCoord } = deriveRoomCoordMaps(
+    mergedWorldBase.rooms,
+    mergedWorldBase.doors,
+    "InsideShuttle",
+    {
+      ignoreIslands: true,
+      excludeRoomIdPatterns: [/Elevator/i, /Shaft/i],
+    },
+  );
+
+  const nextItemRoomId = { ...state.itemState.itemRoomId };
+  const nextInventory = {
+    general: [...state.player.inventory.general],
+    badges: [...state.player.inventory.badges],
+    keys: [...state.player.inventory.keys],
+  };
+
+  for (const item of chunk.items) {
+    if (item.location !== "INVENTORY") continue;
+    if (inventoryHas(nextInventory, item.id)) continue;
+
+    const bucket = bucketForItem(item);
+    nextInventory[bucket].push(item.id);
+    delete nextItemRoomId[item.id];
+  }
+
+  const mergedDoorStates = {
+    ...buildDoorStateMap(mergedWorldBase.doors),
+    ...state.worldState.doors,
+  };
+
+  const nextState = seedInitialPlacements({
+    ...state,
+    world: {
+      ...mergedWorldBase,
+      meta: {
+        ...state.world.meta,
+        loadedChunkIds: [...loadedChunkIds, chunkId],
+        requestedChunkIds: requestedChunkIds.filter(
+          (requestedChunkId: string) => requestedChunkId !== chunkId,
+        ),
+        transmitter: { coordByRoomId, roomIdByCoord },
+      },
+    },
+    player: {
+      ...state.player,
+      inventory: nextInventory,
+    },
+    worldState: {
+      ...state.worldState,
+      doors: mergedDoorStates,
+    },
+    itemState: {
+      ...state.itemState,
+      itemRoomId: nextItemRoomId,
+    },
+  });
+
+  return nextState;
 }

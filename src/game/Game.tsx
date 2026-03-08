@@ -13,13 +13,19 @@ import {
   getCurrentScore,
 } from "../game/selectors/scoreSelectors";
 import { parseCommand } from "../parse/parser";
-import { WORLD } from "../world/World";
+import {
+  DEFERRED_WORLD_CHUNK_IDS,
+  INITIAL_WORLD,
+  getPriorityWorldChunkIdsForRoom,
+  loadWorldChunk,
+  type WorldChunkId,
+} from "../world/World";
 import { dispatchAction } from "./actions/dispatchAction";
 import { LogPanel } from "./components/LogPanel";
 import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 import { appendLog, handleCommand } from "./engine/handleCommand";
-import { createInitialState } from "./gameInit";
+import { createInitialState, mergeWorldChunkIntoState } from "./gameInit";
 import { getCurrentRoom, getCurrentRoomExits } from "./selectors/roomSelectors";
 import {
   getActiveStatusEffectIds,
@@ -28,7 +34,7 @@ import {
 import { useUIEffectsStore, useUIOverlayStore } from "./store/store";
 import { buildRoomDescription } from "./text/roomDescription";
 import type { ActionRequest } from "./types/actionsTypes";
-import type { GameState, StatusEffect } from "./types/gameTypes";
+import type { GameState, StatusEffect, WorldChunk } from "./types/gameTypes";
 
 const LAYOUT_STORAGE_KEY = "aysf-layout-v1";
 export const CRT_COLOR_STORAGE_KEY = "aysf-crt-color-v1";
@@ -82,16 +88,41 @@ function loadLayoutPrefs(): LayoutPrefs {
   }
 }
 
+function waitForBackgroundTurn(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") {
+      resolve();
+      return;
+    }
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (cb: () => void) => number;
+    };
+
+    if (idleWindow.requestIdleCallback) {
+      idleWindow.requestIdleCallback(() => resolve());
+      return;
+    }
+
+    window.setTimeout(resolve, 0);
+  });
+}
+
 export const Game: React.FC = () => {
   type StateAction =
     | { type: "command"; input: string }
     | { type: "replaceState"; next: GameState }
+    | { type: "mergeWorldChunk"; chunkId: WorldChunkId; chunk: WorldChunk }
     | { type: "setBrainActivity"; val: number };
   const [activeTab, setActiveTab] = useState<SidebarTab>("status");
 
   const [gs, dispatchState] = useReducer(
     (s: GameState, a: StateAction): GameState => {
       if (a.type === "replaceState") return a.next;
+
+      if (a.type === "mergeWorldChunk") {
+        return mergeWorldChunkIntoState(s, a.chunkId, a.chunk);
+      }
 
       if (a.type === "setBrainActivity") {
         const result = overridePlayerBrainActivityLevel(s, a.val) as
@@ -132,16 +163,90 @@ export const Game: React.FC = () => {
 
       return s;
     },
-    createInitialState(WORLD),
+    INITIAL_WORLD,
+    createInitialState,
   );
 
   const [showSplash, setShowSplash] = useState(true);
 
   const stateRef = useRef(gs);
+  const isMountedRef = useRef(true);
+  const loadingWorldChunksRef = useRef<Map<WorldChunkId, Promise<void>>>(
+    new Map(),
+  );
 
   useEffect(() => {
     stateRef.current = gs;
   }, [gs]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const requestWorldChunk = useCallback(
+    (chunkId: WorldChunkId): Promise<void> => {
+      if (
+        Array.isArray(stateRef.current.world.meta?.loadedChunkIds) &&
+        stateRef.current.world.meta.loadedChunkIds.includes(chunkId)
+      ) {
+        return Promise.resolve();
+      }
+
+      const existing = loadingWorldChunksRef.current.get(chunkId);
+      if (existing) {
+        return existing;
+      }
+
+      const pending = loadWorldChunk(chunkId)
+        .then((chunk) => {
+          if (!isMountedRef.current) return;
+          dispatchState({ type: "mergeWorldChunk", chunkId, chunk });
+        })
+        .catch((error) => {
+          console.error(`Failed to load world chunk "${chunkId}"`, error);
+        })
+        .finally(() => {
+          loadingWorldChunksRef.current.delete(chunkId);
+        });
+
+      loadingWorldChunksRef.current.set(chunkId, pending);
+      return pending;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const hydrateDeferredWorld = async () => {
+      for (const chunkId of DEFERRED_WORLD_CHUNK_IDS) {
+        if (!isMountedRef.current) return;
+        await requestWorldChunk(chunkId);
+        if (!isMountedRef.current) return;
+        await waitForBackgroundTurn();
+      }
+    };
+
+    void hydrateDeferredWorld();
+  }, [requestWorldChunk]);
+
+  useEffect(() => {
+    for (const chunkId of getPriorityWorldChunkIdsForRoom(gs.player.roomId)) {
+      void requestWorldChunk(chunkId);
+    }
+  }, [gs.player.roomId, requestWorldChunk]);
+
+  useEffect(() => {
+    const requestedChunkIds = Array.isArray(gs.world.meta?.requestedChunkIds)
+      ? (gs.world.meta.requestedChunkIds as WorldChunkId[])
+      : [];
+
+    for (const chunkId of requestedChunkIds) {
+      void requestWorldChunk(chunkId);
+    }
+  }, [gs.world.meta?.requestedChunkIds, requestWorldChunk]);
 
   const [layout, setLayout] = useState<LayoutPrefs>(() => loadLayoutPrefs());
   const [crtColor, setCrtColor] = useState<string>(() => loadInitialCrtColor());

@@ -12,6 +12,10 @@ import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
 import { inventoryHasAll } from "@game/rules/state";
 import { AQUARIUM_ROOM_IDS } from "src/world/Items/creatures/octopus";
 import {
+  getDeferredWorldChunkForEntryRoom,
+  isWorldChunkLoaded,
+} from "src/world/World";
+import {
   HYDROPONICS_SPIDER_ITEM_ID,
   HYDROPONICS_SPIDER_REACHABILITY_MESSAGE,
   canReachHydroponicsSpiderFromRoom,
@@ -162,6 +166,39 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
       if (!destinationRoomId) {
         message = "You can't go that way.";
+        break;
+      }
+
+      if (!state.world.rooms.some((candidate) => candidate.id === destinationRoomId)) {
+        const requiredChunkId =
+          getDeferredWorldChunkForEntryRoom(destinationRoomId);
+
+        if (requiredChunkId && !isWorldChunkLoaded(state.world, requiredChunkId)) {
+          const requestedChunkIds = Array.isArray(
+            state.world.meta?.requestedChunkIds,
+          )
+            ? state.world.meta.requestedChunkIds
+            : [];
+
+          nextState = {
+            ...state,
+            world: {
+              ...state.world,
+              meta: {
+                ...state.world.meta,
+                requestedChunkIds: Array.from(
+                  new Set([...requestedChunkIds, requiredChunkId]),
+                ),
+              },
+            },
+          };
+        }
+
+        message =
+          requiredChunkId && !isWorldChunkLoaded(state.world, requiredChunkId)
+            ? "The area beyond is still coming into focus. Give it a moment and try again."
+            : "You can't go that way.";
+        consumesTurn = false;
         break;
       }
 
