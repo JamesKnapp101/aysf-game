@@ -12,9 +12,6 @@ export function tryPushItem(
   if (!item.isPushable) {
     return { state, message: "You can't push that." };
   }
-  if (item.overrides?.push) {
-    return { state, message: item.overrides.push };
-  }
   let pushMsg = "";
   // Radio call button
   if (item.id === "Radio") {
@@ -76,6 +73,10 @@ export function tryPushItem(
       },
     };
     return { state: next, message: pushMsg };
+  }
+
+  if (item.overrides?.push) {
+    return { state, message: item.overrides.push };
   }
 
   return {

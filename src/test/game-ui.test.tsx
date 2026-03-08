@@ -1,0 +1,162 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { LogPanel } from "@game/components/LogPanel";
+import { LogTab } from "@game/components/LogTab";
+import { RoomCompass } from "@game/components/Compass";
+import { DNASampleTab } from "@game/components/DNASampleTab";
+import { StatusTab } from "@game/components/StatusTab";
+import type { GameState } from "@game/types/gameTypes";
+import { describe, expect, it } from "vitest";
+import {
+  createTestState,
+  runCommands,
+  setInventory,
+} from "./helpers/gameTestHelpers";
+
+const layout = {
+  roomHeightRatio: 0.33,
+  sidebarWidthRatio: 0.3,
+};
+
+function renderLogPanel(state: GameState, activeTab: "inventory" | "log" | "dna" | "status" = "inventory") {
+  return render(
+    <LogPanel
+      state={state}
+      dispatch={() => undefined}
+      layout={layout}
+      setLayout={() => undefined}
+      crtColor="#00ff00"
+      setCrtColor={() => undefined}
+      roomPanelFlexBasis="33%"
+      inputRef={{ current: null }}
+      rootRef={{ current: null }}
+      activeTab={activeTab}
+      setActiveTab={() => undefined}
+    />,
+  );
+}
+
+describe("UI panels", () => {
+  it("shows picked-up items in the Inventory tab", () => {
+    const state = runCommandInInventoryRoom();
+
+    renderLogPanel(state);
+
+    expect(screen.getByText(/^a research notes$/i)).toBeInTheDocument();
+  });
+
+  it("groups inventory items by general, badges, and keys", async () => {
+    const user = userEvent.setup();
+    const state = setInventory(createTestState(), [
+      "ParkPass",
+      "bluebadge",
+      "ShedCellarKey",
+    ]);
+
+    renderLogPanel(state);
+
+    expect(screen.getByText("a laminated pass")).toBeInTheDocument();
+    expect(screen.queryByText("a blue plastic badge")).not.toBeInTheDocument();
+    expect(screen.queryByText("a rusted metal key")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("tab", { name: /badges/i }));
+    expect(screen.getByText("a blue plastic badge")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("tab", { name: /keys/i }));
+    expect(screen.getByText("a rusted metal key")).toBeInTheDocument();
+  });
+
+  it("renders stored log entries in the Log tab", () => {
+    const state = runCommands(
+      setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
+      ["take research notes", "read research notes"],
+    );
+
+    render(<LogTab gameState={state} />);
+
+    expect(
+      screen.getByText("Research Notes Found in Sanyi Clone Quarters"),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/LOG SOURCE:/i)).toBeInTheDocument();
+  });
+
+  it("renders banked DNA samples in the DNA tab", () => {
+    const state = runCommands(
+      setInventory(createTestState({ roomId: "StairSix" }), ["DNAReader"]),
+      ["touch dead soldier with dna sampler"],
+    );
+
+    render(<DNASampleTab gameState={state} />);
+
+    expect(screen.getByText("Joelson Dend")).toBeInTheDocument();
+    expect(screen.getByText(/Severe liquefactive necrosis/i)).toBeInTheDocument();
+  });
+
+  it("reflects health, oxygen, temperature, radiation, and EEG state in the status tab", () => {
+    const state = {
+      ...createTestState(),
+      player: {
+        ...createTestState().player,
+        vitals: {
+          ...createTestState().player.vitals,
+          health: 73,
+          oxygen: 42,
+          temperature: 101.4,
+          brainActivity: 5,
+        },
+        statusEffects: [
+          {
+            id: "radiation",
+            intensity: 25,
+            remainingTurns: 5,
+          },
+          {
+            id: "drunk",
+            intensity: 10,
+            remainingTurns: 2,
+          },
+        ],
+      },
+    };
+
+    render(<StatusTab gameState={state} />);
+
+    expect(screen.getByText("73%")).toBeInTheDocument();
+    expect(screen.getByText("42%")).toBeInTheDocument();
+    expect(screen.getByText(/101\.4/)).toBeInTheDocument();
+    expect(screen.getByText(/25.*mSv/i)).toBeInTheDocument();
+    expect(screen.getByText("???")).toBeInTheDocument();
+    expect(screen.getByText(/tipsy/i)).toBeInTheDocument();
+  });
+
+  it("lights the compass needles and labels for every available exit", () => {
+    const { container } = render(
+      <RoomCompass
+        exits={[
+          "north",
+          "south",
+          "east",
+          "west",
+          "northwest",
+          "northeast",
+          "southwest",
+          "southeast",
+          "up",
+          "down",
+          "in",
+          "out",
+        ]}
+      />,
+    );
+
+    expect(container.querySelectorAll(".compass-arm--active")).toHaveLength(8);
+    expect(container.querySelectorAll(".compass-label--active")).toHaveLength(4);
+  });
+});
+
+function runCommandInInventoryRoom() {
+  return runCommands(
+    setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
+    ["take research notes"],
+  );
+}
