@@ -47,7 +47,14 @@ const COVERED_ACTIONS = [
 ] as const satisfies ReadonlyArray<keyof typeof ACTION_HANDLERS>;
 
 function getCommandEntry(state: { log: string[] }, command: string): string {
-  return [...state.log].findLast((entry) => entry.includes(`> ${command}`)) ?? "";
+  for (let index = state.log.length - 1; index >= 0; index -= 1) {
+    const entry = state.log[index];
+    if (entry.includes(`> ${command}`)) {
+      return entry;
+    }
+  }
+
+  return "";
 }
 
 function expectCommandEntry(

@@ -6,7 +6,6 @@ import { LEVEL_FIVE } from "../world/maps/levelFive/LevelFive";
 import {
   createTestState,
   getLastLogEntry,
-  patchRoomDarkness,
   runCommand,
   runCommands,
   setInventory,
@@ -89,7 +88,7 @@ describe("Doors and level mechanics", () => {
         ...start.itemState,
         itemSettings: {
           ...start.itemState.itemSettings,
-          flashlight: { kind: "flashlight", isOn: true },
+          flashlight: { kind: "flashlight" as const, isOn: true },
         },
       },
     };

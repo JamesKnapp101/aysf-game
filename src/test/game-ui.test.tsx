@@ -93,29 +93,31 @@ describe("UI panels", () => {
   });
 
   it("reflects health, oxygen, temperature, radiation, and EEG state in the status tab", () => {
+    const baseState = createTestState();
+    const statusEffects: GameState["player"]["statusEffects"] = [
+      {
+        id: "radiation",
+        intensity: 25,
+        remainingTurns: 5,
+      },
+      {
+        id: "drunk",
+        intensity: 10,
+        remainingTurns: 2,
+      },
+    ];
     const state = {
-      ...createTestState(),
+      ...baseState,
       player: {
-        ...createTestState().player,
+        ...baseState.player,
         vitals: {
-          ...createTestState().player.vitals,
+          ...baseState.player.vitals,
           health: 73,
           oxygen: 42,
           temperature: 101.4,
           brainActivity: 5,
         },
-        statusEffects: [
-          {
-            id: "radiation",
-            intensity: 25,
-            remainingTurns: 5,
-          },
-          {
-            id: "drunk",
-            intensity: 10,
-            remainingTurns: 2,
-          },
-        ],
+        statusEffects,
       },
     };
 
