@@ -50,7 +50,6 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
           max={100}
           goodWhenHigh={false}
         />
-        {/* Brain activity */}
         {(() => {
           const brainLevel = (
             mindFlash ? 6 : gameState.player.vitals.brainActivity ?? 1
@@ -155,8 +154,8 @@ const MeterRow: React.FC<MeterRowProps> = ({
   );
 };
 
-const TEMP_MIN = 89; // lethal-low-ish
-const TEMP_MAX = 110; // lethal-high-ish
+const TEMP_MIN = 89;
+const TEMP_MAX = 110;
 
 interface TempRowProps {
   value: number;
@@ -225,88 +224,145 @@ const BRAIN_WAVE_LABELS: Record<BrainWaveLevel, string> = {
   6: "Foreign",
 };
 
-type Pt = [number, number];
-
-function makeSineBase(points: number, cycles: number, amplitude: number): Pt[] {
-  const result: Pt[] = [];
-  const width = 200;
-  const stepX = width / (points - 1);
-
-  for (let i = 0; i < points; i++) {
-    const x = i * stepX;
-    const t = (i / (points - 1)) * cycles * Math.PI * 2;
-    const y = 20 + Math.sin(t) * amplitude;
-    result.push([x, Math.round(y)]);
-  }
-  return result;
-}
-
-function buildScrollingPattern(base: Pt[]): string {
-  const extended: Pt[] = [];
-  for (const [x, y] of base) extended.push([x, y]);
-  for (const [x, y] of base) extended.push([x + 200, y]);
-  return extended.map(([x, y]) => `${x},${y}`).join(" ");
-}
-
-function clampPts(base: Pt[], minY = 2, maxY = 38): Pt[] {
-  return base.map(([x, y]) => [x, Math.max(minY, Math.min(maxY, y))] as Pt);
-}
-
-const NORMAL_BASE: Pt[] = makeSineBase(33, 3, 9);
-const EXCITED_BASE: Pt[] = makeSineBase(49, 6, 16);
-const SLOWED_BASE: Pt[] = makeSineBase(17, 1, 9);
-const STONED_BASE: Pt[] = makeSineBase(48, 3.5, 10);
-
-const POSSESSED_BASE: Pt[] = (() => {
-  const pts: Pt[] = [];
-  const width = 200;
-  const points = 21;
-  const stepX = width / (points - 1);
-
-  for (let i = 0; i < points; i++) {
-    const x = i * stepX;
-    const y = 20 + (i % 7 === 0 ? 1 : 0);
-    pts.push([x, Math.round(y)]);
-  }
-  return pts;
-})();
-
-const FOREIGN_OVERLAY_BASE: Pt[] = (() => {
-  const busy = makeSineBase(49, 6, 16);
-  return clampPts(busy);
-})();
-
-const BRAIN_WAVE_PATTERNS: Record<BrainWaveLevel, string> = {
-  1: buildScrollingPattern(NORMAL_BASE),
-  2: buildScrollingPattern(EXCITED_BASE),
-  3: buildScrollingPattern(SLOWED_BASE),
-  4: buildScrollingPattern(STONED_BASE),
-  5: buildScrollingPattern(POSSESSED_BASE),
-  6: buildScrollingPattern(NORMAL_BASE),
+type BrainWaveTrackStyle = React.CSSProperties & {
+  "--brain-wave-image": string;
+  "--brain-wave-duration": string;
+  "--brain-wave-opacity"?: string;
+  "--brain-wave-tile-width": string;
 };
 
-const FOREIGN_OVERLAY_PATTERN = buildScrollingPattern(FOREIGN_OVERLAY_BASE);
+type BrainWaveLayer = {
+  image: string;
+  duration: string;
+  opacity?: number;
+  overlay?: boolean;
+};
+
+function buildBrainWaveImage(
+  points: string,
+  stroke: string,
+  glow: string,
+): string {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" preserveAspectRatio="none">
+      <polyline
+        points="${points}"
+        fill="none"
+        stroke="${glow}"
+        stroke-width="3.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        opacity="0.2"
+      />
+      <polyline
+        points="${points}"
+        fill="none"
+        stroke="${stroke}"
+        stroke-width="1.3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  `;
+
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+function makeBrainWaveStyle(layer: BrainWaveLayer): BrainWaveTrackStyle {
+  return {
+    "--brain-wave-image": layer.image,
+    "--brain-wave-duration": layer.duration,
+    "--brain-wave-tile-width": "112px",
+    ...(layer.opacity != null
+      ? { "--brain-wave-opacity": String(layer.opacity) }
+      : {}),
+  };
+}
+
+const BRAIN_WAVE_LAYERS: Record<BrainWaveLevel, readonly BrainWaveLayer[]> = {
+  1: [
+    {
+      image: buildBrainWaveImage(
+        "0,20 4,20 8,19 12,21 16,19 20,20 24,18 28,22 32,19 36,20 40,18 44,21 48,19 52,20 56,19 60,20 64,17 68,22 72,18 76,20 80,19 84,18 88,24 92,11 96,26 100,18 104,21 108,19 112,20 116,18 120,21 124,19 128,20 132,19 136,20 140,18 144,21 148,19 152,20 156,19 160,20",
+        "#7dff6a",
+        "#7dff6a",
+      ),
+      duration: "11s",
+    },
+  ],
+  2: [
+    {
+      image: buildBrainWaveImage(
+        "0,20 4,19 8,21 12,18 16,22 20,17 24,24 28,16 32,23 36,18 40,20 44,17 48,25 52,14 56,27 60,16 64,23 68,18 72,21 76,17 80,24 84,13 88,28 92,15 96,24 100,18 104,21 108,17 112,23 116,18 120,20 124,15 128,26 132,16 136,22 140,19 144,21 148,18 152,20 156,19 160,20",
+        "#ff9f6a",
+        "#ff9f6a",
+      ),
+      duration: "3.4s",
+    },
+  ],
+  3: [
+    {
+      image: buildBrainWaveImage(
+        "0,20 12,20 24,19 36,20 48,20 60,18 72,22 84,20 96,20 108,19 120,20 132,20 144,18 152,23 160,20",
+        "#56e093",
+        "#56e093",
+      ),
+      duration: "18s",
+    },
+  ],
+  4: [
+    {
+      image: buildBrainWaveImage(
+        "0,20 6,20 12,16 18,24 24,17 30,21 36,19 42,15 48,26 54,18 60,20 66,14 72,28 78,16 84,20 90,18 96,23 102,17 108,20 114,14 120,25 126,18 132,22 138,19 144,16 150,23 156,18 160,20",
+        "#cba7ff",
+        "#cba7ff",
+      ),
+      duration: "7s",
+    },
+  ],
+  5: [
+    {
+      image: buildBrainWaveImage(
+        "0,20 10,20 20,20 30,19 40,20 50,20 60,9 62,31 68,20 78,20 88,19 98,20 108,20 118,11 120,30 126,20 136,20 146,19 154,20 160,20",
+        "#9fff9f",
+        "#9fff9f",
+      ),
+      duration: "6s",
+      opacity: 0.82,
+    },
+  ],
+  6: [
+    {
+      image: buildBrainWaveImage(
+        "0,20 8,20 12,18 16,22 20,19 24,21 28,20 34,20 40,19 44,21 48,20 52,18 56,22 60,19 64,21 68,20 74,20 80,18 84,24 88,12 92,27 96,19 100,20 106,20 112,19 116,21 120,20 126,20 132,18 136,22 140,20 146,20 152,19 156,21 160,20",
+        "#7dff6a",
+        "#7dff6a",
+      ),
+      duration: "10s",
+      opacity: 0.72,
+    },
+    {
+      image: buildBrainWaveImage(
+        "0,20 4,18 8,22 12,17 16,23 20,19 24,21 28,16 32,24 36,18 40,20 44,15 48,25 52,17 56,23 60,16 64,24 68,18 72,21 76,17 80,22 84,14 88,26 92,16 96,23 100,18 104,20 108,16 112,24 116,17 120,21 124,15 128,25 132,18 136,22 140,17 144,23 148,18 152,20 156,19 160,20",
+        "#39ffdd",
+        "#39ffdd",
+      ),
+      duration: "4.5s",
+      opacity: 0.94,
+      overlay: true,
+    },
+  ],
+};
 
 export const BrainWaveRow: React.FC<BrainWaveRowProps> = ({ level }) => {
   const label = BRAIN_WAVE_LABELS[level] ?? "Unknown";
-  const points = BRAIN_WAVE_PATTERNS[level];
-
-  const colors: Record<BrainWaveLevel, string> = {
-    1: "#00ff00",
-    2: "#fd8556ff",
-    3: "#16925aff",
-    4: "#bd96ffff",
-    5: "#88ff88",
-    6: "#39ffdd",
-  };
+  const layers = BRAIN_WAVE_LAYERS[level];
 
   return (
     <div
-      className={`brain-row ${level === 1 ? "normal" : ""} ${
-        level === 2 ? "excited" : ""
-      } ${level === 3 ? "slowed" : ""} ${level === 4 ? "stoned" : ""} ${
-        level === 5 ? "possessed" : ""
-      } ${level === 6 ? "foreign normal" : ""}`}
+      className={`brain-row ${level === 5 ? "brain-row--possessed" : ""} ${
+        level === 6 ? "brain-row--foreign" : ""
+      }`}
     >
       <span className="brain-label">
         <svg className="brain-icon" viewBox="0 0 32 20" aria-hidden="true">
@@ -335,52 +391,17 @@ export const BrainWaveRow: React.FC<BrainWaveRowProps> = ({ level }) => {
         EEG
       </span>
 
-      <svg
-        viewBox="0 0 200 40"
-        preserveAspectRatio="none"
-        className="brain-wave"
-      >
-        {/* Default / single-wave for levels 1–5 */}
-        {level !== 6 && (
-          <polyline
-            fill="none"
-            stroke={colors[level]}
-            strokeWidth="1"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            points={points}
+      <div className="brain-wave" aria-hidden="true">
+        {layers.map((layer, index) => (
+          <div
+            key={index}
+            className={`brain-wave-track ${
+              layer.overlay ? "brain-wave-track--overlay" : ""
+            }`}
+            style={makeBrainWaveStyle(layer)}
           />
-        )}
-
-        {/* Level 6: two independently-animated polylines */}
-        {level === 6 && (
-          <>
-            {/* Base = normal wave, normal scroll speed */}
-            <polyline
-              className="foreign-base"
-              fill="none"
-              stroke={colors[1]}
-              strokeWidth="1"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              points={points}
-              opacity={0.75}
-            />
-
-            {/* Overlay = busy wave, scrolls twice as fast */}
-            <polyline
-              className="foreign-overlay"
-              fill="none"
-              stroke={colors[6]}
-              strokeWidth="1"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              points={FOREIGN_OVERLAY_PATTERN}
-              opacity={0.95}
-            />
-          </>
-        )}
-      </svg>
+        ))}
+      </div>
 
       <span className="brain-state">{label}</span>
     </div>

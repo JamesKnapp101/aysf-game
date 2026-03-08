@@ -1,13 +1,13 @@
 import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
 import { bucketForItem, inventoryHas } from "@game/rules/state";
+import { maybeInitializeHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
+import { mergeWorldChunks, type WorldChunkId } from "../world/World";
 import {
   INITIAL_CONTAINER_CONTENTS,
   INITIAL_SURFACE_CONTENTS,
   INITIAL_UNDER_CONTENTS,
 } from "./containerContents";
 import { seedItemRoomLocations } from "./helpers/itemHelpers";
-import { maybeInitializeHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
-import { mergeWorldChunks, type WorldChunkId } from "../world/World";
 
 import { AVIARY_SPOTLIGHT_ROUTE } from "@game/engine/ticks/aviaryTick";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";

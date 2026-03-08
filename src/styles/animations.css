@@ -53,6 +53,16 @@
     }
 }
 
+@keyframes brain-wave-pan {
+    from {
+        background-position: 0 50%;
+    }
+
+    to {
+        background-position: calc(var(--brain-wave-tile-width) * -1) 50%;
+    }
+}
+
 /* Optional wobble */
 @keyframes drunk-wobble {
 
