@@ -1,3 +1,4 @@
+import { HydroponicsAdminTerminalModal } from "@game/components/HydroponicsAdminTerminalModal";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LogPanel } from "@game/components/LogPanel";
@@ -6,6 +7,7 @@ import { RoomCompass } from "@game/components/Compass";
 import { DNASampleTab } from "@game/components/DNASampleTab";
 import { StatusTab } from "@game/components/StatusTab";
 import type { GameState } from "@game/types/gameTypes";
+import React from "react";
 import { describe, expect, it } from "vitest";
 import {
   createTestState,
@@ -78,6 +80,39 @@ describe("UI panels", () => {
       screen.getByText("Research Notes Found in Sanyi Clone Quarters"),
     ).toBeInTheDocument();
     expect(screen.getByText(/LOG SOURCE:/i)).toBeInTheDocument();
+  });
+
+  it("logs Hydroponics employee records only on first view", async () => {
+    const user = userEvent.setup();
+    const { container } = renderHydroponicsTerminal(createTestState());
+
+    expect(screen.getByTestId("hydro-log-count")).toHaveTextContent("0");
+
+    await user.click(screen.getByText("Employee Records"));
+
+    const employeeMenuItem = Array.from(
+      container.querySelectorAll(".hints-menu-item"),
+    ).find((element) => element.textContent?.trim() !== "BACK");
+
+    expect(employeeMenuItem).toBeTruthy();
+
+    const employeeName = employeeMenuItem?.textContent?.trim() ?? "Unknown";
+
+    await user.click(employeeMenuItem as HTMLElement);
+
+    expect(screen.getByTestId("hydro-log-count")).toHaveTextContent("1");
+    expect(screen.getByText(`Employee Record: ${employeeName}`)).toBeInTheDocument();
+
+    const sameEmployeeMenuItem = Array.from(
+      container.querySelectorAll(".hints-menu-item"),
+    ).find((element) => element.textContent?.trim() === employeeName);
+
+    expect(sameEmployeeMenuItem).toBeTruthy();
+
+    await user.click(sameEmployeeMenuItem as HTMLElement);
+
+    expect(screen.getByTestId("hydro-log-count")).toHaveTextContent("1");
+    expect(screen.getAllByText(`Employee Record: ${employeeName}`)).toHaveLength(1);
   });
 
   it("renders banked DNA samples in the DNA tab", () => {
@@ -161,4 +196,24 @@ function runCommandInInventoryRoom() {
     setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
     ["take research notes"],
   );
+}
+
+function renderHydroponicsTerminal(initialState: GameState) {
+  function Harness() {
+    const [state, setState] = React.useState(initialState);
+
+    return (
+      <>
+        <HydroponicsAdminTerminalModal
+          onClose={() => undefined}
+          state={state}
+          setGameState={setState}
+        />
+        <div data-testid="hydro-log-count">{state.player.log.length}</div>
+        <LogTab gameState={state} />
+      </>
+    );
+  }
+
+  return render(<Harness />);
 }

@@ -329,7 +329,10 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           {/* {activeTab === "hints" && (
             <div>
               <p className="crt-color-header">HINTS</p>
-              <HintsTab rootMenu={allHintsRoot} />
+              <Menu
+                rootMenu={allHintsRoot}
+                emptyDetailMessage="Select a hint to see more information."
+              />
             </div>
           )} */}
           {activeTab === "settings" && (

@@ -1,6 +1,6 @@
-import type { HintMenuNode } from "../game/types/hintTypes";
+import type { MenuBranchNode } from "../game/types/menuTypes";
 
-export const levelOneHints: HintMenuNode = {
+export const levelOneHints: MenuBranchNode = {
   kind: "menu",
   id: "level1-root",
   title: "HINTS FOR LEVEL ONE",

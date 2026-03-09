@@ -164,7 +164,11 @@ export function OverlayHost({
             />
           }
         >
-          <LazyHydroponicsAdminTerminalModal onClose={onClose} state={state} />
+          <LazyHydroponicsAdminTerminalModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
         </Suspense>
       );
     }

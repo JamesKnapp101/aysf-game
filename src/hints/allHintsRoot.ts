@@ -1,4 +1,4 @@
-import type { HintMenuNode } from "../game/types/hintTypes";
+import type { MenuBranchNode } from "../game/types/menuTypes";
 import { levelFiveHints } from "./levelFiveHints";
 import { levelFourHints } from "./levelFourHints";
 import { levelOneHints } from "./levelOneHints";
@@ -8,7 +8,7 @@ import { levelThreeHints } from "./levelThreeHints";
 import { levelTwoHints } from "./levelTwoHints";
 import { miscHints } from "./miscHints";
 
-export const allHintsRoot: HintMenuNode = {
+export const allHintsRoot: MenuBranchNode = {
   kind: "menu",
   id: "hints-root",
   title: "HINTS",

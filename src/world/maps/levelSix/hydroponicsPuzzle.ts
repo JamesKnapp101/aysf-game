@@ -4,13 +4,16 @@ import type {
   GameState,
   HydroponicsCocoonPuzzleState,
 } from "@game/types/gameTypes";
-import type { HintLeafNode, HintMenuNode } from "@game/types/hintTypes";
+import type { MenuBranchNode, MenuLeafNode } from "@game/types/menuTypes";
 import { createInitialHydroponicsSpiderState } from "./hydroponicsEncounterState";
 
 export type HydroponicsEmployeeProfile = {
   id: string;
+  employeeId: string;
   name: string;
-  gender: "male" | "female";
+  age: number;
+  gender: "male" | "female" | "non-binary";
+  pronoun: "he/him" | "she/her" | "they/them";
   build: "thin" | "athletic" | "heavyset";
   height: "short" | "medium height" | "tall";
   hair?: {
@@ -57,8 +60,11 @@ const HYDROPONICS_ESCAPE_MOVES_TO_PLATFORM: Record<
 export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   {
     id: "DizzyTsoukann",
+    employeeId: "E1026630DT",
+    age: 26,
     name: "Dizzy Tsoukann",
     gender: "female",
+    pronoun: "she/her",
     build: "thin",
     height: "medium height",
     hair: { color: "red", texture: "straight", length: "short" },
@@ -66,16 +72,22 @@ export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   },
   {
     id: "OrgrillPinthwell",
+    employeeId: "E6630914OP",
+    age: 47,
     name: "Orgrill Pinthwell",
     gender: "male",
+    pronoun: "he/him",
     build: "athletic",
     height: "tall",
     features: ["missing part of the index finger"],
   },
   {
     id: "GaGaLizSotte",
+    employeeId: "E1128991GL",
+    age: 33,
     name: "Ga-Ga Liz-Sotte",
     gender: "female",
+    pronoun: "he/him",
     build: "athletic",
     height: "short",
     hair: { color: "blonde", texture: "straight", length: "long" },
@@ -83,8 +95,11 @@ export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   },
   {
     id: "ErnwithGob",
+    employeeId: "E5550912EG",
+    age: 61,
     name: "Ernwith Gob",
     gender: "male",
+    pronoun: "he/him",
     build: "thin",
     height: "tall",
     hair: { color: "gray", texture: "straight", length: "short" },
@@ -92,8 +107,11 @@ export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   },
   {
     id: "SlandryTexMex",
+    employeeId: "E3199250ST",
+    age: 25,
     name: "Slandry Tex-Mex",
     gender: "male",
+    pronoun: "he/him",
     build: "heavyset",
     height: "medium height",
     hair: { color: "black", texture: "curly", length: "short" },
@@ -101,16 +119,22 @@ export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   },
   {
     id: "BuglousWimbly",
+    employeeId: "E4218833BW",
+    age: 44,
     name: "Buglous Wimbly",
     gender: "male",
+    pronoun: "he/him",
     build: "heavyset",
     height: "short",
     hair: { color: "brown", texture: "wavy", length: "short" },
   },
   {
     id: "XiXiBo",
+    employeeId: "E7435209XB",
+    age: 29,
     name: "Xi-Xi Bo",
-    gender: "female",
+    gender: "non-binary",
+    pronoun: "they/them",
     build: "thin",
     height: "medium height",
     hair: { color: "black", texture: "straight", length: "short" },
@@ -118,24 +142,33 @@ export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   },
   {
     id: "MistopherBreen",
+    employeeId: "E0861121MB",
+    age: 30,
     name: "Mistopher Breen",
     gender: "male",
+    pronoun: "he/him",
     build: "thin",
     height: "tall",
     hair: { color: "blonde", texture: "wavy", length: "short" },
   },
   {
     id: "CrenchfordMothworthy",
+    employeeId: "E6791022CM",
+    age: 55,
     name: "Crenchford Mothworthy",
     gender: "male",
+    pronoun: "he/him",
     build: "athletic",
     height: "medium height",
     features: ["six fingers on the right hand"],
   },
   {
     id: "SillithLeSconce",
+    employeeId: "E0001294SL",
+    age: 56,
     name: "Sillith LeSconce",
     gender: "female",
+    pronoun: "she/her",
     build: "athletic",
     height: "tall",
     hair: { color: "red", texture: "straight", length: "long" },
@@ -143,8 +176,11 @@ export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   },
   {
     id: "DaschentDwong",
+    employeeId: "E4349455DD",
+    age: 24,
     name: "Daschent Dwong",
     gender: "male",
+    pronoun: "he/him",
     build: "heavyset",
     height: "tall",
     hair: { color: "blonde", texture: "curly", length: "long" },
@@ -152,8 +188,11 @@ export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   },
   {
     id: "WooZhangkWoo",
+    employeeId: "E9531800WW",
+    age: 31,
     name: "Woo-Zhangk Woo",
     gender: "female",
+    pronoun: "she/her",
     build: "thin",
     height: "medium height",
     hair: { color: "black", texture: "straight", length: "long" },
@@ -168,6 +207,12 @@ const HYDROPONICS_BODY_ID_SET = new Set<string>(
   HYDROPONICS_EMPLOYEE_PROFILES.map((profile) => profile.id),
 );
 
+const sexMap = {
+  male: "man",
+  female: "woman",
+  "non-binary": "person of indeterminate sex",
+};
+
 function formatFeatureList(features: string[]): string {
   if (features.length === 0) return "";
   if (features.length === 1) return features[0];
@@ -176,12 +221,18 @@ function formatFeatureList(features: string[]): string {
 }
 
 function buildEmployeeRecord(profile: HydroponicsEmployeeProfile): string {
+  const [pA] = profile.pronoun.split("/");
+  const isBald = profile?.hair === undefined;
+  const hairDesc =
+    isBald === true
+      ? `with a bald head.`
+      : `with ${profile.hair?.length ?? "shoulder-length"} ${profile.hair?.texture ?? "wispy"} ${profile.hair?.color ?? "brown"} hair.`;
   const lines = [
+    `Employee ID: ${profile.employeeId}`,
     `Name: ${profile.name}`,
-    `Sex: ${profile.gender === "male" ? "Male" : "Female"}`,
-    `Build: ${profile.build[0].toUpperCase()}${profile.build.slice(1)}`,
-    `Height: ${profile.height[0].toUpperCase()}${profile.height.slice(1)}`,
-    `Hair: ${profile.hair ? `${profile.hair.color}, ${profile.hair.texture}, ${profile.hair.length}` : "Bald"}`,
+    `Age: ${profile.age}`,
+    `Sex: ${profile.gender[0].toUpperCase()}${profile.gender.slice(1)}\n`,
+    `The employee record includes a photo of ${profile.name.split(" ")[0]}, where ${pA} stands against a neutral backdrop, facing front. ${profile.name.split(" ")[0]} is a ${profile.height}, ${profile.build} ${sexMap[profile.gender]} ${hairDesc}\n`,
   ];
 
   if (profile.features?.length) {
@@ -191,9 +242,7 @@ function buildEmployeeRecord(profile: HydroponicsEmployeeProfile): string {
   return lines.join("\n");
 }
 
-function getPuzzleState(
-  state: GameState,
-): HydroponicsCocoonPuzzleState {
+function getPuzzleState(state: GameState): HydroponicsCocoonPuzzleState {
   return state.worldState.hydroponicsCocoonPuzzle;
 }
 
@@ -335,12 +384,12 @@ export function describeHydroponicsSignIn(state: GameState): string {
   return `The sign-in tablet shows the most recent visitor entry: ${profile.name}, Power Department. Clipped across the front of the visitor's coveralls is a yellow plastic security badge.`;
 }
 
-export function buildHydroponicsTerminalMenu(state: GameState): HintMenuNode {
+export function buildHydroponicsTerminalMenu(state: GameState): MenuBranchNode {
   const powerWorkerBodyId = getPuzzleState(state).powerWorkerBodyId;
-  const employeeRecords: HintLeafNode[] = HYDROPONICS_EMPLOYEE_PROFILES.filter(
+  const employeeRecords: MenuLeafNode[] = HYDROPONICS_EMPLOYEE_PROFILES.filter(
     (profile) => profile.id !== powerWorkerBodyId,
   ).map((profile) => ({
-    kind: "hint",
+    kind: "leaf",
     id: `hydro-record-${profile.id}`,
     title: profile.name,
     description: buildEmployeeRecord(profile),
