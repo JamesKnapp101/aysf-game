@@ -127,35 +127,35 @@ function getHydroponicsSpiderSceneryText(
     case "HydroponicsPlatform":
       return isAlive
         ? "Through the grating you can see a spider which has somehow grown so large that its eight long legs now span the circumference of the platform, a good fifty meters, converging at its spiny carapace whose abdomen is swollen to the size of a parade float, straining at the seams. It hangs from layers of thick webbing, casting shadows across the floor beneath it."
-        : "Below the grated opening, the massive spider hangs motionless in its webbing sling, a dead weight sagging over the middle platform.";
+        : "Below the grated opening, the spider's carcass sags deep into its own torn webbing, its burst abdomen split wide while millions of hand-sized spiders boil through the wreckage beneath it.";
     case "HydroponicsPlatformMid":
       return isAlive
         ? "A massive spider sprawls across the middle platform, its bloated abdomen half-cradled in a glistening cradle of webbing while its long legs rest over the metal grating."
-        : "The massive spider lies collapsed across the middle platform, its distended abdomen sunk deep into the webbing that still clings to it.";
+        : "The massive spider lies collapsed across the middle platform, its abdomen burst open and slumped into a spreading mound of silk, scraps, and swarming young.";
     case "HydroponicsPlatformBottom":
       return isAlive
         ? "Above you, the web canopy bows under the weight of a massive spider suspended near the center, its silhouette shifting whenever the whole structure creaks."
-        : "Above you, the web canopy sags around the massive spider's still bulk, the whole structure drooping without the creature's restless adjustments.";
+        : "Above you, the web canopy sags around the spider's dead bulk, its ruptured abdomen hanging open while streams of hand-sized spiderlings pour through the torn silk.";
     case "UnderWebOne":
       return isAlive
         ? "Through the layered strands overhead, you can make out the massive spider near the canopy's center, one side of its body more visible through the sagging web."
-        : "Through the layered strands overhead, the massive spider hangs inert near the canopy's center, dimly outlined through the silk.";
+        : "Through the layered strands overhead, the spider hangs dead near the canopy's center, dimly outlined through the silk while restless swarms spill from its burst abdomen.";
     case "UnderWebTwo":
       return isAlive
         ? "From this corner the massive spider is partly obscured by overlapping strands, but its swollen body is still visible above the web canopy's central dip."
-        : "From this corner the massive spider is partly obscured by overlapping strands, its dead bulk barely visible above the canopy's central dip.";
+        : "From this corner the spider is partly obscured by overlapping strands, but its dead bulk and the constant movement of swarming young are still visible above the canopy's central dip.";
     case "UnderWebThree":
       return isAlive
         ? "The webbing overhead thins just enough here for you to glimpse the massive spider looming beyond it, several legs braced against the silk near the middle."
-        : "The webbing overhead thins just enough here for you to glimpse the massive spider hanging slack beyond it, several legs frozen where they last braced.";
+        : "The webbing overhead thins just enough here for you to glimpse the spider hanging slack beyond it, several legs frozen where they last braced around a split, emptied abdomen.";
     case "UnderWebFour":
       return isAlive
         ? "Seen through the glistening lattice overhead, the massive spider hangs off-center from your angle, its body swaying faintly whenever the canopy flexes."
-        : "Seen through the glistening lattice overhead, the massive spider hangs off-center from your angle, swaying only when the canopy itself shifts.";
+        : "Seen through the glistening lattice overhead, the spider hangs off-center from your angle, dead and ruptured while the canopy below it crawls with escaping young.";
     default:
       return isAlive
         ? "The massive spider is visible somewhere within the Hydroponics webbing."
-        : "The massive spider's corpse is visible somewhere within the Hydroponics webbing.";
+        : "The massive spider's ruptured corpse is visible somewhere within the Hydroponics webbing, surrounded by swarming offspring.";
   }
 }
 
@@ -167,35 +167,35 @@ function getHydroponicsSpiderExamineText(
     case "HydroponicsPlatform":
       return isAlive
         ? "From up here you can look down onto the creature's distended body where it sags in the webbing below. The spider looks enormous even at this angle, but what stands out most is how labored it seems, as if every breath costs it effort."
-        : "From up here you can see the spider's huge body slumped into the webbing below. Without the slow heave of its abdomen, it looks less like a predator than a grotesque carcass left to dry in its own trap.";
+        : "From up here you can see the spider's huge body slumped into the wrecked webbing below. Its abdomen has burst wide open, spraying scraps of leathery flesh through the silk while millions of hand-sized young continue to spill and swarm over the dead carcass.";
     case "HydroponicsPlatformMid":
       return isAlive
         ? "Up close, the creature is equal parts hideous and pitiable. Its abdomen is swollen to painful proportions, the webbing around it trembling whenever air rasps through its spiracles, and its long, slender legs look barely strong enough to manage the burden."
-        : "Up close, the spider has collapsed into itself. The swollen abdomen is still grotesquely distended, but the weak shifting and miserable breathing have stopped, leaving only a huge, spent body tangled in silk.";
+        : "Up close, the spider is unmistakably dead. Its abdomen has ruptured down the side, spilling a slick ruin of tissue and spiderlings into the collapsed silk while its long legs remain locked in a final curl.";
     case "HydroponicsPlatformBottom":
       return isAlive
         ? "From directly underneath, the spider is mostly a looming mass above the translucent canopy, its weight bowing the silk into a pale, glistening ceiling. Every movement sends small ripples through the web over your head."
-        : "From directly underneath, the spider is a dim, swollen shape trapped above the translucent canopy. With the creature still, the web hangs heavy and quiet over the open space.";
+        : "From directly underneath, the spider is a dead, ruptured mass above the translucent canopy. The web still hangs heavy over the open space, but the quiet is gone; countless hand-sized spiderlings stream through the torn silk in every direction.";
     case "UnderWebOne":
       return isAlive
         ? "From this angle you only get a partial view through the webbing, but it is more than enough. The spider's body hangs near the center of the canopy, and the occasional flex of one long leg makes the surrounding strands shiver."
-        : "From this angle you only get a partial view through the webbing. The spider hangs near the center of the canopy without moving, the surrounding strands no longer trembling with its efforts.";
+        : "From this angle you only get a partial view through the webbing, but it is enough to see the spider hanging dead near the center of the canopy. Its abdomen has split apart, and the surrounding strands twitch now only because waves of young keep pouring through them.";
     case "UnderWebTwo":
       return isAlive
         ? "The overlapping silk here obscures the spider in pieces: a pale swell of abdomen, a dark jointed leg, a faint shift deeper in the canopy. The fragmented view somehow makes it worse."
-        : "The overlapping silk here breaks the spider into pale, motionless fragments: a swollen abdomen behind one sheet of web, a folded leg behind another.";
+        : "The overlapping silk here breaks the spider into grisly fragments: the torn curve of its abdomen behind one sheet of web, a folded leg behind another, and constant movement wherever the young spill through.";
     case "UnderWebThree":
       return isAlive
         ? "The spider is visible through a thinner patch of web from here, close enough that you can track the slow rise and fall of its huge abdomen and the deliberate tension in its legs."
-        : "The spider is visible through a thinner patch of web from here, close enough to make out the full, ugly shape now hanging completely still.";
+        : "The spider is visible through a thinner patch of web from here, close enough to make out the full, ugly shape now hanging completely still. The abdomen has erupted open, leaving a wet cavity that still births out endless young.";
     case "UnderWebFour":
       return isAlive
         ? "From this side the spider appears slightly askew in the canopy, suspended in a slanted nest of silk. It sways faintly whenever the web flexes, but the movement never looks healthy or natural."
-        : "From this side the spider appears slightly askew in the canopy, suspended in a slanted nest of silk that now moves only when the structure around it shifts.";
+        : "From this side the spider appears slightly askew in the canopy, dead in its slanted nest of silk. The only motion comes from the millions of young swarming over the burst abdomen and racing through the shifting web.";
     default:
       return isAlive
         ? "The spider is immense, bloated, and miserable-looking."
-        : "The spider is immense, bloated, and very dead.";
+        : "The spider is immense, ruptured, and very dead, with swarming young still pouring from its burst abdomen.";
   }
 }
 

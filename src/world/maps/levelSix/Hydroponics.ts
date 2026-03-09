@@ -51,7 +51,7 @@ export const hydroponicsRooms: Room[] = [
     name: "Web Underhang",
     description: `This pocket beneath the canopy is hemmed in by drooping sheets of silk attached to bent grow frames and dead stalks. Moisture beads on every strand, making the whole place glisten when the light catches it. [[SCENERY]] Narrow ways lead east, south, and back southeast toward the central space.`,
     exits: [
-      { direction: "east", doorId: "UnderWebTwo" },
+      { direction: "east", toRoomId: "UnderWebTwo" },
       { direction: "southeast", toRoomId: "HydroponicsPlatformBottom" },
       { direction: "south", toRoomId: "UnderWebThree" },
     ],
@@ -61,7 +61,7 @@ export const hydroponicsRooms: Room[] = [
     name: "Web Corner",
     description: `The canopy bunches thickly here in a corner of torn foliage and web-choked support struts. The air feels close, and every shift of your weight sends small tremors through the silk overhead. [[SCENERY]] Paths run west, south, and back southwest toward the area beneath the central platform.`,
     exits: [
-      { direction: "west", doorId: "UnderWebOne" },
+      { direction: "west", toRoomId: "UnderWebOne" },
       { direction: "southwest", toRoomId: "HydroponicsPlatformBottom" },
       { direction: "south", toRoomId: "UnderWebFour" },
     ],
@@ -71,7 +71,7 @@ export const hydroponicsRooms: Room[] = [
     name: "Web Pocket",
     description: `The webbing dips low here between clusters of withered growth trays and dangling roots, forming a cramped recess that smells of wet vegetation and something sharper underneath. [[SCENERY]] The silk-wrapped passages continue north, east, and back northeast toward the center.`,
     exits: [
-      { direction: "north", doorId: "UnderWebOne" },
+      { direction: "north", toRoomId: "UnderWebOne" },
       { direction: "northeast", toRoomId: "HydroponicsPlatformBottom" },
       { direction: "east", toRoomId: "UnderWebFour" },
     ],
@@ -81,40 +81,162 @@ export const hydroponicsRooms: Room[] = [
     name: "Web Grotto",
     description: `This far pocket of Hydroponics feels almost cave-like, enclosed by sheeted web and curtains of dead vines. The filtered light is dimmer here, leaving the silk overhead with a dull pearly sheen. [[SCENERY]] The only ways out are west, north, or back northwest toward the center beneath the canopy.`,
     exits: [
-      { direction: "west", doorId: "UnderWebThree" },
+      { direction: "west", toRoomId: "UnderWebThree" },
       { direction: "northwest", toRoomId: "HydroponicsPlatformBottom" },
       { direction: "north", toRoomId: "UnderWebThree" },
     ],
   },
 ];
 
-const cocoonBodyItems: Item[] = HYDROPONICS_EMPLOYEE_PROFILES.map((profile) => {
-  const nameTokens = profile.name
+type CocoonDetails = {
+  name: string;
+  description: string;
+  sceneryDescription: string;
+  sceneryOrder: number;
+};
+
+const HYDROPONICS_COCOON_DETAILS: Record<string, CocoonDetails> = {
+  DizzyTsoukann: {
+    name: "wispy cocoon",
+    description:
+      "The silk here has dried into a narrow, papery shroud around a thin woman. A tear in the wrapping exposes short, straight red hair matted to the skull and a ruined right shoulder where a leaf tattoo still shows through wet, chewed flesh. Below that, the partially eaten remains hang in sagging ropes, one arm stripped nearly to bone.",
+    sceneryDescription:
+      "[[newline]]A wispy cocoon hangs from above here, from which dangles the head and shoulders of a partially eaten corpse.",
+    sceneryOrder: 12,
+  },
+  OrgrillPinthwell: {
+    name: "stretched cocoon",
+    description:
+      "This cocoon has been stretched taut around a tall, athletic man's frame until ribs and shoulders push against the silk from inside. One hand protrudes from a split seam, the index finger ending in a ragged stump, while the chest has been torn open far enough to show slick bone and dark strings of tissue. Whatever fed here left the body hanging in a heavy, wet slump.",
+    sceneryDescription:
+      "[[newline]]Tucked in one corner is a stretched cocoon whose human occupant tried, and failed, to push through and escape.",
+    sceneryOrder: 11,
+  },
+  GaGaLizSotte: {
+    name: "ribboned cocoon",
+    description:
+      "The webbing pinches this cocoon into the compact shape of a short, athletic woman. A spill of long, straight blonde hair hangs from the upper seam, and lower down the silk has shrunk back from the midriff enough to reveal part of a cat tattoo between bite marks and torn muscle. The abdomen has been opened almost to the spine, leaving the whole bundle to drip slowly onto the roots below.",
+    sceneryDescription:
+      "[[newline]]Near the ceiling hangs a ribboned cocoon with a desiccated head dangling from the bottom, trailing long, straight blonde hair that touches the floor.",
+    sceneryOrder: 10,
+  },
+  ErnwithGob: {
+    name: "lank cocoon",
+    description:
+      "A tall, thin body sags inside this cocoon like damp laundry on a line. The face is half-collapsed, but short gray hair and a pair of bent spectacles are still caught in the silk around the skull, and the wrapping has split open at the feet to expose unmistakably webbed toes. The rest of the corpse has been hollowed in places, leaving the webbing stained and sunken.",
+    sceneryDescription:
+      "[[newline]]On the floor lies a lank cocoon, draped over the bony remains inside, and leaving only one acid-scarred leg exposed.",
+    sceneryOrder: 9,
+  },
+  SlandryTexMex: {
+    name: "knotted cocoon",
+    description:
+      "This heavy cocoon has been tied off in ugly bulges around a medium-height, heavyset man. Short black curls push through a break near the scalp, and one arm hangs partly free with a tribal tattoo still visible above strips of peeled-back flesh. The belly has burst against the silk and dried there in a dark, glossy crust.",
+    sceneryDescription:
+      "[[newline]]Sagging in the web is a knotted cocoon, from which sprouts an acid-burned face and curly black hair.",
+    sceneryOrder: 8,
+  },
+  BuglousWimbly: {
+    name: "compact cocoon",
+    description:
+      "The cocoon bulges low and squat, wrapped around the short, heavyset body inside. Damp, wavy brown hair clings to the scalp through a thumb-wide rent in the silk, and the compressed torso has split open enough to spill dark loops of viscera between the strands. Even half-eaten, the remains look densely packed into the sticky bundle.",
+    sceneryDescription:
+      "[[newline]]A compact cocoon containing a short but heavyset body, or what's left of it, hangs low here.",
+    sceneryOrder: 7,
+  },
+  XiXiBo: {
+    name: "narrow cocoon",
+    description:
+      "This cocoon narrows to the neat outline of a thin woman of medium height. The silk has stuck hard across the face, but short black hair and one arm of a crushed pair of spectacles are visible where the wrapping has torn away from the head. The throat and collarbone have been opened into a glistening notch, and something inside still shifts when the webbing sways.",
+    sceneryDescription:
+      "[[newline]]Dangling from silky strands from the platform above is a narrow cocoon, a pair of spectacles stuck in the sticky threads.",
+    sceneryOrder: 6,
+  },
+  MistopherBreen: {
+    name: "dangling cocoon",
+    description:
+      "The corpse in this cocoon hangs so long that the ankles nearly brush the floor. The body is tall and thin, with short, wavy blonde hair plastered over a skull whose cheek has been gnawed through to the teeth. Long shin bones and a collapsed chest show through the silk like broken tent poles, making the whole cocoon twitch whenever the air moves.",
+    sceneryDescription:
+      "[[newline]]A dangling cocoon trails almost to the floor, with short blonde hair and long, thin legs pressing through the silk.",
+    sceneryOrder: 5,
+  },
+  CrenchfordMothworthy: {
+    name: "stitched cocoon",
+    description:
+      "The webbing has been wrapped and rewound around a medium-height, athletic man's body, giving this cocoon a crudely stitched look. One arm has come free enough for the right hand to hang out in full view, six fingers blackened and curled like burnt roots. Higher up, the chest has been split wide enough to show the bright arcs of ribs beneath the silk.",
+    sceneryDescription:
+      "[[newline]]Lashed to a metal strut is a stitched cocoon, wrapped around the remains of an athletic man's body.",
+    sceneryOrder: 4,
+  },
+  SillithLeSconce: {
+    name: "statuesque cocoon",
+    description:
+      "Even ruined, the body inside this cocoon is unmistakably tall and athletic. A thick spill of long, straight red hair hangs from the upper seam, and one leg has been gnawed free enough to expose a bionic replacement knee slick with old blood and web residue. The rest of the remains hang limp in the silk, ribs and tendons showing through where the abdomen has been opened.",
+    sceneryDescription:
+      "[[newline]]A statuesque cocoon hangs from above, dangling a pair of legs, one of which has been eaten to the bone, exposing a bionic knee.",
+    sceneryOrder: 3,
+  },
+  DaschentDwong: {
+    name: "swollen cocoon",
+    description:
+      "This cocoon is distended around a tall, heavyset man whose remains have slumped to one side. Long, curly blonde hair spills from the top like wet rope, and the face has been eaten away far enough to leave a single bionic eye staring from a nest of torn sockets and silk. The torso has burst in several places, with broken bone and clotted tissue pressing through the weave.",
+    sceneryDescription:
+      "[[newline]]In a sheet of sticky threads bulges a swollen cocoon that exposes dangling skeletal arms and a skull, the flesh burned away and leaving only one bionic eye in its socket",
+    sceneryOrder: 2,
+  },
+  WooZhangkWoo: {
+    name: "trailing cocoon",
+    description:
+      "The silk around this body tapers into a slim, trailing sheath around a woman of medium height and narrow build. Long, straight black hair spills from the split crown all the way down the front of the cocoon, sticking to exposed ribs where the chest has been opened. The lower half has been partly eaten away, leaving pale bone and stringy tissue swinging inside the webbing.",
+    sceneryDescription:
+      "[[newline]]A trailing cocoon stirs here, with long black hair plastered over the ribs of a slim body inside.",
+    sceneryOrder: 1,
+  },
+};
+
+function buildCocoonVocab(cocoonName: string): string[] {
+  const nameTokens = cocoonName
     .toLowerCase()
-    .replace(/-/g, "")
+    .replace(/-/g, " ")
     .split(/\s+/)
-    .map((token) => token.toLowerCase())
     .filter(Boolean);
+
+  return [
+    ...nameTokens,
+    cocoonName.toLowerCase(),
+    "cocoon",
+    "body",
+    "corpse",
+    "remains",
+    "webbed body",
+    "cocooned body",
+  ];
+}
+
+const cocoonBodyItems: Item[] = HYDROPONICS_EMPLOYEE_PROFILES.map((profile) => {
+  const cocoonDetails = HYDROPONICS_COCOON_DETAILS[profile.id];
 
   return {
     id: profile.id,
-    name: "cocooned body",
-    description: `${profile.name}.`,
+    name: cocoonDetails?.name ?? "cocoon",
+    description:
+      cocoonDetails?.description ??
+      "The remains inside the silk have been too badly mangled to identify at a glance.",
+    sceneryDescription:
+      cocoonDetails?.sceneryDescription ??
+      "A cocooned body hangs here in the webbing.",
     location: "seeded",
-    vocab: [
-      "cocoon",
-      "cocooned body",
-      "body",
-      "webbed body",
-      profile.name.toLowerCase(),
-      ...nameTokens,
-    ],
+    vocab: buildCocoonVocab(cocoonDetails?.name ?? "cocoon"),
     itemClass: "solid",
-    itemCategory: "static",
+    itemCategory: "scenery",
     itemWeight: 40,
     itemSize: 40,
     overrides: {
-      open: ({ state }: { state: any }) => openHydroponicsCocoon(state, profile.id),
+      open: ({ state }: { state: any }) =>
+        openHydroponicsCocoon(state, profile.id),
+    },
+    meta: {
+      sceneryDescriptionOrder: cocoonDetails.sceneryOrder,
     },
   };
 });

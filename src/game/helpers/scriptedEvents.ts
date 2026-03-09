@@ -77,4 +77,43 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       return next;
     },
   },
+  {
+    id: "spider_escape_warning",
+    once: false,
+    when: (state, ctx) =>
+      ctx.kind === "onTurnEnd" &&
+      state.worldState.hydroponicsCocoonPuzzle.resolved &&
+      state.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining > 0 &&
+      !state.worldState.conditionalTriggers.EscapedWithYellowBadge,
+    run: (state, ctx) => {
+      let next = state;
+      const turnsRemaining =
+        next.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining;
+
+      const warningText =
+        turnsRemaining >= 3
+          ? "Somewhere overhead, taut strands of web begin snapping one by one. Each sharp report ricochets through the silo as the metal frame starts to creak."
+          : turnsRemaining === 2
+            ? "The web canopy convulses above you. Silk lashes through the air and the surrounding frame groans under a shifting, impossible weight."
+            : "A violent series of cracks tears through the chamber. Webs whip across the passages, the metal shrieks, and whatever is above you is coming loose right now.";
+
+      next = queueAfterRoomDescription(next, warningText);
+      return next;
+    },
+  },
+  {
+    id: "spider_escape",
+    when: (state, ctx) =>
+      ctx.kind === "onTurnEnd" &&
+      ctx.roomId === "HydroponicsPlatform" &&
+      state.worldState.conditionalTriggers.EscapedWithYellowBadge,
+    run: (state, ctx) => {
+      let next = state;
+      next = queueAfterRoomDescription(
+        next,
+        `Just as you reach the top platform, thick strands of silk give way with a series of loud snaps. A metallic groan echoes in the silo, then more strands give way, setting off a chain reaction until the massive spider drops several meters, crashing down into its own web and causing the entire structure to shake. Safe at the top, you stare down through the grate as the spider cringes, long legs curling inward as if in pain, as its huge, swollen abdomen quivers.\n\nAs you watch, the abdomen bursts apart like an overinflated balloon, flinging away sheets of leathery scraps as a loud boom reverberates through the air. The creature's eight legs spasm in that instant, then relax but don't completely stop moving as the contents of her abdomen spill out. Millions of offspring, each the size of a human hand, erupt in waves, crawling over each other and spreading outward in a mad attempt to escape the heap.`,
+      );
+      return next;
+    },
+  },
 ];

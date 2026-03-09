@@ -72,6 +72,18 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     case "move": {
       consumesTurn = true;
 
+      if (
+        state.player.roomId === "HydroponicsPlatform" &&
+        cmd.direction === "down" &&
+        state.worldState.conditionalTriggers.EscapedWithYellowBadge &&
+        !state.worldState.hydroponicsSpider.isAlive
+      ) {
+        message =
+          "Below the grating, the collapsed nest is boiling with millions of hand-sized spiders swarming over the dead mother's burst abdomen. There is no chance you're going back down there.";
+        consumesTurn = false;
+        break;
+      }
+
       const exit = room.exits.find((e) => e.direction === cmd.direction);
       if (!exit) {
         message = "You can't go that way.";
@@ -335,6 +347,22 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
       ...nextState,
       log: logAfter.slice(0, logBeforeLen),
     } as any;
+
+    nextState = runScriptedEvents(
+      nextState,
+      {
+        kind: "onTurnEnd",
+        roomId: nextState.player.roomId,
+        fromRoomId: state.player.roomId,
+        commandText:
+          cmd.type === "action" || cmd.type === "unknown"
+            ? cmd.raw.trim().toLowerCase()
+            : undefined,
+        commandVerb: cmd.type === "action" ? cmd.verb : undefined,
+        commandDirect: cmd.type === "action" ? cmd.direct?.trim().toLowerCase() : undefined,
+      },
+      SCRIPTED_EVENTS,
+    );
   }
 
   // If room changed, append destination room details from the UPDATED world state.

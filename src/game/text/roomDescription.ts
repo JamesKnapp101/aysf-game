@@ -13,7 +13,11 @@ import {
 } from "../selectors/doorSelectors";
 import { getItemsInRoom } from "../selectors/roomSelectors";
 import type { GameState } from "../types/gameTypes";
-import { getVisibleHydroponicsSpider } from "src/world/Items/creatures/giantSpider";
+import {
+  getVisibleHydroponicsSpider,
+  HYDROPONICS_SPIDER_ITEM_ID,
+} from "src/world/Items/creatures/giantSpider";
+import { isHydroponicsCocoonRoom } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 type RoomDescriptionMode = "log" | "panel";
 
@@ -77,20 +81,44 @@ export function buildRoomDescription(
 
   const parts: string[] = [];
 
-  const sceneryText = sceneryItems
-    .map((it) =>
-      getItemSceneryDescription(state, it, { kind: "scenery", roomId }),
+  const sceneryEntries = sceneryItems
+    .map((item) => ({
+      item,
+      text: getItemSceneryDescription(state, item, {
+        kind: "scenery",
+        roomId,
+      }),
+    }))
+    .filter(
+      (entry): entry is { item: (typeof sceneryItems)[number]; text: string } =>
+        Boolean(entry.text && entry.text.trim()),
     )
-    .filter((s): s is string => Boolean(s && s.trim()))
-    .map((s) =>
-      s
+    .map((entry) => ({
+      ...entry,
+      text: entry.text
         .replace(/[ \t]+\n/g, "\n")
         .replace(/\n[ \t]+/g, "\n")
         .replace(/\n{3,}/g, "\n\n")
         .trim(),
-    )
-    .join(" ")
-    .replaceAll("[[newline]]", `\n\n`);
+    }));
+
+  let sceneryText = sceneryEntries.map((entry) => entry.text).join(" ");
+
+  if (isHydroponicsCocoonRoom(roomId)) {
+    const cocoonText = sceneryEntries
+      .filter((entry) => entry.item.id !== HYDROPONICS_SPIDER_ITEM_ID)
+      .map((entry) => entry.text)
+      .join(" ");
+    const spiderText =
+      sceneryEntries.find((entry) => entry.item.id === HYDROPONICS_SPIDER_ITEM_ID)
+        ?.text ?? "";
+
+    if (cocoonText && spiderText) {
+      sceneryText = `${cocoonText}\n\n${spiderText}`;
+    }
+  }
+
+  sceneryText = sceneryText.replaceAll("[[newline]]", `\n\n`);
 
   const token = "[[SCENERY]]";
 

@@ -412,6 +412,7 @@ export const createInitialState = (world: World): GameState => {
         MysteriousNoteFound: false,
         RobotRefugeAccess: false,
         HydroponicsDoorUnblocked: false,
+        EscapedWithYellowBadge: false,
       },
       damagedFlashlight: {
         isOn: false,

@@ -39,6 +39,20 @@ export const HYDROPONICS_COCOON_ROOM_IDS = [
   "UnderWebFour",
 ] as const;
 
+const HYDROPONICS_ESCAPE_MOVES_TO_PLATFORM: Record<
+  (typeof HYDROPONICS_AREA_ROOM_IDS)[number],
+  number
+> = {
+  HydroponicsPlatform: 0,
+  HydroponicsPlatformAdmin: 1,
+  HydroponicsPlatformMid: 1,
+  HydroponicsPlatformBottom: 2,
+  UnderWebOne: 3,
+  UnderWebTwo: 3,
+  UnderWebThree: 3,
+  UnderWebFour: 3,
+};
+
 export const HYDROPONICS_EMPLOYEE_PROFILES: HydroponicsEmployeeProfile[] = [
   {
     id: "DizzyTsoukann",
@@ -160,22 +174,6 @@ function formatFeatureList(features: string[]): string {
   return `${features.slice(0, -1).join(", ")}, and ${features[features.length - 1]}`;
 }
 
-function formatPersonSummary(profile: HydroponicsEmployeeProfile): string {
-  const articles = {
-    male: "man",
-    female: "woman",
-  } as const;
-
-  const hairText = profile.hair
-    ? `${profile.hair.length}, ${profile.hair.texture} ${profile.hair.color} hair`
-    : "a bald head";
-  const featureText = profile.features?.length
-    ? `, and ${formatFeatureList(profile.features)}`
-    : "";
-
-  return `a ${profile.height}, ${profile.build} ${articles[profile.gender]} with ${hairText}${featureText}`;
-}
-
 function buildEmployeeRecord(profile: HydroponicsEmployeeProfile): string {
   const lines = [
     `Name: ${profile.name}`,
@@ -233,6 +231,16 @@ function buildRoomSlots(rng: () => number): string[] {
 
 export function isHydroponicsAreaRoom(roomId: string): boolean {
   return HYDROPONICS_ROOM_ID_SET.has(roomId);
+}
+
+function getHydroponicsEscapeGraceTurns(roomId: string): number {
+  const movesToPlatform =
+    HYDROPONICS_ESCAPE_MOVES_TO_PLATFORM[
+      roomId as keyof typeof HYDROPONICS_ESCAPE_MOVES_TO_PLATFORM
+    ] ?? 0;
+
+  // The timer also ticks at the end of the cocoon-opening turn.
+  return movesToPlatform + 1;
 }
 
 export function isHydroponicsCocoonRoom(roomId: string): boolean {
@@ -301,7 +309,7 @@ export function describeHydroponicsSignIn(state: GameState): string {
     return "The tablet display has gone dim, leaving nothing readable on it.";
   }
 
-  return `The sign-in tablet shows the most recent visitor entry: ${profile.name}, Power Department. A thumbnail photo beside the entry shows ${formatPersonSummary(profile)}. Clipped across the front of the visitor's coveralls is a yellow plastic security badge.`;
+  return `The sign-in tablet shows the most recent visitor entry: ${profile.name}, Power Department. Clipped across the front of the visitor's coveralls is a yellow plastic security badge.`;
 }
 
 export function buildHydroponicsTerminalMenu(state: GameState): HintMenuNode {
@@ -340,21 +348,6 @@ export function tickHydroponicsCocoonPuzzle(state: GameState): {
     return { state };
   }
 
-  if (!isHydroponicsAreaRoom(state.player.roomId)) {
-    return {
-      state: {
-        ...state,
-        worldState: {
-          ...state.worldState,
-          hydroponicsCocoonPuzzle: {
-            ...puzzle,
-            graceTurnsRemaining: 0,
-          },
-        },
-      },
-    };
-  }
-
   const nextGraceTurnsRemaining = Math.max(0, puzzle.graceTurnsRemaining - 1);
   const nextState = {
     ...state,
@@ -369,6 +362,37 @@ export function tickHydroponicsCocoonPuzzle(state: GameState): {
 
   if (nextGraceTurnsRemaining > 0) {
     return { state: nextState };
+  }
+
+  if (state.player.roomId === "HydroponicsPlatform") {
+    const clearedHydroAudio = Object.fromEntries(
+      HYDROPONICS_AREA_ROOM_IDS.map((roomId) => [roomId, 0]),
+    );
+
+    return {
+      state: {
+        ...nextState,
+        worldState: {
+          ...nextState.worldState,
+          conditionalTriggers: {
+            ...nextState.worldState.conditionalTriggers,
+            EscapedWithYellowBadge: true,
+          },
+          hydroponicsSpider: {
+            ...nextState.worldState.hydroponicsSpider,
+            isAlive: false,
+            sensitivity: 0,
+            pendingAcidTarget: "none",
+            turnsSinceLastBreath: 0,
+            lastTrackedHydroponicsRoomId: undefined,
+          },
+          roomAudioLevel: {
+            ...nextState.worldState.roomAudioLevel,
+            ...clearedHydroAudio,
+          },
+        },
+      },
+    };
   }
 
   return {
@@ -428,7 +452,9 @@ export function openHydroponicsCocoon(
       hydroponicsCocoonPuzzle: {
         ...puzzle,
         resolved: true,
-        graceTurnsRemaining: 2,
+        graceTurnsRemaining: getHydroponicsEscapeGraceTurns(
+          workingState.player.roomId,
+        ),
         openedBodyIds: {
           ...puzzle.openedBodyIds,
           [bodyId]: true,
@@ -440,6 +466,6 @@ export function openHydroponicsCocoon(
   return {
     state: next,
     message:
-      "The cocoon parts under your hands and a yellow plastic badge comes away with the loosened silk. Somewhere overhead the web canopy begins to shiver. Whatever is sleeping above you has noticed. You have maybe one move before the whole nest erupts.",
+      "The cocoon parts under your hands and a yellow plastic badge comes away with the loosened silk. Somewhere overhead the web canopy begins to shiver. Whatever is sleeping above you has noticed. If you move now, you might just make it back to the upper platform before the whole nest erupts.",
   };
 }

@@ -16,7 +16,7 @@ export function HydroponicsAdminTerminalModal({ onClose, state }: Props) {
       title="OMNICONNECT - HYDROPONICS ADMIN TERMINAL"
       onClose={onClose}
       width={640}
-      height={440}
+      height={540}
     >
       <HintsTab rootMenu={rootMenu} />
     </CrtModal>
