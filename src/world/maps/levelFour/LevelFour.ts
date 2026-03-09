@@ -14,7 +14,12 @@ import { levelFourDoors } from "../../doors/levelFourDoors";
 import { levelFourItems } from "../../Items/levelFourMisc";
 
 export const LEVEL_FOUR: WorldChunk = {
-  items: [...levelFourItems, ...aviaryOrganismItems, ...bullItems, ...octopusItems],
+  items: [
+    ...levelFourItems,
+    ...aviaryOrganismItems,
+    ...bullItems,
+    ...octopusItems,
+  ],
   doors: [...levelFourDoors],
   teleportPads: [],
   rooms: [

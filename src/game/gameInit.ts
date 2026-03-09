@@ -1,6 +1,10 @@
 import { initializeEncounterStateOnEnter } from "@game/encounters/retryableEncounters";
+import { createInitialAviarySpotlightState } from "@game/engine/ticks/aviaryTick";
 import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
 import { bucketForItem, inventoryHas } from "@game/rules/state";
+import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
+import { createInitialOctopusState } from "src/world/Items/creatures/octopus";
+import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
 import { mergeWorldChunks, type WorldChunkId } from "../world/World";
 import {
   INITIAL_CONTAINER_CONTENTS,
@@ -8,12 +12,17 @@ import {
   INITIAL_UNDER_CONTENTS,
 } from "./containerContents";
 import { seedItemRoomLocations } from "./helpers/itemHelpers";
-import { createInitialAviarySpotlightState } from "@game/engine/ticks/aviaryTick";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
 import type { GameState, World, WorldChunk } from "./types/gameTypes";
-import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
-import { createInitialOctopusState } from "src/world/Items/creatures/octopus";
-import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
+
+export const FINAL_PLAYER_START_ROOM_ID = "VeterinaryCenter";
+
+// Set this to a room id while testing another area. Leave undefined for the
+// normal game start at FINAL_PLAYER_START_ROOM_ID.
+export const DEV_PLAYER_START_ROOM_ID: string | undefined = undefined;
+
+export const INITIAL_PLAYER_ROOM_ID =
+  DEV_PLAYER_START_ROOM_ID ?? FINAL_PLAYER_START_ROOM_ID;
 
 export const createInitialState = (world: World): GameState => {
   const uniqueItems = Array.from(
@@ -69,7 +78,7 @@ export const createInitialState = (world: World): GameState => {
     rating: 0,
     moves: 0,
     player: {
-      roomId: "HydroponicsPlatform",
+      roomId: INITIAL_PLAYER_ROOM_ID,
       inventory: startingInventory,
       log: [],
       dnaBank: [],
@@ -464,7 +473,10 @@ export const createInitialState = (world: World): GameState => {
   };
 
   const seededState = seedInitialPlacements(initialGameState);
-  return initializeEncounterStateOnEnter(seededState, seededState.player.roomId);
+  return initializeEncounterStateOnEnter(
+    seededState,
+    seededState.player.roomId,
+  );
 };
 
 function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {

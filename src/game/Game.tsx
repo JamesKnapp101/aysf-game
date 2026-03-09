@@ -26,7 +26,6 @@ import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 import { appendLog, handleCommand } from "./engine/handleCommand";
 import { createInitialState, mergeWorldChunkIntoState } from "./gameInit";
-import { getCurrentRoom, getCurrentRoomExits } from "./selectors/roomSelectors";
 import {
   getActiveStatusEffectIds,
   getRadiationIntensity,
@@ -239,6 +238,38 @@ export const Game: React.FC = () => {
   }, [gs.player.roomId, requestWorldChunk]);
 
   useEffect(() => {
+    if (gs.world.rooms.some((room) => room.id === gs.player.roomId)) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const hydrateCurrentRoom = async () => {
+      for (const chunkId of DEFERRED_WORLD_CHUNK_IDS) {
+        if (cancelled || !isMountedRef.current) return;
+
+        if (
+          stateRef.current.world.rooms.some(
+            (room) => room.id === stateRef.current.player.roomId,
+          )
+        ) {
+          return;
+        }
+
+        await requestWorldChunk(chunkId);
+        if (cancelled || !isMountedRef.current) return;
+        await waitForBackgroundTurn();
+      }
+    };
+
+    void hydrateCurrentRoom();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [gs.player.roomId, gs.world.rooms, requestWorldChunk]);
+
+  useEffect(() => {
     const requestedChunkIds = Array.isArray(gs.world.meta?.requestedChunkIds)
       ? (gs.world.meta.requestedChunkIds as WorldChunkId[])
       : [];
@@ -339,12 +370,23 @@ export const Game: React.FC = () => {
 
   const roomPanelFlexBasis = `${layout.roomHeightRatio * 100}%`;
 
-  const currentRoom = getCurrentRoom(gs);
-  const exits = getCurrentRoomExits(gs);
-  const desc = buildRoomDescription(gs, currentRoom.id, {
-    mode: "panel",
-    forceFull: true,
-  });
+  const currentRoom =
+    gs.world.rooms.find((room) => room.id === gs.player.roomId) ?? null;
+  const exits = currentRoom?.exits.map((exit) => exit.direction) ?? [];
+  const loadedChunkIds = Array.isArray(gs.world.meta?.loadedChunkIds)
+    ? gs.world.meta.loadedChunkIds
+    : [];
+  const allDeferredChunksLoaded = DEFERRED_WORLD_CHUNK_IDS.every((chunkId) =>
+    loadedChunkIds.includes(chunkId),
+  );
+  const desc = currentRoom
+    ? buildRoomDescription(gs, currentRoom.id, {
+        mode: "panel",
+        forceFull: true,
+      })
+    : allDeferredChunksLoaded
+      ? `Unknown room id: ${gs.player.roomId}`
+      : "The surrounding area is still coming into focus.";
 
   const activeEffects = getActiveStatusEffectIds(gs);
   const rad = getRadiationIntensity(gs);
@@ -354,7 +396,9 @@ export const Game: React.FC = () => {
     (eff: StatusEffect) => eff.id === "drunk",
   );
 
-  const roomIsDark = Boolean(gs.worldState.darkRooms[currentRoom.id]);
+  const roomIsDark = currentRoom
+    ? Boolean(gs.worldState.darkRooms[currentRoom.id])
+    : false;
 
   const nightVisionActive = activeEffects.includes("nightvision-active");
 
@@ -372,7 +416,7 @@ export const Game: React.FC = () => {
       ? "nightvision"
       : roomIsDark && flashlightOn
         ? "flashlight"
-        : "none";
+        : "ambient";
 
   const overlayRunAction = useCallback(
     (verb: string, payload?: any) => {
@@ -439,7 +483,7 @@ export const Game: React.FC = () => {
             {/* HEADER */}
             <div className="game-header">
               <div className="game-header-location">
-                {currentRoom.name || "Unknown Location"}
+                {currentRoom?.name || "Unknown Location"}
               </div>
               <div className="game-header-stats">
                 <span>Score: {getCurrentScore(gs)}</span>
@@ -461,7 +505,7 @@ export const Game: React.FC = () => {
               playerCanSee={playerCanSee}
               playerLightMode={playerLightMode}
               flashlightOn={flashlightOn ? "true" : "false"}
-              roomId={currentRoom.id}
+              roomId={currentRoom?.id ?? gs.player.roomId}
               state={gs}
               setBrainActivityLevel={(val) =>
                 dispatchState({ type: "setBrainActivity", val })
