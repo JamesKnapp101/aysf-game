@@ -5,6 +5,7 @@ import type {
   HydroponicsCocoonPuzzleState,
 } from "@game/types/gameTypes";
 import type { HintLeafNode, HintMenuNode } from "@game/types/hintTypes";
+import { createInitialHydroponicsSpiderState } from "./hydroponicsEncounterState";
 
 export type HydroponicsEmployeeProfile = {
   id: string;
@@ -290,6 +291,28 @@ export function resetHydroponicsCocoonPuzzle(state: GameState): GameState {
       },
     },
   };
+}
+
+export function resetHydroponicsEncounter(state: GameState): GameState {
+  const resetPuzzleState = resetHydroponicsCocoonPuzzle({
+    ...state,
+    worldState: {
+      ...state.worldState,
+      hydroponicsSpider: createInitialHydroponicsSpiderState(),
+      conditionalTriggers: {
+        ...state.worldState.conditionalTriggers,
+        EscapedWithYellowBadge: false,
+      },
+      roomAudioLevel: {
+        ...state.worldState.roomAudioLevel,
+        ...Object.fromEntries(
+          HYDROPONICS_AREA_ROOM_IDS.map((roomId) => [roomId, 0]),
+        ),
+      },
+    },
+  });
+
+  return resetPuzzleState;
 }
 
 export function maybeInitializeHydroponicsCocoonPuzzle(

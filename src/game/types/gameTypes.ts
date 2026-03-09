@@ -181,6 +181,15 @@ export type HydroponicsCocoonPuzzleState = {
   openedBodyIds: Record<string, boolean>;
 };
 
+export type BullEncounterState = {
+  chargeCooldown: number;
+  stunnedTurns: number;
+  pendingCharge?: {
+    dir: string;
+    targetRoomId: string;
+  };
+};
+
 export type BrainSlugState = {
   isHydrated: boolean;
   attachedTo: string;
@@ -246,6 +255,7 @@ export interface WorldState {
   octopusState: OctopusState;
   catState: CatState;
   aviarySpotlight: AviarySpotlightState;
+  bullEncounter: BullEncounterState;
   hydroponicsSpider: HydroponicsSpiderState;
   hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;
   brainSlug: BrainSlugState;

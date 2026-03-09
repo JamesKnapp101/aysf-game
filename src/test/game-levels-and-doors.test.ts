@@ -155,6 +155,39 @@ describe("Doors and level mechanics", () => {
     );
   });
 
+  it("resets the hydroponics encounter and respawns the player nearby on death", () => {
+    const start = createHydroponicsPuzzleState("SillithLeSconce", {
+      ...createTestState({
+        roomId: "UnderWebOne",
+        visitedRooms: ["UnderWebOne", "LevelSixCorridorEnd"],
+      }),
+      itemState: {
+        ...createTestState({
+          roomId: "UnderWebOne",
+          visitedRooms: ["UnderWebOne", "LevelSixCorridorEnd"],
+        }).itemState,
+      },
+    });
+    const withWrongCocoon = {
+      ...start,
+      itemState: {
+        ...start.itemState,
+        itemRoomId: {
+          ...start.itemState.itemRoomId,
+          DizzyTsoukann: "UnderWebOne",
+        },
+      },
+    };
+
+    const next = runCommand(withWrongCocoon, "open wispy cocoon");
+
+    expect(next.player.roomId).toBe("LevelSixCorridorEnd");
+    expect(next.worldState.hydroponicsSpider.isAlive).toBe(true);
+    expect(next.worldState.conditionalTriggers.EscapedWithYellowBadge).toBe(false);
+    expect(next.worldState.hydroponicsCocoonPuzzle.resolved).toBe(false);
+    expect(next.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining).toBe(0);
+  });
+
   it("describes the dead spider aftermath and blocks descending back into the nest after a successful escape", () => {
     const escaped = runCommands(createHydroponicsEscapeState("UnderWebOne"), [
       "open statuesque cocoon",
@@ -387,6 +420,105 @@ describe("Doors and level mechanics", () => {
       true,
     );
     expect(entered.player.roomId).toBe("HydroponicsPlatform");
+  });
+
+  it("respawns the player at the aquarium start and resets the octopus encounter on death", () => {
+    const baseState = createTestState({
+      roomId: "AqOpen1",
+      visitedRooms: ["AqOpen1", "AqStart"],
+    });
+    const start = {
+      ...baseState,
+      worldState: {
+        ...baseState.worldState,
+        octopusState: {
+          ...baseState.worldState.octopusState,
+          rootRoomId: "AqCross",
+          occupiedRoomIds: ["AqCross", "AqOpen2"],
+          tipRoomIds: ["AqOpen2"],
+          maxSegments: 8,
+          movesPerTick: 1,
+          retreatTicks: 0,
+        },
+      },
+    };
+
+    const next = runCommand(start, "north");
+
+    expect(next.player.roomId).toBe("AqStart");
+    expect(next.worldState.octopusState.occupiedRoomIds).toEqual(["AqCross"]);
+    expect(next.worldState.octopusState.tipRoomIds).toEqual(["AqCross"]);
+    expect(next.itemState.itemRoomId.octopus).toBe("AqCross");
+  });
+
+  it("respawns the player near the preserve and resets the bull encounter on death", () => {
+    const baseState = createTestState({
+      roomId: "PresE",
+      visitedRooms: ["PresE", "VeterinaryCenter"],
+    });
+    const start = {
+      ...baseState,
+      itemState: {
+        ...baseState.itemState,
+        itemRoomId: {
+          ...baseState.itemState.itemRoomId,
+          bull: "PresB",
+        },
+      },
+      worldState: {
+        ...baseState.worldState,
+        bullEncounter: {
+          chargeCooldown: 0,
+          stunnedTurns: 0,
+          pendingCharge: {
+            dir: "south",
+            targetRoomId: "PresE",
+          },
+        },
+      },
+    };
+
+    const next = runCommand(start, "wait");
+
+    expect(next.player.roomId).toBe("VeterinaryCenter");
+    expect(next.worldState.bullEncounter.chargeCooldown).toBe(3);
+    expect(next.worldState.bullEncounter.stunnedTurns).toBe(0);
+    expect(next.worldState.bullEncounter.pendingCharge).toBeUndefined();
+    expect(next.itemState.itemRoomId.bull).toBe("PresF");
+  });
+
+  it("respawns the player outside the aviary and resets the encounter on death", () => {
+    const baseState = createTestState({
+      roomId: "OuterRingNorth",
+      visitedRooms: ["OuterRingNorth", "ZooOne"],
+    });
+    const start = {
+      ...baseState,
+      itemState: {
+        ...baseState.itemState,
+        itemRoomId: {
+          ...baseState.itemState.itemRoomId,
+          organism1: "OuterRingNorth",
+        },
+      },
+      worldState: {
+        ...baseState.worldState,
+        aviarySpotlight: {
+          ...baseState.worldState.aviarySpotlight,
+          index: 5,
+          turnsLeftHere: 2 as const,
+          hintCooldown: 2,
+        },
+      },
+    };
+
+    const next = runCommand(start, "wait");
+
+    expect(next.player.roomId).toBe("ZooOne");
+    expect(next.worldState.aviarySpotlight.index).toBe(0);
+    expect(next.worldState.aviarySpotlight.turnsLeftHere).toBe(1);
+    expect(next.worldState.aviarySpotlight.hintCooldown).toBe(0);
+    expect(next.itemState.itemRoomId.organism1).toBe("OuterRingNorth");
   });
 });
 

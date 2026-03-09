@@ -1,11 +1,14 @@
 import {
   AVIARY_ROOM_IDS,
+  createInitialAviarySpotlightState,
   isRoomSpotlitByAviary,
 } from "@game/engine/ticks/aviaryTick";
 import { TickContext } from "@game/types/context";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { Exit } from "@game/types/roomTypes";
+
+export const AVIARY_RETRY_RESPAWN_ROOM_ID = "ZooOne";
 
 export function getRandomOrganismAudioCue(dirFromPlayer: string): string {
   const r = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
@@ -75,6 +78,27 @@ export const aviaryOrganismItems: Item[] = [
     },
   },
 ];
+
+export function resetAviaryEncounter(state: GameState): GameState {
+  const organismRoomPatch = Object.fromEntries(
+    aviaryOrganismItems.map((item) => [item.id, item.location]),
+  );
+
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      aviarySpotlight: createInitialAviarySpotlightState(),
+    },
+    itemState: {
+      ...state.itemState,
+      itemRoomId: {
+        ...state.itemState.itemRoomId,
+        ...organismRoomPatch,
+      },
+    },
+  };
+}
 
 export function getAviaryNextSpotlitRoomId(state: GameState): string | null {
   const spot = state.worldState.aviarySpotlight;

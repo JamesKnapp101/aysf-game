@@ -1,15 +1,15 @@
-import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import { hydroponicsRooms } from "src/world/maps/levelSix/Hydroponics";
+import { HYDROPONICS_SPIDER_INITIAL_DOOR_HEALTH } from "src/world/maps/levelSix/hydroponicsEncounterState";
 
 export const HYDROPONICS_SPIDER_ITEM_ID = "spider";
 export const HYDROPONICS_SPIDER_ROOM_IDS = new Set(
   hydroponicsRooms.map((room) => room.id),
 );
 
-export const HYDROPONICS_SPIDER_DOOR_MAX_HP = 3;
+export const HYDROPONICS_SPIDER_DOOR_MAX_HP = HYDROPONICS_SPIDER_INITIAL_DOOR_HEALTH;
 export const HYDROPONICS_SPIDER_REACHABILITY_MESSAGE =
   "You can't reach it from where you are.";
 const HYDROPONICS_SPIDER_BLIND_SPOT_ROOM_IDS = new Set([
@@ -247,9 +247,13 @@ export function lookThroughSpiderGap(state: GameState): ActionResult {
   };
 }
 
-export function tickHydroponicsSpiderThreat(state: GameState): GameState {
+export function tickHydroponicsSpiderThreat(state: GameState): {
+  state: GameState;
+  deathMessage?: string;
+  deathCause?: string;
+} {
   const spider = state.worldState.hydroponicsSpider;
-  if (!spider.isAlive) return state;
+  if (!spider.isAlive) return { state };
 
   const inHydroponics = isHydroponicsSpiderRoom(state.player.roomId);
   const exposedToSpider =
@@ -257,35 +261,39 @@ export function tickHydroponicsSpiderThreat(state: GameState): GameState {
 
   if (exposedToSpider) {
     if (spider.lastTrackedHydroponicsRoomId !== state.player.roomId) {
-      return updateSpiderState(state, {
-        sensitivity: 0,
-        pendingAcidTarget: "none",
-        lastTrackedHydroponicsRoomId: state.player.roomId,
-      });
+      return {
+        state: updateSpiderState(state, {
+          sensitivity: 0,
+          pendingAcidTarget: "none",
+          lastTrackedHydroponicsRoomId: state.player.roomId,
+        }),
+      };
     }
   } else if (spider.lastTrackedHydroponicsRoomId) {
-    return updateSpiderState(state, {
-      sensitivity: 0,
-      pendingAcidTarget: "none",
-      lastTrackedHydroponicsRoomId: undefined,
-    });
+    return {
+      state: updateSpiderState(state, {
+        sensitivity: 0,
+        pendingAcidTarget: "none",
+        lastTrackedHydroponicsRoomId: undefined,
+      }),
+    };
   }
 
   if (
     spider.pendingAcidTarget === "player" ||
     spider.pendingAcidTarget === "gapPlayer"
   ) {
-    const armedState = updateSpiderState(state, {
-      pendingAcidTarget: "none",
-      sensitivity: Math.max(0, spider.sensitivity - 1),
-    });
-    return triggerPlayerDeath(
-      armedState,
-      spider.pendingAcidTarget === "gapPlayer"
-        ? GAP_FATAL_MESSAGE
-        : HYDROPONICS_FATAL_MESSAGE,
-      "hydroponics spider acid",
-    );
+    return {
+      state: updateSpiderState(state, {
+        pendingAcidTarget: "none",
+        sensitivity: Math.max(0, spider.sensitivity - 1),
+      }),
+      deathMessage:
+        spider.pendingAcidTarget === "gapPlayer"
+          ? GAP_FATAL_MESSAGE
+          : HYDROPONICS_FATAL_MESSAGE,
+      deathCause: "hydroponics spider acid",
+    };
   }
 
   if (spider.pendingAcidTarget === "door") {
@@ -310,10 +318,12 @@ export function tickHydroponicsSpiderThreat(state: GameState): GameState {
     }
 
     const damageIndex = HYDROPONICS_SPIDER_DOOR_MAX_HP - nextDoorHealth - 1;
-    return appendSpiderLog(
-      next,
-      DOOR_ACID_MESSAGES[damageIndex] ?? DOOR_ACID_MESSAGES[2],
-    );
+    return {
+      state: appendSpiderLog(
+        next,
+        DOOR_ACID_MESSAGES[damageIndex] ?? DOOR_ACID_MESSAGES[2],
+      ),
+    };
   }
 
   const nextSensitivity = exposedToSpider
@@ -331,7 +341,7 @@ export function tickHydroponicsSpiderThreat(state: GameState): GameState {
     nextSensitivity === spider.sensitivity &&
     nextPendingAcidTarget === spider.pendingAcidTarget
   ) {
-    return state;
+    return { state };
   }
 
   let next = updateSpiderState(state, {
@@ -349,7 +359,7 @@ export function tickHydroponicsSpiderThreat(state: GameState): GameState {
     next = appendSpiderLog(next, warning);
   }
 
-  return next;
+  return { state: next };
 }
 
 export const giantSpiderItems: Item[] = [

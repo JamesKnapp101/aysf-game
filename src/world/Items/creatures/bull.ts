@@ -1,7 +1,58 @@
 import { appendLog } from "@game/engine/handleCommand";
+import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import { TickContext } from "@game/types/context";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
+
+export const BULL_ROOM_IDS = [
+  "PresA",
+  "PresB",
+  "PresC",
+  "PresD",
+  "PresE",
+  "PresF",
+  "PresG",
+] as const;
+
+export const BULL_INITIAL_ROOM_ID = "PresF";
+export const BULL_RETRY_RESPAWN_ROOM_ID = "VeterinaryCenter";
+
+export function createInitialBullEncounterState(): GameState["worldState"]["bullEncounter"] {
+  return {
+    chargeCooldown: 3,
+    stunnedTurns: 0,
+    pendingCharge: undefined,
+  };
+}
+
+export function resetBullEncounter(state: GameState): GameState {
+  const next = {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      bullEncounter: createInitialBullEncounterState(),
+    },
+  };
+
+  if (next.itemState.itemRoomId.bull) {
+    return moveItemToRoom(next, "bull", BULL_INITIAL_ROOM_ID);
+  }
+
+  return {
+    ...next,
+    itemState: {
+      ...next.itemState,
+      itemRoomId: {
+        ...next.itemState.itemRoomId,
+        bull: BULL_INITIAL_ROOM_ID,
+      },
+    },
+  };
+}
+
+function getBullRoomId(state: GameState, item: Item): string | undefined {
+  return state.itemState.itemRoomId[item.id] ?? item.location ?? undefined;
+}
 
 export const bullItems: Item[] = [
   {
@@ -13,22 +64,12 @@ export const bullItems: Item[] = [
       canMove: true,
       vision: "normal",
       hostility: "hostile",
-      homeRegion: [
-        "PresA",
-        "PresB",
-        "PresC",
-        "PresD",
-        "PresE",
-        "PresF",
-        "PresG",
-      ],
+      homeRegion: [...BULL_ROOM_IDS],
       memories: [],
-      chargeCooldown: 3,
-      stunnedTurns: 2,
     },
     description:
       "The bull is huge, with a thick, black hide and a powerful, muscular frame. Its horns curve menacingly from its head, and its dark eyes glint, never leaving you for long. It stands with a low, threatening posture, ready to charge at any perceived threat.",
-    location: "PresF",
+    location: BULL_INITIAL_ROOM_ID,
     vocab: ["bull", "steer"],
     itemClass: "solid",
     itemWeight: 600,
@@ -38,7 +79,7 @@ export const bullItems: Item[] = [
         state,
         item,
         rng,
-        moveItemToRoom,
+        moveItemToRoom: moveBullItemToRoom,
         getRoomExits,
         getPlayerRoomId,
         triggerPlayerDeath,
@@ -47,12 +88,38 @@ export const bullItems: Item[] = [
       }): GameState | void => {
         let nextState = state;
 
-        const bullRoom = item.location;
+        const bullRoom = getBullRoomId(nextState, item);
         const playerRoom = getPlayerRoomId
           ? getPlayerRoomId()
           : state.player.roomId;
+        if (!bullRoom) return nextState;
 
-        const meta = (item.meta ?? {}) as any;
+        const meta = (item.meta ?? {}) as {
+          isAlive?: boolean;
+          canMove?: boolean;
+          homeRegion?: string[];
+        };
+        const region: string[] = meta.homeRegion ?? [];
+        const inRegion =
+          region.includes(playerRoom) && region.includes(bullRoom);
+        if (meta.isAlive === false || meta.canMove === false || !inRegion) {
+          return nextState;
+        }
+
+        let bullEncounter =
+          nextState.worldState.bullEncounter ?? createInitialBullEncounterState();
+
+        const commitBullEncounter = () => {
+          nextState = {
+            ...nextState,
+            worldState: {
+              ...nextState.worldState,
+              bullEncounter: {
+                ...bullEncounter,
+              },
+            },
+          };
+        };
 
         const log = (text: string) => {
           nextState = appendLog(nextState, text);
@@ -63,10 +130,10 @@ export const bullItems: Item[] = [
 
         const getNextRoom = (
           fromRoomId: string,
-          dir: string
+          dir: string,
         ): string | undefined => {
           const exits = getRoomExits(fromRoomId) ?? [];
-          const ex = exits.find((e: any) => e.direction === dir);
+          const ex = exits.find((candidate: any) => candidate.direction === dir);
           return ex?.toRoomId;
         };
 
@@ -88,11 +155,11 @@ export const bullItems: Item[] = [
         const traceLine = (
           startRoomId: string,
           dir: string,
-          maxSteps: number
+          maxSteps: number,
         ): string[] => {
           const rooms: string[] = [];
           let cur = startRoomId;
-          for (let i = 0; i < maxSteps; i++) {
+          for (let i = 0; i < maxSteps; i += 1) {
             const nxt = getNextRoom(cur, dir);
             if (!nxt) break;
             rooms.push(nxt);
@@ -118,58 +185,47 @@ export const bullItems: Item[] = [
         const countBehind = (
           targetRoomId: string,
           dir: string,
-          max: number
-        ): number => {
-          return traceLine(targetRoomId, dir, max).length;
-        };
+          max: number,
+        ): number => traceLine(targetRoomId, dir, max).length;
 
         const moveBullTo = (roomId: string) => {
-          nextState = moveItemToRoom(item.id, roomId);
+          nextState = moveBullItemToRoom(item.id, roomId);
         };
 
         const moveBullAlong = (rooms: string[]) => {
-          for (const r of rooms) moveBullTo(r);
+          for (const roomId of rooms) moveBullTo(roomId);
         };
 
-        // ----------------------------
-        // Meta fields
-        // ----------------------------
-        const pendingCharge = meta.pendingCharge as
-          | { dir: string; targetRoomId: string }
-          | undefined;
+        const pendingCharge = bullEncounter.pendingCharge;
+        bullEncounter = {
+          ...bullEncounter,
+          chargeCooldown: Math.max(0, bullEncounter.chargeCooldown ?? 0),
+          stunnedTurns: Math.max(0, bullEncounter.stunnedTurns ?? 0),
+        };
 
-        meta.chargeCooldown = Math.max(0, meta.chargeCooldown ?? 0);
-        meta.stunnedTurns = Math.max(0, meta.stunnedTurns ?? 0);
-
-        if (meta.isAlive === false || meta.canMove === false) return;
-
-        const region: string[] = meta.homeRegion ?? [];
-        const inRegion =
-          region.includes(playerRoom) && region.includes(bullRoom);
-        if (!inRegion) return;
-
-        // ----------------------------
-        // Stun handling
-        // ----------------------------
-        if (meta.stunnedTurns > 0) {
-          meta.stunnedTurns -= 1;
-          if (meta.stunnedTurns === 0) {
+        if (bullEncounter.stunnedTurns > 0) {
+          bullEncounter = {
+            ...bullEncounter,
+            stunnedTurns: bullEncounter.stunnedTurns - 1,
+          };
+          if (bullEncounter.stunnedTurns === 0) {
             log(
-              "The bull shakes its head, snorting hard, and regains its footing."
+              "The bull shakes its head, snorting hard, and regains its footing.",
             );
           } else {
             log(
-              "The bull is still stunned, hooves scraping as it tries to steady itself."
+              "The bull is still stunned, hooves scraping as it tries to steady itself.",
             );
           }
+          commitBullEncounter();
           return nextState;
         }
 
-        // ----------------------------
-        // Cooldown handling
-        // ----------------------------
-        if (meta.chargeCooldown > 0 && !pendingCharge) {
-          meta.chargeCooldown -= 1;
+        if (bullEncounter.chargeCooldown > 0 && !pendingCharge) {
+          bullEncounter = {
+            ...bullEncounter,
+            chargeCooldown: bullEncounter.chargeCooldown - 1,
+          };
 
           if (bullRoom === playerRoom) {
             log("The bull looms close, breathing hot through its nostrils.");
@@ -177,12 +233,14 @@ export const bullItems: Item[] = [
             log("The bull grazes in tense circles, keeping one eye on you.");
           }
 
-          // Optional: tiny reposition during cooldown
           if (rand01() < 0.15) {
             const exits = getRoomExits(bullRoom) ?? [];
             const candidates = exits
-              .map((e: any) => e.toRoomId)
-              .filter((rid: string | undefined) => rid && region.includes(rid));
+              .map((exit: any) => exit.toRoomId)
+              .filter(
+                (roomId: string | undefined) =>
+                  roomId && region.includes(roomId),
+              );
 
             if (candidates.length > 0) {
               const idx = Math.floor(rand01() * candidates.length);
@@ -190,17 +248,16 @@ export const bullItems: Item[] = [
             }
           }
 
+          commitBullEncounter();
           return nextState;
         }
 
-        // ----------------------------
-        // Resolve telegraphed charge
-        // ----------------------------
         if (pendingCharge) {
           const { dir, targetRoomId } = pendingCharge;
-
-          // Clear pending charge
-          delete meta.pendingCharge;
+          bullEncounter = {
+            ...bullEncounter,
+            pendingCharge: undefined,
+          };
 
           log("The bull lowers its head and charges!");
 
@@ -208,32 +265,35 @@ export const bullItems: Item[] = [
           const playerStillInLine = lineNow.includes(playerRoom);
 
           if (playerStillInLine) {
-            log(
-              "Too slow—at the last second it corrects course and slams into you with bone-crushing force."
-            );
-
             if (triggerPlayerDeath) {
+              commitBullEncounter();
               triggerPlayerDeath(
-                "Too slow—at the last second it corrects course and slams into you with bone-crushing force.",
-                "bull"
+                "Too slow-at the last second it corrects course and slams into you with bone-crushing force.",
+                "bull",
               );
-              return nextState;
+              return;
             }
 
-            (nextState.player as any).isAlive = false;
-            (nextState as any).gameOver = (nextState as any).gameOver ?? {
-              reason: "bull",
+            commitBullEncounter();
+            return {
+              ...nextState,
+              player: {
+                ...nextState.player,
+                roomId: BULL_RETRY_RESPAWN_ROOM_ID,
+              },
             };
-            return nextState;
           }
 
           const path = traceLine(bullRoom, dir, 4);
           const targetIdx = path.indexOf(targetRoomId);
 
           if (targetIdx === -1) {
-            // Just go as far as possible
             moveBullAlong(path);
-            meta.chargeCooldown = 2;
+            bullEncounter = {
+              ...bullEncounter,
+              chargeCooldown: 2,
+            };
+            commitBullEncounter();
             return nextState;
           }
 
@@ -243,10 +303,14 @@ export const bullItems: Item[] = [
           if (behind === 0) {
             moveBullAlong(path.slice(0, stepsToTarget));
             log(
-              "With nowhere to carry through, it smashes into the barrier and recoils, stunned."
+              "With nowhere to carry through, it smashes into the barrier and recoils, stunned.",
             );
-            meta.stunnedTurns = 2;
-            meta.chargeCooldown = 3;
+            bullEncounter = {
+              ...bullEncounter,
+              stunnedTurns: 2,
+              chargeCooldown: 3,
+            };
+            commitBullEncounter();
             return nextState;
           }
 
@@ -257,55 +321,61 @@ export const bullItems: Item[] = [
 
             moveBullAlong(moveRooms);
             log("It thunders past and skids hard, stopping just in time.");
-            meta.chargeCooldown = 2;
+            bullEncounter = {
+              ...bullEncounter,
+              chargeCooldown: 2,
+            };
+            commitBullEncounter();
             return nextState;
           }
 
-          // 2+ behind: full charge
           moveBullAlong(path);
-          meta.chargeCooldown = 2;
+          bullEncounter = {
+            ...bullEncounter,
+            chargeCooldown: 2,
+          };
+          commitBullEncounter();
           return nextState;
         }
 
-        // ----------------------------
-        // Telegraph a new charge
-        // ----------------------------
         const line = findPlayerLine();
-        if (line) {
-          const willTelegraph = rand01() < 0.85;
-          if (willTelegraph) {
-            meta.pendingCharge = { dir: line.dir, targetRoomId: playerRoom };
-            const fromPlayerPerspective = oppositeDir(line.dir);
-            log(
-              `The bull stares at you from the ${fromPlayerPerspective}, pawing the ground. It's getting ready to charge!`
-            );
-            return nextState;
-          }
+        if (line && rand01() < 0.85) {
+          bullEncounter = {
+            ...bullEncounter,
+            pendingCharge: { dir: line.dir, targetRoomId: playerRoom },
+          };
+          const fromPlayerPerspective = oppositeDir(line.dir);
+          log(
+            `The bull stares at you from the ${fromPlayerPerspective}, pawing the ground. It's getting ready to charge!`,
+          );
+          commitBullEncounter();
+          return nextState;
         }
 
-        // ----------------------------
-        // Otherwise: wander
-        // ----------------------------
         if (bullRoom === playerRoom) {
           log(
-            "The bull snorts and shifts its weight, close enough that you can feel the tremor in the ground."
+            "The bull snorts and shifts its weight, close enough that you can feel the tremor in the ground.",
           );
+          commitBullEncounter();
           return nextState;
         }
 
         if (rand01() < 0.2) {
           const exits = getRoomExits(bullRoom) ?? [];
           const candidates = exits
-            .map((e: any) => e.toRoomId)
-            .filter((rid: string | undefined) => rid && region.includes(rid));
+            .map((exit: any) => exit.toRoomId)
+            .filter(
+              (roomId: string | undefined) =>
+                roomId && region.includes(roomId),
+            );
 
           if (candidates.length > 0) {
             const idx = Math.floor(rand01() * candidates.length);
             moveBullTo(candidates[idx]);
-            // Optional: log only if player is nearby, etc.
           }
         }
 
+        commitBullEncounter();
         return nextState;
       },
     },

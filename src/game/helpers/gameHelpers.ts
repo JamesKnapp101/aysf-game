@@ -1,4 +1,5 @@
 import { appendLog } from "@game/engine/handleCommand";
+import { getRetryableEncounterDeathOverride } from "@game/encounters/retryableEncounters";
 import {
   getExitDestinationRoomId,
   getRoomExits,
@@ -9,10 +10,6 @@ import { secretOrganismMessage } from "@game/text/secretOrganismMessage";
 import { ScriptContext, ScriptedEvent } from "@game/types/eventTypes";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
-import {
-  isHydroponicsAreaRoom,
-  resetHydroponicsCocoonPuzzle,
-} from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 export function triggerTeleportFlash(el: HTMLElement | null) {
   if (!el) return;
@@ -210,7 +207,11 @@ export function triggerPlayerDeath(
 ): GameState {
   let next = state;
   const roomId = state.player.roomId;
-  const diedInHydroponics = isHydroponicsAreaRoom(roomId);
+  const retryableEncounterOverride = getRetryableEncounterDeathOverride(
+    state,
+    cause,
+    roomId,
+  );
 
   const rebootMessage = `${deathMessage}\n\n\n *** You have died *** \n\n\n...You feel a cold chill over your body as you drift in and out of sleep...why is it so cold? You grope for a blanket, but can't find it. You have a strange, nagging feeling that keeps picking at you, pulling you from the comfort of sleep...you try and remember...\n\nYou open your eyes suddenly and jerk awake, with one of those brief, panicky flashes where you can't remember where you are...you look slowly down at yourself; you're lying sprawled out on the floor, completely naked.  When you sit up, you feel a sharp pain in your neck that triggers a memory...\n\n"I know this...I've done this before," you whisper to yourself.\n\n...but what happened? The last thing you remember...is it possible you somehow survived it? Could you have crawled here? Did someone carry you here? You try and sort it out; this isn't the first time you've woken up like this, but...you can't remember anything before that...nothing at all...`;
 
@@ -257,11 +258,11 @@ export function triggerPlayerDeath(
   const finalRoomIsDark = !!state.worldState.darkRooms[finalRegenRoom];
 
   // Absolute safety: never respawn into the death room or a dark room.
-  const safeRegenRoom = diedInHydroponics
-    ? "LevelSixCorridorEnd"
-    : finalRegenRoom !== roomId && !finalRoomIsDark
+  const safeRegenRoom =
+    retryableEncounterOverride?.respawnRoomId ??
+    (finalRegenRoom !== roomId && !finalRoomIsDark
       ? finalRegenRoom
-      : "PowerGrid";
+      : "PowerGrid");
 
   let nextState: GameState = {
     ...next,
@@ -298,8 +299,8 @@ export function triggerPlayerDeath(
     },
   };
 
-  if (diedInHydroponics) {
-    nextState = resetHydroponicsCocoonPuzzle(nextState);
+  if (retryableEncounterOverride) {
+    nextState = retryableEncounterOverride.reset(nextState);
   }
 
   if (cause === "organism") {

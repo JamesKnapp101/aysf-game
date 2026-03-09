@@ -28,6 +28,9 @@ export const AQUARIUM_ROOM_IDS = new Set<string>([
   "AqChannel5",
 ]);
 
+export const AQUARIUM_RETRY_RESPAWN_ROOM_ID = "AqStart";
+export const OCTOPUS_ROOT_ROOM_ID = "AqCross";
+
 /**
  * IMPORTANT SEMANTICS (for this implementation):
  * - octo.maxSegments is interpreted as MAX TIPS (max tentacles), not "max occupied rooms".
@@ -36,15 +39,24 @@ export const AQUARIUM_ROOM_IDS = new Set<string>([
  */
 
 const DEFAULT_OCTOPUS_STATE: OctopusState = {
-  rootRoomId: "AqCross",
-  occupiedRoomIds: ["AqCross"],
-  tipRoomIds: ["AqCross"],
-  maxSegments: 8, // default "8 tentacles"
+  rootRoomId: OCTOPUS_ROOT_ROOM_ID,
+  occupiedRoomIds: [OCTOPUS_ROOT_ROOM_ID],
+  tipRoomIds: [OCTOPUS_ROOT_ROOM_ID],
+  maxSegments: 8,
   movesPerTick: 1,
   retreatTicks: 0,
   lastSeenPlayerRoomId: undefined,
-  trailQueue: [], // no longer used for movement; kept for type compatibility
+  trailQueue: [],
 };
+
+export function createInitialOctopusState(): OctopusState {
+  return {
+    ...DEFAULT_OCTOPUS_STATE,
+    occupiedRoomIds: [...DEFAULT_OCTOPUS_STATE.occupiedRoomIds],
+    tipRoomIds: [...DEFAULT_OCTOPUS_STATE.tipRoomIds],
+    trailQueue: [...DEFAULT_OCTOPUS_STATE.trailQueue],
+  };
+}
 
 function normalizeOctopusState(maybe: any): OctopusState {
   const merged: OctopusState = {
@@ -105,11 +117,71 @@ function normalizeOctopusState(maybe: any): OctopusState {
 function updateOctopusState(
   state: any,
   updater: (prev: OctopusState) => OctopusState
-): OctopusState {
+): any {
   const prev = normalizeOctopusState(state.worldState.octopusState);
   const next = normalizeOctopusState(updater(prev));
-  state.worldState.octopusState = next;
-  return next;
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      octopusState: next,
+    },
+  };
+}
+
+export function resetAquariumEncounter(state: any): any {
+  const nextItemRoomId = { ...state.itemState.itemRoomId };
+  if ("octopus" in nextItemRoomId) {
+    nextItemRoomId.octopus = OCTOPUS_ROOT_ROOM_ID;
+  }
+
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      octopusState: createInitialOctopusState(),
+    },
+    itemState: {
+      ...state.itemState,
+      itemRoomId: nextItemRoomId,
+    },
+  };
+}
+
+export function getAquariumMoveGuard(
+  state: any,
+  destinationRoomId: string | undefined,
+):
+  | {
+      kind: "block";
+      message: string;
+    }
+  | {
+      kind: "death";
+      deathMessage: string;
+      deathCause: string;
+    }
+  | undefined {
+  if (!destinationRoomId) return undefined;
+  if (!AQUARIUM_ROOM_IDS.has(getPlayerRoomId(state))) return undefined;
+
+  const octo = normalizeOctopusState(state.worldState.octopusState);
+  if (!octo.occupiedRoomIds.includes(destinationRoomId)) return undefined;
+
+  if (octo.tipRoomIds.includes(destinationRoomId)) {
+    return {
+      kind: "death",
+      deathMessage:
+        "You move through the murky water in that direction and run headlong into the groping end of a giant tentacle. You struggle as it wraps around you and jerks you off your feet, dragging you back toward the source in a chaos of flailing arms and ink-black water. You catch a glimpse of the creature's massive, bulbous head, eyes studying you, before it pulls you into a gaping, razor sharp beak...",
+      deathCause: "aquarium octopus",
+    };
+  }
+
+  return {
+    kind: "block",
+    message:
+      "A giant tentacle fills most of the passageway in that direction, you better steer clear.",
+  };
 }
 
 function buildAdjacency(
@@ -233,10 +305,11 @@ function advanceTentaclesTowardPlayer(
 
     const first = candidates[0];
 
-    // If tentacle would move into player => death (wire game over here later)
     if (first === playerRoomId) {
-      console.log("AHHHHH! THE OCTOPUS GOT YOU!!!");
-      return { ...octo, lastSeenPlayerRoomId: playerRoomId };
+      occupied.add(first);
+      tips[i] = first;
+      movesDone += 1;
+      break;
     }
 
     occupied.add(first);
@@ -315,36 +388,17 @@ export const octopusItems: Item[] = [
     itemWeight: 8,
     itemSize: 2,
     overrides: {
-      tick: ({ state, getRoomExits }: TickContext) => {
+      tick: ({ state, getRoomExits, triggerPlayerDeath }: TickContext & {
+        triggerPlayerDeath?: (deathMessage: string, cause: string) => void;
+      }) => {
         const playerRoomId = getPlayerRoomId(state);
         if (!AQUARIUM_ROOM_IDS.has(playerRoomId)) return;
 
-        const returned = updateOctopusState(state, (octo) => {
-          console.log(
-            "[octopus.tick] BEGIN playerRoomId:",
-            playerRoomId,
-            "occupiedLen:",
-            octo.occupiedRoomIds.length,
-            "tipsLen:",
-            octo.tipRoomIds.length,
-            "maxTips(maxSegments):",
-            octo.maxSegments,
-            "movesPerTick:",
-            octo.movesPerTick,
-            "retreatTicks:",
-            octo.retreatTicks
-          );
-
+        const nextState = updateOctopusState(state, (octo) => {
           if (octo.retreatTicks > 0) {
-            const next = { ...octo, retreatTicks: octo.retreatTicks - 1 };
-            console.log(
-              "[octopus.tick] retreat tick; NEXT retreatTicks:",
-              next.retreatTicks
-            );
-            return next;
+            return { ...octo, retreatTicks: octo.retreatTicks - 1 };
           }
 
-          // Core behavior: advance tips (no FIFO trimming)
           const next = advanceTentaclesTowardPlayer(
             state,
             octo,
@@ -352,32 +406,24 @@ export const octopusItems: Item[] = [
             getRoomExits
           );
 
-          // Defensive: keep everything connected (optional, but helps if your map has one-way links later)
           const tmp = { ...next };
           pruneDisconnectedFromRoot(state, tmp, getRoomExits);
-
-          console.log(
-            "[octopus.tick] NEXT occupiedLen:",
-            tmp.occupiedRoomIds.length,
-            "tipsLen:",
-            tmp.tipRoomIds.length,
-            "tips:",
-            tmp.tipRoomIds
-          );
 
           return tmp;
         });
 
-        console.log(
-          "[octopus.tick] COMMITTED occupiedLen:",
-          state.worldState.octopusState?.occupiedRoomIds?.length,
-          "tipsLen:",
-          state.worldState.octopusState?.tipRoomIds?.length
-        );
-        console.log(
-          "[octopus.tick] RETURNED occupiedLen:",
-          returned.occupiedRoomIds.length
-        );
+        if (
+          triggerPlayerDeath &&
+          nextState.worldState.octopusState.tipRoomIds.includes(playerRoomId)
+        ) {
+          triggerPlayerDeath(
+            "The water convulses around you as a tentacle surges in out of the dark and coils around your body. Before you can break free, you're hauled violently through the aquarium toward a yawning beak hidden deeper in the black water.",
+            "aquarium octopus",
+          );
+          return;
+        }
+
+        return nextState;
       },
     },
   } as const,

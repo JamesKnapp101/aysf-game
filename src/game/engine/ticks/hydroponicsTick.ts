@@ -43,7 +43,15 @@ export function tickHydroponics(state: GameState): GameState {
       next = appendLog(next, moanMessage);
     }
 
-    next = tickHydroponicsSpiderThreat(next);
+    const spiderTick = tickHydroponicsSpiderThreat(next);
+    if (spiderTick.deathMessage) {
+      return triggerPlayerDeath(
+        spiderTick.state,
+        spiderTick.deathMessage,
+        spiderTick.deathCause ?? "hydroponics spider acid",
+      );
+    }
+    next = spiderTick.state;
   }
 
   const cocoonTick = tickHydroponicsCocoonPuzzle(next);

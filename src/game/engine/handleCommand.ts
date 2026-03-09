@@ -1,4 +1,9 @@
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
+import {
+  getEncounterActionGuard,
+  getEncounterMoveGuard,
+  initializeEncounterStateOnEnter,
+} from "@game/encounters/retryableEncounters";
 import { drainRadioQueuedLog } from "@game/helpers/conversationHelpers";
 import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import {
@@ -10,52 +15,22 @@ import {
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
 import { inventoryHasAll } from "@game/rules/state";
-import { AQUARIUM_ROOM_IDS } from "src/world/Items/creatures/octopus";
 import {
   getDeferredWorldChunkForEntryRoom,
   isWorldChunkLoaded,
 } from "src/world/World";
-import {
-  HYDROPONICS_SPIDER_ITEM_ID,
-  HYDROPONICS_SPIDER_REACHABILITY_MESSAGE,
-  canReachHydroponicsSpiderFromRoom,
-  isHydroponicsSpiderNoun,
-  isHydroponicsSpiderRoom,
-  isHydroponicsSpiderVisibleFromRoom,
-} from "src/world/Items/creatures/giantSpider";
 import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";
-import { getCurrentRoom, getPlayerRoomId } from "../selectors/roomSelectors";
+import { getCurrentRoom } from "../selectors/roomSelectors";
 import { useUIOverlayStore } from "../store/store";
 import { buildRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
 import type { ParsedCommand } from "../types/parserTypes";
 import { advanceTurn } from "./turn";
-import { maybeInitializeHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 export function appendLog(state: GameState, text: string): GameState {
   return { ...state, log: [...state.log, text] };
-}
-
-function isRemoteHydroponicsSpiderInteraction(
-  state: GameState,
-  cmd: ParsedCommand,
-): boolean {
-  if (cmd.type !== "action") return false;
-  if (cmd.verb === "examine" || cmd.verb === "look") return false;
-  if (!isHydroponicsSpiderRoom(state.player.roomId)) return false;
-  if (!isHydroponicsSpiderVisibleFromRoom(state.player.roomId)) return false;
-  if (canReachHydroponicsSpiderFromRoom(state, state.player.roomId)) return false;
-
-  const spider = state.world.items.find((item) => item.id === HYDROPONICS_SPIDER_ITEM_ID);
-  if (!spider) return false;
-
-  const targets = [cmd.direct, cmd.indirect].filter(
-    (noun): noun is string => Boolean(noun?.trim()),
-  );
-
-  return targets.some((noun) => isHydroponicsSpiderNoun(spider, noun));
 }
 
 export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
@@ -71,18 +46,6 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   switch (cmd.type) {
     case "move": {
       consumesTurn = true;
-
-      if (
-        state.player.roomId === "HydroponicsPlatform" &&
-        cmd.direction === "down" &&
-        state.worldState.conditionalTriggers.EscapedWithYellowBadge &&
-        !state.worldState.hydroponicsSpider.isAlive
-      ) {
-        message =
-          "Below the grating, the collapsed nest is boiling with millions of hand-sized spiders swarming over the dead mother's burst abdomen. There is no chance you're going back down there.";
-        consumesTurn = false;
-        break;
-      }
 
       const exit = room.exits.find((e) => e.direction === cmd.direction);
       if (!exit) {
@@ -114,35 +77,6 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
             message = conditionalExit.blockMsg;
             break;
           }
-        }
-      }
-
-      // Aquarium special-case
-      if (AQUARIUM_ROOM_IDS.has(getPlayerRoomId(state))) {
-        if (
-          state.worldState.octopusState.occupiedRoomIds.includes(
-            exit.toRoomId ?? "",
-          )
-        ) {
-          message =
-            "A giant tentacle fills most of the passageway in that direction, you better steer clear.";
-
-          if (
-            state.worldState.octopusState.tipRoomIds.includes(
-              exit.toRoomId ?? "",
-            )
-          ) {
-            message =
-              "You move through the murky water in that direction and run headlong into the groping end of a giant tentacle! You struggle as it wraps around you and jerks you off your feet, dragging you back toward the source in a chaos of flailing arms and ink-black water. You catch a glimpse of the creatures massive, bulbous head, eyes studying you, before it pulls you into a gaping, razor sharp beak...";
-            nextState = triggerPlayerDeath(
-              nextState,
-              message,
-              "aquarium octopus",
-            );
-            break;
-          }
-
-          break;
         }
       }
 
@@ -178,6 +112,28 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
       if (!destinationRoomId) {
         message = "You can't go that way.";
+        break;
+      }
+
+      const encounterMoveGuard = getEncounterMoveGuard(state, {
+        fromRoomId: state.player.roomId,
+        direction: cmd.direction,
+        destinationRoomId,
+      });
+      if (encounterMoveGuard) {
+        if (encounterMoveGuard.kind === "death") {
+          nextState = triggerPlayerDeath(
+            state,
+            encounterMoveGuard.deathMessage,
+            encounterMoveGuard.deathCause,
+          );
+          message = encounterMoveGuard.deathMessage;
+          consumesTurn = encounterMoveGuard.consumesTurn ?? false;
+          break;
+        }
+
+        message = encounterMoveGuard.message;
+        consumesTurn = encounterMoveGuard.consumesTurn ?? false;
         break;
       }
 
@@ -241,7 +197,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         },
       };
 
-      next = maybeInitializeHydroponicsCocoonPuzzle(next, destinationRoomId);
+      next = initializeEncounterStateOnEnter(next, destinationRoomId);
 
       nextState = next;
       message = moveMessage.trim();
@@ -251,9 +207,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     case "action": {
       consumesTurn = true;
 
-      if (isRemoteHydroponicsSpiderInteraction(state, cmd)) {
-        message = HYDROPONICS_SPIDER_REACHABILITY_MESSAGE;
-        consumesTurn = false;
+      const encounterActionGuard = getEncounterActionGuard(state, cmd);
+      if (encounterActionGuard) {
+        message = encounterActionGuard.message;
+        consumesTurn = encounterActionGuard.consumesTurn;
         break;
       }
 

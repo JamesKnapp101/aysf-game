@@ -41,6 +41,16 @@ export const AVIARY_ROOM_IDS = new Set<string>([
   "AviaryMaintenance",
 ]);
 
+export function createInitialAviarySpotlightState(): GameState["worldState"]["aviarySpotlight"] {
+  return {
+    route: AVIARY_SPOTLIGHT_ROUTE,
+    index: 0,
+    turnsLeftHere: 1,
+    pauseWhenPlayerNotInAviary: true,
+    hintCooldown: 0,
+  };
+}
+
 function isInAviary(roomId?: string | null): boolean {
   return typeof roomId === "string" && AVIARY_ROOM_IDS.has(roomId);
 }
@@ -75,13 +85,7 @@ function ensureAviarySpotlight(state: GameState): GameState {
     ...state,
     worldState: {
       ...state.worldState,
-      aviarySpotlight: {
-        route: AVIARY_SPOTLIGHT_ROUTE,
-        index: 0,
-        turnsLeftHere: 2,
-        pauseWhenPlayerNotInAviary: true,
-        hintCooldown: 0 as number,
-      },
+      aviarySpotlight: createInitialAviarySpotlightState(),
     },
   };
 }

@@ -1,6 +1,6 @@
+import { initializeEncounterStateOnEnter } from "@game/encounters/retryableEncounters";
 import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
 import { bucketForItem, inventoryHas } from "@game/rules/state";
-import { maybeInitializeHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
 import { mergeWorldChunks, type WorldChunkId } from "../world/World";
 import {
   INITIAL_CONTAINER_CONTENTS,
@@ -8,10 +8,12 @@ import {
   INITIAL_UNDER_CONTENTS,
 } from "./containerContents";
 import { seedItemRoomLocations } from "./helpers/itemHelpers";
-
-import { AVIARY_SPOTLIGHT_ROUTE } from "@game/engine/ticks/aviaryTick";
+import { createInitialAviarySpotlightState } from "@game/engine/ticks/aviaryTick";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
 import type { GameState, World, WorldChunk } from "./types/gameTypes";
+import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
+import { createInitialOctopusState } from "src/world/Items/creatures/octopus";
+import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
 
 export const createInitialState = (world: World): GameState => {
   const uniqueItems = Array.from(
@@ -369,14 +371,7 @@ export const createInitialState = (world: World): GameState => {
         womenLocker16: false,
       },
       octopusState: {
-        rootRoomId: "AqCross",
-        occupiedRoomIds: [],
-        tipRoomIds: [],
-        maxSegments: 0,
-        movesPerTick: 0,
-        retreatTicks: 0,
-        lastSeenPlayerRoomId: undefined,
-        trailQueue: [],
+        ...createInitialOctopusState(),
       },
       catState: {
         isWearingCollar: true,
@@ -386,20 +381,10 @@ export const createInitialState = (world: World): GameState => {
         attachedTo: "none",
       },
       playerDeaths: {},
-      aviarySpotlight: {
-        route: AVIARY_SPOTLIGHT_ROUTE,
-        index: 0,
-        turnsLeftHere: 1,
-        pauseWhenPlayerNotInAviary: true,
-        hintCooldown: 0,
-      },
+      aviarySpotlight: createInitialAviarySpotlightState(),
+      bullEncounter: createInitialBullEncounterState(),
       hydroponicsSpider: {
-        isAlive: true,
-        turnsSinceLastBreath: 0,
-        sensitivity: 0,
-        pendingAcidTarget: "none",
-        doorHealth: 3,
-        lastTrackedHydroponicsRoomId: undefined,
+        ...createInitialHydroponicsSpiderState(),
       },
       hydroponicsCocoonPuzzle: {
         initialized: false,
@@ -479,10 +464,7 @@ export const createInitialState = (world: World): GameState => {
   };
 
   const seededState = seedInitialPlacements(initialGameState);
-  return maybeInitializeHydroponicsCocoonPuzzle(
-    seededState,
-    seededState.player.roomId,
-  );
+  return initializeEncounterStateOnEnter(seededState, seededState.player.roomId);
 };
 
 function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {
