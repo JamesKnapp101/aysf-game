@@ -10,8 +10,14 @@ export function doUse(state: GameState, cmd: ParsedCommand): ActionResult {
   }
 
   const direct = cmd.direct?.trim();
+  const preposition = cmd.preposition?.trim();
+  const indirect = cmd.indirect?.trim();
   if (!direct) {
     return { state, message: "Use what?" };
+  }
+
+  if (preposition && !indirect) {
+    return { state, message: "Use it on what?" };
   }
 
   const item = resolveItemByNoun(state, direct);
@@ -19,5 +25,5 @@ export function doUse(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "There's nothing to use." };
   }
 
-  return tryUseItem(state, item);
+  return tryUseItem(state, item, cmd);
 }

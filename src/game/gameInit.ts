@@ -3,7 +3,13 @@ import { createInitialAviarySpotlightState } from "@game/engine/ticks/aviaryTick
 import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
 import { bucketForItem, inventoryHas } from "@game/rules/state";
 import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
-import { createInitialOctopusState } from "src/world/Items/creatures/octopus";
+import {
+  AQUARIUM_BREATHER_CORPSE_ITEM_ID,
+  AQUARIUM_BREATHER_ITEM_ID,
+  AQUARIUM_ELECTRIC_PROD_CORPSE_ITEM_ID,
+  AQUARIUM_ELECTRIC_PROD_ITEM_ID,
+  createInitialOctopusState,
+} from "src/world/Items/creatures/octopus";
 import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
 import { mergeWorldChunks, type WorldChunkId } from "../world/World";
 import {
@@ -443,6 +449,8 @@ export const createInitialState = (world: World): GameState => {
       revealedUnder: {},
       searchableContents: {
         FallenCorpse: ["MysteriousNote"],
+        [AQUARIUM_BREATHER_CORPSE_ITEM_ID]: [AQUARIUM_BREATHER_ITEM_ID],
+        [AQUARIUM_ELECTRIC_PROD_CORPSE_ITEM_ID]: [AQUARIUM_ELECTRIC_PROD_ITEM_ID],
       },
       itemSettings: {
         Cooler: { kind: "cooler", mode: "off" },

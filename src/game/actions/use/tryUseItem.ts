@@ -2,14 +2,26 @@ import { isItemUseable, setItemDoses } from "@game/rules/items";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
+import type { ParsedCommand } from "@game/types/parserTypes";
 
 export function tryUseItem(
   state: GameState,
   item: Item,
+  cmd?: ParsedCommand,
 ): { state: GameState; message: string } {
   if (!isItemUseable(item)) {
     return { state, message: "You can't use that." };
   }
+
+  const useOverride = item.overrides?.use;
+  if (typeof useOverride === "function") {
+    return useOverride({
+      state,
+      item,
+      cmd,
+    });
+  }
+
   let next = state;
   let baseMsg = "";
   // This is for things that are usable and also have doses, like the vape pen

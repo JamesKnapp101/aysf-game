@@ -23,6 +23,7 @@ type RoomDescriptionPanelProps = {
   playerCanSee: boolean;
   playerLightMode: string;
   flashlightOn: string;
+  isUnderwater: boolean;
   roomId: string;
   state: GameState;
   setBrainActivityLevel?: (val: number) => void;
@@ -101,6 +102,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   playerCanSee,
   playerLightMode,
   flashlightOn,
+  isUnderwater,
   roomId,
   state,
   setBrainActivityLevel,
@@ -479,6 +481,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       data-player-can-see={playerCanSee}
       data-player-light-mode={playerLightMode}
       data-flashlight-on={flashlightOn}
+      data-underwater={isUnderwater ? "true" : "false"}
       data-mindflash={showMindLayer ? "true" : "false"}
       data-organismdeath={showOdLayer ? "true" : "false"}
     >

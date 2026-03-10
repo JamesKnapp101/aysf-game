@@ -1,6 +1,7 @@
 import type { GameState } from "@game/types/gameTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
 import {
+  AQUARIUM_DROWNING_DEATH_CAUSE,
   getAquariumMoveGuard,
   AQUARIUM_RETRY_RESPAWN_ROOM_ID,
   resetAquariumEncounter,
@@ -136,7 +137,8 @@ const RETRYABLE_ENCOUNTERS: RetryableEncounterDefinition[] = [
   {
     id: "aquarium",
     beforeMove: (state, ctx) => getAquariumMoveGuard(state, ctx.destinationRoomId),
-    matchesRetryableDeath: (_state, cause) => cause === "aquarium octopus",
+    matchesRetryableDeath: (_state, cause) =>
+      cause === "aquarium octopus" || cause === AQUARIUM_DROWNING_DEATH_CAUSE,
     getRetryableDeathOverride: () => ({
       respawnRoomId: AQUARIUM_RETRY_RESPAWN_ROOM_ID,
       reset: resetAquariumEncounter,

@@ -1,5 +1,6 @@
 import { appendLog } from "@game/engine/handleCommand";
 import { getRetryableEncounterDeathOverride } from "@game/encounters/retryableEncounters";
+import { refreshPlayerOxygenForEnvironment } from "@game/helpers/environmentHelpers";
 import {
   getExitDestinationRoomId,
   getRoomExits,
@@ -119,7 +120,7 @@ export function movePlayerToRoom(
   const nextEvent: PlayerMoveEvent = { fromRoomId, toRoomId, via, atTurn };
   const recentMoves = [nextEvent, ...prevMoves].slice(0, MAX_RECENT_MOVES);
 
-  return {
+  const next = {
     ...state,
     player: {
       ...state.player,
@@ -128,6 +129,8 @@ export function movePlayerToRoom(
       recentMoves,
     },
   };
+
+  return refreshPlayerOxygenForEnvironment(next);
 }
 
 function isTripped(state: GameState, id: string) {

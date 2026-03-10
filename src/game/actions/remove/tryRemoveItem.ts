@@ -1,3 +1,4 @@
+import { refreshPlayerOxygenForEnvironment } from "@game/helpers/environmentHelpers";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 
@@ -33,7 +34,7 @@ export function tryRemoveItem(
   };
 
   return {
-    state: next,
+    state: refreshPlayerOxygenForEnvironment(next),
     message: baseMsg,
   };
 }

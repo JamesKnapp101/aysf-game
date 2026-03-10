@@ -1,9 +1,14 @@
 import { advanceTurn } from "@game/engine/turn";
+import {
+  AQUARIUM_DROWNING_DAMAGE_PER_TURN,
+  AQUARIUM_OXYGEN_LOSS_PER_TURN,
+} from "@game/helpers/environmentHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { getRadiationIntensity } from "@game/selectors/statusSelectors";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
+import { AQUARIUM_BREATHER_ITEM_ID } from "src/world/Items/creatures/octopus";
 import { getItemsInRoom } from "../game/selectors/roomSelectors";
 import {
   createTestState,
@@ -227,6 +232,73 @@ describe("General gameplay", () => {
     ).toBe(true);
   });
 
-  it.todo("starts damaging health each turn when oxygen reaches zero");
-  it.todo("stops oxygen-related health loss when oxygen is replenished");
+  it("drains oxygen underwater and starts damaging health after the air runs out", () => {
+    const baseState = createTestState({ roomId: "AqOpen1" });
+    const start = {
+      ...baseState,
+      player: {
+        ...baseState.player,
+        vitals: {
+          ...baseState.player.vitals,
+          health: 50,
+          oxygen: AQUARIUM_OXYGEN_LOSS_PER_TURN * 2,
+        },
+      },
+    };
+
+    const afterOne = advanceTurn(start);
+    const afterTwo = advanceTurn(afterOne);
+    const afterThree = advanceTurn(afterTwo);
+
+    expect(afterOne.player.vitals.oxygen).toBe(AQUARIUM_OXYGEN_LOSS_PER_TURN);
+    expect(afterOne.player.vitals.health).toBe(50);
+    expect(afterTwo.player.vitals.oxygen).toBe(0);
+    expect(afterTwo.player.vitals.health).toBe(50);
+    expect(afterThree.player.vitals.oxygen).toBe(0);
+    expect(afterThree.player.vitals.health).toBe(
+      50 - AQUARIUM_DROWNING_DAMAGE_PER_TURN,
+    );
+  });
+
+  it("refills oxygen immediately when the player reaches dry air", () => {
+    const baseState = createTestState({ roomId: "AqOpen1" });
+    const start = {
+      ...baseState,
+      player: {
+        ...baseState.player,
+        vitals: {
+          ...baseState.player.vitals,
+          oxygen: 10,
+        },
+      },
+    };
+
+    const next = runCommand(start, "south");
+
+    expect(next.player.roomId).toBe("AqStart");
+    expect(next.player.vitals.oxygen).toBe(100);
+  });
+
+  it("refills oxygen and prevents underwater loss while the breather is worn", () => {
+    const baseState = setInventory(createTestState({ roomId: "AqOpen1" }), [
+      AQUARIUM_BREATHER_ITEM_ID,
+    ]);
+    const start = {
+      ...baseState,
+      player: {
+        ...baseState.player,
+        vitals: {
+          ...baseState.player.vitals,
+          oxygen: 30,
+        },
+      },
+    };
+
+    const worn = runCommand(start, "wear breather");
+    const afterWait = runCommand(worn, "wait");
+
+    expect(worn.itemState.wornByPlayer.face).toBe(AQUARIUM_BREATHER_ITEM_ID);
+    expect(worn.player.vitals.oxygen).toBe(100);
+    expect(afterWait.player.vitals.oxygen).toBe(100);
+  });
 });

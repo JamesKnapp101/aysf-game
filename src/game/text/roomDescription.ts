@@ -129,7 +129,7 @@ export function buildRoomDescription(
     ? room.describe(state, room, {
         kind: "roomBase",
         roomId: room.id,
-        mode: "panel",
+        mode,
       })
     : ((useShortBase && room.descriptionShort
         ? room.descriptionShort

@@ -5,6 +5,11 @@ import { describe, expect, it } from "vitest";
 import { LEVEL_FIVE } from "../world/maps/levelFive/LevelFive";
 import { hydroponicsItems } from "../world/maps/levelSix/Hydroponics";
 import {
+  AQUARIUM_ELECTRIC_PROD_ITEM_ID,
+  AQUARIUM_BREATHER_ITEM_ID,
+  createInitialOctopusState,
+} from "../world/Items/creatures/octopus";
+import {
   buildHydroponicsTerminalMenu,
   describeHydroponicsSignIn,
   HYDROPONICS_EMPLOYEE_PROFILES,
@@ -427,18 +432,19 @@ describe("Doors and level mechanics", () => {
       roomId: "AqOpen1",
       visitedRooms: ["AqOpen1", "AqStart"],
     });
+    const baseOcto = createInitialOctopusState();
     const start = {
       ...baseState,
       worldState: {
         ...baseState.worldState,
         octopusState: {
-          ...baseState.worldState.octopusState,
-          rootRoomId: "AqCross",
-          occupiedRoomIds: ["AqCross", "AqOpen2"],
-          tipRoomIds: ["AqOpen2"],
-          maxSegments: 8,
-          movesPerTick: 1,
-          retreatTicks: 0,
+          ...baseOcto,
+          isAware: true,
+          arms: baseOcto.arms.map((arm, index) =>
+            index === 0
+              ? { ...arm, path: ["AqCross", "AqOpen2"] }
+              : arm,
+          ),
         },
       },
     };
@@ -446,9 +452,66 @@ describe("Doors and level mechanics", () => {
     const next = runCommand(start, "north");
 
     expect(next.player.roomId).toBe("AqStart");
-    expect(next.worldState.octopusState.occupiedRoomIds).toEqual(["AqCross"]);
-    expect(next.worldState.octopusState.tipRoomIds).toEqual(["AqCross"]);
-    expect(next.itemState.itemRoomId.octopus).toBe("AqCross");
+    expect(next.worldState.octopusState.occupiedRoomIds).toEqual(["AqRock7"]);
+    expect(next.worldState.octopusState.tipRoomIds).toEqual(["AqRock7"]);
+    expect(next.itemState.itemRoomId.octopus).toBe("AqRock7");
+  });
+
+  it("lets the player use the local aqua pad without a badge", () => {
+    const start = setInventory(createTestState({ roomId: "VeterinaryCenter" }), []);
+
+    const next = runCommand(start, "stand on aqua disk");
+
+    expect(next.player.roomId).toBe("AqStart");
+    expect(getLastLogEntry(next)).toContain("Transfer Lock");
+  });
+
+  it("lets the electric prod retreat one nearby tentacle and spends a charge", () => {
+    const baseState = setInventory(createTestState({ roomId: "AqRock2" }), [
+      AQUARIUM_ELECTRIC_PROD_ITEM_ID,
+    ]);
+    const baseOcto = createInitialOctopusState();
+    const start = {
+      ...baseState,
+      worldState: {
+        ...baseState.worldState,
+        octopusState: {
+          ...baseOcto,
+          isAware: true,
+          arms: baseOcto.arms.map((arm, index) =>
+            index === 0
+              ? { ...arm, path: ["AqCross", "AqRock3"] }
+              : arm,
+          ),
+        },
+      },
+    };
+
+    const next = runCommand(start, "use prod on tentacle");
+    const prod = next.world.items.find((item) => item.id === AQUARIUM_ELECTRIC_PROD_ITEM_ID);
+
+    expect(prod?.doses).toBe(1);
+    expect(next.worldState.octopusState.arms[0]?.path).toEqual(["AqRock7"]);
+    expect(getLastLogEntry(next)).toContain("recoils all the way back");
+  });
+
+  it("finds the breather by searching the dead diver", () => {
+    const next = runCommand(createTestState({ roomId: "AqRock2" }), "search dead diver");
+
+    expect(expectInventoryToContain(next, AQUARIUM_BREATHER_ITEM_ID)).toBe(true);
+  });
+
+  it("gives the player enough time to reach and secure the breather", () => {
+    const next = runCommands(createTestState({ roomId: "AqStart" }), [
+      "north",
+      "west",
+      "north",
+      "search dead diver",
+      "wear breather",
+    ]);
+
+    expect(next.player.roomId).toBe("AqRock2");
+    expect(next.itemState.wornByPlayer.face).toBe(AQUARIUM_BREATHER_ITEM_ID);
   });
 
   it("respawns the player near the preserve and resets the bull encounter on death", () => {

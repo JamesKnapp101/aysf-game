@@ -15,6 +15,10 @@ import {
   getItemsInCurrentRoom,
 } from "@game/selectors/roomSelectors";
 import { GameState } from "@game/types/gameTypes";
+import {
+  AQUARIUM_GOAL_ITEM_ID,
+  triggerAquariumReturnChoke,
+} from "src/world/Items/creatures/octopus";
 
 export function tryTakeItem(
   state: GameState,
@@ -75,8 +79,17 @@ export function tryTakeItem(
     next = addToInventory(next, itemOnFloor.id);
 
     const scoreId = getItemById(next, itemOnFloor.id)?.scoreId ?? "";
+    const aquariumGoalTaken = itemOnFloor.id === AQUARIUM_GOAL_ITEM_ID;
+    if (aquariumGoalTaken) {
+      next = triggerAquariumReturnChoke(next);
+    }
+
+    const aquariumGoalTail = aquariumGoalTaken
+      ? "\n\nAs you wrench the control node free, the water outside the grotto convulses. A heavy tentacle surges through the lower trench and knots itself across the return run toward the lock."
+      : "";
+
     if (scoreId === "") {
-      return { state: next, message: "Taken." };
+      return { state: next, message: `Taken.${aquariumGoalTail}` };
     } else {
       let msg = `Taken.`;
       if (next.worldState.scoresTriggered[scoreId] !== true) {
@@ -88,7 +101,7 @@ export function tryTakeItem(
           playerScoreMap[scoreId]?.value ?? 0
         } points!`;
       }
-      return { state: next, message: msg };
+      return { state: next, message: `${msg}${aquariumGoalTail}` };
     }
   }
 

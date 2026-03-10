@@ -4,10 +4,19 @@ import { tickDamagedFlashlight } from "@game/engine/ticks/damagedFlashlightTick"
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
 import { tickRadioConversation } from "@game/helpers/conversationHelpers";
+import {
+  isPlayerUnderwater,
+  playerHasBreather,
+  tickUnderwaterVitals,
+} from "@game/helpers/environmentHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
 import { playerMemoryMap, playerScoreMap } from "../constants";
+import {
+  AQUARIUM_DROWNING_DEATH_CAUSE,
+  AQUARIUM_DROWNING_DEATH_MESSAGE,
+} from "src/world/Items/creatures/octopus";
 import {
   canMove,
   getRoomExits,
@@ -454,6 +463,21 @@ export function advanceTurn(state: GameState): GameState {
   next = tickHydroponics(next);
   next = tickAttachedItems(next);
   next = applyEffects(next);
+  next = tickUnderwaterVitals(next);
+
+  if (
+    next.player.vitals.health <= 0 &&
+    next.player.vitals.oxygen <= 0 &&
+    isPlayerUnderwater(next) &&
+    !playerHasBreather(next)
+  ) {
+    next = triggerPlayerDeath(
+      next,
+      AQUARIUM_DROWNING_DEATH_MESSAGE,
+      AQUARIUM_DROWNING_DEATH_CAUSE,
+    );
+  }
+
   next = tickStatusEffects(next);
   next = tickSickness(next);
   next = tickAnimateActivities(next);

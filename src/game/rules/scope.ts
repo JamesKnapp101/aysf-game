@@ -6,6 +6,10 @@ import {
   isHydroponicsSpiderRoom,
   isHydroponicsSpiderVisibleFromRoom,
 } from "src/world/Items/creatures/giantSpider";
+import {
+  isAquariumRoom,
+  matchesAquariumThreatNoun,
+} from "src/world/Items/creatures/octopus";
 import { getCurrentRoom } from "../selectors/roomSelectors";
 import { getTeleportPadsInCurrentRoom } from "../selectors/teleportationSelectors";
 import type { DoorDefinition, DoorState } from "../types/doorTypes";
@@ -187,6 +191,10 @@ export function resolveItemByNoun(
     if (spider && isHydroponicsSpiderNoun(spider, noun)) {
       return spider;
     }
+  }
+
+  if (isAquariumRoom(room.id) && matchesAquariumThreatNoun(noun)) {
+    return state.world.items.find((it) => it.id === "octopus");
   }
 
   return undefined;

@@ -145,15 +145,27 @@ export interface Countdown {
   isActive: boolean;
 }
 
+export type OctopusArmState = {
+  id: string;
+  path: string[];
+  stunnedTurns: number;
+};
+
 export type OctopusState = {
   rootRoomId: string;
+  arms: OctopusArmState[];
   occupiedRoomIds: string[]; // segments
   tipRoomIds: string[]; // endpoints
   maxSegments: number; // 8
-  movesPerTick: number; // 1 or 2
-  retreatTicks: number; // e.g., 0/1 if prod causes a skipped tick
+  movesPerTick: number; // rooms advanced when the octopus does move
+  moveEveryTurns: number; // game turns between advances
+  turnsUntilMove: number; // countdown until the next advance
+  retreatTicks: number; // reserved for future global retreat/cooldown tuning
   lastSeenPlayerRoomId?: string;
   trailQueue: string[];
+  isAware: boolean;
+  returnChokeActive: boolean;
+  lastWarningLevel: number;
 };
 
 export type AviarySpotlightState = {

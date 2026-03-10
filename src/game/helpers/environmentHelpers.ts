@@ -1,0 +1,71 @@
+import type { GameState } from "@game/types/gameTypes";
+import {
+  AQUARIUM_BREATHER_ITEM_ID,
+  isAquariumUnderwaterRoom,
+} from "src/world/Items/creatures/octopus";
+
+export const AQUARIUM_OXYGEN_LOSS_PER_TURN = 15;
+export const AQUARIUM_DROWNING_DAMAGE_PER_TURN = 20;
+
+export function playerHasBreather(state: GameState): boolean {
+  return (
+    state.itemState.wornByPlayer.face === AQUARIUM_BREATHER_ITEM_ID ||
+    state.itemState.wornByPlayer.head === AQUARIUM_BREATHER_ITEM_ID
+  );
+}
+
+export function isPlayerUnderwater(state: GameState): boolean {
+  return isAquariumUnderwaterRoom(state.player.roomId);
+}
+
+export function refreshPlayerOxygenForEnvironment(state: GameState): GameState {
+  const shouldRefillOxygen = !isPlayerUnderwater(state) || playerHasBreather(state);
+  if (!shouldRefillOxygen || state.player.vitals.oxygen === 100) {
+    return state;
+  }
+
+  return {
+    ...state,
+    player: {
+      ...state.player,
+      vitals: {
+        ...state.player.vitals,
+        oxygen: 100,
+      },
+    },
+  };
+}
+
+export function tickUnderwaterVitals(state: GameState): GameState {
+  if (!isPlayerUnderwater(state) || playerHasBreather(state)) {
+    return state;
+  }
+
+  const oxygen = state.player.vitals.oxygen;
+  if (oxygen > 0) {
+    return {
+      ...state,
+      player: {
+        ...state.player,
+        vitals: {
+          ...state.player.vitals,
+          oxygen: Math.max(0, oxygen - AQUARIUM_OXYGEN_LOSS_PER_TURN),
+        },
+      },
+    };
+  }
+
+  return {
+    ...state,
+    player: {
+      ...state.player,
+      vitals: {
+        ...state.player.vitals,
+        health: Math.max(
+          0,
+          state.player.vitals.health - AQUARIUM_DROWNING_DAMAGE_PER_TURN,
+        ),
+      },
+    },
+  };
+}

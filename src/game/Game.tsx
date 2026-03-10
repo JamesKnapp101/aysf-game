@@ -26,6 +26,7 @@ import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 import { appendLog, handleCommand } from "./engine/handleCommand";
 import { createInitialState, mergeWorldChunkIntoState } from "./gameInit";
+import { isPlayerUnderwater } from "./helpers/environmentHelpers";
 import {
   getActiveStatusEffectIds,
   getRadiationIntensity,
@@ -407,6 +408,7 @@ export const Game: React.FC = () => {
     const fs = gs.itemState.itemSettings["flashlight"];
     return Boolean(fs && "isOn" in fs && fs.isOn === true);
   })();
+  const playerIsUnderwater = isPlayerUnderwater(gs);
 
   // Light and Dark
   const roomAmbientLight = !roomIsDark;
@@ -505,6 +507,7 @@ export const Game: React.FC = () => {
               playerCanSee={playerCanSee}
               playerLightMode={playerLightMode}
               flashlightOn={flashlightOn ? "true" : "false"}
+              isUnderwater={playerIsUnderwater}
               roomId={currentRoom?.id ?? gs.player.roomId}
               state={gs}
               setBrainActivityLevel={(val) =>
