@@ -57,7 +57,7 @@ export type OrganismDeathPayload = {
   onEnd?: () => void;
 
   // Display tuning
-  revealMode?: "fade" | "type";
-  chunkMs?: number; // for "type"
-  chunkSize?: number; // for "type"
+  revealMode?: "fade" | "type" | "random-chunks";
+  chunkMs?: number; // for chunk-by-chunk reveal
+  chunkSize?: number; // characters per revealed chunk
 };

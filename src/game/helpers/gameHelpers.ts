@@ -1,5 +1,5 @@
-import { appendLog } from "@game/engine/handleCommand";
 import { getRetryableEncounterDeathOverride } from "@game/encounters/retryableEncounters";
+import { appendLog } from "@game/engine/handleCommand";
 import { refreshPlayerOxygenForEnvironment } from "@game/helpers/environmentHelpers";
 import {
   getExitDestinationRoomId,
@@ -311,15 +311,14 @@ export function triggerPlayerDeath(
     const key = "FUNCTIONING"; // hinted in-world later
 
     const cipher = encryptVigenere(secretOrganismMessage, key);
-    console.log(cipher);
-    const display = formatCipherBlocks(cipher, 5);
+    const display = formatCipherBlocks(cipher, 25);
     useUIEffectsStore.getState().playOrganismDeath({
       title: "SIGNAL RECEIVED",
       cipherText: encryptVigenere(display, key),
       seed,
-      revealMode: "type",
-      chunkMs: 22,
-      chunkSize: 28,
+      revealMode: "random-chunks",
+      chunkMs: 5,
+      chunkSize: 5,
     });
   }
 

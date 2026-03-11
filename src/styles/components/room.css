@@ -44,6 +44,11 @@
     position: relative;
 }
 
+.game-room-desc-clip {
+    position: relative;
+    overflow: hidden;
+}
+
 .room-more-indicator {
     position: absolute;
     left: 50%;
@@ -212,9 +217,10 @@
             rgba(130, 220, 255, 0.05) 0 16px,
             rgba(130, 220, 255, 0.12) 16px 19px,
             rgba(130, 220, 255, 0.03) 19px 31px);
+    background-position: 0 -18px;
+    background-size: 100% 32px;
     mix-blend-mode: screen;
     opacity: 0.55;
-    transform: translateY(-4%);
     animation: room-underwater-sheen 8s linear infinite;
 }
 
@@ -224,6 +230,7 @@
         radial-gradient(circle at 18% 22%, rgba(150, 240, 255, 0.16), transparent 24%),
         radial-gradient(circle at 72% 18%, rgba(120, 220, 255, 0.12), transparent 20%),
         radial-gradient(circle at 42% 72%, rgba(90, 190, 255, 0.12), transparent 24%);
+    background-position: -8px -6px, 6px -4px, -4px 8px;
     filter: blur(10px);
     opacity: 0.6;
     animation: room-underwater-caustics 11s ease-in-out infinite alternate;
@@ -236,31 +243,32 @@
 }
 
 .game-room-panel[data-underwater="true"] .game-room-desc {
+    will-change: transform;
     animation: room-underwater-drift 6.5s ease-in-out infinite;
 }
 
 @keyframes room-underwater-sheen {
     0% {
-        transform: translate3d(-1.5%, -5%, 0) skewY(-1.2deg);
+        background-position: -12px -26px;
     }
 
     50% {
-        transform: translate3d(1.25%, 3%, 0) skewY(1deg);
+        background-position: 10px 8px;
     }
 
     100% {
-        transform: translate3d(-1%, 8%, 0) skewY(-0.75deg);
+        background-position: -8px 26px;
     }
 }
 
 @keyframes room-underwater-caustics {
     0% {
-        transform: translate3d(-1.5%, -1%, 0) scale(1);
+        background-position: -8px -6px, 6px -4px, -4px 8px;
         opacity: 0.45;
     }
 
     100% {
-        transform: translate3d(2%, 2%, 0) scale(1.04);
+        background-position: 10px 6px, -6px 8px, 8px -6px;
         opacity: 0.72;
     }
 }
@@ -270,11 +278,15 @@
         transform: translate3d(0, 0, 0);
     }
 
-    50% {
-        transform: translate3d(0.35%, 0.45%, 0);
+    35% {
+        transform: translate3d(1px, 1px, 0);
+    }
+
+    70% {
+        transform: translate3d(-1px, -0.5px, 0);
     }
 
     100% {
-        transform: translate3d(-0.25%, -0.35%, 0);
+        transform: translate3d(0, 0, 0);
     }
 }

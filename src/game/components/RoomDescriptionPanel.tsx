@@ -37,6 +37,14 @@ type Flash = {
   phase: "enter" | "steady" | "exit";
 };
 
+type OrganismDeathRevealMode = "fade" | "random-chunks";
+
+type OrganismDeathToken = {
+  id: number;
+  text: string;
+  revealable: boolean;
+};
+
 const START_DELAY_MS = 220;
 const FADE_IN_MS = 180;
 const FADE_OUT_MS = 160;
@@ -78,6 +86,55 @@ function wait(ms: number) {
 
 const clamp = (n: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, n));
+
+function resolveOrganismDeathRevealMode(
+  mode?: string,
+): OrganismDeathRevealMode {
+  return mode === "type" || mode === "random-chunks"
+    ? "random-chunks"
+    : "fade";
+}
+
+function buildOrganismDeathTokens(
+  text: string,
+  chunkSize: number,
+): OrganismDeathToken[] {
+  const normalizedChunkSize = Math.max(1, Math.floor(chunkSize));
+  const parts = text.match(/\s+|\S+/g) ?? [];
+  const tokens: OrganismDeathToken[] = [];
+  let tokenId = 0;
+
+  for (const part of parts) {
+    if (/^\s+$/.test(part)) {
+      tokens.push({ id: tokenId++, text: part, revealable: false });
+      continue;
+    }
+
+    for (let i = 0; i < part.length; i += normalizedChunkSize) {
+      tokens.push({
+        id: tokenId++,
+        text: part.slice(i, i + normalizedChunkSize),
+        revealable: true,
+      });
+    }
+  }
+
+  return tokens;
+}
+
+function shuffleTokenIds(tokens: OrganismDeathToken[], seed: number): number[] {
+  const ids = tokens
+    .filter((token) => token.revealable)
+    .map((token) => token.id);
+  const rand = makeRand(seed);
+
+  for (let i = ids.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+  }
+
+  return ids;
+}
 
 function titleize(s: string) {
   return s
@@ -149,11 +206,20 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   // =========================
   const odTitle: string | undefined = organismDeath?.title;
   const odCipherText: string = organismDeath?.cipherText ?? "";
-  const odRevealMode: "fade" | "type" =
-    organismDeath?.revealMode === "type" ? "type" : "fade";
+  const odRevealMode = resolveOrganismDeathRevealMode(
+    organismDeath?.revealMode,
+  );
+  const odChunkSize =
+    typeof organismDeath?.chunkSize === "number" && organismDeath.chunkSize > 0
+      ? organismDeath.chunkSize
+      : 5;
+  const odTokens = useMemo(
+    () => buildOrganismDeathTokens(odCipherText, odChunkSize),
+    [odCipherText, odChunkSize],
+  );
 
   const [odHijacked, setOdHijacked] = useState(false);
-  const [odShown, setOdShown] = useState(0);
+  const [odRevealedChunkIds, setOdRevealedChunkIds] = useState<number[]>([]);
   const odRunIdRef = useRef(0);
 
   // Always scroll to top on new room desc (normal behavior)
@@ -275,11 +341,15 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
 
   const AUTO_CLEAR_MS = 5000;
   const brainBoostedRef = useRef(false);
+  const odRevealedChunkSet = useMemo(
+    () => new Set(odRevealedChunkIds),
+    [odRevealedChunkIds],
+  );
 
   useEffect(() => {
     if (!organismDeath) {
       setOdHijacked(false);
-      setOdShown(0);
+      setOdRevealedChunkIds([]);
 
       if (brainBoostedRef.current) {
         setBrainActivityLevel?.(1);
@@ -290,14 +360,24 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
 
     // Pull once per run (stable snapshot)
     const cipherText: string = organismDeath.cipherText ?? "";
-    const revealMode: "fade" | "type" =
-      organismDeath.revealMode === "type" ? "type" : "fade";
+    const revealMode = resolveOrganismDeathRevealMode(
+      organismDeath.revealMode,
+    );
     const chunkMs: number = Number.isFinite(organismDeath.chunkMs)
       ? organismDeath.chunkMs
       : 28;
-    const chunkSize: number = Number.isFinite(organismDeath.chunkSize)
-      ? organismDeath.chunkSize
-      : 14;
+    const chunkSize: number =
+      typeof organismDeath.chunkSize === "number" && organismDeath.chunkSize > 0
+        ? organismDeath.chunkSize
+        : 5;
+    const seed = organismDeath.seed ?? 0;
+    const tokens = buildOrganismDeathTokens(cipherText, chunkSize);
+    const allTokenIds = tokens
+      .filter((token) => token.revealable)
+      .map((token) => token.id);
+    const revealOrder = shuffleTokenIds(tokens, seed);
+
+    const stepMs = Number.isFinite(chunkMs) && chunkMs >= 0 ? chunkMs : 28;
 
     const myRunId = ++odRunIdRef.current;
     let cancelled = false;
@@ -317,14 +397,13 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
 
     async function run() {
       setOdHijacked(true);
-      setOdShown(0);
+      setOdRevealedChunkIds([]);
 
       await wait(120);
       if (cancelled || odRunIdRef.current !== myRunId) return;
 
       if (revealMode === "fade") {
-        // show immediately
-        setOdShown(cipherText.length);
+        setOdRevealedChunkIds(allTokenIds);
 
         autoClearTimer = window.setTimeout(() => {
           if (cancelled || odRunIdRef.current !== myRunId) return;
@@ -336,14 +415,10 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
         return;
       }
 
-      // type/chunk reveal
-      const total = cipherText.length;
-      let shown = 0;
-
-      while (!cancelled && odRunIdRef.current === myRunId && shown < total) {
-        shown = Math.min(total, shown + chunkSize);
-        setOdShown(shown);
-        await wait(chunkMs);
+      for (const tokenId of revealOrder) {
+        if (cancelled || odRunIdRef.current !== myRunId) return;
+        setOdRevealedChunkIds((current) => [...current, tokenId]);
+        await wait(stepMs);
       }
 
       if (cancelled || odRunIdRef.current !== myRunId) return;
@@ -362,7 +437,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       cancelled = true;
       if (autoClearTimer) window.clearTimeout(autoClearTimer);
       setOdHijacked(false);
-      setOdShown(0);
+      setOdRevealedChunkIds([]);
 
       if (brainBoostedRef.current) {
         setBrainActivityLevel?.(1);
@@ -467,9 +542,6 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   const showMindLayer = mindHijacked && hijackMode === "mindFlash";
   const showOdLayer = odHijacked && hijackMode === "organismDeath";
 
-  const odVisibleText =
-    odRevealMode === "type" ? odCipherText.slice(0, odShown) : odCipherText;
-
   return (
     <section
       className="game-room-panel"
@@ -525,13 +597,15 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
 
         <div className="game-room-textWrap">
           <div ref={scrollRef} className="game-room-text">
-            <div
-              className={`game-room-desc ${
-                showMindLayer || showOdLayer ? "is-hijacked" : ""
-              }`}
-              aria-hidden={showOdLayer ? "true" : "false"}
-            >
-              {desc}
+            <div className="game-room-desc-clip">
+              <div
+                className={`game-room-desc ${
+                  showMindLayer || showOdLayer ? "is-hijacked" : ""
+                }`}
+                aria-hidden={showOdLayer ? "true" : "false"}
+              >
+                {desc}
+              </div>
             </div>
 
             {/* MindFlash overlay (unchanged visuals) */}
@@ -566,10 +640,25 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
 
                   <div
                     className={`organismdeath-body ${
-                      odRevealMode === "fade" ? "is-fade" : "is-type"
+                      odRevealMode === "fade"
+                        ? "is-fade"
+                        : "is-random-chunks"
                     }`}
                   >
-                    {odVisibleText}
+                    {odTokens.map((token) => (
+                      <span
+                        key={token.id}
+                        className="organismdeath-token"
+                        data-revealable={token.revealable ? "true" : "false"}
+                        data-revealed={
+                          token.revealable && odRevealedChunkSet.has(token.id)
+                            ? "true"
+                            : "false"
+                        }
+                      >
+                        {token.text}
+                      </span>
+                    ))}
                   </div>
 
                   {/* Optional: if you ever want a click-to-dismiss during dev

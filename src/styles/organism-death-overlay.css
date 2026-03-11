@@ -29,6 +29,7 @@
     z-index: 2;
     overflow: auto;
     /* allow scroll if it overflows */
+    color: var(--crt-color, #39ff14);
 }
 
 .organismdeath-title {
@@ -40,17 +41,19 @@
 .organismdeath-body {
     white-space: pre-wrap;
     word-break: break-word;
-    opacity: 0;
-    animation: organismdeathFade 700ms ease-out forwards;
-    animation-delay: 140ms;
     font-family: var(--mono-font, monospace);
     letter-spacing: 0.08em;
+    color: #000;
 }
 
-@keyframes organismdeathFade {
-    to {
-        opacity: 1;
-    }
+.organismdeath-token {
+    color: inherit;
+    transition: color 40ms linear, text-shadow 120ms ease-out;
+}
+
+.organismdeath-token[data-revealed="true"] {
+    color: var(--crt-color, #39ff14);
+    text-shadow: 0 0 8px rgba(74, 255, 74, 0.18);
 }
 
 .game-room-desc.is-hijacked {

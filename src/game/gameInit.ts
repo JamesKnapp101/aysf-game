@@ -21,7 +21,7 @@ import { seedItemRoomLocations } from "./helpers/itemHelpers";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
 import type { GameState, World, WorldChunk } from "./types/gameTypes";
 
-export const FINAL_PLAYER_START_ROOM_ID = "VeterinaryCenter";
+export const FINAL_PLAYER_START_ROOM_ID = "LevelThreeCorridorThree"; //"VeterinaryCenter";
 
 // Set this to a room id while testing another area. Leave undefined for the
 // normal game start at FINAL_PLAYER_START_ROOM_ID.
@@ -450,7 +450,9 @@ export const createInitialState = (world: World): GameState => {
       searchableContents: {
         FallenCorpse: ["MysteriousNote"],
         [AQUARIUM_BREATHER_CORPSE_ITEM_ID]: [AQUARIUM_BREATHER_ITEM_ID],
-        [AQUARIUM_ELECTRIC_PROD_CORPSE_ITEM_ID]: [AQUARIUM_ELECTRIC_PROD_ITEM_ID],
+        [AQUARIUM_ELECTRIC_PROD_CORPSE_ITEM_ID]: [
+          AQUARIUM_ELECTRIC_PROD_ITEM_ID,
+        ],
       },
       itemSettings: {
         Cooler: { kind: "cooler", mode: "off" },
