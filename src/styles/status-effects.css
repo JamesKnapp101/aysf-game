@@ -1,11 +1,11 @@
 /* ---------- DRUNK ---------- */
 
-.game-root[data-status~="drunk"] .game-main-row,
+.game-root[data-status~="drunk"] .game-left,
 .game-root[data-status~="drunk"] .game-room-panel {
     filter: blur(calc(0.4px + (var(--drunk) * 1.6px)));
 }
 
-.game-root[data-status~="drunk"] .game-main-row {
+.game-root[data-status~="drunk"] .game-left {
     animation: drunk-wobble calc(3.2s - (var(--drunk) * 1.6s)) ease-in-out infinite;
 }
 
@@ -15,7 +15,7 @@
 /* ---------- TRIXOPHINE ---------- */
 
 .game-root[data-status~="trixophine"] .game-room-panel,
-.game-root[data-status~="trixophine"] .game-main-row {
+.game-root[data-status~="trixophine"] .game-left {
     position: relative;
     will-change: transform, filter;
     animation: trixo-drift 6s ease-in-out infinite, trixo-hue 10s linear infinite;
@@ -25,7 +25,7 @@
 }
 
 .game-root[data-status~="trixophine"] .game-room-panel::before,
-.game-root[data-status~="trixophine"] .game-main-row::before {
+.game-root[data-status~="trixophine"] .game-left::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -44,28 +44,25 @@
 @media (prefers-reduced-motion: reduce) {
 
     .game-root[data-status~="trixophine"] .game-room-panel,
-    .game-root[data-status~="trixophine"] .game-main-row,
+    .game-root[data-status~="trixophine"] .game-left,
     .game-root[data-status~="trixophine"] .game-room-panel::before,
-    .game-root[data-status~="trixophine"] .game-main-row::before {
+    .game-root[data-status~="trixophine"] .game-left::before {
         animation: none !important;
     }
 }
 
 /* ---------- RADIATION (intensity-scaled via --rad in [0..1]) ---------- */
 
-.game-root[data-status~="radiation"] .game-header,
 .game-root[data-status~="radiation"] .game-room-panel,
-.game-root[data-status~="radiation"] .game-main-row {
+.game-root[data-status~="radiation"] .game-left {
     position: relative;
-    will-change: transform, filter;
-
-    filter: saturate(calc(1.05 + var(--rad, 0) * 0.55)) contrast(calc(1.1 + var(--rad, 0) * 0.25)) brightness(calc(1 + var(--rad, 0) * 0.1)) hue-rotate(48deg) blur(calc(var(--rad, 0) * 0.35px));
+    will-change: transform;
 
     animation: rad-shimmer 4.2s ease-in-out infinite;
 }
 
 .game-root[data-status~="radiation"] .game-room-panel::before,
-.game-root[data-status~="radiation"] .game-main-row::before {
+.game-root[data-status~="radiation"] .game-left::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -84,7 +81,7 @@
 }
 
 .game-root[data-status~="radiation"] .game-room-panel::after,
-.game-root[data-status~="radiation"] .game-main-row::after {
+.game-root[data-status~="radiation"] .game-left::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -102,20 +99,18 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .game-root[data-status~="radiation"] .game-header,
     .game-root[data-status~="radiation"] .game-room-panel,
-    .game-root[data-status~="radiation"] .game-main-row,
+    .game-root[data-status~="radiation"] .game-left,
     .game-root[data-status~="radiation"] .game-room-panel::after,
-    .game-root[data-status~="radiation"] .game-main-row::after {
+    .game-root[data-status~="radiation"] .game-left::after {
         animation: none !important;
     }
 }
 
 /* ---------- POSSESSED (more washed-out): bleak, ghostly, faded ---------- */
 
-.game-root[data-status~="possessed"] .game-header,
 .game-root[data-status~="possessed"] .game-room-panel,
-.game-root[data-status~="possessed"] .game-main-row {
+.game-root[data-status~="possessed"] .game-left {
     position: relative;
     will-change: filter, opacity;
 
@@ -125,7 +120,7 @@
 }
 
 .game-root[data-status~="possessed"] .game-room-panel::before,
-.game-root[data-status~="possessed"] .game-main-row::before {
+.game-root[data-status~="possessed"] .game-left::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -145,18 +140,17 @@
 }
 
 .game-root[data-status~="possessed"] .game-room-panel,
-.game-root[data-status~="possessed"] .game-main-row {
+.game-root[data-status~="possessed"] .game-left {
     text-shadow: 0 0 14px rgba(190, 230, 255, 0.18),
         2px 0 rgba(0, 0, 0, 0.45), -2px 0 rgba(0, 0, 0, 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {
 
-    .game-root[data-status~="possessed"] .game-header,
     .game-root[data-status~="possessed"] .game-room-panel,
-    .game-root[data-status~="possessed"] .game-main-row,
+    .game-root[data-status~="possessed"] .game-left,
     .game-root[data-status~="possessed"] .game-room-panel::before,
-    .game-root[data-status~="possessed"] .game-main-row::before {
+    .game-root[data-status~="possessed"] .game-left::before {
         animation: none !important;
     }
 }

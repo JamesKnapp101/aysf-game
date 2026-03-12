@@ -1,30 +1,34 @@
 # AYSF Game Server
 
-Backend API server for Claude AI-powered NPC conversations.
+Express backend for AI-enabled NPC conversations in AYSF. The server keeps the Anthropic API key off the client, formats character prompts, applies lightweight request protection, and exposes the conversation endpoints used by the frontend.
 
-## Quick Start
+The frontend can still run without this service. If the API is unavailable, the game falls back to authored NPC dialog.
+
+## Responsibilities
+
+- Accept conversation requests from the frontend
+- Build character-aware prompts from NPC profile data and conversation history
+- Call the Anthropic Messages API
+- Cache repeated prompts in memory
+- Apply a per-NPC rate limit
+- Return fallback-friendly error payloads to the client
+
+## Requirements
+
+- Node.js 20+ recommended
+- `pnpm`
+- An Anthropic API key
+
+## Setup
+
+From the `server/` directory:
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Create environment file
-copy .env.local.example .env.local
-# Edit .env.local and add your Anthropic API key
-
-# Start development server
-pnpm run dev
-
-# Build for production
-pnpm run build
-
-# Start production server
-pnpm start
+cp .env.local.example .env.local
 ```
 
-## Environment Variables
-
-Required in `.env.local`:
+Set your API key in `.env.local`:
 
 ```env
 ANTHROPIC_API_KEY=sk-ant-your-api-key-here
@@ -32,158 +36,130 @@ PORT=3001
 NODE_ENV=development
 ```
 
-## API Endpoints
+`FRONTEND_URL` is only needed in production, where CORS is restricted to that origin.
 
-### `POST /api/conversation/ask`
+## Running the Server
 
-Generate AI response for NPC conversation.
+From `server/`:
 
-**Request:**
-
-```json
-{
-  "npcId": "kevin_1st_contact",
-  "characterProfile": {
-    "name": "Kevin",
-    "personality": "...",
-    "background": "...",
-    "knowledge": [...],
-    "ignorance": [...],
-    "physicalState": "...",
-    "objectives": [...],
-    "timeContext": "...",
-    "conversationContext": "..."
-  },
-  "conversationHistory": [
-    {
-      "turn": 1,
-      "type": "ask",
-      "topic": "reactor",
-      "response": "..."
-    }
-  ],
-  "playerInput": {
-    "type": "ask",
-    "topic": "power"
-  }
-}
+```bash
+pnpm run dev
 ```
 
-**Response:**
+The API listens on `http://localhost:3001`.
+
+From the repo root, you can also use:
+
+```bash
+pnpm run dev:server
+pnpm run dev:full
+```
+
+## API
+
+### `GET /api/health`
+
+Basic server health check.
+
+Example response:
 
 ```json
 {
-  "success": true,
-  "response": "Yeah man (cough)...you gotta get the power on first...",
-  "cached": false
+  "status": "ok",
+  "service": "aysf-game-server",
+  "timestamp": "2026-03-12T12:00:00.000Z"
 }
 ```
 
 ### `GET /api/conversation/health`
 
-Health check for conversation service.
+Conversation service health check, including in-memory cache size.
 
-### `GET /api/health`
+Example response:
 
-Server health check.
-
-## Features
-
-- ✅ **Caching**: Responses cached to avoid duplicate API calls
-- ✅ **Rate Limiting**: 1 request per second per voice
-- ✅ **Error Handling**: Graceful fallback on API failures
-- ✅ **CORS**: Configured for frontend access
-- ✅ **Logging**: Request/response logging for debugging
-
-## Development
-
-The server uses:
-
-- **Express** for HTTP server
-- **Anthropic SDK** for Claude API
-- **tsx** for TypeScript execution
-- **CORS** for cross-origin requests
-
-## Production Deployment
-
-### Option 1: Fly.io
-
-```bash
-# Install flyctl
-curl -L https://fly.io/install.sh | sh
-
-# Login
-fly auth login
-
-# Deploy
-fly deploy
+```json
+{
+  "status": "ok",
+  "cacheSize": 3
+}
 ```
 
-### Option 2: Vercel
+### `POST /api/conversation/ask`
 
-Install Vercel CLI and deploy:
+Generates an AI response for an NPC conversation turn.
 
-```bash
-vercel
+Request body:
+
+```json
+{
+  "npcId": "RangerBot",
+  "characterProfile": {
+    "name": "The ranger robot",
+    "personality": "helpful and slightly rigid",
+    "background": "park support robot",
+    "knowledge": ["park hours", "restricted areas"],
+    "ignorance": ["the full outbreak timeline"],
+    "physicalState": "operational",
+    "objectives": ["help the player without leaving role"],
+    "timeContext": "events are unfolding in real time",
+    "conversationContext": "The player is exploring a dangerous ship."
+  },
+  "conversationHistory": [
+    {
+      "turn": 12,
+      "type": "ask",
+      "topic": "hours",
+      "response": "Park hours are currently suspended."
+    }
+  ],
+  "playerInput": {
+    "type": "ask",
+    "topic": "reactor"
+  }
+}
 ```
 
-### Option 3: Railway
+Success response:
 
-Connect your GitHub repo to Railway and it will auto-deploy.
+```json
+{
+  "success": true,
+  "response": "I do not manage reactor systems, sir.",
+  "cached": false
+}
+```
 
-### Environment Variables in Production
+Failure responses include `fallback: true` so the frontend can switch to authored dialog.
 
-Don't forget to set these in your deployment platform:
+### `POST /api/conversation/clear-cache`
 
-- `ANTHROPIC_API_KEY`
-- `NODE_ENV=production`
-- `FRONTEND_URL` (your frontend domain)
-- `PORT` (usually set automatically)
+Development endpoint that clears the in-memory response cache.
 
-## Monitoring
+Example response:
 
-Check server logs for:
+```json
+{
+  "success": true,
+  "message": "Cache cleared"
+}
+```
 
-- API call success/failure
-- Cache hits/misses
-- Rate limit triggers
-- Error messages
+## Runtime Behavior
 
-## Security Considerations
+- Request bodies are limited to `1mb`
+- Development CORS origin is `http://localhost:5173`
+- Production CORS origin comes from `FRONTEND_URL`
+- Cache keys are based on `npcId`, input type, and normalized topic text
+- Rate limiting is currently per NPC with a `100ms` minimum interval between requests
+- The configured Claude model and prompt strategy live in `src/services/claudeService.ts`
 
-✅ API key is server-side only (never exposed to frontend)  
-✅ CORS configured to specific origin in production  
-✅ Rate limiting prevents abuse  
-✅ Input validation on all endpoints  
-✅ No sensitive data in logs
+## Scripts
 
-## Cost Optimization
+- `pnpm run dev` starts the server with `tsx watch`
+- `pnpm run build` compiles TypeScript to `dist/`
+- `pnpm start` runs the compiled server from `dist/index.js`
 
-- Responses are cached (same question = no API call)
-- Using Claude 3.5 Haiku (cheapest model)
-- Max tokens limited to 200 per response
-- Rate limiting prevents runaway costs
+## Notes
 
-Typical costs: **$0.02-0.05 per full 9-turn conversation with Kevin**
-
-## Troubleshooting
-
-**"API key not found"**
-
-- Check `.env.local` exists in server directory
-- Verify `ANTHROPIC_API_KEY` is set
-
-**"Failed to reach Claude service"**
-
-- Check Anthropic API status
-- Verify API key is valid
-- Check for rate limits on your account
-
-**CORS errors**
-
-- Update `FRONTEND_URL` in production
-- Check origin in CORS configuration
-
-## License
-
-MIT
+- Cache and rate-limit state are stored in memory, so they reset on restart.
+- This service currently has no standalone test or lint script in `server/package.json`.

@@ -1,73 +1,155 @@
-# React + TypeScript + Vite
+# AYSF Game Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AYSF is a browser-based interactive fiction game built with React, TypeScript, and Vite. The frontend renders the command-line style interface, room and world state, UI overlays, and puzzle systems for a large sci-fi survival adventure aboard a failing ship.
 
-Currently, two official plugins are available:
+The project is playable as a standalone frontend. When the optional backend is running, selected NPC conversations can be upgraded with Claude-generated responses; if the API is unavailable, the game falls back to authored dialog.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Highlights
 
-## React Compiler
+- Command-driven interactive fiction interface with parser-based input
+- Large multi-level world assembled from deferred-loaded map chunks
+- Rich room presentation with CRT styling, overlays, modal interactions, and status effects
+- Inventory, score, memory, and hint systems integrated into the main UI
+- AI-assisted NPC conversations with safe frontend fallback behavior
+- Frontend test coverage for game logic, UI flows, and regression scenarios
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19
+- TypeScript
+- Vite
+- Zustand
+- Vitest + Testing Library
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Screenshots
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Main Game
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+![And Ye Shall Find](src/assets/screenshot1.png)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### AI Conversations
+
+![AI Conversation](src/assets/screenshot9.png)
+![AI Conversation](src/assets/screenshot10.png)
+
+### Status Tab
+
+<p align="center">
+  <img src="src/assets/screenshot2.png" alt="Status Tab" width="49%" />
+  <img src="src/assets/screenshot3.png" alt="Status Effects" width="49%" />
+</p>
+
+### Game Logs
+
+<p align="center">
+  <img src="src/assets/screenshot6.png" alt="Text Logs" width="49%" />
+  <img src="src/assets/screenshot7.png" alt="DNA Logs" width="49%" />
+</p>
+
+## Project Layout
+
+```text
+src/
+  game/      Core game loop, actions, state, UI components, services
+  world/     Rooms, maps, doors, items, creatures, chunk definitions
+  parse/     Command parser
+  hints/     Hint content and hint UI
+  test/      Frontend and gameplay tests
+server/      Optional backend for Claude-powered NPC conversations
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Requirements
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Node.js 20+ recommended
+- `pnpm`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Quick Start
+
+### Frontend only
+
+```bash
+pnpm install
+pnpm run dev
 ```
+
+The Vite dev server runs at `http://localhost:5173`.
+
+### Frontend + AI conversation server
+
+```bash
+pnpm install
+cd server
+pnpm install
+cp .env.local.example .env.local
+```
+
+Add your Anthropic API key to `server/.env.local`, then return to the repo root and run:
+
+```bash
+pnpm run dev:full
+or
+pnpm run start
+```
+
+Convenience launchers are also included:
+
+- Windows: `start-game.bat`
+- macOS/Linux: `start-game.sh`
+
+## Available Scripts
+
+From the repo root:
+
+- `pnpm run dev` starts the frontend only
+- `pnpm run dev:server` starts the backend from the root workspace
+- `pnpm run dev:full` starts frontend and backend together
+- `pnpm run start` aliases `dev:full`
+- `pnpm run build` builds the frontend for production
+- `pnpm run build:server` builds the backend
+- `pnpm run preview` serves the production frontend build locally
+- `pnpm run lint` runs ESLint
+- `pnpm run test` runs the frontend test suite once
+- `pnpm run test:watch` runs tests in watch mode
+- `pnpm run drift:check` checks world data for new placeholder drift
+
+## Gameplay Input
+
+The parser supports short text commands and direction aliases. Common examples:
+
+```text
+look
+inventory
+diagnose
+n
+go east
+examine terminal
+take badge
+open locker
+use radio
+ask ranger about reactor
+tell voice about power
+```
+
+## Frontend Architecture Notes
+
+- `src/game/Game.tsx` owns the top-level reducer, async command flow, deferred world loading, and layout state.
+- `src/parse/parser.ts` converts user text into structured commands consumed by the action system.
+- `src/game/actions/` contains verb handlers and dispatch logic.
+- `src/world/` contains authored game content: rooms, items, doors, maps, and creature behavior.
+- `src/game/services/claudeClient.ts` calls the backend API in development through the Vite `/api` proxy and falls back gracefully when the server is unavailable.
+
+## Testing
+
+The frontend test suite covers parser behavior, UI rendering, smoke coverage for action handlers, map progression, puzzle regressions, and conversation state behavior.
+
+Run:
+
+```bash
+pnpm run test
+```
+
+## Backend Integration
+
+The frontend proxies `/api/*` to `http://localhost:3001` in development via `vite.config.ts`. Production assumes the frontend and API are served from the same origin under `/api`.
+
+For backend setup and API details, see [server/README.md](./server/README.md).

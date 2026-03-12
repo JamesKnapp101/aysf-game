@@ -119,6 +119,7 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
       "He does recall another dude who looked a lot like the player came through at some point; he had on a flowered robe and nothing else.",
       "There is a body pinned under a heavy weight in the room",
       "Insta-roids are a fast-acting steroid that power lifters take",
+      "Insta-roids are not something that gets used on the weights themselves, it's a drug power lifters take",
       "The member who used the insta-roids signed in as 'Freeny Salk' but that's all he knows about him",
       "Freeny Salk is not the body trapped under the weight. The guy under the weight looks just like the player",
     ],
@@ -131,7 +132,8 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     physicalState: "Confined to the weight room",
     objectives: [
       "Help the player as much as it can, but is mostly workout focused",
-      "",
+      "Get the player totally jacked",
+      "Give good workout advice",
     ],
     timeContext: "None",
     conversationContext:
