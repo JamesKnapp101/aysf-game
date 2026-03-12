@@ -73,32 +73,29 @@ export function InventoryTree({
   const isContainerId = (id: string) =>
     Boolean(getItemById(state, id)?.isContainer);
 
-  const sortIds = React.useCallback(
-    (ids: string[]) => {
-      if (!sort || sort === "none") return ids;
+  const sortIds = (ids: string[]) => {
+    if (!sort || sort === "none") return ids;
 
-      const dir = sort === "name-asc" ? 1 : -1;
+    const dir = sort === "name-asc" ? 1 : -1;
 
-      const copy = [...ids];
-      copy.sort((a, b) => {
-        // Containers first (file-explorer style)
-        const ac = isContainerId(a) ? 0 : 1;
-        const bc = isContainerId(b) ? 0 : 1;
-        if (ac !== bc) return ac - bc;
+    const copy = [...ids];
+    copy.sort((a, b) => {
+      // Containers first (file-explorer style)
+      const ac = isContainerId(a) ? 0 : 1;
+      const bc = isContainerId(b) ? 0 : 1;
+      if (ac !== bc) return ac - bc;
 
-        const an = getSortName(a);
-        const bn = getSortName(b);
-        if (an < bn) return -1 * dir;
-        if (an > bn) return 1 * dir;
+      const an = getSortName(a);
+      const bn = getSortName(b);
+      if (an < bn) return -1 * dir;
+      if (an > bn) return 1 * dir;
 
-        // tie-breaker for stability
-        return a.localeCompare(b) * dir;
-      });
+      // tie-breaker for stability
+      return a.localeCompare(b) * dir;
+    });
 
-      return copy;
-    },
-    [sort],
-  );
+    return copy;
+  };
 
   const getItemLabel = (id: string) => {
     const it = getItemById(state, id);

@@ -24,7 +24,10 @@ export function MessageMachineModal({
   playNewestFirst = false,
   autoPlayOnOpen = false,
 }: MessageMachineModalProps) {
-  const safeMessages: PhoneMessage[] = Array.isArray(messages) ? messages : [];
+  const safeMessages = useMemo<PhoneMessage[]>(
+    () => (Array.isArray(messages) ? messages : []),
+    [messages],
+  );
 
   const unlistenedCount = useMemo(() => {
     return safeMessages.reduce(
@@ -117,7 +120,13 @@ export function MessageMachineModal({
     if (safeMessages.length === 0) return;
     const first = findFirstUnplayedIndex();
     if (first != null) playAtIndex(first);
-  }, [autoPlayOnOpen, safeMessages.length]);
+  }, [
+    activeIndex,
+    autoPlayOnOpen,
+    findFirstUnplayedIndex,
+    playAtIndex,
+    safeMessages.length,
+  ]);
 
   const displayNumber = useMemo(() => {
     if (activeIndex == null) return unlistenedCount;

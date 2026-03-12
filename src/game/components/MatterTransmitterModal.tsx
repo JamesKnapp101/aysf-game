@@ -12,8 +12,15 @@ type MatterTransmitterModalProps = {
 };
 
 type Axis = "x" | "y" | "z";
+type TransmitterCoord = { x: number; y: number; z: number };
+type TransmitterMeta = {
+  coordByRoomId: Record<string, TransmitterCoord>;
+  roomIdByCoord: Record<string, string>;
+};
 
 const MT_HOST_ID = "MatterTransmitter";
+const EMPTY_COORD_BY_ROOM_ID: Record<string, TransmitterCoord> = {};
+const EMPTY_ROOM_ID_BY_COORD: Record<string, string> = {};
 
 const coordKey = (x: number, y: number, z: number) => `${x},${y},${z}`;
 
@@ -30,14 +37,13 @@ export function MatterTransmitterModal({
   setGameState,
 }: MatterTransmitterModalProps) {
   const transmitterMeta = (state.world as any)?.meta?.transmitter as
-    | {
-        coordByRoomId: Record<string, { x: number; y: number; z: number }>;
-        roomIdByCoord: Record<string, string>;
-      }
+    | TransmitterMeta
     | undefined;
 
-  const coordByRoomId = transmitterMeta?.coordByRoomId ?? {};
-  const roomIdByCoord = transmitterMeta?.roomIdByCoord ?? {};
+  const coordByRoomId =
+    transmitterMeta?.coordByRoomId ?? EMPTY_COORD_BY_ROOM_ID;
+  const roomIdByCoord =
+    transmitterMeta?.roomIdByCoord ?? EMPTY_ROOM_ID_BY_COORD;
 
   const axisBounds = useMemo(() => {
     const coords = Object.values(coordByRoomId);
@@ -209,7 +215,9 @@ export function MatterTransmitterModal({
   const triggerFx = () => {
     try {
       useUIEffectsStore.getState().triggerTeleportFlash();
-    } catch {}
+    } catch {
+      // UI effects are optional; transmission still succeeds without the flash.
+    }
   };
 
   const handleTransmit = () => {

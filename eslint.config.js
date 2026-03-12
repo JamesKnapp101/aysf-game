@@ -19,5 +19,10 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Legacy game content still uses broad typing in many places.
+      // Keep lint focused on correctness issues until those types are tightened.
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
   },
 ])

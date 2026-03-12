@@ -144,7 +144,7 @@ export function tryOpenDoor(
     }
   }
 
-  let nextDoorState: DoorState = { ...doorState };
+  const nextDoorState: DoorState = { ...doorState };
   let nextState: GameState = state;
 
   if (nextDoorState.isLocked) {

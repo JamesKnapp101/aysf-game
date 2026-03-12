@@ -7,7 +7,7 @@ export function tryRideItem(
   item: Item,
 ): { state: GameState; message: string } {
   let next = state;
-  let baseMsg = "I'm not sure that's going to work.";
+  const baseMsg = "I'm not sure that's going to work.";
 
   if (state.player.roomId === "RobotRefuge" && item.id === "Conveyor") {
     next = movePlayerToRoom(next, "Storage");

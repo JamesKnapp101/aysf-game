@@ -21,14 +21,7 @@ export const catItems: Item[] = [
     itemWeight: 8,
     itemSize: 2,
     overrides: {
-      tick: ({
-        state,
-        item,
-        rng,
-        moveItemToRoom,
-        getRoomExits,
-        isRoomDark,
-      }: TickContext) => {
+      tick: ({ rng }: TickContext) => {
         if (rng() < 0.9) return;
 
         // This is copied over from the cat, so uses it

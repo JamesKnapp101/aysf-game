@@ -17,7 +17,7 @@ export function tryRemoveItem(
     };
   }
   let next = state;
-  let baseMsg =
+  const baseMsg =
     item?.meta?.clothing?.removeMessage ??
     item?.overrides?.remove ??
     `You remove the ${item.name}`;

@@ -109,7 +109,7 @@ export async function checkClaudeServerHealth(): Promise<boolean> {
       method: "GET",
     });
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

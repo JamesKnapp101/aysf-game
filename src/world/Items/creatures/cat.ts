@@ -65,7 +65,7 @@ export const catItems: Item[] = [
       ],
     },
     description: `It's a smallish male black and white short-haired cat, with a nick on his right ear.`,
-    describe: (state, item) => {
+    describe: (state) => {
       if (state.worldState.catState.isWearingCollar) {
         return `It's a smallish male black and white short-haired cat, with a nick on his right ear. Around his neck is a fancy leather collar, with a dangling, silver-rimmed onyx pendant inscribed with the name 'Iggy Onche'`;
       } else {

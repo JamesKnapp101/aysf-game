@@ -80,6 +80,16 @@ function makeRand(seed: number) {
   };
 }
 
+function hashString(text: string): number {
+  let hash = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    hash = (Math.imul(hash, 31) + text.charCodeAt(i)) | 0;
+  }
+
+  return hash >>> 0;
+}
+
 function wait(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
@@ -190,7 +200,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   // =========================
   const isMindFlash = hijackMode === "mindFlash";
   const memoryText = mindFlash?.memory ?? "";
-  const mindSeed = mindFlash?.seed ?? Date.now();
+  const mindSeed = mindFlash?.seed ?? hashString(memoryText);
 
   const mindChunks = useMemo(() => {
     if (!isMindFlash) return [];
@@ -261,13 +271,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   // Mind flash sequence
   // =========================
   useEffect(() => {
-    if (!isMindFlash) {
-      if (flashes.length > 0) {
-        setFlashes([]);
-      }
-      setMindHijacked(false);
-      return;
-    }
+    if (!isMindFlash) return;
 
     const myRunId = ++mindRunIdRef.current;
     let cancelled = false;
@@ -347,16 +351,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   );
 
   useEffect(() => {
-    if (!organismDeath) {
-      setOdHijacked(false);
-      setOdRevealedChunkIds([]);
-
-      if (brainBoostedRef.current) {
-        setBrainActivityLevel?.(1);
-        brainBoostedRef.current = false;
-      }
-      return;
-    }
+    if (!organismDeath) return;
 
     // Pull once per run (stable snapshot)
     const cipherText: string = organismDeath.cipherText ?? "";
@@ -444,7 +439,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
         brainBoostedRef.current = false;
       }
     };
-  }, [odRunKey, clearOrganismDeath]);
+  }, [clearOrganismDeath, odRunKey, organismDeath, setBrainActivityLevel]);
 
   // =========================
   // Diagnostics (unchanged)
@@ -460,7 +455,6 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     return "Ambient";
   }, [
     flashlightOn,
-    playerCanSee,
     roomIsDark,
     roomAmbientLight,
     playerLightMode,
@@ -491,18 +485,18 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     return clamp(Math.round(baseAudioUnit * AUDIO_BARS), 0, AUDIO_BARS);
   }, [baseAudioUnit]);
 
-  const [litBars, setLitBars] = useState(0);
+  const [audioBarDelta, setAudioBarDelta] = useState(0);
+  const litBars = useMemo(() => {
+    if (baseBars <= 0) return 0;
+    return clamp(baseBars + audioBarDelta, 0, AUDIO_BARS);
+  }, [audioBarDelta, baseBars]);
 
   useEffect(() => {
-    if (baseBars <= 0) {
-      setLitBars(0);
-      return;
-    }
-
-    setLitBars(baseBars);
+    if (baseBars <= 0) return;
 
     let cancelled = false;
     let timeoutId: number | undefined;
+    let resetId: number | undefined;
 
     const scheduleNext = () => {
       const delay = 250 + Math.random() * 650;
@@ -512,13 +506,11 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
 
         if (Math.random() < 0.3) {
           const delta = Math.random() < 0.65 ? 1 : -1;
+          setAudioBarDelta(delta);
 
-          const bumped = clamp(baseBars + delta, 0, AUDIO_BARS);
-          setLitBars(bumped);
-
-          window.setTimeout(() => {
+          resetId = window.setTimeout(() => {
             if (cancelled) return;
-            setLitBars(baseBars);
+            setAudioBarDelta(0);
             scheduleNext();
           }, 160);
         } else {
@@ -532,6 +524,8 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     return () => {
       cancelled = true;
       if (timeoutId) window.clearTimeout(timeoutId);
+      if (resetId) window.clearTimeout(resetId);
+      setAudioBarDelta(0);
     };
   }, [baseBars]);
 

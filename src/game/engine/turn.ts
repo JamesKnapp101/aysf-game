@@ -180,7 +180,7 @@ export function applyStatusEffectTick(
         brainActivity,
       };
 
-      let nextState: GameState = {
+      const nextState: GameState = {
         ...state,
         player: { ...state.player, vitals: nextVitals },
       };

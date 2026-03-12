@@ -5,6 +5,7 @@ import * as React from "react";
 import "../../styles/quantum-folder.css";
 
 export type InvSort = "none" | "name-asc" | "name-desc";
+const EMPTY_ITEM_IDS: string[] = [];
 
 export function QuantumTotePanel({
   state,
@@ -17,7 +18,7 @@ export function QuantumTotePanel({
     "general" | "badges" | "keys"
   >("general");
 
-  const activeIds = state.player.inventory[activeTab] ?? [];
+  const activeIds = state.player.inventory[activeTab] ?? EMPTY_ITEM_IDS;
   const activeItems: Item[] = React.useMemo(() => {
     const itemsById = new Map(
       state.world.items.map((it) => [it.id, it] as const),

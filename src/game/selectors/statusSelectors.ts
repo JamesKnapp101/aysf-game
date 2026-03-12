@@ -187,15 +187,17 @@ export function describeCurrentEffects(state: GameState): string {
         effectsMsg += "You are feeling a little tipsy from the alcohol.\n\n";
         break;
       case "superhorny":
-        const remainingTurns = statusEffect.remainingTurns ?? 0;
-        if (remainingTurns > 49) {
-          effectsMsg += "You're feeling a bit horny.\n";
-        } else if (remainingTurns > 29) {
-          effectsMsg += "You are really, REALLY horny.\n";
-        } else if (remainingTurns > 19) {
-          effectsMsg += "You're back to feeling just a bit horny.";
-        } else if (remainingTurns > 2) {
-          effectsMsg += "The horniness is leaving you...";
+        {
+          const remainingTurns = statusEffect.remainingTurns ?? 0;
+          if (remainingTurns > 49) {
+            effectsMsg += "You're feeling a bit horny.\n";
+          } else if (remainingTurns > 29) {
+            effectsMsg += "You are really, REALLY horny.\n";
+          } else if (remainingTurns > 19) {
+            effectsMsg += "You're back to feeling just a bit horny.";
+          } else if (remainingTurns > 2) {
+            effectsMsg += "The horniness is leaving you...";
+          }
         }
         break;
       case "trixophine":
@@ -219,13 +221,15 @@ export function describeCurrentEffects(state: GameState): string {
           "You feel a little discombobulated, with minor little aches and pains. Muscle ache? Gas? It doesn't seem serious.\n";
         break;
       case "nightvision-active":
-        const currentRoom = getCurrentRoom(state);
-        if (state.worldState.darkRooms[currentRoom.id]) {
-          effectsMsg +=
-            "You're wearing night vision goggles, which allow you to see in the darkness.";
-        } else {
-          effectsMsg +=
-            "You're wearing night vision goggles, but since there's plenty of light you're effectively blind.";
+        {
+          const currentRoom = getCurrentRoom(state);
+          if (state.worldState.darkRooms[currentRoom.id]) {
+            effectsMsg +=
+              "You're wearing night vision goggles, which allow you to see in the darkness.";
+          } else {
+            effectsMsg +=
+              "You're wearing night vision goggles, but since there's plenty of light you're effectively blind.";
+          }
         }
         break;
       default:

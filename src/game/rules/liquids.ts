@@ -8,13 +8,12 @@ export function addLiquidToFillableContainer(
   liquidId: string,
 ): GameState {
   if (!inventoryHas(state.player.inventory, container.id)) return state;
-  let next = state;
   return {
-    ...next,
+    ...state,
     itemState: {
-      ...next.itemState,
+      ...state.itemState,
       containerFilled: {
-        ...next.itemState.containerFilled,
+        ...state.itemState.containerFilled,
         [container.id]: [liquidId],
       },
     },
@@ -26,26 +25,25 @@ export function removeLiquidFromFillableContainer(
   container: Item,
 ): GameState {
   if (!inventoryHas(state.player.inventory, container.id)) return state;
-  let next = state;
-  const { [container.id]: _, ...rest } = state.itemState.containerFilled;
+  const containerFilled = { ...state.itemState.containerFilled };
+  delete containerFilled[container.id];
 
   return {
-    ...next,
+    ...state,
     itemState: {
-      ...next.itemState,
-      containerFilled: rest,
+      ...state.itemState,
+      containerFilled,
     },
   };
 }
 
 export function setItemFrozen(state: GameState, item: Item): GameState {
-  let next = state;
   return {
-    ...next,
+    ...state,
     itemState: {
-      ...next.itemState,
+      ...state.itemState,
       frozenItems: {
-        ...next.itemState.frozenItems,
+        ...state.itemState.frozenItems,
         [item.name]: true,
       },
     },

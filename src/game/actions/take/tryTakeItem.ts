@@ -23,7 +23,6 @@ import {
 export function tryTakeItem(
   state: GameState,
   noun: string,
-  indirect: string,
 ): RuleResult {
   const lower = noun.toLowerCase();
   const itemsHere = getItemsInCurrentRoom(state);

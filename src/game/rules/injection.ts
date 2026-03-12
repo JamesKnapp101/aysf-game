@@ -6,7 +6,6 @@ import { applyStatusEffectToPlayer } from "./status";
 export function applyInjectionEffect(
   state: GameState,
   target: Item,
-  cartridgeId: string
 ): RuleResult {
   const effectId = target.injectionEffectId;
 

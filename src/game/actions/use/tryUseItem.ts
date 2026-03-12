@@ -13,9 +13,9 @@ export function tryUseItem(
     return { state, message: "You can't use that." };
   }
 
-  const useOverride = item.overrides?.use;
-  if (typeof useOverride === "function") {
-    return useOverride({
+  const itemUseOverride = item.overrides?.use;
+  if (typeof itemUseOverride === "function") {
+    return itemUseOverride({
       state,
       item,
       cmd,

@@ -23,7 +23,7 @@ export function tryWearItem(
     };
   }
   let next = state;
-  let baseMsg =
+  const baseMsg =
     item?.meta?.clothing?.wearMessage ??
     item?.overrides?.wear ??
     `You put on the ${item.name}`;

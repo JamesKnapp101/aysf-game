@@ -15,7 +15,7 @@ export function tryCloseItem(
     return { state, message: "It's already closed." };
   }
 
-  let next = setItemClosed(state, item.id, true);
+  const next = setItemClosed(state, item.id, true);
 
   const msg = item.overrides?.open ?? "You close the " + item.name;
 

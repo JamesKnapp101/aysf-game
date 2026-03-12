@@ -185,7 +185,7 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     itemDesc += ` The ${item.name} is filled with ${containerContents}`;
   } else if (item.isContainer && isItemOpen(next, item.id)) {
     const containerContents = next.itemState.containerContents[item.id] ?? [];
-    let containerItems: Item[] = [];
+    const containerItems: Item[] = [];
     for (const itemId of containerContents) {
       const containerItem = getItemById(next, itemId);
       if (containerItem) containerItems.push(containerItem);

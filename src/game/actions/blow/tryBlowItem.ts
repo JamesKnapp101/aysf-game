@@ -9,8 +9,8 @@ export function tryBlowItem(
     return { state, message: "You can't do that." };
   }
 
-  let next = state;
-  let baseMsg =
+  const next = state;
+  const baseMsg =
     "You blow into the little whistle but it doesn't make any noise, at least not one you can hear.";
 
   return {

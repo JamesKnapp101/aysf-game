@@ -16,8 +16,8 @@ export function tryFillItem(
   }
   const preposition = cmd.preposition?.trim();
   const liquid2Get = cmd.indirect?.trim();
-  let next = state;
-  let baseMsg = "";
+  const next = state;
+  const baseMsg = "";
 
   if (preposition && preposition !== "with") {
     return { state, message: `I don't understand that.` };
@@ -51,7 +51,7 @@ export function tryFillItem(
     if (!desiredVessel) {
       return { state, message: "You don't have that container on you." };
     } else {
-      let next = state;
+      const next = state;
       return {
         state: {
           ...next,

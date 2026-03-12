@@ -20,8 +20,8 @@ export function tryListen(
   state: GameState,
   listenee: string,
 ): { state: GameState; message: string } {
-  let next: GameState = state;
-  let playerLocation = state.player.roomId;
+  const next: GameState = state;
+  const playerLocation = state.player.roomId;
   let baseMsg = ``;
 
   if (resolveListenTopic(listenee) === "moan") {

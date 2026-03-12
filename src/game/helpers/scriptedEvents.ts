@@ -24,7 +24,7 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
     id: "parkbot_meet",
     when: (state, ctx) =>
       ctx.kind === "onEnterRoom" && ctx.roomId === "ParkEntrance",
-    run: (state, ctx) => {
+    run: (state) => {
       let next = state;
 
       next = queueAfterRoomDescription(
@@ -38,7 +38,7 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
     id: "l3warehouse_visit",
     when: (state, ctx) =>
       ctx.kind === "onEnterRoom" && ctx.roomId === "L3Warehouse",
-    run: (state, ctx) => {
+    run: (state) => {
       let next = state;
 
       next = queueAfterRoomDescription(
@@ -55,10 +55,10 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       ctx.commandVerb === "blow" &&
       Boolean(
         ctx.commandDirect?.includes("whistle") ||
-        ctx.commandDirect?.includes("robot"),
+          ctx.commandDirect?.includes("robot"),
       ) &&
       ctx.roomId === "L3Warehouse",
-    run: (state, ctx) => {
+    run: (state) => {
       let next = state;
       next = {
         ...next,
@@ -85,7 +85,7 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       state.worldState.hydroponicsCocoonPuzzle.resolved &&
       state.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining > 0 &&
       !state.worldState.conditionalTriggers.EscapedWithYellowBadge,
-    run: (state, ctx) => {
+    run: (state) => {
       let next = state;
       const turnsRemaining =
         next.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining;
@@ -107,7 +107,7 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       ctx.kind === "onTurnEnd" &&
       ctx.roomId === "HydroponicsPlatform" &&
       state.worldState.conditionalTriggers.EscapedWithYellowBadge,
-    run: (state, ctx) => {
+    run: (state) => {
       let next = state;
       next = queueAfterRoomDescription(
         next,

@@ -106,16 +106,11 @@ export const createInitialState = (world: World): GameState => {
       vitals: {
         health: 100,
         oxygen: 100,
-        temperature: 101.6,
+        temperature: 98.6,
         brainActivity: 1,
         theSickness: undefined,
       },
-      statusEffects: [
-        {
-          id: "radiation",
-          intensity: 37,
-        },
-      ],
+      statusEffects: [],
     },
     worldState: {
       conditionalExits: {

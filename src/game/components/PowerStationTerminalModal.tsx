@@ -428,9 +428,7 @@ export function PowerStationTerminalModal({
   state,
   setGameState,
 }: Props) {
-  void state;
-
-  const root = useMemo(() => buildPowerGridTree(state), []);
+  const [root] = useState<TreeNode>(() => buildPowerGridTree(state));
   const [path, setPath] = useState<Breadcrumb[]>([
     { node: root, selectedIndex: 0 },
   ]);

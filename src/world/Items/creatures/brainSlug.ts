@@ -10,7 +10,7 @@ export const brainSlugItems: Item[] = [
     },
     itemCategory: "collectable",
     initialDescription: `Laying atop the dresser is a dried green rag, with a little note next to it that reads 'Return to Edwardix - Don't forget!'`,
-    describe: (state, item) => {
+    describe: (state) => {
       const hydrated = state.worldState.brainSlug.isHydrated;
       const attachedTo = state.worldState.brainSlug.attachedTo;
       if (hydrated) {

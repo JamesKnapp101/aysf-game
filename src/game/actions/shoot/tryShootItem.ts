@@ -40,7 +40,7 @@ export function tryShootItem(
       };
     }
 
-    let msg = shotWithItem?.meta?.onLink ?? "Nothing happens.";
+    const msg = shotWithItem?.meta?.onLink ?? "Nothing happens.";
 
     useUIEffectsStore.getState().playMindFlash({
       memory:

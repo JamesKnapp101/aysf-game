@@ -22,14 +22,23 @@ export const Menu: React.FC<MenuProps> = ({
   rootMenu,
   emptyDetailMessage = "Select an item to see more information.",
   onLeafActivated,
-}) => {
+}) => (
+  <MenuInner
+    key={rootMenu.id}
+    rootMenu={rootMenu}
+    emptyDetailMessage={emptyDetailMessage}
+    onLeafActivated={onLeafActivated}
+  />
+);
+
+function MenuInner({
+  rootMenu,
+  emptyDetailMessage = "Select an item to see more information.",
+  onLeafActivated,
+}: MenuProps) {
   const [state, setState] = useState<MenuUIState>(() =>
     createInitialMenuState(rootMenu),
   );
-
-  useEffect(() => {
-    setState(createInitialMenuState(rootMenu));
-  }, [rootMenu.id]);
 
   const entries: VisibleMenuEntry[] = useMemo(
     () => getVisibleMenuEntries(state),
@@ -133,4 +142,4 @@ export const Menu: React.FC<MenuProps> = ({
       </div>
     </div>
   );
-};
+}

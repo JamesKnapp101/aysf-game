@@ -45,7 +45,7 @@ export function tryOpenItem(
   if (isItemOpen(state, item.id)) {
     return { state, message: "It's already open." };
   }
-  let next = setItemOpen(state, item.id, true);
+  const next = setItemOpen(state, item.id, true);
 
   const contents = getContainerContentsItems(next, item);
 
