@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 interface ConversationRequest {
-  voiceId: string;
+  npcId: string;
   characterProfile: CharacterProfile;
   conversationHistory: ConversationEntry[];
   playerInput: PlayerInput;
@@ -19,21 +19,21 @@ interface ConversationRequest {
 // In production, use Redis or a database
 const responseCache = new Map<string, string>();
 
-// Simple rate limiting per voice
+// Simple rate limiting per NPC
 const lastRequestTime = new Map<string, number>();
 const RATE_LIMIT_MS = 100; // 1 second between requests
 
-function getCacheKey(voiceId: string, type: string, topic: string): string {
-  return `${voiceId}:${type}:${topic.toLowerCase().trim()}`;
+function getCacheKey(npcId: string, type: string, topic: string): string {
+  return `${npcId}:${type}:${topic.toLowerCase().trim()}`;
 }
 
 router.post("/ask", async (req: Request, res: Response) => {
   try {
-    const { voiceId, characterProfile, conversationHistory, playerInput } =
+    const { npcId, characterProfile, conversationHistory, playerInput } =
       req.body as ConversationRequest;
 
     // Validate request
-    if (!voiceId || !characterProfile || !playerInput) {
+    if (!npcId || !characterProfile || !playerInput) {
       res.status(400).json({
         success: false,
         error: "Missing required fields",
@@ -43,7 +43,7 @@ router.post("/ask", async (req: Request, res: Response) => {
     }
 
     // Check rate limit
-    const lastRequest = lastRequestTime.get(voiceId) || 0;
+    const lastRequest = lastRequestTime.get(npcId) || 0;
     const now = Date.now();
     if (now - lastRequest < RATE_LIMIT_MS) {
       res.status(429).json({
@@ -53,10 +53,10 @@ router.post("/ask", async (req: Request, res: Response) => {
       });
       return;
     }
-    lastRequestTime.set(voiceId, now);
+    lastRequestTime.set(npcId, now);
 
     // Check cache first
-    const cacheKey = getCacheKey(voiceId, playerInput.type, playerInput.topic);
+    const cacheKey = getCacheKey(npcId, playerInput.type, playerInput.topic);
     const cached = responseCache.get(cacheKey);
     if (cached) {
       console.log(`Cache hit for ${cacheKey}`);
@@ -66,10 +66,10 @@ router.post("/ask", async (req: Request, res: Response) => {
 
     // Generate new response from Claude
     console.log(
-      `Generating response for ${voiceId}: ${playerInput.type} "${playerInput.topic}"`,
+      `Generating response for ${npcId}: ${playerInput.type} "${playerInput.topic}"`,
     );
     const response = await generateClaudeResponse({
-      voiceId,
+      npcId,
       characterProfile,
       conversationHistory: conversationHistory || [],
       playerInput,

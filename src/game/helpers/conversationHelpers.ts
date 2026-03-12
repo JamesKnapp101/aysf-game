@@ -1,23 +1,28 @@
 import { appendLog } from "@game/engine/handleCommand";
-import {
-  RADIO_DIALOG,
-  RANGERBOT_DIALOG,
-  resolveAskTopic,
-} from "@game/npcDialog";
+import { getCharacterProfile } from "@game/npcProfiles";
+import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
+import { getNpcById } from "@game/npcRegistry";
 import { normalize, resolveConversationTarget } from "@game/rules/scope";
 import { getClaudeResponse } from "@game/services/claudeClient";
-import { ActionResult } from "@game/types/actionsTypes";
-import { GameState } from "@game/types/gameTypes";
-import { Item } from "@game/types/itemTypes";
-import { ConversationHistoryEntry, RadioVoice } from "@game/types/npcTypes";
-import { ParsedCommand } from "@game/types/parserTypes";
+import type { ActionResult } from "@game/types/actionsTypes";
+import type { GameState } from "@game/types/gameTypes";
+import type { Item } from "@game/types/itemTypes";
+import type {
+  ConversationHistoryEntry,
+  ConversationNpc,
+  NpcConversationState,
+  RadioState,
+} from "@game/types/npcTypes";
+import type { ParsedCommand } from "@game/types/parserTypes";
 
-export function getActiveRadioVoice(state: GameState): RadioVoice | undefined {
-  return state.conversation?.radio?.activeVoice;
+export function getActiveRadioNpc(
+  state: GameState,
+): ConversationNpc | undefined {
+  return getNpcById(state.radio?.activeNpcId);
 }
 
 export function getRadioTurnsRemaining(state: GameState): number | undefined {
-  return state.conversation?.radio?.turnsRemaining;
+  return state.radio?.turnsRemaining;
 }
 
 export function getPendingConversationLogMessage(
@@ -35,18 +40,19 @@ export function getPendingConversationLogMessage(
   const target = resolveConversationTarget(state, cmd.direct.trim());
   if (!target) return undefined;
 
-  const voice =
-    target.kind === "radioVoice"
-      ? target.voice
+  const npc =
+    target.kind === "npc"
+      ? target.npc
       : isRadioTargetItem(target.item)
-        ? getActiveRadioVoice(state)
+        ? getActiveRadioNpc(state)
         : undefined;
 
-  if (!voice?.aiEnabled || !voice.characterProfile) {
+  const profile = getCharacterProfile(npc?.characterProfileId);
+  if (!npc?.aiEnabled || !profile) {
     return undefined;
   }
 
-  return `${voice.name} considers this...`;
+  return `${npc.name} considers this...`;
 }
 
 function ensureConversation(state: GameState): GameState {
@@ -54,108 +60,159 @@ function ensureConversation(state: GameState): GameState {
   return { ...state, conversation: {} };
 }
 
-function ensureRadioConversation(state: GameState): GameState {
-  state = ensureConversation(state);
-  if (state.conversation!.radio) return state;
-  return { ...state, conversation: { ...state.conversation, radio: {} } };
+function getNpcConversationState(
+  state: GameState,
+  npcId: string,
+): NpcConversationState | undefined {
+  return state.conversation?.npcs?.[npcId];
 }
 
-function setRadioConversation(
+function setNpcConversationState(
   state: GameState,
-  nextRadio: NonNullable<NonNullable<GameState["conversation"]>["radio"]>,
+  npcId: string,
+  nextNpcConversation: NpcConversationState,
 ): GameState {
   state = ensureConversation(state);
   return {
     ...state,
-    conversation: { ...state.conversation, radio: nextRadio },
+    conversation: {
+      ...state.conversation,
+      npcs: {
+        ...(state.conversation?.npcs ?? {}),
+        [npcId]: nextNpcConversation,
+      },
+    },
   };
+}
+
+function setRadioState(state: GameState, nextRadio: RadioState): GameState {
+  return {
+    ...state,
+    radio: nextRadio,
+  };
+}
+
+function resetNpcTopicUsage(state: GameState, npcId: string): GameState {
+  const prevConversation = getNpcConversationState(state, npcId) ?? {};
+  return setNpcConversationState(state, npcId, {
+    ...prevConversation,
+    topicsUsed: {},
+  });
+}
+
+function markNpcTopicUsed(
+  state: GameState,
+  npcId: string,
+  topic: string,
+): GameState {
+  const prevConversation = getNpcConversationState(state, npcId) ?? {};
+  const used = { ...(prevConversation.topicsUsed ?? {}) };
+  used[topic] = true;
+
+  return setNpcConversationState(state, npcId, {
+    ...prevConversation,
+    topicsUsed: used,
+  });
+}
+
+function hasNpcTopicBeenUsed(
+  state: GameState,
+  npcId: string,
+  topic: string,
+): boolean {
+  return Boolean(getNpcConversationState(state, npcId)?.topicsUsed?.[topic]);
+}
+
+function getNpcConversationHistory(
+  state: GameState,
+  npcId: string,
+): ConversationHistoryEntry[] {
+  return getNpcConversationState(state, npcId)?.conversationHistory ?? [];
+}
+
+function appendNpcConversationHistory(
+  state: GameState,
+  npcId: string,
+  historyEntry: ConversationHistoryEntry,
+): GameState {
+  const prevConversation = getNpcConversationState(state, npcId) ?? {};
+  const conversationHistory = prevConversation.conversationHistory ?? [];
+
+  return setNpcConversationState(state, npcId, {
+    ...prevConversation,
+    conversationHistory: [...conversationHistory, historyEntry],
+  });
 }
 
 export function startRadioCall(
   state: GameState,
-  voice: RadioVoice,
+  npcId: string,
   turnsRemaining: number,
   opts?: {
     incomingMessage?: string;
     beep?: boolean;
   },
 ): GameState {
+  const npc = getNpcById(npcId);
+  if (!npc) return state;
+
   const beepPrefix = opts?.beep === false ? "" : `*pop*`;
   const incomingMessage =
     opts?.incomingMessage ??
-    `${beepPrefix}"${voice.name}?" A voice crackles through the radio.`;
+    `${beepPrefix}"${npc.name}?" A voice crackles through the radio.`;
 
-  const prevRadio = state.conversation?.radio ?? {};
+  const prevRadio = state.radio ?? {};
   const prevQueue = prevRadio.queuedLog ?? [];
 
-  const nextRadio = {
+  const nextState = resetNpcTopicUsage(state, npcId);
+  return setRadioState(nextState, {
     ...prevRadio,
-    activeVoice: voice,
+    activeNpcId: npcId,
     turnsRemaining: Math.max(0, Math.floor(turnsRemaining)),
-    topicsUsed: {},
     queuedLog: [...prevQueue, incomingMessage],
-  };
-
-  return {
-    ...state,
-    conversation: {
-      ...(state.conversation ?? {}),
-      radio: nextRadio,
-    },
-  };
+  });
 }
 
 export function drainRadioQueuedLog(state: GameState): {
   state: GameState;
   entries: string[];
 } {
-  const radio = state.conversation?.radio;
+  const radio = state.radio;
   const entries = radio?.queuedLog ?? [];
   if (entries.length === 0) return { state, entries: [] };
 
-  const nextRadio = { ...radio, queuedLog: [] };
-
   return {
-    state: {
-      ...state,
-      conversation: {
-        ...(state.conversation ?? {}),
-        radio: nextRadio,
-      },
-    },
+    state: setRadioState(state, {
+      ...(radio ?? {}),
+      queuedLog: [],
+    }),
     entries,
   };
 }
 
-// End a call explicitly (and optionally supply a final message for the log system if you want)
 export function endRadioCall(state: GameState): GameState {
-  if (!state.conversation?.radio) return state;
-  let next = state;
-  const prev = state.conversation.radio;
+  const radio = state.radio;
+  const activeNpcId = radio?.activeNpcId;
+  if (!radio || !activeNpcId) return state;
 
-  next = setRadioConversation(state, {
-    ...prev,
-    activeVoice: undefined,
+  const nextState = setRadioState(state, {
+    ...radio,
+    activeNpcId: undefined,
     turnsRemaining: undefined,
-    topicsUsed: undefined,
   });
-  return appendLog(
-    next,
-    "*pop* " +
-      (RADIO_DIALOG[state.conversation.radio.activeVoice?.id ?? ""]?.signOff ??
-        "") +
-      " *pop*",
-  );
+
+  const signOff = NPC_DIALOG[activeNpcId]?.signOff;
+  if (!signOff) return nextState;
+
+  return appendLog(nextState, `*pop* ${signOff} *pop*`);
 }
 
-// Decrement the timer once per *turn* while a call is active.
-// Call this from your central "after command" pipeline.
 export function tickRadioConversation(state: GameState): {
   state: GameState;
   ended: boolean;
 } {
-  const radio = state.conversation?.radio;
-  if (!radio?.activeVoice) return { state, ended: false };
+  const radio = state.radio;
+  if (!radio?.activeNpcId) return { state, ended: false };
 
   const remaining =
     typeof radio.turnsRemaining === "number" ? radio.turnsRemaining : 0;
@@ -163,7 +220,7 @@ export function tickRadioConversation(state: GameState): {
 
   if (nextRemaining > 0) {
     return {
-      state: setRadioConversation(state, {
+      state: setRadioState(state, {
         ...radio,
         turnsRemaining: nextRemaining,
       }),
@@ -171,234 +228,200 @@ export function tickRadioConversation(state: GameState): {
     };
   }
 
-  // Connection ends now.
   return { state: endRadioCall(state), ended: true };
 }
 
 export function isRadioTargetItem(item: Item): boolean {
   if (normalize(item.id) === "radio") return true;
 
-  // Optional extra robustness: match vocab too
   const vocab = (item.vocab ?? []).map(normalize);
   return (
     vocab.includes("radio") || vocab.includes("walkie") || vocab.includes("cb")
   );
 }
 
-export function isRangerBotTargetItem(item: Item): boolean {
-  if (normalize(item.id) === "RangerBot") return true;
+async function getNpcAiResponse(
+  state: GameState,
+  npc: ConversationNpc,
+  playerInput: { type: "ask" | "tell"; topic: string },
+): Promise<{ state: GameState; response: string | null }> {
+  const profile = getCharacterProfile(npc.characterProfileId);
+  if (!npc.aiEnabled || !profile) {
+    return { state, response: null };
+  }
 
-  // Optional extra robustness: match vocab too
-  const vocab = (item.vocab ?? []).map(normalize);
-  return (
-    vocab.includes("robot") ||
-    vocab.includes("rangerbot") ||
-    vocab.includes("parkbot") ||
-    vocab.includes("bot")
-  );
+  const conversationHistory = getNpcConversationHistory(state, npc.id);
+
+  try {
+    const claudeResponse = await getClaudeResponse(
+      npc.id,
+      profile,
+      conversationHistory,
+      playerInput,
+    );
+
+    if (!claudeResponse) {
+      return { state, response: null };
+    }
+
+    const historyEntry: ConversationHistoryEntry = {
+      turn: state.moves,
+      type: playerInput.type,
+      topic: playerInput.topic,
+      response: claudeResponse,
+    };
+
+    return {
+      state: appendNpcConversationHistory(state, npc.id, historyEntry),
+      response: claudeResponse,
+    };
+  } catch (error) {
+    console.warn("Claude integration error, using fallback:", error);
+    return { state, response: null };
+  }
 }
 
-// ----------------
-// Radio behavior
-// ----------------
+function wrapRadioLine(text: string): string {
+  return `*pop* ${text} *pop*`;
+}
+
+async function askRadioNpc(
+  state: GameState,
+  npc: ConversationNpc,
+  topic: string,
+): Promise<ActionResult> {
+  const aiResult = await getNpcAiResponse(state, npc, { type: "ask", topic });
+  if (aiResult.response) {
+    return {
+      state: aiResult.state,
+      message: wrapRadioLine(aiResult.response),
+    };
+  }
+
+  if (hasNpcTopicBeenUsed(state, npc.id, topic)) {
+    return {
+      state,
+      message: wrapRadioLine(`"I don't know anything more about that (cough)..."`),
+    };
+  }
+
+  const nextState = markNpcTopicUsed(state, npc.id, topic);
+  const line =
+    NPC_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)] ??
+    defaultRadioAskLine(topic);
+
+  return { state: nextState, message: wrapRadioLine(line) };
+}
+
+async function tellRadioNpc(
+  state: GameState,
+  npc: ConversationNpc,
+  topic: string,
+): Promise<ActionResult> {
+  const aiResult = await getNpcAiResponse(state, npc, {
+    type: "tell",
+    topic,
+  });
+  if (aiResult.response) {
+    return {
+      state: aiResult.state,
+      message: wrapRadioLine(aiResult.response),
+    };
+  }
+
+  const topicKey = `tell:${topic}`;
+  if (hasNpcTopicBeenUsed(state, npc.id, topicKey)) {
+    return {
+      state,
+      message: wrapRadioLine(`"I know (cough)...you (cough) told me..."`),
+    };
+  }
+
+  const nextState = markNpcTopicUsed(state, npc.id, topicKey);
+  const line =
+    NPC_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ?? defaultRadioTellLine();
+
+  return { state: nextState, message: wrapRadioLine(line) };
+}
 
 export async function askRadioDevice(
   state: GameState,
   topic: string,
 ): Promise<ActionResult> {
-  const voice = getActiveRadioVoice(state);
-  if (!voice) return { state, message: "Only static answers." };
-  return await askRadioVoice(state, voice, topic);
+  const npc = getActiveRadioNpc(state);
+  if (!npc) return { state, message: "Only static answers." };
+  return askRadioNpc(state, npc, topic);
 }
 
 export async function tellRadioDevice(
   state: GameState,
   topic: string,
 ): Promise<ActionResult> {
-  const voice = getActiveRadioVoice(state);
-  if (!voice) return { state, message: "Only static answers." };
-  return await tellRadioVoice(state, voice, topic);
+  const npc = getActiveRadioNpc(state);
+  if (!npc) return { state, message: "Only static answers." };
+  return tellRadioNpc(state, npc, topic);
 }
 
-// Track used topics so repeated questions can get a different response
-function markTopicUsed(state: GameState, topic: string): GameState {
-  state = ensureRadioConversation(state);
-  const radio = state.conversation!.radio!;
-  const used = { ...(radio.topicsUsed ?? {}) };
-  used[topic] = true;
-  return setRadioConversation(state, { ...radio, topicsUsed: used });
-}
-
-function hasTopicBeenUsed(state: GameState, topic: string): boolean {
-  return Boolean(state.conversation?.radio?.topicsUsed?.[topic]);
-}
-
-export async function askRadioVoice(
+export async function askNpc(
   state: GameState,
-  voice: RadioVoice,
+  npc: ConversationNpc,
   topic: string,
+  via: "radio" | "direct" = "direct",
 ): Promise<ActionResult> {
-  // Try Claude AI if enabled
-  if (voice.aiEnabled && voice.characterProfile) {
-    const conversationHistory =
-      state.conversation?.radio?.conversationHistory || [];
-
-    try {
-      const claudeResponse = await getClaudeResponse(
-        voice.id,
-        voice.characterProfile,
-        conversationHistory,
-        { type: "ask", topic },
-      );
-
-      if (claudeResponse) {
-        // Add to conversation history
-        const historyEntry: ConversationHistoryEntry = {
-          turn: state.moves,
-          type: "ask",
-          topic,
-          response: claudeResponse,
-        };
-
-        const nextState = {
-          ...state,
-          conversation: {
-            ...state.conversation,
-            radio: {
-              ...state.conversation?.radio,
-              conversationHistory: [...conversationHistory, historyEntry],
-            },
-          },
-        };
-
-        return {
-          state: nextState,
-          message: `*pop* ${claudeResponse} *pop*`,
-        };
-      }
-      // Falls through to static dialog if Claude fails
-    } catch (error) {
-      console.warn("Claude integration error, using fallback:", error);
-    }
+  if (via === "radio") {
+    return askRadioNpc(state, npc, topic);
   }
 
-  // Static fallback (original implementation)
-  if (hasTopicBeenUsed(state, topic)) {
+  const aiResult = await getNpcAiResponse(state, npc, { type: "ask", topic });
+  if (aiResult.response) {
     return {
-      state,
-      message: `*pop* "I don't know anything more about that (cough)..." *pop*`,
-    };
-  }
-  const nextState = markTopicUsed(state, topic);
-  const line = `*pop* ${
-    RADIO_DIALOG[voice.id]?.ask?.[resolveAskTopic(topic)] ??
-    defaultRadioAskLine(topic)
-  } *pop*`;
-
-  return { state: nextState, message: line };
-}
-
-export async function tellRadioVoice(
-  state: GameState,
-  voice: RadioVoice,
-  topic: string,
-): Promise<ActionResult> {
-  // Try Claude AI if enabled
-  if (voice.aiEnabled && voice.characterProfile) {
-    const conversationHistory =
-      state.conversation?.radio?.conversationHistory || [];
-
-    try {
-      const claudeResponse = await getClaudeResponse(
-        voice.id,
-        voice.characterProfile,
-        conversationHistory,
-        { type: "tell", topic },
-      );
-
-      if (claudeResponse) {
-        // Add to conversation history
-        const historyEntry: ConversationHistoryEntry = {
-          turn: state.moves,
-          type: "tell",
-          topic,
-          response: claudeResponse,
-        };
-
-        const nextState = {
-          ...state,
-          conversation: {
-            ...state.conversation,
-            radio: {
-              ...state.conversation?.radio,
-              conversationHistory: [...conversationHistory, historyEntry],
-            },
-          },
-        };
-
-        return {
-          state: nextState,
-          message: `*pop* ${claudeResponse} *pop*`,
-        };
-      }
-      // Falls through to static dialog if Claude fails
-    } catch (error) {
-      console.warn("Claude integration error, using fallback:", error);
-    }
-  }
-
-  // Static fallback (original implementation)
-  if (hasTopicBeenUsed(state, `tell:${topic}`)) {
-    return {
-      state,
-      message: `*pop* "I know (cough)...you (cough) told me..." *pop*`,
+      state: aiResult.state,
+      message: `"${aiResult.response}"`,
     };
   }
 
-  const nextState = markTopicUsed(state, `tell:${topic}`);
-
-  const line = `*pop* ${
-    RADIO_DIALOG[voice.id]?.tell?.[resolveAskTopic(topic)] ??
-    defaultRadioTellLine()
-  } *pop*`;
-
-  return { state: nextState, message: line };
-}
-
-export function askNpc(
-  state: GameState,
-  npc: Item,
-  topic: string,
-): ActionResult {
-  if (npc.name === "Ranger Rick") {
-    const line = `"${
-      RANGERBOT_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)] ??
-      defaultRangerAskLine()
-    }"`;
-
-    return { state, message: line };
+  if (npc.id === "RangerBot") {
+    const line =
+      NPC_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)] ?? defaultRangerAskLine();
+    return { state, message: `"${line}"` };
   }
+
   return { state, message: `${npc.name} has nothing to say about that.` };
 }
 
-export function tellNpc(
+export async function tellNpc(
   state: GameState,
-  npc: Item,
+  npc: ConversationNpc,
   topic: string,
-): ActionResult {
-  if (npc.name === "Ranger Rick") {
-    const line = `"${
-      RANGERBOT_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ??
-      defaultRangerTellLine()
-    }"`;
-
-    return { state, message: line };
+  via: "radio" | "direct" = "direct",
+): Promise<ActionResult> {
+  if (via === "radio") {
+    return tellRadioNpc(state, npc, topic);
   }
+
+  const aiResult = await getNpcAiResponse(state, npc, {
+    type: "tell",
+    topic,
+  });
+  if (aiResult.response) {
+    return {
+      state: aiResult.state,
+      message: `"${aiResult.response}"`,
+    };
+  }
+
+  if (npc.id === "RangerBot") {
+    const line =
+      NPC_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ??
+      defaultRangerTellLine();
+    return { state, message: `"${line}"` };
+  }
+
   return { state, message: `${npc.name} doesn't seem to care.` };
 }
 
 function defaultRadioAskLine(topic: string): string {
-  return `*pop* "I (cough) don't really know anything about any ${topic}..." *pop*`;
+  return `"I (cough) don't really know anything about any ${topic}..."`;
 }
 
 function defaultRangerAskLine(): string {

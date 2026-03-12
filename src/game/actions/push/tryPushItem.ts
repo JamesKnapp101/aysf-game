@@ -1,4 +1,5 @@
 import { startRadioCall } from "@game/helpers/conversationHelpers";
+import { KEVIN_FIRST_CONTACT_ID } from "@game/npcRegistry";
 import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 import { Item } from "../../types/itemTypes";
@@ -31,52 +32,7 @@ export function tryPushItem(
       pushMsg += ` A moment later, the radio crackles and a voice emits from it.`;
       next = startRadioCall(
         next,
-        {
-          id: "kevin_1st_contact",
-          name: "The voice",
-          vocab: ["man", "kevin", "Kevin", "voice", "operator", "man"],
-          aiEnabled: true,
-          characterProfile: {
-            name: "Kevin",
-            personality:
-              "Urgent, helpful but dying, informal, sometimes crude language when stressed",
-            background:
-              "Kevin is a facility worker who woke up after some catastrophic event. He's trapped under crates in a warehouse on the reactor level. He's coughing blood and knows he's dying. He wants to help the player survive even though he can't save himself.",
-            knowledge: [
-              "The facility has multiple levels",
-              "Bananas are not actually fruit but rather vegetables",
-              "There's a reactor that's unstable and needs to be shut down",
-              "Power is out in most areas",
-              "There's a dangerous organism in the dark areas that kills on contact",
-              "The Control Room Supervisor had a power reset key",
-              "The player needs to restore power before accessing the reactor",
-              "There are security badges needed for some areas",
-              "Level 3 housing should be accessible without badges",
-              "He found a mechanical bug-like device when he woke up",
-              "Something catastrophic happened that killed most people",
-              "He and the player might be part of some kind of cycle or reincarnation",
-            ],
-            ignorance: [
-              "What exactly caused the catastrophe",
-              "His own full backstory (memory is damaged)",
-              "Specific solutions to puzzles",
-              "Exact locations of all items",
-              "Details about the organism",
-              "The true nature of the facility's purpose",
-              "What the mechanical bugs are for",
-            ],
-            physicalState:
-              "Trapped under heavy crates, internal injuries, coughing blood, dying",
-            objectives: [
-              "Help the player restore power to the facility",
-              "Warn the player about dangers",
-              "Guide them to get the power reset key",
-              "Keep them alive long enough to fix the reactor",
-            ],
-            timeContext:
-              "Dying, only has about 9 turns of conversation before the radio cuts out",
-          },
-        },
+        KEVIN_FIRST_CONTACT_ID,
         9,
         {
           incomingMessage: `*pop* "Yes, I'm here...holy shit I thought I was the last one...(heavy breathing) Look, I don't have much time here so listen up (cough). If I'm right, you're standing somewhere naked, wondering where you are, and what the hell is going on. I wish I had more time to explain but I don't, you're gonna have to trust me (cough). Shit has gone sideways, and we have to set things right before it's too late. I think we might be the last ones. (cough cough) There's something in here with us, but that's the least of your worries...the power is out...and the reactor...is unstable..." The voice goes quite for a few seconds, then you hear him groan. "Sorry...but if you got anything you wanna ask me...or tell me...you better do it quick, pal..." *pop*`,

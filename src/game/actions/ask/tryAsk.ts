@@ -1,13 +1,11 @@
 import {
   askNpc,
   askRadioDevice,
-  askRadioVoice,
   isRadioTargetItem,
-  isRangerBotTargetItem,
 } from "@game/helpers/conversationHelpers";
 import { normalizeTopic } from "@game/rules/scope";
-import { ActionResult } from "@game/types/actionsTypes";
-import { ConversationTarget } from "@game/types/npcTypes";
+import type { ActionResult } from "@game/types/actionsTypes";
+import type { ConversationTarget } from "@game/types/npcTypes";
 import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 
@@ -18,25 +16,19 @@ export async function tryAsk(
 ): Promise<ActionResult> {
   const topic = normalizeTopic(topicRaw, target);
 
-  // Asking the voice directly (ASK DAVE ABOUT ...)
-  if (target.kind === "radioVoice") {
-    return await askRadioVoice(state, target.voice, topic);
+  if (target.kind === "npc") {
+    return askNpc(state, target.npc, topic, target.via);
   }
 
-  // Asking an in-world item or NPC
   const item = target.item;
 
   if (isRadioTargetItem(item)) {
-    return await askRadioDevice(state, topic);
-  }
-
-  if (isRangerBotTargetItem(item)) {
-    return askNpc(state, item, topic);
+    return askRadioDevice(state, topic);
   }
 
   if (item.itemCategory !== "animate") {
     return { state, message: "That isn't going to respond." };
   }
 
-  return askNpc(state, item, topic);
+  return { state, message: `${item.name} has nothing to say about that.` };
 }

@@ -353,7 +353,7 @@ describe("Action smoke coverage", () => {
       "push radio",
     );
 
-    expect(next.conversation?.radio?.activeVoice?.id).toBe("kevin_1st_contact");
+    expect(next.radio?.activeNpcId).toBe("kevin_1st_contact");
   });
 
   it("covers ask", () => {
@@ -362,7 +362,9 @@ describe("Action smoke coverage", () => {
       ["push radio", "ask kevin about power"],
     );
 
-    expect(next.conversation?.radio?.topicsUsed?.power).toBe(true);
+    expect(next.conversation?.npcs?.kevin_1st_contact?.topicsUsed?.power).toBe(
+      true,
+    );
     expectCommandEntry(next, "ask kevin about power", /reset key/i);
   });
 
@@ -372,7 +374,9 @@ describe("Action smoke coverage", () => {
       ["push radio", "tell kevin about bug"],
     );
 
-    expect(next.conversation?.radio?.topicsUsed?.["tell:bug"]).toBe(true);
+    expect(
+      next.conversation?.npcs?.kevin_1st_contact?.topicsUsed?.["tell:bug"],
+    ).toBe(true);
     expectCommandEntry(next, "tell kevin about bug", /found one when i woke up/i);
   });
 

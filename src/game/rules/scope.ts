@@ -1,5 +1,6 @@
 import { inventoryHas } from "@game/rules/state";
-import { ConversationTarget, RadioVoice } from "@game/types/npcTypes";
+import { getNpcById, getNpcForItem } from "@game/npcRegistry";
+import type { ConversationNpc, ConversationTarget } from "@game/types/npcTypes";
 import {
   HYDROPONICS_SPIDER_ITEM_ID,
   isHydroponicsSpiderNoun,
@@ -65,9 +66,9 @@ export function normalizeTopic(
   target?: ConversationTarget,
 ): string {
   const ignoreWords = ["the", "a", "an", "ask", "tell"];
-  if (target?.kind === "radioVoice") {
-    ignoreWords.push(target.voice.name.toLowerCase());
-    for (const v of target.voice?.vocab ?? []) {
+  if (target?.kind === "npc") {
+    ignoreWords.push(target.npc.name.toLowerCase());
+    for (const v of target.npc.vocab ?? []) {
       ignoreWords.push(v);
     }
   }
@@ -254,8 +255,10 @@ export function resolveTeleportPadByNoun(
   );
 }
 
-export function getActiveRadioVoice(state: GameState): RadioVoice | undefined {
-  return state.conversation?.radio?.activeVoice;
+export function getActiveRadioNpc(
+  state: GameState,
+): ConversationNpc | undefined {
+  return getNpcById(state.radio?.activeNpcId);
 }
 
 function normalizeForConversation(t: string): string {
@@ -292,20 +295,27 @@ export function resolveConversationTarget(
   targetText: string,
 ): ConversationTarget | undefined {
   const item = resolveItemByNoun(state, targetText);
-  if (item) return { kind: "item", item };
+  if (item) {
+    const npc = getNpcForItem(item);
+    if (npc) {
+      return { kind: "npc", npc, via: "direct", item };
+    }
 
-  const voice = getActiveRadioVoice(state);
-  if (!voice) return undefined;
+    return { kind: "item", item };
+  }
+
+  const npc = getActiveRadioNpc(state);
+  if (!npc) return undefined;
 
   const inputTokens = tokenizeConv(targetText);
 
-  const nameNeedle = tokenizeConv(voice.name);
+  const nameNeedle = tokenizeConv(npc.name);
   const matchesName = containsTokenSequence(inputTokens, nameNeedle);
-  const matchesVocab = (voice.vocab ?? []).some((term) =>
+  const matchesVocab = (npc.vocab ?? []).some((term) =>
     containsTokenSequence(inputTokens, tokenizeConv(term)),
   );
 
   return matchesName || matchesVocab
-    ? { kind: "radioVoice", voice }
+    ? { kind: "npc", npc, via: "radio" }
     : undefined;
 }

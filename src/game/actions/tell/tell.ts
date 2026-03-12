@@ -1,6 +1,6 @@
 import { tryTell } from "@game/actions/tell/tryTell";
 import {
-  getActiveRadioVoice,
+  getActiveRadioNpc,
   resolveConversationTarget,
 } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
@@ -28,7 +28,7 @@ export async function doTell(
 
   const target = resolveConversationTarget(state, targetText);
   if (!target) {
-    if (!getActiveRadioVoice(state))
+    if (!getActiveRadioNpc(state))
       return { state, message: "No one answers." };
     return { state, message: "No response." };
   }

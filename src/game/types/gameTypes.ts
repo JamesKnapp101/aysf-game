@@ -1,7 +1,10 @@
 import { playerMemoryMap, playerScoreMap } from "@game/constants";
 import { DNAResult } from "@game/rules/dnaReader";
 import { ItemId, RoomId } from "@game/types/ids";
-import { ConversationHistoryEntry, RadioVoice } from "@game/types/npcTypes";
+import type {
+  NpcConversationState,
+  RadioState,
+} from "@game/types/npcTypes";
 import type { DoorDefinition, DoorState } from "./doorTypes";
 import type { Item, ItemState } from "./itemTypes";
 import type { Direction, Room } from "./roomTypes";
@@ -17,20 +20,9 @@ export interface GameState {
   worldState: WorldState;
   itemState: ItemState;
   conversation?: {
-    radio?: {
-      activeVoice?: RadioVoice;
-
-      // how long the connection lasts
-      turnsRemaining?: number;
-
-      // optional: prevents repeat spam
-      topicsUsed?: Record<string, true>;
-      queuedLog?: string[];
-
-      // AI conversation history
-      conversationHistory?: ConversationHistoryEntry[];
-    };
+    npcs?: Record<string, NpcConversationState>;
   };
+  radio?: RadioState;
   rng: () => number;
 }
 

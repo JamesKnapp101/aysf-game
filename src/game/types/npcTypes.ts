@@ -1,4 +1,4 @@
-import { Item } from "@game/types/itemTypes";
+import type { Item } from "@game/types/itemTypes";
 
 export interface CharacterProfile {
   name: string;
@@ -9,47 +9,48 @@ export interface CharacterProfile {
   physicalState: string;
   objectives: string[];
   timeContext: string;
+  conversationContext?: string;
 }
 
-export type RadioVoice = {
-  id: string; // "call1_dave"
-  name: string; // "Dave"
-  vocab?: string[]; // ["dave", "voice", "operator"]
-  // New: Enable AI-powered conversations
+export type CharacterProfileId = string;
+
+export type ConversationNpc = {
+  id: string;
+  name: string;
+  vocab?: string[];
   aiEnabled?: boolean;
-  characterProfile?: CharacterProfile;
+  characterProfileId?: CharacterProfileId;
 };
+
+export type ConversationChannel = "radio" | "direct";
 
 export type ConversationTarget =
-  | { kind: "radioVoice"; voice: RadioVoice }
+  | { kind: "npc"; npc: ConversationNpc; via: ConversationChannel; item?: Item }
   | { kind: "item"; item: Item };
 
-export type RadioDialogId = string;
-
-/**
- * Your keys are arrays like ["what hell"] but they end up as plain string keys.
- * So the actual runtime type is just string -> string.
- */
-export type RadioAskMap = Record<string, string>;
-
-/**
- * ping is numeric keys (1,2,3...) but in JS object keys become strings anyway.
- * This type allows 1,2,3 etc as keys.
- */
-export type RadioPingMap = Record<number, string>;
-
-export type RadioDialogEntry = {
+export type NpcDialogEntry = {
   ask: Record<string, string>;
   tell: Record<string, string>;
-  ping: string[];
-  signOff: string;
+  ping?: string[];
+  signOff?: string;
 };
 
-export type RadioDialog = Record<string, RadioDialogEntry>;
+export type NpcDialog = Record<string, NpcDialogEntry>;
 
 export interface ConversationHistoryEntry {
   turn: number;
   type: "ask" | "tell";
   topic: string;
   response: string;
+}
+
+export interface NpcConversationState {
+  topicsUsed?: Record<string, true>;
+  conversationHistory?: ConversationHistoryEntry[];
+}
+
+export interface RadioState {
+  activeNpcId?: string;
+  turnsRemaining?: number;
+  queuedLog?: string[];
 }

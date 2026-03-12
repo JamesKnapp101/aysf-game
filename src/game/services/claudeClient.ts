@@ -1,28 +1,15 @@
 // Frontend client for Claude conversation API
 // This runs in the browser but calls your secure backend
 
+import type {
+  CharacterProfile,
+  ConversationHistoryEntry,
+} from "@game/types/npcTypes";
+
 const API_BASE =
   process.env.NODE_ENV === "production"
     ? "/api" // Production uses same domain
     : "http://localhost:3001/api"; // Dev uses proxy or direct
-
-export interface CharacterProfile {
-  name: string;
-  personality: string;
-  background: string;
-  knowledge: string[];
-  ignorance: string[];
-  physicalState: string;
-  objectives: string[];
-  timeContext: string;
-}
-
-export interface ConversationEntry {
-  turn: number;
-  type: "ask" | "tell";
-  topic: string;
-  response: string;
-}
 
 export interface PlayerInput {
   type: "ask" | "tell";
@@ -40,8 +27,8 @@ interface ClaudeResponse {
 // Track pending requests to prevent duplicate API calls
 const pendingRequests = new Map<string, Promise<string | null>>();
 
-function getRequestKey(voiceId: string, type: string, topic: string): string {
-  return `${voiceId}:${type}:${topic.toLowerCase().trim()}`;
+function getRequestKey(npcId: string, type: string, topic: string): string {
+  return `${npcId}:${type}:${topic.toLowerCase().trim()}`;
 }
 
 /**
@@ -49,17 +36,13 @@ function getRequestKey(voiceId: string, type: string, topic: string): string {
  * Returns null if the API fails (signals to use static fallback)
  */
 export async function getClaudeResponse(
-  voiceId: string,
+  npcId: string,
   characterProfile: CharacterProfile,
-  conversationHistory: ConversationEntry[],
+  conversationHistory: ConversationHistoryEntry[],
   playerInput: PlayerInput,
 ): Promise<string | null> {
   // Check if there's already a pending request for this exact question
-  const requestKey = getRequestKey(
-    voiceId,
-    playerInput.type,
-    playerInput.topic,
-  );
+  const requestKey = getRequestKey(npcId, playerInput.type, playerInput.topic);
 
   const existingRequest = pendingRequests.get(requestKey);
   if (existingRequest) {
@@ -76,7 +59,7 @@ export async function getClaudeResponse(
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          voiceId,
+          npcId,
           characterProfile,
           conversationHistory,
           playerInput,
@@ -98,7 +81,7 @@ export async function getClaudeResponse(
       }
 
       if (data.cached) {
-        console.log(`Using cached response for ${voiceId}`);
+        console.log(`Using cached response for ${npcId}`);
       }
 
       return data.response;

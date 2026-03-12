@@ -1,5 +1,5 @@
 import { normalize } from "@game/rules/scope";
-import { RadioDialog, RadioDialogEntry } from "@game/types/npcTypes";
+import type { NpcDialog, NpcDialogEntry } from "@game/types/npcTypes";
 
 const RADIO_ASK_ALIASES: Record<string, string[]> = {
   bug: ["spider", "husk", "itsy bitsy spider"],
@@ -32,12 +32,12 @@ export function resolveAskTopic(raw: string) {
   return t;
 }
 
-export function getRadioAskReply(dialog: RadioDialogEntry, topic: string) {
+export function getNpcAskReply(dialog: NpcDialogEntry, topic: string) {
   const key = resolveAskTopic(topic);
   return dialog.ask[key];
 }
 
-export const RADIO_DIALOG: RadioDialog = {
+export const NPC_DIALOG: NpcDialog = {
   kevin_1st_contact: {
     ask: {
       ["what fuck"]: `"I don't know man...but I'm pretty sure that if we don't get things back on track...we are effed in the A..."`,
@@ -60,7 +60,7 @@ export const RADIO_DIALOG: RadioDialog = {
     },
     tell: {
       ["bug"]: `"Shit, no way (cough)...I found one when I woke up too..."`,
-      ["steel door"]: `"Huh, I don't know man (cough), it sounds like it won't open for a reason...`,
+      ["steel door"]: `"Huh, I don't know man (cough), it sounds like it won't open for a reason..."`,
     },
     ping: [
       `"Hey...you still there..?`,
@@ -69,16 +69,11 @@ export const RADIO_DIALOG: RadioDialog = {
     ],
     signOff: `(cough) (cough) ...looks like you're gonna be on your own from here out...(cough) wish I could help you more...(cough) good luck, man...`,
   },
-};
-
-export const RANGERBOT_DIALOG: RadioDialog = {
   RangerBot: {
     ask: {
       ["hours"]: `The park is available around the clock, the only requirement being a valid park pass.`,
       ["pass"]: `If you don't have a valid park pass, you can request one from Park Services. Current wait time is estimated to be: *Infinite Number*`,
     },
     tell: {},
-    ping: [],
-    signOff: "",
   },
 };

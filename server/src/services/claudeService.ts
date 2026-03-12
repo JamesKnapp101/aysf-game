@@ -9,6 +9,7 @@ export interface CharacterProfile {
   physicalState: string;
   objectives: string[];
   timeContext: string;
+  conversationContext?: string;
 }
 
 export interface ConversationEntry {
@@ -24,7 +25,7 @@ export interface PlayerInput {
 }
 
 interface GenerateParams {
-  voiceId: string;
+  npcId: string;
   characterProfile: CharacterProfile;
   conversationHistory: ConversationEntry[];
   playerInput: PlayerInput;
@@ -47,9 +48,9 @@ export async function generateClaudeResponse(
   // Build conversation history for Claude
   const messages = buildMessages(conversationHistory, playerInput);
 
-  const response = await client.messages.create({
+const response = await client.messages.create({
     model: "claude-haiku-4-5-20251001", // Cheapest option, fast and efficient
-    max_tokens: 200, // Keep radio responses concise
+    max_tokens: 200, // Keep responses concise
     temperature: 0.8, // Some variety but mostly consistent
     system: systemPrompt,
     messages,
@@ -64,7 +65,12 @@ export async function generateClaudeResponse(
 }
 
 function buildSystemPrompt(characterProfile: CharacterProfile): string {
-  return `You are playing the character of ${characterProfile.name} in an interactive fiction game. This is a radio conversation with static and poor reception.
+  const conversationContext =
+    characterProfile.conversationContext ??
+    "This conversation takes place inside an interactive fiction game.";
+
+  return `You are playing the character of ${characterProfile.name} in an interactive fiction game.
+${conversationContext}
 
 **Character Profile:**
 - Personality: ${characterProfile.personality}
@@ -83,24 +89,22 @@ ${characterProfile.objectives.map((o) => `- ${o}`).join("\n")}
 
 **Critical Instructions:**
 1. Stay in character at ALL times - you are ${characterProfile.name}, not an AI
-2. Keep responses VERY SHORT (1-3 sentences max) - this is radio with static
-3. Show your physical state: cough, groan, breathe heavily when appropriate
-4. Use "(cough)" as a verbal tic occasionally
-5. If asked about something you don't know, express it naturally: "I don't know man..." or "My memory is fried..."
-6. Don't break the fourth wall or acknowledge being an AI assistant
-7. Reference past conversation when relevant
-8. Sound urgent but helpful - you're dying but trying to help the player survive
-9. Use informal language: "man", "shit", "holy crap", etc.
-10. DO NOT include radio formatting like "*pop*" - the game adds that
+2. Keep responses VERY SHORT (1-3 sentences max)
+3. Let the personality, background, physical state, and conversation context shape the wording
+4. If asked about something you don't know, express uncertainty naturally and in character
+5. Don't break the fourth wall or acknowledge being an AI assistant
+6. Reference past conversation when relevant
+7. Do not add formatting like "*pop*", speaker labels, or stage directions unless the character would literally say them
+8. Keep the response grounded in what the character knows, wants, and is currently capable of saying
 
 **Example Good Responses:**
-- "Yeah man (cough)...I found one of those too...creepy as hell..."
-- "I don't know (cough)...my memory is totally fried...but I know this place..."
-- "Shit no way...you gotta get the power on first (cough cough)..."
+- "I know what you mean. Keep moving."
+- "I'm not sure. Memory's a mess right now."
+- "That tracks. Be careful."
 
 **Example Bad Responses:**
-- "*pop* I can help you with that information *pop*" (too formal, includes formatting)
-- "As Kevin, I would say..." (breaking character)
+- "*pop* I can help you with that information *pop*" (includes formatting the game should add)
+- "As this character, I would say..." (breaking character)
 - Long explanations (keep it brief!)`;
 }
 
@@ -125,7 +129,7 @@ function buildMessages(
       });
     }
 
-    // Kevin's past response
+    // NPC's past response
     messages.push({
       role: "assistant",
       content: entry.response,

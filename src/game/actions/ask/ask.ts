@@ -1,6 +1,6 @@
 import { tryAsk } from "@game/actions/ask/tryAsk";
 import {
-  getActiveRadioVoice,
+  getActiveRadioNpc,
   resolveConversationTarget,
 } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
@@ -29,7 +29,7 @@ export async function doAsk(
   const target = resolveConversationTarget(state, targetText);
   if (!target) {
     // Better radio-ish feedback if there's no active call and they tried a person
-    if (!getActiveRadioVoice(state))
+    if (!getActiveRadioNpc(state))
       return { state, message: "No one answers." };
     return { state, message: "No response." };
   }

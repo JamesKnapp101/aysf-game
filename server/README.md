@@ -42,7 +42,7 @@ Generate AI response for NPC conversation.
 
 ```json
 {
-  "voiceId": "kevin_1st_contact",
+  "npcId": "kevin_1st_contact",
   "characterProfile": {
     "name": "Kevin",
     "personality": "...",
@@ -51,7 +51,8 @@ Generate AI response for NPC conversation.
     "ignorance": [...],
     "physicalState": "...",
     "objectives": [...],
-    "timeContext": "..."
+    "timeContext": "...",
+    "conversationContext": "..."
   },
   "conversationHistory": [
     {
