@@ -1,4 +1,4 @@
-# AYSF Game Frontend
+# And Ye Shall Find: AI Powered Interactive Fiction
 
 AYSF is a browser-based interactive fiction game built with React, TypeScript, and Vite. The frontend renders the command-line style interface, room and world state, UI overlays, and puzzle systems for a large sci-fi survival adventure aboard a failing ship.
 
