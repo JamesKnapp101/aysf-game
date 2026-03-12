@@ -7,7 +7,10 @@ import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
 
-export function doTell(state: GameState, cmd: ParsedCommand): ActionResult {
+export async function doTell(
+  state: GameState,
+  cmd: ParsedCommand,
+): Promise<ActionResult> {
   if (cmd.type !== "action" || cmd.verb !== "tell") {
     return { state, message: "You can't do that." };
   }
@@ -30,5 +33,5 @@ export function doTell(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "No response." };
   }
 
-  return tryTell(state, target, topicText);
+  return await tryTell(state, target, topicText);
 }

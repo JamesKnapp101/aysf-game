@@ -7,7 +7,10 @@ import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
 
-export function doAsk(state: GameState, cmd: ParsedCommand): ActionResult {
+export async function doAsk(
+  state: GameState,
+  cmd: ParsedCommand,
+): Promise<ActionResult> {
   if (cmd.type !== "action" || cmd.verb !== "ask") {
     return { state, message: "You can't do that." };
   }
@@ -31,5 +34,5 @@ export function doAsk(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "No response." };
   }
 
-  return tryAsk(state, target, topicText);
+  return await tryAsk(state, target, topicText);
 }

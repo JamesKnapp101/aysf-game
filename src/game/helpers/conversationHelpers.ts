@@ -4,11 +4,13 @@ import {
   RANGERBOT_DIALOG,
   resolveAskTopic,
 } from "@game/npcDialog";
-import { normalize } from "@game/rules/scope";
+import { normalize, resolveConversationTarget } from "@game/rules/scope";
+import { getClaudeResponse } from "@game/services/claudeClient";
 import { ActionResult } from "@game/types/actionsTypes";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
-import { RadioVoice } from "@game/types/npcTypes";
+import { ConversationHistoryEntry, RadioVoice } from "@game/types/npcTypes";
+import { ParsedCommand } from "@game/types/parserTypes";
 
 export function getActiveRadioVoice(state: GameState): RadioVoice | undefined {
   return state.conversation?.radio?.activeVoice;
@@ -16,6 +18,35 @@ export function getActiveRadioVoice(state: GameState): RadioVoice | undefined {
 
 export function getRadioTurnsRemaining(state: GameState): number | undefined {
   return state.conversation?.radio?.turnsRemaining;
+}
+
+export function getPendingConversationLogMessage(
+  state: GameState,
+  cmd: ParsedCommand,
+): string | undefined {
+  if (
+    cmd.type !== "action" ||
+    (cmd.verb !== "ask" && cmd.verb !== "tell") ||
+    !cmd.direct?.trim()
+  ) {
+    return undefined;
+  }
+
+  const target = resolveConversationTarget(state, cmd.direct.trim());
+  if (!target) return undefined;
+
+  const voice =
+    target.kind === "radioVoice"
+      ? target.voice
+      : isRadioTargetItem(target.item)
+        ? getActiveRadioVoice(state)
+        : undefined;
+
+  if (!voice?.aiEnabled || !voice.characterProfile) {
+    return undefined;
+  }
+
+  return `${voice.name} considers this...`;
 }
 
 function ensureConversation(state: GameState): GameState {
@@ -171,16 +202,22 @@ export function isRangerBotTargetItem(item: Item): boolean {
 // Radio behavior
 // ----------------
 
-export function askRadioDevice(state: GameState, topic: string): ActionResult {
+export async function askRadioDevice(
+  state: GameState,
+  topic: string,
+): Promise<ActionResult> {
   const voice = getActiveRadioVoice(state);
   if (!voice) return { state, message: "Only static answers." };
-  return askRadioVoice(state, voice, topic);
+  return await askRadioVoice(state, voice, topic);
 }
 
-export function tellRadioDevice(state: GameState, topic: string): ActionResult {
+export async function tellRadioDevice(
+  state: GameState,
+  topic: string,
+): Promise<ActionResult> {
   const voice = getActiveRadioVoice(state);
   if (!voice) return { state, message: "Only static answers." };
-  return tellRadioVoice(state, voice, topic);
+  return await tellRadioVoice(state, voice, topic);
 }
 
 // Track used topics so repeated questions can get a different response
@@ -196,11 +233,56 @@ function hasTopicBeenUsed(state: GameState, topic: string): boolean {
   return Boolean(state.conversation?.radio?.topicsUsed?.[topic]);
 }
 
-export function askRadioVoice(
+export async function askRadioVoice(
   state: GameState,
   voice: RadioVoice,
   topic: string,
-): ActionResult {
+): Promise<ActionResult> {
+  // Try Claude AI if enabled
+  if (voice.aiEnabled && voice.characterProfile) {
+    const conversationHistory =
+      state.conversation?.radio?.conversationHistory || [];
+
+    try {
+      const claudeResponse = await getClaudeResponse(
+        voice.id,
+        voice.characterProfile,
+        conversationHistory,
+        { type: "ask", topic },
+      );
+
+      if (claudeResponse) {
+        // Add to conversation history
+        const historyEntry: ConversationHistoryEntry = {
+          turn: state.moves,
+          type: "ask",
+          topic,
+          response: claudeResponse,
+        };
+
+        const nextState = {
+          ...state,
+          conversation: {
+            ...state.conversation,
+            radio: {
+              ...state.conversation?.radio,
+              conversationHistory: [...conversationHistory, historyEntry],
+            },
+          },
+        };
+
+        return {
+          state: nextState,
+          message: `*pop* ${claudeResponse} *pop*`,
+        };
+      }
+      // Falls through to static dialog if Claude fails
+    } catch (error) {
+      console.warn("Claude integration error, using fallback:", error);
+    }
+  }
+
+  // Static fallback (original implementation)
   if (hasTopicBeenUsed(state, topic)) {
     return {
       state,
@@ -210,17 +292,62 @@ export function askRadioVoice(
   const nextState = markTopicUsed(state, topic);
   const line = `*pop* ${
     RADIO_DIALOG[voice.id]?.ask?.[resolveAskTopic(topic)] ??
-    defaultRadioAskLine(voice, topic)
+    defaultRadioAskLine(topic)
   } *pop*`;
 
   return { state: nextState, message: line };
 }
 
-export function tellRadioVoice(
+export async function tellRadioVoice(
   state: GameState,
   voice: RadioVoice,
   topic: string,
-): ActionResult {
+): Promise<ActionResult> {
+  // Try Claude AI if enabled
+  if (voice.aiEnabled && voice.characterProfile) {
+    const conversationHistory =
+      state.conversation?.radio?.conversationHistory || [];
+
+    try {
+      const claudeResponse = await getClaudeResponse(
+        voice.id,
+        voice.characterProfile,
+        conversationHistory,
+        { type: "tell", topic },
+      );
+
+      if (claudeResponse) {
+        // Add to conversation history
+        const historyEntry: ConversationHistoryEntry = {
+          turn: state.moves,
+          type: "tell",
+          topic,
+          response: claudeResponse,
+        };
+
+        const nextState = {
+          ...state,
+          conversation: {
+            ...state.conversation,
+            radio: {
+              ...state.conversation?.radio,
+              conversationHistory: [...conversationHistory, historyEntry],
+            },
+          },
+        };
+
+        return {
+          state: nextState,
+          message: `*pop* ${claudeResponse} *pop*`,
+        };
+      }
+      // Falls through to static dialog if Claude fails
+    } catch (error) {
+      console.warn("Claude integration error, using fallback:", error);
+    }
+  }
+
+  // Static fallback (original implementation)
   if (hasTopicBeenUsed(state, `tell:${topic}`)) {
     return {
       state,
@@ -232,7 +359,7 @@ export function tellRadioVoice(
 
   const line = `*pop* ${
     RADIO_DIALOG[voice.id]?.tell?.[resolveAskTopic(topic)] ??
-    defaultRadioTellLine(voice, topic)
+    defaultRadioTellLine()
   } *pop*`;
 
   return { state: nextState, message: line };
@@ -246,7 +373,7 @@ export function askNpc(
   if (npc.name === "Ranger Rick") {
     const line = `"${
       RANGERBOT_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)] ??
-      defaultRangerAskLine(npc, topic)
+      defaultRangerAskLine()
     }"`;
 
     return { state, message: line };
@@ -262,7 +389,7 @@ export function tellNpc(
   if (npc.name === "Ranger Rick") {
     const line = `"${
       RANGERBOT_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ??
-      defaultRangerTellLine(npc, topic)
+      defaultRangerTellLine()
     }"`;
 
     return { state, message: line };
@@ -270,18 +397,18 @@ export function tellNpc(
   return { state, message: `${npc.name} doesn't seem to care.` };
 }
 
-function defaultRadioAskLine(voice: RadioVoice, topic: string): string {
+function defaultRadioAskLine(topic: string): string {
   return `*pop* "I (cough) don't really know anything about any ${topic}..." *pop*`;
 }
 
-function defaultRangerAskLine(voice: Item, topic: string): string {
+function defaultRangerAskLine(): string {
   return `Does that relate in some way to a park pass?`;
 }
 
-function defaultRadioTellLine(voice: RadioVoice, topic: string): string {
+function defaultRadioTellLine(): string {
   return `"Roger that (cough)..."`;
 }
 
-function defaultRangerTellLine(voice: Item, topic: string): string {
+function defaultRangerTellLine(): string {
   return `Roger that, sir!`;
 }

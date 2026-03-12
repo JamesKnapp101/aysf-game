@@ -1,9 +1,23 @@
 import { Item } from "@game/types/itemTypes";
 
+export interface CharacterProfile {
+  name: string;
+  personality: string;
+  background: string;
+  knowledge: string[];
+  ignorance: string[];
+  physicalState: string;
+  objectives: string[];
+  timeContext: string;
+}
+
 export type RadioVoice = {
   id: string; // "call1_dave"
   name: string; // "Dave"
   vocab?: string[]; // ["dave", "voice", "operator"]
+  // New: Enable AI-powered conversations
+  aiEnabled?: boolean;
+  characterProfile?: CharacterProfile;
 };
 
 export type ConversationTarget =
@@ -32,3 +46,10 @@ export type RadioDialogEntry = {
 };
 
 export type RadioDialog = Record<string, RadioDialogEntry>;
+
+export interface ConversationHistoryEntry {
+  turn: number;
+  type: "ask" | "tell";
+  topic: string;
+  response: string;
+}

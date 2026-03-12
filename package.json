@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:server": "cd server && pnpm run dev",
+    "dev:full": "concurrently \"pnpm run dev:server\" \"pnpm run dev\" --names \"server,frontend\" --prefix-colors \"blue,green\"",
+    "start": "pnpm run dev:full",
     "build": "tsc -b && vite build",
+    "build:server": "cd server && pnpm run build",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -13,6 +17,7 @@
     "drift:check": "node scripts/drift-check.mjs"
   },
   "dependencies": {
+    "concurrently": "^9.1.2",
     "lodash": "^4.17.21",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

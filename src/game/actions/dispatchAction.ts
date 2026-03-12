@@ -6,13 +6,13 @@ import type { ActionRequest, ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
 
-export function dispatchAction(
+export async function dispatchAction(
   state: GameState,
   req: ActionRequest
-): ActionResult {
+): Promise<ActionResult> {
   switch (req.verb) {
     case "command": {
-      const result = handleCommand(state, {
+      const result = await handleCommand(state, {
         type: "action",
         verb: req.payload?.input ?? "",
         raw: req.payload?.input ?? "",
@@ -40,9 +40,10 @@ export function dispatchAction(
           mode: getCoolerMode(state),
         },
       };
-    case "markMessagePlayed":
-      let next = setMessageListened(state, req.payload.messageId ?? "");
+    case "markMessagePlayed": {
+      const next = setMessageListened(state, req.payload.messageId ?? "");
       return { state: next, message: undefined };
+    }
     case "cycleCameraGunView":
       return {
         state,

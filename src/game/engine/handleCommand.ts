@@ -33,7 +33,15 @@ export function appendLog(state: GameState, text: string): GameState {
   return { ...state, log: [...state.log, text] };
 }
 
-export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
+type HandleCommandOptions = {
+  skipEcho?: boolean;
+};
+
+export async function handleCommand(
+  state: GameState,
+  cmd: ParsedCommand,
+  options: HandleCommandOptions = {},
+): Promise<GameState> {
   const { openOverlay } = useUIOverlayStore.getState();
   const DEATH_MARKER = "*** You have died ***";
 
@@ -137,11 +145,18 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         break;
       }
 
-      if (!state.world.rooms.some((candidate) => candidate.id === destinationRoomId)) {
+      if (
+        !state.world.rooms.some(
+          (candidate) => candidate.id === destinationRoomId,
+        )
+      ) {
         const requiredChunkId =
           getDeferredWorldChunkForEntryRoom(destinationRoomId);
 
-        if (requiredChunkId && !isWorldChunkLoaded(state.world, requiredChunkId)) {
+        if (
+          requiredChunkId &&
+          !isWorldChunkLoaded(state.world, requiredChunkId)
+        ) {
           const requestedChunkIds = Array.isArray(
             state.world.meta?.requestedChunkIds,
           )
@@ -221,7 +236,7 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
         break;
       }
 
-      const result = handler(state, cmd);
+      const result = await handler(state, cmd);
       nextState = result.state;
       message = result.message ?? "";
       consumesTurn = result.consumesTurn ?? true;
@@ -249,7 +264,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
     }
   }
 
-  if (cmd.type === "action" && nextState.player.roomId !== state.player.roomId) {
+  if (
+    cmd.type === "action" &&
+    nextState.player.roomId !== state.player.roomId
+  ) {
     nextState = runScriptedEvents(
       nextState,
       {
@@ -316,7 +334,8 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
             ? cmd.raw.trim().toLowerCase()
             : undefined,
         commandVerb: cmd.type === "action" ? cmd.verb : undefined,
-        commandDirect: cmd.type === "action" ? cmd.direct?.trim().toLowerCase() : undefined,
+        commandDirect:
+          cmd.type === "action" ? cmd.direct?.trim().toLowerCase() : undefined,
       },
       SCRIPTED_EVENTS,
     );
@@ -364,7 +383,10 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   }
 
   // Surface scripted narration queued by onCommand events even if no room change.
-  if (cmd.type === "action" && nextState.player.roomId === state.player.roomId) {
+  if (
+    cmd.type === "action" &&
+    nextState.player.roomId === state.player.roomId
+  ) {
     const drained = drainAfterRoomDescription(nextState);
     nextState = drained.state;
 
@@ -380,7 +402,9 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
 
   // Build echo block
   let logWithEcho = "";
-  if (cmd.type === "move") {
+  if (options.skipEcho) {
+    logWithEcho = message;
+  } else if (cmd.type === "move") {
     if (nextState.player.roomId !== state.player.roomId) {
       if (diedThisTurn) {
         logWithEcho = [`> ${cmd.direction}`, message.trim()]
@@ -406,10 +430,13 @@ export function handleCommand(state: GameState, cmd: ParsedCommand): GameState {
   }
 
   // Append echo/response
-  nextState = appendLog(
-    nextState,
-    logWithEcho.trim() + (tickLogEntries.length === 0 ? "\n\n" : ""),
-  );
+  const finalLogText = logWithEcho.trim();
+  if (finalLogText) {
+    nextState = appendLog(
+      nextState,
+      finalLogText + (tickLogEntries.length === 0 ? "\n\n" : ""),
+    );
+  }
 
   {
     const drained = drainRadioQueuedLog(nextState);

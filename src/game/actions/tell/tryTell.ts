@@ -10,21 +10,21 @@ import { ConversationTarget } from "@game/types/npcTypes";
 import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 
-export function tryTell(
+export async function tryTell(
   state: GameState,
   target: ConversationTarget,
-  topicRaw: string
-): ActionResult {
+  topicRaw: string,
+): Promise<ActionResult> {
   const topic = normalizeTopic(topicRaw);
 
   if (target.kind === "radioVoice") {
-    return tellRadioVoice(state, target.voice, topic);
+    return await tellRadioVoice(state, target.voice, topic);
   }
 
   const item = target.item;
 
   if (isRadioTargetItem(item)) {
-    return tellRadioDevice(state, topic);
+    return await tellRadioDevice(state, topic);
   }
 
   if (item.itemCategory !== "animate") {

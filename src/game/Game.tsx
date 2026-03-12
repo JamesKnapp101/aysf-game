@@ -26,6 +26,7 @@ import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 import { appendLog, handleCommand } from "./engine/handleCommand";
 import { createInitialState, mergeWorldChunkIntoState } from "./gameInit";
+import { getPendingConversationLogMessage } from "./helpers/conversationHelpers";
 import { isPlayerUnderwater } from "./helpers/environmentHelpers";
 import {
   getActiveStatusEffectIds,
@@ -140,25 +141,31 @@ export const Game: React.FC = () => {
         if (!trimmed) return s;
 
         const parsed = parseCommand(trimmed);
-        type CommandResult =
-          | GameState
-          | { state: GameState; message?: string; overlay?: any };
-        const result = handleCommand(s, parsed) as CommandResult;
-        const nextState = "state" in result ? result.state : result;
+        const pendingConversationLog = getPendingConversationLogMessage(
+          s,
+          parsed,
+        );
+        const optimisticState = pendingConversationLog
+          ? appendLog(appendLog(s, `> ${trimmed}`), pendingConversationLog)
+          : s;
 
-        if (parsed.type === "inventory") {
-          setActiveTab("inventory");
-        }
+        // Handle async command
+        handleCommand(optimisticState, parsed, {
+          skipEcho: Boolean(pendingConversationLog),
+        }).then((nextState) => {
+          if (parsed.type === "inventory") {
+            setActiveTab("inventory");
+          }
 
-        if (parsed.type === "diagnose") {
-          setActiveTab("status");
-        }
+          if (parsed.type === "diagnose") {
+            setActiveTab("status");
+          }
 
-        if ("message" in result && result.message) {
-          return appendLog(nextState, result.message);
-        }
+          dispatchState({ type: "replaceState", next: nextState });
+        });
 
-        return nextState;
+        // Return optimistic state immediately; async will reconcile it.
+        return optimisticState;
       }
 
       return s;
@@ -330,8 +337,7 @@ export const Game: React.FC = () => {
   const runAction = useCallback(
     (req: ActionRequest) => {
       const current = stateRef.current;
-      const result = dispatchAction(current, req);
-      applyResult(result);
+      void dispatchAction(current, req).then(applyResult);
     },
     [applyResult],
   );

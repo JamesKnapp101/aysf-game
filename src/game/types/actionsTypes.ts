@@ -11,8 +11,8 @@ export type ActionResult = {
 
 export type ActionHandler = (
   state: GameState,
-  cmd: ParsedCommand
-) => ActionResult;
+  cmd: ParsedCommand,
+) => ActionResult | Promise<ActionResult>;
 
 export type ActionRequest = {
   verb:
