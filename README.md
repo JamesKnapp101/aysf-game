@@ -27,7 +27,7 @@ The project is playable as a standalone frontend. When the optional backend is r
 
 ![And Ye Shall Find](src/assets/screenshot1.png)
 
-### AI Conversations
+### AI NPC Conversations
 
 ![AI Conversation](src/assets/screenshot9.png)
 ![AI Conversation](src/assets/screenshot10.png)
@@ -153,3 +153,7 @@ pnpm run test
 The frontend proxies `/api/*` to `http://localhost:3001` in development via `vite.config.ts`. Production assumes the frontend and API are served from the same origin under `/api`.
 
 For backend setup and API details, see [server/README.md](./server/README.md).
+
+## License
+
+MIT
