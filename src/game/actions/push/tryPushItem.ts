@@ -1,5 +1,5 @@
 import { startRadioCall } from "@game/helpers/conversationHelpers";
-import { KEVIN_FIRST_CONTACT_ID } from "@game/npcRegistry";
+import { YOU_FIRST_CONTACT_ID } from "@game/npcRegistry";
 import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 import { Item } from "../../types/itemTypes";
@@ -30,14 +30,9 @@ export function tryPushItem(
         },
       };
       pushMsg += ` A moment later, the radio crackles and a voice emits from it.`;
-      next = startRadioCall(
-        next,
-        KEVIN_FIRST_CONTACT_ID,
-        9,
-        {
-          incomingMessage: `*pop* "Yes, I'm here...holy shit I thought I was the last one...(heavy breathing) Look, I don't have much time here so listen up (cough). If I'm right, you're standing somewhere naked, wondering where you are, and what the hell is going on. I wish I had more time to explain but I don't, you're gonna have to trust me (cough). Shit has gone sideways, and we have to set things right before it's too late. I think we might be the last ones. (cough cough) There's something in here with us, but that's the least of your worries...the power is out...and the reactor...is unstable..." The voice goes quite for a few seconds, then you hear him groan. "Sorry...but if you got anything you wanna ask me...or tell me...you better do it quick, pal..." *pop*`,
-        },
-      );
+      next = startRadioCall(next, YOU_FIRST_CONTACT_ID, 9, {
+        incomingMessage: `*pop* "Yes, I'm here...holy shit I thought I was the last one...(heavy breathing) Look, I don't have much time here so listen up (cough). If I'm right, you're standing somewhere naked, wondering where you are, and what the hell is going on. I wish I had more time to explain but I don't, you're gonna have to trust me (cough). Shit has gone sideways, and we have to set things right before it's too late. I think we might be the last ones. (cough cough) There's something in here with us, but that's the least of your worries...the power is out...and the reactor...is unstable..." The voice goes quite for a few seconds, then you hear him groan. "Sorry...but if you got anything you wanna ask me...or tell me...you better do it quick, pal..." *pop*`,
+      });
     }
   }
   if (item.id === "PowerStationButton") {

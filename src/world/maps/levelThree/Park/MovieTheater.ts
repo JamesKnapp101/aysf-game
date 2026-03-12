@@ -11,7 +11,7 @@ export const movieTheaterRooms: Room[] = [
       { direction: "northwest", toRoomId: "MovieTheatreOne" },
       { direction: "southwest", toRoomId: "ParkWest" },
       { direction: "east", toRoomId: "ParkNorth" },
-      { direction: "south", toRoomId: "ParkTree" },
+      { direction: "south", toRoomId: "ParkMaintenance" },
       // { direction: "up", toRoomId: "Projection" },
     ],
   },

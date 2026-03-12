@@ -290,11 +290,27 @@ function containsTokenSequence(haystack: string[], needle: string[]): boolean {
   return false;
 }
 
+function resolveConversationItemPrefix(
+  state: GameState,
+  targetText: string,
+): Item | undefined {
+  const directItem = resolveItemByNoun(state, targetText);
+  if (directItem) return directItem;
+
+  const tokens = tokenizeConv(targetText);
+  for (let end = tokens.length - 1; end >= 1; end -= 1) {
+    const candidate = resolveItemByNoun(state, tokens.slice(0, end).join(" "));
+    if (candidate) return candidate;
+  }
+
+  return undefined;
+}
+
 export function resolveConversationTarget(
   state: GameState,
   targetText: string,
 ): ConversationTarget | undefined {
-  const item = resolveItemByNoun(state, targetText);
+  const item = resolveConversationItemPrefix(state, targetText);
   if (item) {
     const npc = getNpcForItem(item);
     if (npc) {

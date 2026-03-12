@@ -10,7 +10,7 @@ export const restaurantRooms: Room[] = [
       { direction: "northwest", toRoomId: "ParkWest" },
       { direction: "northeast", toRoomId: "ParkCenter" },
       { direction: "southwest", toRoomId: "Restaurant" },
-      { direction: "north", toRoomId: "ParkTree" },
+      { direction: "north", toRoomId: "ParkMaintenance" },
       { direction: "east", toRoomId: "ParkSouth" },
       { direction: "up", toRoomId: "UpOnTheRoof" },
     ],

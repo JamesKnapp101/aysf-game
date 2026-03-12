@@ -1,20 +1,79 @@
 import type { Item } from "@game/types/itemTypes";
 import type { ConversationNpc } from "@game/types/npcTypes";
 
-export const KEVIN_FIRST_CONTACT_ID = "kevin_1st_contact";
+export const YOU_FIRST_CONTACT_ID = "you_1st_contact";
 
 export const NPCS: Record<string, ConversationNpc> = {
-  [KEVIN_FIRST_CONTACT_ID]: {
-    id: KEVIN_FIRST_CONTACT_ID,
+  [YOU_FIRST_CONTACT_ID]: {
+    id: YOU_FIRST_CONTACT_ID,
     name: "The voice",
-    vocab: ["man", "kevin", "voice", "operator"],
+    vocab: ["man", "mox", "eedler", "voice", "operator"],
     aiEnabled: true,
-    characterProfileId: KEVIN_FIRST_CONTACT_ID,
+    characterProfileId: YOU_FIRST_CONTACT_ID,
   },
   RangerBot: {
     id: "RangerBot",
-    name: "Ranger Rick",
+    name: "The ranger robot",
     vocab: ["ranger", "robot", "bot", "rangerbot"],
+    aiEnabled: true,
+    characterProfileId: "ranger_bot",
+  },
+  LonelyBot: {
+    id: "LonelyBot",
+    name: "The lonely robot",
+    vocab: ["lonely", "robot", "bot", "lonelybot"],
+    aiEnabled: true,
+    characterProfileId: "lonely_bot",
+  },
+  BarBot: {
+    id: "BarBot",
+    name: "The robot bartender",
+    vocab: ["barbot", "robot", "bot", "bartender", "mixologist"],
+    aiEnabled: true,
+    characterProfileId: "bar_bot",
+  },
+  NailBot: {
+    id: "NailBot",
+    name: "The robot nail-tech",
+    vocab: ["nail tech", "robot", "bot", "nailbot", "manibot", "pedibot"],
+    aiEnabled: true,
+    characterProfileId: "nail_bot",
+  },
+  SpotBot: {
+    id: "SpotBot",
+    name: "The robot gym bro",
+    vocab: ["bro", "robot", "bot", "brobot", "gymbot", "spotbot"],
+    aiEnabled: true,
+    characterProfileId: "spot_bot",
+  },
+  TrashBot: {
+    id: "TrashBot",
+    name: "The little trash bot",
+    vocab: [
+      "trash",
+      "robot",
+      "bot",
+      "trashbot",
+      "little robot",
+      "sweeper",
+      "sweepbot",
+    ],
+    aiEnabled: true,
+    characterProfileId: "trash_bot",
+  },
+  UsherBot: {
+    id: "UsherBot",
+    name: "The robot usher",
+    vocab: ["usher", "robot", "bot", "usherbot"],
+    aiEnabled: true,
+    characterProfileId: "usher_bot",
+  },
+  DoomedChef: {
+    id: "DoomedChef",
+    name: "The doomed man",
+    vocab: ["chef", "doomed", "man", "guy"],
+    aiEnabled: true,
+    characterProfileId: "doomed_chef",
   },
 };
 

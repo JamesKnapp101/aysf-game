@@ -6,8 +6,15 @@ import { oneEastRooms } from "src/world/maps/levelThree/LivingQuarters/OneEast";
 import { oneWestRooms } from "src/world/maps/levelThree/LivingQuarters/OneWest";
 
 import { Item } from "@game/types/itemTypes";
+import { doomedChefItems } from "src/world/Items/creatures/doomedChef";
 import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
+import { barBotItems } from "src/world/Items/robots/barBot";
+import { lonelyBotItems } from "src/world/Items/robots/lonelyBot";
+import { nailBotItems } from "src/world/Items/robots/nailBot";
 import { rangerBotItems } from "src/world/Items/robots/rangerBot";
+import { spotBotItems } from "src/world/Items/robots/spotBot";
+import { trashBotItems } from "src/world/Items/robots/trashBot";
+import { usherBotItems } from "src/world/Items/robots/usherBot";
 import {
   sixEastItems,
   sixEastRooms,
@@ -73,6 +80,13 @@ export const LEVEL_THREE: WorldChunk = {
     ...stairwellItems,
     ...corridorItems,
     ...rangerBotItems,
+    ...lonelyBotItems,
+    ...barBotItems,
+    ...spotBotItems,
+    ...trashBotItems,
+    ...usherBotItems,
+    ...nailBotItems,
+    ...doomedChefItems,
     ...warehouseItems,
     ...spaItems,
   ],
