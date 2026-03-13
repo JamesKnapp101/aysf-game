@@ -1,26 +1,20 @@
 import { SplashModal } from "@game/components/SplashModal";
 import { OPENING_SPLASH } from "@game/constants";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   getCurrentMemory,
   getCurrentScore,
 } from "../game/selectors/scoreSelectors";
-import {
-  DEFERRED_WORLD_CHUNK_IDS,
-} from "../world/World";
+import { DEFERRED_WORLD_CHUNK_IDS } from "../world/World";
 import { LogPanel } from "./components/LogPanel";
 import { NotificationHost } from "./components/NotificationHost";
 import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
+import { isPlayerUnderwater } from "./helpers/environmentHelpers";
+import { isFlashlightOn } from "./helpers/itemSettingsHelpers";
 import { useGameSession } from "./hooks/useGameSession";
 import { useLayoutPrefs } from "./hooks/useLayoutPrefs";
 import { useWorldChunkHydration } from "./hooks/useWorldChunkHydration";
-import { isPlayerUnderwater } from "./helpers/environmentHelpers";
 import {
   getActiveStatusEffectIds,
   getRadiationIntensity,
@@ -141,8 +135,7 @@ export const Game: React.FC = () => {
 
   const flashlightOn = (() => {
     if (!gs.player.inventory.general.includes("flashlight")) return false;
-    const fs = gs.itemState.itemSettings["flashlight"];
-    return Boolean(fs && "isOn" in fs && fs.isOn === true);
+    return isFlashlightOn(gs);
   })();
   const playerIsUnderwater = isPlayerUnderwater(gs);
 

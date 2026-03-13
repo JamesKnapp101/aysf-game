@@ -49,11 +49,17 @@ export function useWorldChunkHydration({
 
     return () => {
       isMountedRef.current = false;
+      // Clear any pending chunk loads on unmount
+      loadingWorldChunksRef.current.clear();
     };
   }, []);
 
   const requestWorldChunk = useCallback(
-    (chunkId: WorldChunkId): Promise<void> => {
+    (
+      chunkId: WorldChunkId,
+      priority: "high" | "low" = "low",
+    ): Promise<void> => {
+      // Already loaded
       if (
         Array.isArray(stateRef.current.world.meta?.loadedChunkIds) &&
         stateRef.current.world.meta.loadedChunkIds.includes(chunkId)
@@ -61,6 +67,7 @@ export function useWorldChunkHydration({
         return Promise.resolve();
       }
 
+      // Already loading
       const existing = loadingWorldChunksRef.current.get(chunkId);
       if (existing) {
         return existing;
@@ -69,10 +76,21 @@ export function useWorldChunkHydration({
       const pending = loadWorldChunk(chunkId)
         .then((chunk) => {
           if (!isMountedRef.current) return;
+
+          // Validate state before merging
+          if (!stateRef.current) {
+            console.warn(`State ref invalid when loading chunk "${chunkId}"`);
+            return;
+          }
+
           updateState((prev) => mergeWorldChunkIntoState(prev, chunkId, chunk));
         })
         .catch((error) => {
-          console.error(`Failed to load world chunk "${chunkId}"`, error);
+          console.error(
+            `Failed to load world chunk "${chunkId}" (priority: ${priority})`,
+            error,
+          );
+          // Don't rethrow - allow other chunks to continue loading
         })
         .finally(() => {
           loadingWorldChunksRef.current.delete(chunkId);

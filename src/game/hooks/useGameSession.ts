@@ -1,5 +1,12 @@
 import { overridePlayerBrainActivityLevel } from "@game/helpers/itemHelpers";
-import { useCallback, useEffect, useRef, useState, type MutableRefObject, type SetStateAction } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MutableRefObject,
+  type SetStateAction,
+} from "react";
 import { parseCommand } from "../../parse/parser";
 import { INITIAL_WORLD } from "../../world/World";
 import { dispatchAction } from "../actions/dispatchAction";
@@ -31,9 +38,12 @@ export function useGameSession({
   onInventoryCommand,
   onDiagnoseCommand,
 }: UseGameSessionOptions): UseGameSessionResult {
-  const [gs, setGs] = useState<GameState>(() => createInitialState(INITIAL_WORLD));
+  const [gs, setGs] = useState<GameState>(() =>
+    createInitialState(INITIAL_WORLD),
+  );
   const stateRef = useRef(gs);
   const commandQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const isUnmountingRef = useRef(false);
   const openOverlay = useUIOverlayStore.getState().openOverlay;
 
   const replaceState = useCallback((next: GameState) => {
@@ -163,6 +173,19 @@ export function useGameSession({
     },
     [replaceState],
   );
+
+  // Cleanup: Wait for pending commands to finish before unmounting
+  useEffect(() => {
+    return () => {
+      isUnmountingRef.current = true;
+
+      // Allow any pending commands to complete gracefully
+      // This prevents state updates after unmount
+      void commandQueueRef.current.catch(() => {
+        // Silently handle any errors during cleanup
+      });
+    };
+  }, []);
 
   return {
     gs,

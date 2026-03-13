@@ -12,17 +12,18 @@ import {
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
-import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
   AQUARIUM_DROWNING_DEATH_CAUSE,
   AQUARIUM_DROWNING_DEATH_MESSAGE,
 } from "src/world/Items/creatures/octopus";
+import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
   canMove,
   getRoomExits,
   isRoomDark,
   moveItemToRoom,
 } from "../helpers/itemHelpers";
+import { areGogglesOn } from "../helpers/itemSettingsHelpers";
 import {
   applyStatusEffectToPlayer,
   removeStatusEffectFromPlayer,
@@ -307,7 +308,8 @@ function tickSickness(state: GameState): GameState {
 function applyEffects(state: GameState): GameState {
   let next = state;
 
-  const gogglesOn = !!(next.itemState.itemSettings["NVGoggles"] as any)?.isOn;
+  // Import areGogglesOn from itemSettingsHelpers to use here
+  const gogglesOn = areGogglesOn(next);
   const gogglesWorn = next.itemState.wornByPlayer.face === "NVGoggles";
   const shouldHaveNV = gogglesOn && gogglesWorn;
 

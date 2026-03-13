@@ -29,8 +29,18 @@ import type { GameState } from "../types/gameTypes";
 import type { ParsedCommand } from "../types/parserTypes";
 import { advanceTurn } from "./turn";
 
+// Maximum number of log entries to keep in memory
+// Older entries are pruned to prevent unbounded memory growth during long play sessions
+const MAX_LOG_ENTRIES = 500;
+
 export function appendLog(state: GameState, text: string): GameState {
-  return { ...state, log: [...state.log, text] };
+  const newLog = [...state.log, text];
+
+  // Prune old entries if we exceed the maximum
+  const prunedLog =
+    newLog.length > MAX_LOG_ENTRIES ? newLog.slice(-MAX_LOG_ENTRIES) : newLog;
+
+  return { ...state, log: prunedLog };
 }
 
 type HandleCommandOptions = {
