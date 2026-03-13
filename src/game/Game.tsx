@@ -4,7 +4,6 @@ import { overridePlayerBrainActivityLevel } from "@game/helpers/itemHelpers";
 import React, {
   useCallback,
   useEffect,
-  useReducer,
   useRef,
   useState,
 } from "react";
@@ -35,7 +34,7 @@ import {
 import { useUIEffectsStore, useUIOverlayStore } from "./store/store";
 import { buildRoomDescription } from "./text/roomDescription";
 import type { ActionRequest } from "./types/actionsTypes";
-import type { GameState, StatusEffect, WorldChunk } from "./types/gameTypes";
+import type { GameState, StatusEffect } from "./types/gameTypes";
 
 const LAYOUT_STORAGE_KEY = "aysf-layout-v1";
 export const CRT_COLOR_STORAGE_KEY = "aysf-crt-color-v1";
@@ -110,69 +109,9 @@ function waitForBackgroundTurn(): Promise<void> {
 }
 
 export const Game: React.FC = () => {
-  type StateAction =
-    | { type: "command"; input: string }
-    | { type: "replaceState"; next: GameState }
-    | { type: "mergeWorldChunk"; chunkId: WorldChunkId; chunk: WorldChunk }
-    | { type: "setBrainActivity"; val: number };
   const [activeTab, setActiveTab] = useState<SidebarTab>("status");
 
-  const [gs, dispatchState] = useReducer(
-    (s: GameState, a: StateAction): GameState => {
-      if (a.type === "replaceState") return a.next;
-
-      if (a.type === "mergeWorldChunk") {
-        return mergeWorldChunkIntoState(s, a.chunkId, a.chunk);
-      }
-
-      if (a.type === "setBrainActivity") {
-        const result = overridePlayerBrainActivityLevel(s, a.val) as
-          | GameState
-          | { state: GameState; message?: string; overlay?: any };
-        const nextState = "state" in result ? result.state : result;
-        if ("message" in result && result.message) {
-          return appendLog(nextState, result.message);
-        }
-        return nextState;
-      }
-
-      if (a.type === "command") {
-        const trimmed = a.input.trim();
-        if (!trimmed) return s;
-
-        const parsed = parseCommand(trimmed);
-        const pendingConversationLog = getPendingConversationLogMessage(
-          s,
-          parsed,
-        );
-        const optimisticState = pendingConversationLog
-          ? appendLog(appendLog(s, `> ${trimmed}`), pendingConversationLog)
-          : s;
-
-        // Handle async command
-        handleCommand(optimisticState, parsed, {
-          skipEcho: Boolean(pendingConversationLog),
-        }).then((nextState) => {
-          if (parsed.type === "inventory") {
-            setActiveTab("inventory");
-          }
-
-          if (parsed.type === "diagnose") {
-            setActiveTab("status");
-          }
-
-          dispatchState({ type: "replaceState", next: nextState });
-        });
-
-        // Return optimistic state immediately; async will reconcile it.
-        return optimisticState;
-      }
-
-      return s;
-    },
-    INITIAL_WORLD,
-    createInitialState,
-  );
+  const [gs, setGs] = useState<GameState>(() => createInitialState(INITIAL_WORLD));
 
   const [showSplash, setShowSplash] = useState(true);
 
@@ -180,6 +119,21 @@ export const Game: React.FC = () => {
   const isMountedRef = useRef(true);
   const loadingWorldChunksRef = useRef<Map<WorldChunkId, Promise<void>>>(
     new Map(),
+  );
+  const commandQueueRef = useRef<Promise<void>>(Promise.resolve());
+
+  const replaceState = useCallback((next: GameState) => {
+    stateRef.current = next;
+    setGs(next);
+  }, []);
+
+  const updateState = useCallback(
+    (updater: (prev: GameState) => GameState): GameState => {
+      const next = updater(stateRef.current);
+      replaceState(next);
+      return next;
+    },
+    [replaceState],
   );
 
   useEffect(() => {
@@ -211,7 +165,7 @@ export const Game: React.FC = () => {
       const pending = loadWorldChunk(chunkId)
         .then((chunk) => {
           if (!isMountedRef.current) return;
-          dispatchState({ type: "mergeWorldChunk", chunkId, chunk });
+          updateState((prev) => mergeWorldChunkIntoState(prev, chunkId, chunk));
         })
         .catch((error) => {
           console.error(`Failed to load world chunk "${chunkId}"`, error);
@@ -223,7 +177,7 @@ export const Game: React.FC = () => {
       loadingWorldChunksRef.current.set(chunkId, pending);
       return pending;
     },
-    [],
+    [updateState],
   );
 
   useEffect(() => {
@@ -295,6 +249,60 @@ export const Game: React.FC = () => {
 
   const openOverlay = useUIOverlayStore.getState().openOverlay;
 
+  const executeCommand = useCallback(
+    async (input: string) => {
+      const trimmed = input.trim();
+      if (!trimmed) return;
+
+      let current = stateRef.current;
+      const parsed = parseCommand(trimmed);
+      const pendingConversationLog = getPendingConversationLogMessage(
+        current,
+        parsed,
+      );
+
+      if (pendingConversationLog) {
+        current = appendLog(appendLog(current, `> ${trimmed}`), pendingConversationLog);
+        replaceState(current);
+      }
+
+      const nextState = await handleCommand(current, parsed, {
+        skipEcho: Boolean(pendingConversationLog),
+      });
+
+      if (parsed.type === "inventory") {
+        setActiveTab("inventory");
+      }
+
+      if (parsed.type === "diagnose") {
+        setActiveTab("status");
+      }
+
+      replaceState(nextState);
+    },
+    [replaceState],
+  );
+
+  const enqueueCommand = useCallback(
+    (input: string) => {
+      const trimmed = input.trim();
+      if (!trimmed) return;
+
+      commandQueueRef.current = commandQueueRef.current
+        .catch((error) => {
+          console.error("Previous command failed:", error);
+        })
+        .then(async () => {
+          try {
+            await executeCommand(trimmed);
+          } catch (error) {
+            console.error(`Failed to process command "${trimmed}"`, error);
+          }
+        });
+    },
+    [executeCommand],
+  );
+
   // persist layout
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -325,21 +333,26 @@ export const Game: React.FC = () => {
         next = appendLog(next, result.message);
       }
 
-      dispatchState({ type: "replaceState", next });
+      replaceState(next);
 
       if (result.overlay) {
         openOverlay(result.overlay);
       }
     },
-    [openOverlay],
+    [openOverlay, replaceState],
   );
 
   const runAction = useCallback(
     (req: ActionRequest) => {
+      if (req.verb === "command") {
+        enqueueCommand(req.payload.input ?? "");
+        return;
+      }
+
       const current = stateRef.current;
       void dispatchAction(current, req).then(applyResult);
     },
-    [applyResult],
+    [applyResult, enqueueCommand],
   );
 
   // -------- horizontal resize: room vs main row -----------------------------
@@ -437,18 +450,28 @@ export const Game: React.FC = () => {
     (value: GameState | ((prev: GameState) => GameState)) => {
       if (typeof value === "function") {
         const updater = value as (prev: GameState) => GameState;
-        dispatchState({
-          type: "replaceState",
-          next: updater(stateRef.current),
-        });
+        updateState(updater);
       } else {
-        dispatchState({
-          type: "replaceState",
-          next: value,
-        });
+        replaceState(value);
       }
     },
-    [],
+    [replaceState, updateState],
+  );
+
+  const setBrainActivityLevel = useCallback(
+    (val: number) => {
+      const result = overridePlayerBrainActivityLevel(stateRef.current, val) as
+        | GameState
+        | { state: GameState; message?: string; overlay?: any };
+      let nextState = "state" in result ? result.state : result;
+
+      if ("message" in result && result.message) {
+        nextState = appendLog(nextState, result.message);
+      }
+
+      replaceState(nextState);
+    },
+    [replaceState],
   );
 
   return (
@@ -516,9 +539,7 @@ export const Game: React.FC = () => {
               isUnderwater={playerIsUnderwater}
               roomId={currentRoom?.id ?? gs.player.roomId}
               state={gs}
-              setBrainActivityLevel={(val) =>
-                dispatchState({ type: "setBrainActivity", val })
-              }
+              setBrainActivityLevel={setBrainActivityLevel}
             />
 
             {/* horizontal resizer - between room and main row */}
@@ -530,7 +551,7 @@ export const Game: React.FC = () => {
             {/* MAIN ROW: log + sidebar */}
             <LogPanel
               state={gs}
-              dispatch={dispatchState as any}
+              onCommand={enqueueCommand}
               layout={layout}
               setLayout={setLayout}
               crtColor={crtColor}

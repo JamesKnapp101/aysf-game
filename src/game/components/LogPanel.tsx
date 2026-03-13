@@ -11,7 +11,7 @@ import { StatusTab } from "./StatusTab";
 type SidebarTab = "inventory" | "status" | "log" | "dna" | "hints" | "settings";
 type LogPanelProps = {
   state: GameState;
-  dispatch: React.Dispatch<any>;
+  onCommand: (input: string) => void;
   layout: LayoutPrefs;
   setLayout: React.Dispatch<React.SetStateAction<LayoutPrefs>>;
   crtColor: string;
@@ -69,7 +69,7 @@ function renderLogLine(line: string) {
 
 export const LogPanel: React.FC<LogPanelProps> = ({
   state,
-  dispatch,
+  onCommand,
   layout,
   setLayout,
   crtColor,
@@ -106,7 +106,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
     );
     setHistoryIndex(null);
     setHistoryDraft("");
-    dispatch({ type: "command", input: trimmed });
+    onCommand(trimmed);
     setInput("");
   };
 

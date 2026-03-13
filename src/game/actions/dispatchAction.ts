@@ -1,4 +1,5 @@
 import { handleCommand } from "../engine/handleCommand";
+import { parseCommand } from "../../parse/parser";
 import { handleSetCoolerMode } from "../rules/cooler";
 import { setMessageListened } from "../rules/message-machine";
 import { getCoolerMode } from "../selectors/gadgetSelectors";
@@ -12,11 +13,8 @@ export async function dispatchAction(
 ): Promise<ActionResult> {
   switch (req.verb) {
     case "command": {
-      const result = await handleCommand(state, {
-        type: "action",
-        verb: req.payload?.input ?? "",
-        raw: req.payload?.input ?? "",
-      });
+      const input = req.payload?.input ?? "";
+      const result = await handleCommand(state, parseCommand(input));
       return { state: result, message: undefined };
     }
     case "setCoolerMode": {

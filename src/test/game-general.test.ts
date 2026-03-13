@@ -21,49 +21,49 @@ import {
 } from "./helpers/gameTestHelpers";
 
 describe("General gameplay", () => {
-  it("lets the player move from room to room", () => {
+  it("lets the player move from room to room", async () => {
     const initial = createTestState({ roomId: "LevelSixCorridorBend" });
 
-    const next = runCommand(initial, "east");
+    const next = await runCommand(initial, "east");
 
     expect(next.player.roomId).toBe("LevelSixStairAccess");
   });
 
-  it("lets the player move through standard doors", () => {
+  it("lets the player move through standard doors", async () => {
     const initial = createTestState({ roomId: "LevelThreeCorridorOne" });
 
-    const next = runCommand(initial, "east");
+    const next = await runCommand(initial, "east");
 
     expect(next.player.roomId).toBe("LivingQuartersOneEast");
     expect(getLastLogEntry(next)).toContain("You open the door and step through.");
   });
 
-  it("lets the player pick up collectable items", () => {
+  it("lets the player pick up collectable items", async () => {
     const initial = setInventory(
       createTestState({ roomId: "ThreeWestBed" }),
       [],
     );
 
-    const next = runCommand(initial, "take research notes");
+    const next = await runCommand(initial, "take research notes");
 
     expect(expectInventoryToContain(next, "ResearchNotes")).toBe(true);
   });
 
-  it("lets the player drop carried items and keeps them in the current room", () => {
-    const initial = runCommand(
+  it("lets the player drop carried items and keeps them in the current room", async () => {
+    const initial = await runCommand(
       setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
       "take research notes",
     );
 
-    const next = runCommand(initial, "drop research notes");
+    const next = await runCommand(initial, "drop research notes");
     const itemsHere = getItemsInRoom(next, "ThreeWestBed").map((item) => item.id);
 
     expect(expectInventoryToContain(next, "ResearchNotes")).toBe(false);
     expect(itemsHere).toContain("ResearchNotes");
   });
 
-  it("logs player activity into the transcript", () => {
-    const next = runCommand(
+  it("logs player activity into the transcript", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
       "take research notes",
     );
@@ -76,10 +76,10 @@ describe("General gameplay", () => {
     ).toBe(true);
   });
 
-  it("stores loggable readable text in the player log and removes the original note", () => {
+  it("stores loggable readable text in the player log and removes the original note", async () => {
     const start = setInventory(createTestState({ roomId: "ThreeWestBed" }), []);
 
-    const next = runCommands(start, [
+    const next = await runCommands(start, [
       "take research notes",
       "read research notes",
     ]);
@@ -92,16 +92,16 @@ describe("General gameplay", () => {
     );
   });
 
-  it("shows readable text without logging or removing non-loggable items", () => {
+  it("shows readable text without logging or removing non-loggable items", async () => {
     const start = setInventory(createTestState({ roomId: "ThreeWestBath" }), []);
 
-    const next = runCommands(start, ["take ice bag", "read ice bag"]);
+    const next = await runCommands(start, ["take ice bag", "read ice bag"]);
 
     expect(next.player.log).toHaveLength(0);
     expect(expectInventoryToContain(next, "IceBag")).toBe(true);
   });
 
-  it("keeps status effects active for their duration and then removes them", () => {
+  it("keeps status effects active for their duration and then removes them", async () => {
     const withEffect = applyStatusEffectToPlayer(
       createTestState(),
       "drunk",
@@ -120,7 +120,7 @@ describe("General gameplay", () => {
     );
   });
 
-  it("applies radiation intensity to health loss during turn advancement", () => {
+  it("applies radiation intensity to health loss during turn advancement", async () => {
     const withRadiation = applyStatusEffectToPlayer(
       createTestState(),
       "radiation",
@@ -134,7 +134,7 @@ describe("General gameplay", () => {
     expect(afterTurn.player.vitals.health).toBe(99);
   });
 
-  it("shows the full room description when a room is lit", () => {
+  it("shows the full room description when a room is lit", async () => {
     const state = createTestState({ roomId: "LevelSixCorridorBend" });
 
     const description = buildRoomDescription(state, state.player.roomId, {
@@ -146,7 +146,7 @@ describe("General gameplay", () => {
     expect(description).not.toContain("It's pitch black");
   });
 
-  it("shows the dark-room fallback when the player cannot see", () => {
+  it("shows the dark-room fallback when the player cannot see", async () => {
     const state = setInventory(
       createTestState({ roomId: "LivingQuartersThreeWest" }),
       [],
@@ -160,7 +160,7 @@ describe("General gameplay", () => {
     expect(description).toBe("It's pitch black in here, you can't see a thing.");
   });
 
-  it("inserts scenery descriptions in their configured order", () => {
+  it("inserts scenery descriptions in their configured order", async () => {
     const state = patchRoomDarkness(
       createTestState({ roomId: "ThreeWestBed" }),
       "ThreeWestBed",
@@ -185,29 +185,29 @@ describe("General gameplay", () => {
     expect(third).toBeGreaterThan(second);
   });
 
-  it("updates score when the player completes a score-bearing task", () => {
+  it("updates score when the player completes a score-bearing task", async () => {
     const start = setInventory(createTestState({ roomId: "PowerGrid" }), []);
 
-    const next = runCommand(start, "take key");
+    const next = await runCommand(start, "take key");
 
     expect(next.worldState.scoresTriggered.obtained_power_key).toBe(true);
     expect(next.score).toBe(5);
   });
 
-  it("updates memory rating when the player completes a memory-bearing task", () => {
+  it("updates memory rating when the player completes a memory-bearing task", async () => {
     const start = patchRoomDarkness(
       createTestState({ roomId: "ThreeWestBath" }),
       "ThreeWestBath",
       false,
     );
 
-    const next = runCommand(start, "examine mirror");
+    const next = await runCommand(start, "examine mirror");
 
     expect(next.player.memoriesTriggered.own_image).toBe(true);
     expect(next.rating).toBe(5);
   });
 
-  it("revives the player in a previously visited lit room and leaves behind a husk", () => {
+  it("revives the player in a previously visited lit room and leaves behind a husk", async () => {
     const start = createTestState({
       roomId: "LevelSixCorridorEnd",
       visitedRooms: ["LevelSixCorridorEnd", "LevelSixCorridorBend"],
@@ -232,7 +232,7 @@ describe("General gameplay", () => {
     ).toBe(true);
   });
 
-  it("drains oxygen underwater and starts damaging health after the air runs out", () => {
+  it("drains oxygen underwater and starts damaging health after the air runs out", async () => {
     const baseState = createTestState({ roomId: "AqOpen1" });
     const start = {
       ...baseState,
@@ -260,7 +260,7 @@ describe("General gameplay", () => {
     );
   });
 
-  it("refills oxygen immediately when the player reaches dry air", () => {
+  it("refills oxygen immediately when the player reaches dry air", async () => {
     const baseState = createTestState({ roomId: "AqOpen1" });
     const start = {
       ...baseState,
@@ -273,13 +273,13 @@ describe("General gameplay", () => {
       },
     };
 
-    const next = runCommand(start, "south");
+    const next = await runCommand(start, "south");
 
     expect(next.player.roomId).toBe("AqStart");
     expect(next.player.vitals.oxygen).toBe(100);
   });
 
-  it("refills oxygen and prevents underwater loss while the breather is worn", () => {
+  it("refills oxygen and prevents underwater loss while the breather is worn", async () => {
     const baseState = setInventory(createTestState({ roomId: "AqOpen1" }), [
       AQUARIUM_BREATHER_ITEM_ID,
     ]);
@@ -294,11 +294,12 @@ describe("General gameplay", () => {
       },
     };
 
-    const worn = runCommand(start, "wear breather");
-    const afterWait = runCommand(worn, "wait");
+    const worn = await runCommand(start, "wear breather");
+    const afterWait = await runCommand(worn, "wait");
 
     expect(worn.itemState.wornByPlayer.face).toBe(AQUARIUM_BREATHER_ITEM_ID);
     expect(worn.player.vitals.oxygen).toBe(100);
     expect(afterWait.player.vitals.oxygen).toBe(100);
   });
 });
+

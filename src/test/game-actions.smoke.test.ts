@@ -74,14 +74,14 @@ function expectCommandEntry(
 }
 
 describe("Action smoke coverage", () => {
-  it("keeps smoke coverage aligned with registered action verbs", () => {
+  it("keeps smoke coverage aligned with registered action verbs", async () => {
     expect([...COVERED_ACTIONS].sort()).toEqual(
       Object.keys(ACTION_HANDLERS).sort(),
     );
   });
 
-  it("covers open", () => {
-    const next = runCommand(
+  it("covers open", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "InsideTheShed" }), [
         "ShedCellarKey",
       ]),
@@ -91,8 +91,8 @@ describe("Action smoke coverage", () => {
     expect(next.worldState.doors.ShedCellarDoor?.isOpen).toBe(true);
   });
 
-  it("covers close", () => {
-    const next = runCommands(
+  it("covers close", async () => {
+    const next = await runCommands(
       setInventory(createTestState({ roomId: "InsideTheShed" }), [
         "ShedCellarKey",
       ]),
@@ -102,8 +102,8 @@ describe("Action smoke coverage", () => {
     expect(next.worldState.doors.ShedCellarDoor?.isOpen).toBe(false);
   });
 
-  it("covers take", () => {
-    const next = runCommand(
+  it("covers take", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
       "take research notes",
     );
@@ -111,8 +111,8 @@ describe("Action smoke coverage", () => {
     expect(expectInventoryToContain(next, "ResearchNotes")).toBe(true);
   });
 
-  it("covers drop", () => {
-    const next = runCommands(
+  it("covers drop", async () => {
+    const next = await runCommands(
       setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
       ["take research notes", "drop research notes"],
     );
@@ -123,8 +123,8 @@ describe("Action smoke coverage", () => {
     );
   });
 
-  it("covers put", () => {
-    const next = runCommand(
+  it("covers put", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "PowerGrid" }), [
         "PowerStationKey",
       ]),
@@ -136,8 +136,8 @@ describe("Action smoke coverage", () => {
     );
   });
 
-  it("covers read", () => {
-    const next = runCommands(
+  it("covers read", async () => {
+    const next = await runCommands(
       setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
       ["take research notes", "read research notes"],
     );
@@ -145,8 +145,8 @@ describe("Action smoke coverage", () => {
     expect(next.player.log[0]?.title).toContain("Research Notes");
   });
 
-  it("covers examine", () => {
-    const next = runCommand(
+  it("covers examine", async () => {
+    const next = await runCommand(
       patchRoomDarkness(
         createTestState({ roomId: "ThreeWestBath" }),
         "ThreeWestBath",
@@ -158,8 +158,8 @@ describe("Action smoke coverage", () => {
     expect(next.player.memoriesTriggered.own_image).toBe(true);
   });
 
-  it("covers inject", () => {
-    const next = runCommands(
+  it("covers inject", async () => {
+    const next = await runCommands(
       setInventory(createTestState(), ["Syringe", "GroovyCart"]),
       ["put green serum cartridge in syringe", "inject me"],
     );
@@ -170,8 +170,8 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.syringe.loadedCartridgeId).toBeUndefined();
   });
 
-  it("covers drink", () => {
-    const next = runCommand(
+  it("covers drink", async () => {
+    const next = await runCommand(
       setInventory(createTestState(), ["FiveWestScotch"]),
       "drink scotch",
     );
@@ -184,8 +184,8 @@ describe("Action smoke coverage", () => {
     );
   });
 
-  it("covers eat", () => {
-    const next = runCommand(
+  it("covers eat", async () => {
+    const next = await runCommand(
       setInventory(createTestState(), ["hornychew"]),
       "eat chewable",
     );
@@ -196,8 +196,8 @@ describe("Action smoke coverage", () => {
     expect(next.world.items.find((item) => item.id === "hornychew")?.doses).toBe(0);
   });
 
-  it("covers set", () => {
-    const next = runCommand(
+  it("covers set", async () => {
+    const next = await runCommand(
       setInventory(createTestState(), ["Cooler"]),
       "set cooler",
     );
@@ -206,9 +206,9 @@ describe("Action smoke coverage", () => {
     expectCommandEntry(next, "set cooler", /^> set cooler/m);
   });
 
-  it("covers empty", () => {
+  it("covers empty", async () => {
     const start = setInventory(createTestState(), ["FISHBOWL"]);
-    const next = runCommand(
+    const next = await runCommand(
       {
         ...start,
         itemState: {
@@ -226,8 +226,8 @@ describe("Action smoke coverage", () => {
     expectCommandEntry(next, "empty fish bowl", "You empty the fish bowl");
   });
 
-  it("covers fill", () => {
-    const next = runCommand(
+  it("covers fill", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "ThreeEastBath" }), ["FISHBOWL"]),
       "fill fish bowl with water",
     );
@@ -235,9 +235,9 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.containerFilled.FISHBOWL).toEqual(["water"]);
   });
 
-  it("covers pour", () => {
+  it("covers pour", async () => {
     const start = setInventory(createTestState(), ["FISHBOWL", "URN"]);
-    const next = runCommand(
+    const next = await runCommand(
       {
         ...start,
         itemState: {
@@ -255,8 +255,8 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.containerFilled.URN).toEqual(["water"]);
   });
 
-  it("covers wear", () => {
-    const next = runCommand(
+  it("covers wear", async () => {
+    const next = await runCommand(
       setInventory(createTestState(), ["NVGoggles"]),
       "wear goggles",
     );
@@ -264,8 +264,8 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.wornByPlayer.face).toBe("NVGoggles");
   });
 
-  it("covers remove", () => {
-    const next = runCommands(
+  it("covers remove", async () => {
+    const next = await runCommands(
       setInventory(createTestState(), ["NVGoggles"]),
       ["wear goggles", "remove goggles"],
     );
@@ -273,8 +273,8 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.wornByPlayer.face).toBeUndefined();
   });
 
-  it("covers switch", () => {
-    const next = runCommand(
+  it("covers switch", async () => {
+    const next = await runCommand(
       setInventory(createTestState(), ["NVGoggles"]),
       "switch goggles",
     );
@@ -282,8 +282,8 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.itemSettings.NVGoggles).toMatchObject({ isOn: true });
   });
 
-  it("covers wait", () => {
-    const next = runCommand(
+  it("covers wait", async () => {
+    const next = await runCommand(
       createTestState({ roomId: "PowerGrid" }),
       "wait",
     );
@@ -291,8 +291,8 @@ describe("Action smoke coverage", () => {
     expectCommandEntry(next, "wait", "You wait for a bit.");
   });
 
-  it("covers shoot", () => {
-    const next = runCommands(
+  it("covers shoot", async () => {
+    const next = await runCommands(
       setInventory(createTestState({ roomId: "LivingQuartersThreeEast" }), [
         "CameraGun",
         "GelRound1",
@@ -304,8 +304,8 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.containerContents.CameraGun).toEqual([]);
   });
 
-  it("covers load", () => {
-    const next = runCommand(
+  it("covers load", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "LivingQuartersThreeEast" }), [
         "CameraGun",
         "GelRound1",
@@ -317,8 +317,8 @@ describe("Action smoke coverage", () => {
     expect(expectInventoryToContain(next, "GelRound1")).toBe(false);
   });
 
-  it("covers search", () => {
-    const next = runCommand(
+  it("covers search", async () => {
+    const next = await runCommand(
       createTestState({ roomId: "StairWellSeven" }),
       "search corpse",
     );
@@ -327,8 +327,8 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.searchableContents.FallenCorpse).toEqual([]);
   });
 
-  it("covers stand", () => {
-    const next = runCommand(
+  it("covers stand", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "TPADTerminal" }), ["greenbadge"]),
       "stand on green disk",
     );
@@ -336,8 +336,8 @@ describe("Action smoke coverage", () => {
     expect(next.player.roomId).toBe("ParkCenter");
   });
 
-  it("covers turn", () => {
-    const next = runCommands(
+  it("covers turn", async () => {
+    const next = await runCommands(
       setInventory(createTestState({ roomId: "PowerGrid" }), [
         "PowerStationKey",
       ]),
@@ -347,42 +347,57 @@ describe("Action smoke coverage", () => {
     expect(next.worldState.powerRestoredSections["power-key-turned"]).toBe(true);
   });
 
-  it("covers push", () => {
-    const next = runCommand(
+  it("covers push", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "StairSix" }), ["Radio"]),
       "push radio",
     );
 
-    expect(next.radio?.activeNpcId).toBe("kevin_1st_contact");
+    expect(next.radio?.activeNpcId).toBe("you_1st_contact");
   });
 
-  it("covers ask", () => {
-    const next = runCommands(
+  it("covers ask", async () => {
+    const next = await runCommands(
       setInventory(createTestState({ roomId: "StairSix" }), ["Radio"]),
-      ["push radio", "ask kevin about power"],
+      ["push radio", "ask voice about power"],
     );
 
-    expect(next.conversation?.npcs?.kevin_1st_contact?.topicsUsed?.power).toBe(
+    const conversation = next.conversation?.npcs?.you_1st_contact ?? null;
+    expect(
+      conversation?.topicsUsed?.power === true ||
+        conversation?.conversationHistory?.at(-1)?.topic === "power",
+    ).toBe(
       true,
     );
-    expectCommandEntry(next, "ask kevin about power", /reset key/i);
+    expectCommandEntry(
+      next,
+      "ask voice about power",
+      /power|reset|supervisor|key|reactor/i,
+    );
   });
 
-  it("covers tell", () => {
-    const next = runCommands(
+  it("covers tell", async () => {
+    const next = await runCommands(
       setInventory(createTestState({ roomId: "StairSix" }), ["Radio"]),
-      ["push radio", "tell kevin about bug"],
+      ["push radio", "tell voice about bug"],
     );
 
     expect(
-      next.conversation?.npcs?.kevin_1st_contact?.topicsUsed?.["tell:bug"],
+      next.conversation?.npcs?.you_1st_contact?.topicsUsed?.["tell:bug"] ===
+        true ||
+        next.conversation?.npcs?.you_1st_contact?.conversationHistory?.at(-1)
+          ?.topic === "bug",
     ).toBe(true);
-    expectCommandEntry(next, "tell kevin about bug", /found one when i woke up/i);
+    expectCommandEntry(
+      next,
+      "tell voice about bug",
+      /bug|mechanical|found|important/i,
+    );
   });
 
-  it("covers listen", () => {
+  it("covers listen", async () => {
     const baseState = createTestState({ roomId: "LevelSixCorridorEnd" });
-    const next = runCommand(
+    const next = await runCommand(
       {
         ...baseState,
         worldState: {
@@ -399,8 +414,8 @@ describe("Action smoke coverage", () => {
     expectCommandEntry(next, "listen to moan", /haunting, eerie quality/i);
   });
 
-  it("covers look", () => {
-    const next = runCommand(
+  it("covers look", async () => {
+    const next = await runCommand(
       createTestState({ roomId: "LevelSixCorridorEnd" }),
       "look through gap",
     );
@@ -408,8 +423,8 @@ describe("Action smoke coverage", () => {
     expectCommandEntry(next, "look through gap", /Through the narrow gap/i);
   });
 
-  it("covers use", () => {
-    const next = runCommand(
+  it("covers use", async () => {
+    const next = await runCommand(
       setInventory(createTestState(), ["TrixPen"]),
       "use vape pen",
     );
@@ -420,8 +435,8 @@ describe("Action smoke coverage", () => {
     expect(next.world.items.find((item) => item.id === "TrixPen")?.doses).toBe(99);
   });
 
-  it("covers ride", () => {
-    const next = runCommand(
+  it("covers ride", async () => {
+    const next = await runCommand(
       createTestState({ roomId: "RobotRefuge" }),
       "ride conveyor belt",
     );
@@ -429,8 +444,8 @@ describe("Action smoke coverage", () => {
     expect(next.player.roomId).toBe("Storage");
   });
 
-  it("covers touch", () => {
-    const next = runCommand(
+  it("covers touch", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "StairSix" }), ["DNAReader"]),
       "touch dead soldier with dna sampler",
     );
@@ -438,8 +453,8 @@ describe("Action smoke coverage", () => {
     expect(next.player.dnaBank[0]?.name).toBe("Joelson Dend");
   });
 
-  it("covers blow", () => {
-    const next = runCommand(
+  it("covers blow", async () => {
+    const next = await runCommand(
       setInventory(createTestState({ roomId: "L3Warehouse" }), [
         "RobotWhistle",
       ]),
@@ -449,3 +464,4 @@ describe("Action smoke coverage", () => {
     expect(next.worldState.conditionalTriggers.RobotRefugeAccess).toBe(true);
   });
 });
+

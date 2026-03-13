@@ -24,7 +24,7 @@ import {
 } from "./helpers/gameTestHelpers";
 
 describe("Doors and level mechanics", () => {
-  it("authors the hydroponics cocoons as distinct scenery items", () => {
+  it("authors the hydroponics cocoons as distinct scenery items", async () => {
     const employeeIds = new Set(
       HYDROPONICS_EMPLOYEE_PROFILES.map((profile) => profile.id),
     );
@@ -47,7 +47,7 @@ describe("Doors and level mechanics", () => {
     }
   });
 
-  it("uses visible employee traits in cocoon descriptions", () => {
+  it("uses visible employee traits in cocoon descriptions", async () => {
     const sillith = hydroponicsItems.find((item) => item.id === "SillithLeSconce");
     const ernwith = hydroponicsItems.find((item) => item.id === "ErnwithGob");
 
@@ -57,7 +57,7 @@ describe("Doors and level mechanics", () => {
     expect(ernwith?.description).toContain("webbed toes");
   });
 
-  it("keeps the sign-in tablet focused on identity and badge, not physical description", () => {
+  it("keeps the sign-in tablet focused on identity and badge, not physical description", async () => {
     const state = createHydroponicsPuzzleState("SillithLeSconce");
 
     const signInText = describeHydroponicsSignIn(state);
@@ -69,7 +69,7 @@ describe("Doors and level mechanics", () => {
     expect(signInText).not.toContain("bionic replacement knee");
   });
 
-  it("omits the power worker from the hydroponics terminal employee list", () => {
+  it("omits the power worker from the hydroponics terminal employee list", async () => {
     const state = createHydroponicsPuzzleState("SillithLeSconce");
 
     const menu = buildHydroponicsTerminalMenu(state);
@@ -89,12 +89,12 @@ describe("Doors and level mechanics", () => {
     );
   });
 
-  it("sets the yellow-badge escape timer based on the current cocoon room", () => {
-    const openedUnderWeb = runCommand(
+  it("sets the yellow-badge escape timer based on the current cocoon room", async () => {
+    const openedUnderWeb = await runCommand(
       createHydroponicsEscapeState("UnderWebOne"),
       "open statuesque cocoon",
     );
-    const openedBottom = runCommand(
+    const openedBottom = await runCommand(
       createHydroponicsEscapeState("HydroponicsPlatformBottom"),
       "open statuesque cocoon",
     );
@@ -105,8 +105,8 @@ describe("Doors and level mechanics", () => {
     expect(openedBottom.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining).toBe(2);
   });
 
-  it("lets the player escape with the yellow badge if they reach the top platform in time", () => {
-    const escaped = runCommands(createHydroponicsEscapeState("UnderWebOne"), [
+  it("lets the player escape with the yellow badge if they reach the top platform in time", async () => {
+    const escaped = await runCommands(createHydroponicsEscapeState("UnderWebOne"), [
       "open statuesque cocoon",
       "southeast",
       "up",
@@ -121,32 +121,32 @@ describe("Doors and level mechanics", () => {
     expect(escaped.worldState.playerDeaths.HydroponicsPlatform).toBeUndefined();
   });
 
-  it("adds escalating warnings during the escape and plays the finale on reaching the top platform", () => {
+  it("adds escalating warnings during the escape and plays the finale on reaching the top platform", async () => {
     const start = createHydroponicsEscapeState("UnderWebOne");
 
-    const opened = runCommand(start, "open statuesque cocoon");
+    const opened = await runCommand(start, "open statuesque cocoon");
     expect(opened.log.join("\n")).toContain(
       "Somewhere overhead, taut strands of web begin snapping one by one.",
     );
 
-    const toBottom = runCommand(opened, "southeast");
+    const toBottom = await runCommand(opened, "southeast");
     expect(toBottom.log.join("\n")).toContain(
       "The web canopy convulses above you. Silk lashes through the air",
     );
 
-    const toMid = runCommand(toBottom, "up");
+    const toMid = await runCommand(toBottom, "up");
     expect(toMid.log.join("\n")).toContain(
       "A violent series of cracks tears through the chamber.",
     );
 
-    const toTop = runCommand(toMid, "up");
+    const toTop = await runCommand(toMid, "up");
     expect(toTop.log.join("\n")).toContain(
       "Just as you reach the top platform, thick strands of silk give way with a series of loud snaps.",
     );
   });
 
-  it("kills the player if the yellow-badge timer expires before they reach the top platform", () => {
-    const doomed = runCommands(createHydroponicsEscapeState("UnderWebOne"), [
+  it("kills the player if the yellow-badge timer expires before they reach the top platform", async () => {
+    const doomed = await runCommands(createHydroponicsEscapeState("UnderWebOne"), [
       "open statuesque cocoon",
       "southeast",
       "up",
@@ -160,7 +160,7 @@ describe("Doors and level mechanics", () => {
     );
   });
 
-  it("resets the hydroponics encounter and respawns the player nearby on death", () => {
+  it("resets the hydroponics encounter and respawns the player nearby on death", async () => {
     const start = createHydroponicsPuzzleState("SillithLeSconce", {
       ...createTestState({
         roomId: "UnderWebOne",
@@ -184,7 +184,7 @@ describe("Doors and level mechanics", () => {
       },
     };
 
-    const next = runCommand(withWrongCocoon, "open wispy cocoon");
+    const next = await runCommand(withWrongCocoon, "open wispy cocoon");
 
     expect(next.player.roomId).toBe("LevelSixCorridorEnd");
     expect(next.worldState.hydroponicsSpider.isAlive).toBe(true);
@@ -193,8 +193,8 @@ describe("Doors and level mechanics", () => {
     expect(next.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining).toBe(0);
   });
 
-  it("describes the dead spider aftermath and blocks descending back into the nest after a successful escape", () => {
-    const escaped = runCommands(createHydroponicsEscapeState("UnderWebOne"), [
+  it("describes the dead spider aftermath and blocks descending back into the nest after a successful escape", async () => {
+    const escaped = await runCommands(createHydroponicsEscapeState("UnderWebOne"), [
       "open statuesque cocoon",
       "southeast",
       "up",
@@ -205,7 +205,7 @@ describe("Doors and level mechanics", () => {
       mode: "panel",
       forceFull: true,
     });
-    const blocked = runCommand(escaped, "down");
+    const blocked = await runCommand(escaped, "down");
 
     expect(description).toContain("the spider's carcass sags deep into its own torn webbing");
     expect(description).toContain("millions of hand-sized spiders");
@@ -213,7 +213,7 @@ describe("Doors and level mechanics", () => {
     expect(getLastLogEntry(blocked)).toContain("There is no chance you're going back down there.");
   });
 
-  it("starts the visible hydroponics spider on a new paragraph after cocoon scenery", () => {
+  it("starts the visible hydroponics spider on a new paragraph after cocoon scenery", async () => {
     const baseState = createTestState({ roomId: "HydroponicsPlatformBottom" });
     const state = {
       ...baseState,
@@ -240,52 +240,52 @@ describe("Doors and level mechanics", () => {
     expect(description).toContain(`\n\n${spiderText}`);
   });
 
-  it("blocks the park entrance without a park pass", () => {
+  it("blocks the park entrance without a park pass", async () => {
     const start = setInventory(createTestState({ roomId: "ParkEntrance" }), []);
 
-    const next = runCommand(start, "west");
+    const next = await runCommand(start, "west");
 
     expect(next.player.roomId).toBe("ParkEntrance");
     expect(getLastLogEntry(next)).toContain("park pass");
   });
 
-  it("allows the player into the park when they have a park pass", () => {
+  it("allows the player into the park when they have a park pass", async () => {
     const start = setInventory(
       createTestState({ roomId: "ParkEntrance" }),
       ["ParkPass"],
     );
 
-    const next = runCommand(start, "west");
+    const next = await runCommand(start, "west");
 
     expect(next.player.roomId).toBe("ParkEast");
   });
 
-  it("unlocks keyed doors with the correct key", () => {
+  it("unlocks keyed doors with the correct key", async () => {
     const start = setInventory(
       createTestState({ roomId: "InsideTheShed" }),
       ["ShedCellarKey"],
     );
 
-    const opened = runCommand(start, "open hatch");
-    const entered = runCommand(opened, "down");
+    const opened = await runCommand(start, "open hatch");
+    const entered = await runCommand(opened, "down");
 
     expect(opened.worldState.doors.ShedCellarDoor?.isOpen).toBe(true);
     expect(opened.worldState.doors.ShedCellarDoor?.isLocked).toBe(false);
     expect(entered.player.roomId).toBe("UnderTheShed");
   });
 
-  it("requires the correct badge for badge-scanner doors", () => {
+  it("requires the correct badge for badge-scanner doors", async () => {
     const wrongBadgeState = setInventory(
       createTestState({ roomId: "LevelFourCorridorTwo" }),
       ["bluebadge"],
     );
-    const blocked = runCommand(wrongBadgeState, "south");
+    const blocked = await runCommand(wrongBadgeState, "south");
 
     const correctBadgeState = setInventory(
       createTestState({ roomId: "LevelFourCorridorTwo" }),
       ["yellowbadge"],
     );
-    const allowed = runCommand(correctBadgeState, "south");
+    const allowed = await runCommand(correctBadgeState, "south");
 
     expect(blocked.player.roomId).toBe("LevelFourCorridorTwo");
     expect(getLastLogEntry(blocked)).toContain("badge scanner emits a flat buzz");
@@ -294,18 +294,18 @@ describe("Doors and level mechanics", () => {
 
   it.todo("treats the gray superadmin badge as valid for every badge scanner");
 
-  it("records DNA samples when the player touches a body with the DNA sampler", () => {
+  it("records DNA samples when the player touches a body with the DNA sampler", async () => {
     const start = setInventory(createTestState({ roomId: "StairSix" }), [
       "DNAReader",
     ]);
 
-    const next = runCommand(start, "touch dead soldier with dna sampler");
+    const next = await runCommand(start, "touch dead soldier with dna sampler");
 
     expect(next.player.dnaBank).toHaveLength(1);
     expect(next.player.dnaBank[0]?.name).toBe("Joelson Dend");
   });
 
-  it("shows the Sanyi organisms as statues when the room is lit", () => {
+  it("shows the Sanyi organisms as statues when the room is lit", async () => {
     const start = setInventory(
       createTestState({ roomId: "LivingQuartersThreeWest" }),
       ["flashlight"],
@@ -329,7 +329,7 @@ describe("Doors and level mechanics", () => {
     expect(description).toContain("large, ornate wreath");
   });
 
-  it("lets the dark Sanyi organisms kill the player", () => {
+  it("lets the dark Sanyi organisms kill the player", async () => {
     const start = setInventory(
       createTestState({
         roomId: "LivingQuartersThreeWest",
@@ -347,14 +347,14 @@ describe("Doors and level mechanics", () => {
     );
   });
 
-  it("opens the warehouse secret door after the robot whistle is blown", () => {
+  it("opens the warehouse secret door after the robot whistle is blown", async () => {
     const start = setInventory(createTestState({ roomId: "L3Warehouse" }), [
       "RobotWhistle",
     ]);
 
-    const blocked = runCommand(start, "east");
-    const revealed = runCommand(start, "blow whistle");
-    const entered = runCommand(revealed, "east");
+    const blocked = await runCommand(start, "east");
+    const revealed = await runCommand(start, "blow whistle");
+    const entered = await runCommand(revealed, "east");
 
     expect(blocked.player.roomId).toBe("L3Warehouse");
     expect(revealed.worldState.conditionalTriggers.RobotRefugeAccess).toBe(true);
@@ -362,12 +362,12 @@ describe("Doors and level mechanics", () => {
     expect(entered.player.roomId).toBe("RobotRefuge");
   });
 
-  it("activates the Power Grid by inserting the key, turning it, and pushing the button", () => {
+  it("activates the Power Grid by inserting the key, turning it, and pushing the button", async () => {
     const start = setInventory(createTestState({ roomId: "PowerGrid" }), [
       "PowerStationKey",
     ]);
 
-    const next = runCommands(start, [
+    const next = await runCommands(start, [
       "put key in keyhole",
       "turn key",
       "push button",
@@ -378,7 +378,7 @@ describe("Doors and level mechanics", () => {
     expect(next.worldState.roomAudioLevel.PowerGrid).toBe(3);
   });
 
-  it("defaults every level five room to dark", () => {
+  it("defaults every level five room to dark", async () => {
     const state = createTestState();
 
     for (const room of LEVEL_FIVE.rooms) {
@@ -386,7 +386,7 @@ describe("Doors and level mechanics", () => {
     }
   });
 
-  it("emits the spider moan message at the correct turn in range", () => {
+  it("emits the spider moan message at the correct turn in range", async () => {
     const baseState = createTestState({ roomId: "LevelSixCorridorEnd" });
     const start = {
       ...baseState,
@@ -406,10 +406,10 @@ describe("Doors and level mechanics", () => {
     );
   });
 
-  it("lets the spider acid puzzle melt the hydroponics door open", () => {
+  it("lets the spider acid puzzle melt the hydroponics door open", async () => {
     const start = createTestState({ roomId: "LevelSixCorridorEnd" });
 
-    const opened = runCommands(start, [
+    const opened = await runCommands(start, [
       "look through gap",
       "look through gap",
       "look through gap",
@@ -419,7 +419,7 @@ describe("Doors and level mechanics", () => {
       "look through gap",
       "wait",
     ]);
-    const entered = runCommand(opened, "south");
+    const entered = await runCommand(opened, "south");
 
     expect(opened.worldState.conditionalTriggers.HydroponicsDoorUnblocked).toBe(
       true,
@@ -427,7 +427,7 @@ describe("Doors and level mechanics", () => {
     expect(entered.player.roomId).toBe("HydroponicsPlatform");
   });
 
-  it("respawns the player at the aquarium start and resets the octopus encounter on death", () => {
+  it("respawns the player at the aquarium start and resets the octopus encounter on death", async () => {
     const baseState = createTestState({
       roomId: "AqOpen1",
       visitedRooms: ["AqOpen1", "AqStart"],
@@ -449,7 +449,7 @@ describe("Doors and level mechanics", () => {
       },
     };
 
-    const next = runCommand(start, "north");
+    const next = await runCommand(start, "north");
 
     expect(next.player.roomId).toBe("AqStart");
     expect(next.worldState.octopusState.occupiedRoomIds).toEqual(["AqRock7"]);
@@ -457,16 +457,16 @@ describe("Doors and level mechanics", () => {
     expect(next.itemState.itemRoomId.octopus).toBe("AqRock7");
   });
 
-  it("lets the player use the local aqua pad without a badge", () => {
+  it("lets the player use the local aqua pad without a badge", async () => {
     const start = setInventory(createTestState({ roomId: "VeterinaryCenter" }), []);
 
-    const next = runCommand(start, "stand on aqua disk");
+    const next = await runCommand(start, "stand on aqua disk");
 
     expect(next.player.roomId).toBe("AqStart");
     expect(getLastLogEntry(next)).toContain("Transfer Lock");
   });
 
-  it("lets the electric prod retreat one nearby tentacle and spends a charge", () => {
+  it("lets the electric prod retreat one nearby tentacle and spends a charge", async () => {
     const baseState = setInventory(createTestState({ roomId: "AqRock2" }), [
       AQUARIUM_ELECTRIC_PROD_ITEM_ID,
     ]);
@@ -487,7 +487,7 @@ describe("Doors and level mechanics", () => {
       },
     };
 
-    const next = runCommand(start, "use prod on tentacle");
+    const next = await runCommand(start, "use prod on tentacle");
     const prod = next.world.items.find((item) => item.id === AQUARIUM_ELECTRIC_PROD_ITEM_ID);
 
     expect(prod?.doses).toBe(1);
@@ -495,14 +495,14 @@ describe("Doors and level mechanics", () => {
     expect(getLastLogEntry(next)).toContain("recoils all the way back");
   });
 
-  it("finds the breather by searching the dead diver", () => {
-    const next = runCommand(createTestState({ roomId: "AqRock2" }), "search dead diver");
+  it("finds the breather by searching the dead diver", async () => {
+    const next = await runCommand(createTestState({ roomId: "AqRock2" }), "search dead diver");
 
     expect(expectInventoryToContain(next, AQUARIUM_BREATHER_ITEM_ID)).toBe(true);
   });
 
-  it("gives the player enough time to reach and secure the breather", () => {
-    const next = runCommands(createTestState({ roomId: "AqStart" }), [
+  it("gives the player enough time to reach and secure the breather", async () => {
+    const next = await runCommands(createTestState({ roomId: "AqStart" }), [
       "north",
       "west",
       "north",
@@ -514,7 +514,7 @@ describe("Doors and level mechanics", () => {
     expect(next.itemState.wornByPlayer.face).toBe(AQUARIUM_BREATHER_ITEM_ID);
   });
 
-  it("respawns the player near the preserve and resets the bull encounter on death", () => {
+  it("respawns the player near the preserve and resets the bull encounter on death", async () => {
     const baseState = createTestState({
       roomId: "PresE",
       visitedRooms: ["PresE", "VeterinaryCenter"],
@@ -541,7 +541,7 @@ describe("Doors and level mechanics", () => {
       },
     };
 
-    const next = runCommand(start, "wait");
+    const next = await runCommand(start, "wait");
 
     expect(next.player.roomId).toBe("VeterinaryCenter");
     expect(next.worldState.bullEncounter.chargeCooldown).toBe(3);
@@ -550,7 +550,7 @@ describe("Doors and level mechanics", () => {
     expect(next.itemState.itemRoomId.bull).toBe("PresF");
   });
 
-  it("respawns the player outside the aviary and resets the encounter on death", () => {
+  it("respawns the player outside the aviary and resets the encounter on death", async () => {
     const baseState = createTestState({
       roomId: "OuterRingNorth",
       visitedRooms: ["OuterRingNorth", "ZooOne"],
@@ -575,7 +575,7 @@ describe("Doors and level mechanics", () => {
       },
     };
 
-    const next = runCommand(start, "wait");
+    const next = await runCommand(start, "wait");
 
     expect(next.player.roomId).toBe("ZooOne");
     expect(next.worldState.aviarySpotlight.index).toBe(0);
@@ -639,3 +639,4 @@ function createHydroponicsPuzzleState(
     },
   };
 }
+

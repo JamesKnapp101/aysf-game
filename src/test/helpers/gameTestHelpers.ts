@@ -115,15 +115,24 @@ export function patchRoomDarkness(
   };
 }
 
-export function runCommand(state: GameState, command: string): GameState {
+export async function runCommand(
+  state: GameState,
+  command: string,
+): Promise<GameState> {
   return handleCommand(state, parseCommand(command));
 }
 
-export function runCommands(
+export async function runCommands(
   state: GameState,
   commands: string[],
-): GameState {
-  return commands.reduce((nextState, command) => runCommand(nextState, command), state);
+): Promise<GameState> {
+  let nextState = state;
+
+  for (const command of commands) {
+    nextState = await runCommand(nextState, command);
+  }
+
+  return nextState;
 }
 
 export function getLastLogEntry(state: GameState): string {

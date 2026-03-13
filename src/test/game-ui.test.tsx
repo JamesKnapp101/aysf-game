@@ -24,7 +24,7 @@ function renderLogPanel(state: GameState, activeTab: "inventory" | "log" | "dna"
   return render(
     <LogPanel
       state={state}
-      dispatch={() => undefined}
+      onCommand={() => undefined}
       layout={layout}
       setLayout={() => undefined}
       crtColor="#00ff00"
@@ -39,8 +39,8 @@ function renderLogPanel(state: GameState, activeTab: "inventory" | "log" | "dna"
 }
 
 describe("UI panels", () => {
-  it("shows picked-up items in the Inventory tab", () => {
-    const state = runCommandInInventoryRoom();
+  it("shows picked-up items in the Inventory tab", async () => {
+    const state = await runCommandInInventoryRoom();
 
     renderLogPanel(state);
 
@@ -68,8 +68,8 @@ describe("UI panels", () => {
     expect(screen.getByText("a rusted metal key")).toBeInTheDocument();
   });
 
-  it("renders stored log entries in the Log tab", () => {
-    const state = runCommands(
+  it("renders stored log entries in the Log tab", async () => {
+    const state = await runCommands(
       setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
       ["take research notes", "read research notes"],
     );
@@ -115,8 +115,8 @@ describe("UI panels", () => {
     expect(screen.getAllByText(`Employee Record: ${employeeName}`)).toHaveLength(1);
   });
 
-  it("renders banked DNA samples in the DNA tab", () => {
-    const state = runCommands(
+  it("renders banked DNA samples in the DNA tab", async () => {
+    const state = await runCommands(
       setInventory(createTestState({ roomId: "StairSix" }), ["DNAReader"]),
       ["touch dead soldier with dna sampler"],
     );
@@ -127,7 +127,7 @@ describe("UI panels", () => {
     expect(screen.getByText(/Severe liquefactive necrosis/i)).toBeInTheDocument();
   });
 
-  it("reflects health, oxygen, temperature, radiation, and EEG state in the status tab", () => {
+  it("reflects health, oxygen, temperature, radiation, and EEG state in the status tab", async () => {
     const baseState = createTestState();
     const statusEffects: GameState["player"]["statusEffects"] = [
       {
@@ -166,7 +166,7 @@ describe("UI panels", () => {
     expect(screen.getByText(/tipsy/i)).toBeInTheDocument();
   });
 
-  it("lights the compass needles and labels for every available exit", () => {
+  it("lights the compass needles and labels for every available exit", async () => {
     const { container } = render(
       <RoomCompass
         exits={[
@@ -191,8 +191,8 @@ describe("UI panels", () => {
   });
 });
 
-function runCommandInInventoryRoom() {
-  return runCommands(
+async function runCommandInInventoryRoom() {
+  return await runCommands(
     setInventory(createTestState({ roomId: "ThreeWestBed" }), []),
     ["take research notes"],
   );
@@ -217,3 +217,4 @@ function renderHydroponicsTerminal(initialState: GameState) {
 
   return render(<Harness />);
 }
+

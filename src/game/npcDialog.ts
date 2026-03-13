@@ -1,4 +1,5 @@
 import { normalize } from "@game/rules/scope";
+import { YOU_FIRST_CONTACT_ID } from "@game/npcRegistry";
 import type { NpcDialog, NpcDialogEntry } from "@game/types/npcTypes";
 
 const RADIO_ASK_ALIASES: Record<string, string[]> = {
@@ -38,7 +39,7 @@ export function getNpcAskReply(dialog: NpcDialogEntry, topic: string) {
 }
 
 export const NPC_DIALOG: NpcDialog = {
-  kevin_1st_contact: {
+  [YOU_FIRST_CONTACT_ID]: {
     ask: {
       ["what fuck"]: `"I don't know man...but I'm pretty sure that if we don't get things back on track...we are effed in the A..."`,
       ["where we are"]: `"My memory is totally fried...some kind of facility (cough) but I know this place, I know where we are I just can't place it..."`,
@@ -46,7 +47,7 @@ export const NPC_DIALOG: NpcDialog = {
       ["power"]: `"Something must have overloaded...the Control Room Supervisor should have...the reset key..."`,
       ["reset key"]: `"Yeah it's like a manual override...it should cut everything over (cough) you just need to find it..."`,
       ["plumbus"]: `"Yeah, I don't know man...I think it's just a regular old plumbus..."`,
-      ["name"]: `My name's Kevin (cough) at least...I think it is (cough) ...I'm ninety percent sure my name is (cough) Kevin...`,
+      ["name"]: `My name's Mox (cough) at least...I think it is (cough) ...I'm ninety percent sure my name is (cough) Mox...`,
       ["dark"]: `Yeah stay out of the dark (cough)...I don't know what it is but there's some kind of organism in here with us...it won't come into the light (cough)...`,
       ["organism"]: `Well, I say that (cough)...I don't know what it is...but if it touches you...you're a dead man (cough)...`,
       ["himself"]: `I managed to get onto the floor where the reactor is (cough)...I was (cough) searching the warehouse when (cough)...collapsed...I'm pinned under (cough) a shit ton of crates...I don't think I'm gonna make it...`,

@@ -171,7 +171,7 @@ function getStateSignature(state: GameState): string {
   });
 }
 
-function findWinningAquariumRoute(options: SolverOptions = {}) {
+async function findWinningAquariumRoute(options: SolverOptions = {}) {
   const maxDepth = options.maxDepth ?? 40;
   const start = createTestState({
     roomId: "VeterinaryCenter",
@@ -216,7 +216,7 @@ function findWinningAquariumRoute(options: SolverOptions = {}) {
     if (node.path.length >= maxDepth) continue;
 
     for (const command of getCandidateCommands(node.state, options)) {
-      const nextState = runCommand(node.state, command);
+      const nextState = await runCommand(node.state, command);
       if (didDie(nextState)) continue;
 
       const signature = getStateSignature(nextState);
@@ -240,8 +240,8 @@ function findWinningAquariumRoute(options: SolverOptions = {}) {
 }
 
 describe("Aquarium solver", () => {
-  it("finds a winning route through the aquarium puzzle", () => {
-    const result = findWinningAquariumRoute({
+  it("finds a winning route through the aquarium puzzle", async () => {
+    const result = await findWinningAquariumRoute({
       requireBreatherInWin: true,
       requireProdInWin: true,
     });
@@ -255,23 +255,23 @@ describe("Aquarium solver", () => {
     expect(result.escapedWithNode).toBe(true);
   });
 
-  it("does not have a winning route if the player refuses to get the breather", () => {
-    const result = findWinningAquariumRoute({
+  it("does not have a winning route if the player refuses to get the breather", async () => {
+    const result = await findWinningAquariumRoute({
       allowBreather: false,
     });
 
     expect(result.path).toBeNull();
   });
 
-  it("does not have a winning route if the player refuses to get the prod", () => {
-    const result = findWinningAquariumRoute({
+  it("does not have a winning route if the player refuses to get the prod", async () => {
+    const result = await findWinningAquariumRoute({
       allowProd: false,
     });
 
     expect(result.path).toBeNull();
   });
 
-  it("warns when a tentacle tip moves into the player's room on the same turn", () => {
+  it("warns when a tentacle tip moves into the player's room on the same turn", async () => {
     const baseState = createTestState({
       roomId: "AqRock3",
       visitedRooms: ["AqRock3", "AqStart"],
@@ -295,10 +295,11 @@ describe("Aquarium solver", () => {
       },
     };
 
-    const next = runCommand(start, "wait");
+    const next = await runCommand(start, "wait");
     const fullLog = next.log.join("\n");
 
     expect(fullLog).toContain("lashes in from the north");
     expect(fullLog).toContain("*** You have died ***");
   });
 });
+
