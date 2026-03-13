@@ -16,13 +16,13 @@ export type ParsedCommand =
   | { type: "inventory" }
   | { type: "diagnose" }
   | { type: "wait" }
-  | { type: "move"; direction: Direction }
+  | { direction: Direction; type: "move" }
   | {
+      direct?: string;
+      indirect?: string;
+      preposition?: Preposition;
+      raw: string;
       type: "action";
       verb: string;
-      direct?: string;
-      preposition?: Preposition;
-      indirect?: string;
-      raw: string;
     }
-  | { type: "unknown"; raw: string };
+  | { raw: string; type: "unknown" };

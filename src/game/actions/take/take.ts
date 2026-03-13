@@ -12,7 +12,6 @@ export function doTake(state: GameState, cmd: ParsedCommand): ActionResult {
   }
 
   const direct = cmd.direct?.trim();
-  const indirect = cmd.indirect?.trim() ?? "";
   if (!direct) {
     return { state, message: "Take what?" };
   }
@@ -58,5 +57,5 @@ export function doTake(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
-  return tryTakeItem(state, direct, indirect);
+  return tryTakeItem(state, direct);
 }

@@ -8,20 +8,20 @@ type OverlayPostClose = {
 };
 
 export type OverlayIntent = {
-  kind: "reader" | "cooler" | "message-machine";
-  title: string;
   body: string;
+  kind: "reader" | "cooler" | "message-machine";
   mode?: CoolerMode;
   sourceItemId?: string;
+  title: string;
 };
 
 export type Overlay =
   | { kind: "none" }
   | ({
-      kind: "reader";
-      title: string;
       body: string;
+      kind: "reader";
       sourceItemId?: string;
+      title: string;
     } & OverlayPostClose)
   | ({ kind: "cooler"; mode: CoolerMode } & OverlayPostClose)
   | ({
@@ -29,40 +29,38 @@ export type Overlay =
       messages: PhoneMessage[];
       messagesPlayedById: Record<string, boolean>;
     } & OverlayPostClose)
-  | ({ kind: "camera-gun-viewer"; currentViewIndex: number } & OverlayPostClose)
-  | ({ kind: "plt-viewer"; isOn: boolean; hasLink: boolean } & OverlayPostClose)
-  | ({ kind: "power-station-terminal"; isOn: boolean } & OverlayPostClose)
+  | ({ currentViewIndex: number; kind: "camera-gun-viewer" } & OverlayPostClose)
+  | ({ hasLink: boolean; isOn: boolean; kind: "plt-viewer" } & OverlayPostClose)
+  | ({ isOn: boolean; kind: "power-station-terminal" } & OverlayPostClose)
   | ({ kind: "hydroponics-admin-terminal" } & OverlayPostClose)
   | ({ kind: "mens-lockers" } & OverlayPostClose)
   | ({ kind: "womens-lockers" } & OverlayPostClose)
-  | ({ kind: "matter-transmitter"; isOn: boolean } & OverlayPostClose)
+  | ({ isOn: boolean; kind: "matter-transmitter" } & OverlayPostClose)
   | ({ kind: "teleportation-terminal" } & OverlayPostClose)
   | ({
       kind: "mindFlash";
-      title?: string;
       memory: string;
       seed?: number;
+      title?: string;
     } & OverlayPostClose);
 
 export type UIOverlayActions = {
+  closeOverlay: () => void;
+  openCooler: (args: { mode: CoolerMode }) => void;
   openReader: (args: {
-    title: string;
     body: string;
     sourceItemId?: string;
+    title: string;
   }) => void;
-  openCooler: (args: { mode: CoolerMode }) => void;
-  closeOverlay: () => void;
 };
 
 export type OrganismDeathPayload = {
-  title?: string;
-  cipherText: string;
-  seed?: number;
-  onStart?: () => void;
-  onEnd?: () => void;
-
-  // Display tuning
-  revealMode?: "fade" | "type" | "random-chunks";
   chunkMs?: number; // for chunk-by-chunk reveal
   chunkSize?: number; // characters per revealed chunk
+  cipherText: string;
+  onEnd?: () => void;
+  onStart?: () => void;
+  revealMode?: "fade" | "type" | "random-chunks";
+  seed?: number;
+  title?: string;
 };

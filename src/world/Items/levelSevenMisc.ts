@@ -408,8 +408,6 @@ export const levelSevenItems: Item[] = [
     clothingSlot: "body",
     isReadable: false,
     isContainer: false,
-    remainingCharge: 350,
-
     overrides: {
       take: "You haul the cold suit upright. It’s heavier than it looks, dense with insulation, tanks, and whatever passes for safety on this ship.",
       wear: "You climb into the cold suit and pull the helmet into place. The neck seal locks with a soft click, followed by a low hiss as the oxygen system spins up and the suit pressurizes around you.",

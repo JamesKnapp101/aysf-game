@@ -1,5 +1,5 @@
-import { GameState } from "@game/types/gameTypes";
-import { DescriptionContext } from "@game/types/itemTypes";
+import type { GameState } from "@game/types/gameTypes";
+import type { DescriptionContext } from "@game/types/itemTypes";
 
 export type Direction =
   | "north"
@@ -21,24 +21,24 @@ export interface CompassProps {
 
 export interface RoomExit {
   direction: Direction;
-  toRoomId: string;
   doorId?: string;
+  toRoomId: string;
 }
 
 export interface Exit {
   direction: Direction;
-  toRoomId?: string;
   doorId?: string;
+  toRoomId?: string;
 }
 
 export interface Room {
-  id: string;
-  name: string;
   description: string;
-  describe?: (state: GameState, room: Room, ctx: DescriptionContext) => string;
   descriptionShort?: string;
+  describe?: (state: GameState, room: Room, ctx: DescriptionContext) => string;
   exits: Exit[];
+  id: string;
   meta?: Record<string, any>;
+  name: string;
 }
 
 export type Coord = { x: number; y: number; z: number };

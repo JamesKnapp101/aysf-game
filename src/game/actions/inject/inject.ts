@@ -101,7 +101,7 @@ export function doInject(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
-  const result = applyInjectionEffect(state, targetItem, loadedId);
+  const result = applyInjectionEffect(state, targetItem);
 
   const next: GameState = {
     ...result.state,

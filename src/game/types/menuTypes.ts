@@ -1,23 +1,23 @@
 export type MenuNode = MenuBranchNode | MenuLeafNode;
 
 export interface MenuBranchNode {
-  kind: "menu";
-  id: string;
-  title: string;
   children: MenuNode[];
+  id: string;
+  kind: "menu";
+  title: string;
 }
 
 export interface MenuLeafNode {
-  kind: "leaf" | "hint";
-  id: string;
-  title: string;
   description: string;
+  id: string;
+  kind: "leaf" | "hint";
+  title: string;
 }
 
 export interface MenuUIState {
+  activeLeaf?: MenuLeafNode;
   currentPath: MenuBranchNode[];
   selectedIndex: number;
-  activeLeaf?: MenuLeafNode;
 }
 
 export type VisibleMenuEntry =

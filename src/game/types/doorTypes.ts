@@ -1,5 +1,5 @@
-import { GameState } from "@game/types/gameTypes";
-import { DescriptionContext } from "@game/types/itemTypes";
+import type { GameState } from "@game/types/gameTypes";
+import type { DescriptionContext } from "@game/types/itemTypes";
 import type { Direction } from "./roomTypes";
 
 export type DoorKind =
@@ -11,37 +11,37 @@ export type DoorKind =
   | "scripted";
 
 export interface DoorDefinition {
-  id: string;
-  name: string;
-  description?: string;
-  describe?: (state: GameState, ctx: DescriptionContext) => string;
-  descriptionFromA?: string;
-  descriptionFromB?: string;
-  describeFromA?: (state: GameState, ctx: DescriptionContext) => string;
-  describeFromB?: (state: GameState, ctx: DescriptionContext) => string;
-  vocab: string[];
+  badgeItemId?: string;
+  blockMsg?: string;
+  checkBadgeOnDir?: string;
+  closeVerb?: string;
   connects: {
     roomAId: string;
     roomBId: string;
   };
+  describe?: (state: GameState, ctx: DescriptionContext) => string;
+  describeFromA?: (state: GameState, ctx: DescriptionContext) => string;
+  describeFromB?: (state: GameState, ctx: DescriptionContext) => string;
+  description?: string;
+  descriptionFromA?: string;
+  descriptionFromB?: string;
   directions?: {
     fromA: Direction;
     fromB: Direction;
   };
-  kind: DoorKind;
-  initiallyOpen?: boolean;
+  id: string;
   initiallyLocked?: boolean;
+  initiallyOpen?: boolean;
   keyItemId?: string;
-  badgeItemId?: string;
-  checkBadgeOnDir?: string;
-  scriptId?: string;
+  kind: DoorKind;
+  name: string;
   openVerb?: string;
-  closeVerb?: string;
-  blockMsg?: string;
+  scriptId?: string;
+  vocab: string[];
 }
 
 export interface DoorState {
   id: string;
-  isOpen: boolean;
   isLocked: boolean;
+  isOpen: boolean;
 }

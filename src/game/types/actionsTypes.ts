@@ -3,10 +3,10 @@ import type { ParsedCommand } from "./parserTypes";
 import type { Overlay } from "./uiTypes";
 
 export type ActionResult = {
-  state: GameState;
+  consumesTurn?: boolean;
   message?: string;
   overlay?: Overlay;
-  consumesTurn?: boolean;
+  state: GameState;
 };
 
 export type ActionHandler = (
@@ -15,15 +15,15 @@ export type ActionHandler = (
 ) => ActionResult | Promise<ActionResult>;
 
 export type ActionRequest = {
+  payload: {
+    input?: string;
+    messageId?: string;
+    mode?: "off" | "cool" | "cold" | "freeze";
+  };
   verb:
     | "setCoolerMode"
     | "openCoolerPanel"
     | "markMessagePlayed"
     | "cycleCameraGunView"
     | "command";
-  payload: {
-    mode?: "off" | "cool" | "cold" | "freeze";
-    messageId?: string;
-    input?: string;
-  };
 };

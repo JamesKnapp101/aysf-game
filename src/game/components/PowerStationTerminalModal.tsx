@@ -13,7 +13,7 @@ type NodeBase = {
   label: string;
 };
 
-type MenuNode = NodeBase & {
+type MenuTreeNode = NodeBase & {
   kind: "menu";
   children: TreeNode[];
 };
@@ -23,7 +23,7 @@ type OptionNode = NodeBase & {
   status: SwitchStatus;
 };
 
-type TreeNode = MenuNode | OptionNode;
+type TreeNode = MenuTreeNode | OptionNode;
 
 type Props = {
   onClose: () => void;
@@ -31,7 +31,7 @@ type Props = {
   setGameState: (updater: (prev: GameState) => GameState) => void;
 };
 
-function isMenu(n: TreeNode): n is MenuNode {
+function isMenu(n: TreeNode): n is MenuTreeNode {
   return n.kind === "menu";
 }
 
@@ -83,7 +83,7 @@ function stripParenNotes(label: string) {
   return label.replace(/\s*\([^)]*\)\s*$/, "");
 }
 
-function buildPowerGridTree(state: GameState): MenuNode {
+function buildPowerGridTree(state: GameState): MenuTreeNode {
   return {
     id: "power_grid_menu",
     kind: "menu",
@@ -401,7 +401,7 @@ function buildPowerGridTree(state: GameState): MenuNode {
   };
 }
 
-type Breadcrumb = { node: MenuNode; selectedIndex: number };
+type Breadcrumb = { node: MenuTreeNode; selectedIndex: number };
 
 function applyPowerFromSwitches(
   worldState: WorldState,
@@ -428,7 +428,7 @@ export function PowerStationTerminalModal({
   state,
   setGameState,
 }: Props) {
-  const [root] = useState<TreeNode>(() => buildPowerGridTree(state));
+  const [root] = useState<MenuTreeNode>(() => buildPowerGridTree(state));
   const [path, setPath] = useState<Breadcrumb[]>([
     { node: root, selectedIndex: 0 },
   ]);
@@ -481,7 +481,7 @@ export function PowerStationTerminalModal({
 
   const selected = listItems[clampIndex(current.selectedIndex)];
 
-  const openMenu = (menu: MenuNode) => {
+  const openMenu = (menu: MenuTreeNode) => {
     setPath((prev) => [...prev, { node: menu, selectedIndex: 0 }]);
   };
 

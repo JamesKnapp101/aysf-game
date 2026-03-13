@@ -1,4 +1,3 @@
-import React from "react";
 import { getItemById } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";

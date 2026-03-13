@@ -192,10 +192,6 @@ export const createInitialState = (world: World): GameState => {
         Warehouse: true,
         LevelFiveStairAccess: true,
       },
-      noPowerRooms: {
-        // This will basically be everything on some of the floors
-        FiveEastBed: true, // for testing
-      },
       powerRestoredSections: {
         "lights-level-one": true,
         "lights-level-two": false,
@@ -229,7 +225,6 @@ export const createInitialState = (world: World): GameState => {
         "power-key-turned": false,
         "power-initialized": false,
       },
-      gravityOffRooms: {},
       visitedRooms: {
         PowerGrid: false,
         StairWellSeven: true,
@@ -446,7 +441,6 @@ export const createInitialState = (world: World): GameState => {
       openItems: {
         PowerStationKeyhole: true,
       },
-      spentCartridges: {},
       containerContents: {},
       containerFilled: {},
       surfaceContents: {},

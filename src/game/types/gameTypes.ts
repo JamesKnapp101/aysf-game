@@ -1,6 +1,6 @@
 import { playerMemoryMap, playerScoreMap } from "@game/constants";
-import { DNAResult } from "@game/rules/dnaReader";
-import { ItemId, RoomId } from "@game/types/ids";
+import type { DNAResult } from "@game/rules/dnaReader";
+import type { ItemId, RoomId } from "@game/types/ids";
 import type { NpcConversationState, RadioState } from "@game/types/npcTypes";
 import type { DoorDefinition, DoorState } from "./doorTypes";
 import type { Item, ItemState } from "./itemTypes";
@@ -8,28 +8,30 @@ import type { Direction, Room } from "./roomTypes";
 import type { TeleportPadDefinition } from "./tpadTypes";
 
 export interface GameState {
-  world: World;
-  moves: number;
-  score: number;
-  rating: number;
-  log: string[];
-  uiState: GameUiState;
-  player: PlayerState;
-  worldState: WorldState;
+  conversation?: ConversationState;
   itemState: ItemState;
-  conversation?: {
-    npcs?: Record<string, NpcConversationState>;
-  };
+  log: string[];
+  moves: number;
+  player: PlayerState;
   radio?: RadioState;
+  rating: number;
   rng: () => number;
+  score: number;
+  uiState: GameUiState;
+  world: World;
+  worldState: WorldState;
 }
 
+export type ConversationState = {
+  npcs?: Record<string, NpcConversationState>;
+};
+
 export interface PlayerVitals {
+  brainActivity: number;
+  drunkenness?: number;
   health: number;
   oxygen: number;
   temperature: number;
-  brainActivity: number;
-  drunkenness?: number;
   theSickness?: number;
 }
 
@@ -75,8 +77,8 @@ export type GameNotification = GameNotificationDraft & {
 };
 
 export interface GameUiState {
-  notifications: GameNotification[];
   nextNotificationId: number;
+  notifications: GameNotification[];
 }
 
 type PendingNarration = {
@@ -119,40 +121,42 @@ type PowerSectionId =
   | "power-initialized";
 
 type PlayerMoveEvent = {
+  atTurn?: number;
   fromRoomId: string;
   toRoomId: string;
   via?: string;
-  atTurn?: number;
 };
 
 export type PlayerLogEntry = {
+  body: string;
+  loggedAtTurn: number;
   source: string;
   title: string;
-  loggedAtTurn: number;
-  body: string;
+};
+
+export type PlayerInventory = {
+  badges: string[];
+  general: string[];
+  keys: string[];
 };
 
 export interface PlayerState {
-  roomId: string;
+  dnaBank: DNAResult[];
+  inventory: PlayerInventory;
+  log: PlayerLogEntry[];
+  memoriesTriggered: Record<PlayerMemoryId, boolean>;
   prevRoomId?: string;
   recentMoves?: PlayerMoveEvent[];
-  inventory: {
-    general: string[];
-    badges: string[];
-    keys: string[];
-  };
-  log: PlayerLogEntry[];
-  dnaBank: DNAResult[];
-  vitals: PlayerVitals;
-  statusEffects: StatusEffect[];
-  memoriesTriggered: Record<PlayerMemoryId, boolean>;
+  roomId: string;
   spiltTea: JuicyTopic[];
+  statusEffects: StatusEffect[];
+  vitals: PlayerVitals;
 }
 
 export interface Countdown {
   id: string;
-  remainingTurns: number;
   isActive: boolean;
+  remainingTurns: number;
 }
 
 export type OctopusArmState = {
@@ -162,59 +166,59 @@ export type OctopusArmState = {
 };
 
 export type OctopusState = {
-  rootRoomId: string;
   arms: OctopusArmState[];
-  occupiedRoomIds: string[]; // segments
-  tipRoomIds: string[]; // endpoints
-  maxSegments: number; // 8
-  movesPerTick: number; // rooms advanced when the octopus does move
-  moveEveryTurns: number; // game turns between advances
-  turnsUntilMove: number; // countdown until the next advance
-  retreatTicks: number; // reserved for future global retreat/cooldown tuning
-  lastSeenPlayerRoomId?: string;
-  trailQueue: string[];
   isAware: boolean;
-  returnChokeActive: boolean;
+  lastSeenPlayerRoomId?: string;
   lastWarningLevel: number;
+  maxSegments: number; // 8
+  moveEveryTurns: number; // game turns between advances
+  movesPerTick: number; // rooms advanced when the octopus does move
+  occupiedRoomIds: string[]; // segments
+  returnChokeActive: boolean;
+  retreatTicks: number; // reserved for future global retreat/cooldown tuning
+  rootRoomId: string;
+  tipRoomIds: string[]; // endpoints
+  trailQueue: string[];
+  turnsUntilMove: number; // countdown until the next advance
 };
 
 export type AviarySpotlightState = {
-  route: string[];
-  index: number; // current route index
-  turnsLeftHere: 1 | 2; // stays 2 turns per room
-  pauseWhenPlayerNotInAviary: boolean; // config
   hintCooldown: number; // turns until next hint
+  index: number; // current route index
+  pauseWhenPlayerNotInAviary: boolean; // config
+  route: string[];
+  turnsLeftHere: 1 | 2; // stays 2 turns per room
 };
 
 export type HydroponicsSpiderState = {
-  isAlive: boolean;
-  turnsSinceLastBreath: number;
-  sensitivity: number;
-  pendingAcidTarget: "none" | "door" | "player" | "gapPlayer";
   doorHealth: number;
+  isAlive: boolean;
   lastTrackedHydroponicsRoomId?: string;
+  pendingAcidTarget: "none" | "door" | "player" | "gapPlayer";
+  sensitivity: number;
+  turnsSinceLastBreath: number;
 };
 
 export type HydroponicsCocoonPuzzleState = {
-  initialized: boolean;
-  powerWorkerBodyId?: string;
   graceTurnsRemaining: number;
-  resolved: boolean;
+  initialized: boolean;
   openedBodyIds: Record<string, boolean>;
+  powerWorkerBodyId?: string;
+  resolved: boolean;
 };
 
 export type BullEncounterState = {
   chargeCooldown: number;
-  stunnedTurns: number;
   pendingCharge?: {
     dir: string;
     targetRoomId: string;
   };
+  stunnedTurns: number;
 };
 
 export type BrainSlugState = {
-  isHydrated: boolean;
   attachedTo: string;
+  isHydrated: boolean;
 };
 
 export type CatState = {
@@ -222,25 +226,25 @@ export type CatState = {
 };
 
 export interface World {
-  rooms: Room[];
-  items: Item[];
   doors: DoorDefinition[];
-  teleportPads: TeleportPadDefinition[];
+  items: Item[];
   meta?: Record<string, any>;
+  rooms: Room[];
+  teleportPads: TeleportPadDefinition[];
 }
 
 export interface WorldChunk {
-  rooms: Room[];
-  items: Item[];
   doors: DoorDefinition[];
+  items: Item[];
+  rooms: Room[];
   teleportPads: TeleportPadDefinition[];
 }
 
 export interface DamagedFlashlightState {
+  chargeRate: number;
+  currentCharge: number;
   isOn: boolean;
   maxCharge: number;
-  currentCharge: number;
-  chargeRate: number;
 }
 
 export interface SyringeState {
@@ -248,141 +252,105 @@ export interface SyringeState {
 }
 
 type PlayerDeath = {
-  cause: string;
   bodyDescription?: string;
+  cause: string;
 };
 
 type ConditionalExit = {
-  roomId: string;
-  direction: Direction;
-  unlockTriggers: string[];
-  conditionalTriggers?: string[];
   blockMsg: string;
+  conditionalTriggers?: string[];
+  direction: Direction;
   passMsg: string;
+  roomId: string;
+  unlockTriggers: string[];
 };
 
 export type JuicyTopic = {
   id: string;
-  title: string;
   summary: string;
   tags: string[];
+  title: string;
   type: "gossip" | "secret";
 };
 
+type MensLockerId =
+  | "menLocker1"
+  | "menLocker2"
+  | "menLocker3"
+  | "menLocker4"
+  | "menLocker5"
+  | "menLocker6"
+  | "menLocker7"
+  | "menLocker8"
+  | "menLocker9"
+  | "menLocker10"
+  | "menLocker11"
+  | "menLocker12"
+  | "menLocker13"
+  | "menLocker14"
+  | "menLocker15"
+  | "menLocker16";
+
+type WomensLockerId =
+  | "womenLocker1"
+  | "womenLocker2"
+  | "womenLocker3"
+  | "womenLocker4"
+  | "womenLocker5"
+  | "womenLocker6"
+  | "womenLocker7"
+  | "womenLocker8"
+  | "womenLocker9"
+  | "womenLocker10"
+  | "womenLocker11"
+  | "womenLocker12"
+  | "womenLocker13"
+  | "womenLocker14"
+  | "womenLocker15"
+  | "womenLocker16";
+
+type LockerContents<TLockerId extends string> = Record<TLockerId, ItemId[]>;
+type LockerOpenedState<TLockerId extends string> = Record<TLockerId, boolean>;
+type RoomAirQuality =
+  | "clean"
+  | "gas emmissions"
+  | "foreign particles"
+  | "smoke"
+  | "thin"
+  | "vaccum";
+type RoomTemperature =
+  | "freezing"
+  | "cold"
+  | "cool"
+  | "temperate"
+  | "warm"
+  | "hot"
+  | "scorching";
+
 export interface WorldState {
-  conditionalExits: Record<RoomId, ConditionalExit>;
-  pendingNarration?: PendingNarration;
-  scriptedEventsTripped: Record<string, boolean>;
-  conditionalTriggers: Record<string, boolean>;
-  playerDeaths: Record<RoomId, PlayerDeath>;
-  doors: Record<string, DoorState>;
-  darkRooms: Record<string, boolean>;
-  gravityOffRooms: Record<string, boolean>;
-  noPowerRooms: Record<string, boolean>;
-  powerRestoredSections: Record<PowerSectionId, boolean>;
-  visitedRooms: Record<string, boolean>;
-  scoresTriggered: Record<PlayerScoreId, boolean>;
-  octopusState: OctopusState;
-  catState: CatState;
   aviarySpotlight: AviarySpotlightState;
-  bullEncounter: BullEncounterState;
-  hydroponicsSpider: HydroponicsSpiderState;
-  hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;
   brainSlug: BrainSlugState;
+  bullEncounter: BullEncounterState;
+  catState: CatState;
+  conditionalExits: Record<RoomId, ConditionalExit>;
+  conditionalTriggers: Record<string, boolean>;
   damagedFlashlight: DamagedFlashlightState;
-  roomTemp: Record<
-    string,
-    "freezing" | "cold" | "cool" | "temperate" | "warm" | "hot" | "scorching"
-  >;
-  roomAirQuality: Record<
-    string,
-    | "clean"
-    | "gas emmissions"
-    | "foreign particles"
-    | "smoke"
-    | "thin"
-    | "vaccum"
-  >;
+  darkRooms: Record<string, boolean>;
+  doors: Record<string, DoorState>;
+  hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;
+  hydroponicsSpider: HydroponicsSpiderState;
+  mensLockerContents: LockerContents<MensLockerId>;
+  mensLockersOpened: LockerOpenedState<MensLockerId>;
+  octopusState: OctopusState;
+  pendingNarration?: PendingNarration;
+  playerDeaths: Record<RoomId, PlayerDeath>;
+  powerRestoredSections: Record<PowerSectionId, boolean>;
+  roomAirQuality: Record<string, RoomAirQuality>;
   roomAudioLevel: Record<string, number>;
-  threatTimers?: {
-    engineMeltdown?: Countdown;
-    reactorOverload?: Countdown;
-    hullBreach?: Countdown;
-  };
-  globalConditions?: {
-    shipPressure: "normal" | "low" | "vacuum";
-    radiationLevel: number;
-  };
-  mensLockerContents: {
-    menLocker1: ItemId[];
-    menLocker2: ItemId[];
-    menLocker3: ItemId[];
-    menLocker4: ItemId[];
-    menLocker5: ItemId[];
-    menLocker6: ItemId[];
-    menLocker7: ItemId[];
-    menLocker8: ItemId[];
-    menLocker9: ItemId[];
-    menLocker10: ItemId[];
-    menLocker11: ItemId[];
-    menLocker12: ItemId[];
-    menLocker13: ItemId[];
-    menLocker14: ItemId[];
-    menLocker15: ItemId[];
-    menLocker16: ItemId[];
-  };
-  mensLockersOpened: {
-    menLocker1: false;
-    menLocker2: false;
-    menLocker3: false;
-    menLocker4: false;
-    menLocker5: false;
-    menLocker6: false;
-    menLocker7: false;
-    menLocker8: false;
-    menLocker9: false;
-    menLocker10: false;
-    menLocker11: false;
-    menLocker12: false;
-    menLocker13: false;
-    menLocker14: false;
-    menLocker15: false;
-    menLocker16: false;
-  };
-  womensLockerContents: {
-    womenLocker1: ItemId[];
-    womenLocker2: ItemId[];
-    womenLocker3: ItemId[];
-    womenLocker4: ItemId[];
-    womenLocker5: ItemId[];
-    womenLocker6: ItemId[];
-    womenLocker7: ItemId[];
-    womenLocker8: ItemId[];
-    womenLocker9: ItemId[];
-    womenLocker10: ItemId[];
-    womenLocker11: ItemId[];
-    womenLocker12: ItemId[];
-    womenLocker13: ItemId[];
-    womenLocker14: ItemId[];
-    womenLocker15: ItemId[];
-    womenLocker16: ItemId[];
-  };
-  womensLockersOpened: {
-    womenLocker1: false;
-    womenLocker2: false;
-    womenLocker3: false;
-    womenLocker4: false;
-    womenLocker5: false;
-    womenLocker6: false;
-    womenLocker7: false;
-    womenLocker8: false;
-    womenLocker9: false;
-    womenLocker10: false;
-    womenLocker11: false;
-    womenLocker12: false;
-    womenLocker13: false;
-    womenLocker14: false;
-    womenLocker15: false;
-    womenLocker16: false;
-  };
+  roomTemp: Record<string, RoomTemperature>;
+  scoresTriggered: Record<PlayerScoreId, boolean>;
+  scriptedEventsTripped: Record<string, boolean>;
+  visitedRooms: Record<string, boolean>;
+  womensLockerContents: LockerContents<WomensLockerId>;
+  womensLockersOpened: LockerOpenedState<WomensLockerId>;
 }

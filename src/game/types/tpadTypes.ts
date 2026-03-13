@@ -2,10 +2,10 @@ export type TeleportPadId = string;
 export type TeleportRingId = string;
 
 export interface TeleportPadDefinition {
-  id: TeleportPadId;
-  ringId: TeleportRingId;
-  order: number;
-  roomId: string;
-  label: string;
   autoTriggerOnEnter?: boolean;
+  id: TeleportPadId;
+  label: string;
+  order: number;
+  ringId: TeleportRingId;
+  roomId: string;
 }
