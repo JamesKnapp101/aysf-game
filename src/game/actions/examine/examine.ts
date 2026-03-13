@@ -1,3 +1,7 @@
+import {
+  appendGossipNotice,
+  collectTeaFromItemResult,
+} from "@game/rules/gossip";
 import { isItemOpen } from "@game/rules/containers";
 import { resolveDoorByNoun, resolveItemByNoun } from "../../rules/scope";
 import { getItemById } from "../../selectors/itemSelectors";
@@ -15,8 +19,6 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   if (!direct) {
     return { state, message: "Examine what?" };
   }
-
-  let next = state;
 
   const item =
     direct !== "water"
@@ -39,128 +41,156 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "You don't see that here." };
   }
 
+  const teaResult = collectTeaFromItemResult(state, item);
+  let next = teaResult.state;
+  const gossipNotice = appendGossipNotice(undefined, teaResult.obtainedNewTea);
+
   if (item.isReflective) {
     let reflectMsg: string = ``;
-    if (!state.player.memoriesTriggered.own_image) {
-      if (state.player.memoriesTriggered.seen_self) {
+    if (!next.player.memoriesTriggered.own_image) {
+      if (next.player.memoriesTriggered.seen_self) {
         reflectMsg += `You regard your reflection for a moment and are taken aback as you realize you've seen that face before. It's the same exact face you saw on one of the dead bodies you found, you're him, or he was you? How is this possible?`;
       } else {
         reflectMsg += `You regard your reflection for a moment, feeling a glimmer of recognition. Your skin is fresh and unblemished, your head smooth, and hairless. You don't even have eyebrows.`;
       }
       next = {
-        ...state,
+        ...next,
         player: {
-          ...state.player,
+          ...next.player,
           memoriesTriggered: {
-            ...state.player.memoriesTriggered,
+            ...next.player.memoriesTriggered,
             own_image: true,
           },
         },
       };
     } else {
-      return { state: next, message: `Still looking good!` };
+      return {
+        state: next,
+        message: appendGossipNotice(
+          "Still looking good!",
+          teaResult.obtainedNewTea,
+        ),
+      };
     }
-    return { state: next, message: reflectMsg };
+    return {
+      state: next,
+      message: appendGossipNotice(reflectMsg, teaResult.obtainedNewTea),
+    };
   }
 
   if (item.id === "TelepadTerminal") {
     return {
-      state,
+      state: next,
       overlay: {
         kind: "teleportation-terminal",
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item?.meta?.kind === "phone") {
     return {
-      state,
+      state: next,
       overlay: {
         kind: "message-machine",
         messages: item?.meta?.messages,
         messagesPlayedById: {},
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item?.meta?.kind === "camera-gun-viewer") {
     return {
-      state,
+      state: next,
       overlay: {
         kind: "camera-gun-viewer",
         currentViewIndex: 0,
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item?.meta?.kind === "hydroponics-admin-terminal") {
     return {
-      state,
+      state: next,
       overlay: {
         kind: "hydroponics-admin-terminal",
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item?.meta?.kind === "plt-viewer") {
     return {
-      state,
+      state: next,
       overlay: {
         kind: "plt-viewer",
-        isOn: (state.itemState.itemSettings["PLT"] as any)?.isOn,
-        hasLink: (state.itemState.itemSettings["PLT"] as any)?.hasLink,
+        isOn: (next.itemState.itemSettings["PLT"] as any)?.isOn,
+        hasLink: (next.itemState.itemSettings["PLT"] as any)?.hasLink,
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item.id === "PowerStationMonitor") {
-    if (!state.worldState.powerRestoredSections["power-initialized"]) {
-      return { state, message: item?.meta?.onNoPower ?? "The screen is dark." };
+    if (!next.worldState.powerRestoredSections["power-initialized"]) {
+      return {
+        state: next,
+        message: appendGossipNotice(
+          item?.meta?.onNoPower ?? "The screen is dark.",
+          teaResult.obtainedNewTea,
+        ),
+      };
     }
     return {
-      state,
+      state: next,
       overlay: {
         kind: "power-station-terminal",
         isOn: true,
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item.id === "MatterTransmitter") {
     return {
-      state,
+      state: next,
       overlay: {
         kind: "matter-transmitter",
         isOn: true,
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item.id === "MensLockers") {
     return {
-      state,
+      state: next,
       overlay: {
         kind: "mens-lockers",
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item.id === "WomensLockers") {
     return {
-      state,
+      state: next,
       overlay: {
         kind: "womens-lockers",
+        postCloseMessage: gossipNotice,
       },
     };
   }
 
   if (item.id === "FallenCorpse") {
     next = {
-      ...state,
+      ...next,
       player: {
-        ...state.player,
+        ...next.player,
         memoriesTriggered: {
-          ...state.player.memoriesTriggered,
+          ...next.player.memoriesTriggered,
           seen_self: true,
         },
       },
@@ -197,22 +227,31 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   const ex = item.overrides?.examine;
 
   if (!ex) {
-    return { state: next, message: itemDesc };
+    return {
+      state: next,
+      message: appendGossipNotice(itemDesc, teaResult.obtainedNewTea),
+    };
   }
 
   if (typeof ex === "string") {
     const msg = ex.trim() || itemDesc;
-    return { state: next, message: msg };
+    return {
+      state: next,
+      message: appendGossipNotice(msg, teaResult.obtainedNewTea),
+    };
   }
   const out = ex({ item, state: next });
 
   if (typeof out === "string") {
     const msg = out.trim() || itemDesc;
-    return { state: next, message: msg };
+    return {
+      state: next,
+      message: appendGossipNotice(msg, teaResult.obtainedNewTea),
+    };
   }
 
   if (item.id === "Cooler") {
-    const coolerSetting = state.itemState.itemSettings["Cooler"];
+    const coolerSetting = next.itemState.itemSettings["Cooler"];
     const mode =
       coolerSetting && coolerSetting.kind === "cooler"
         ? coolerSetting.mode
@@ -220,11 +259,18 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
 
     return {
       state: next,
-      overlay: { kind: "cooler", mode },
+      overlay: {
+        kind: "cooler",
+        mode,
+        postCloseMessage: gossipNotice,
+      },
     };
   }
   return {
     state: out.state ?? next,
-    message: (out.message ?? itemDesc).trim() || itemDesc,
+    message: appendGossipNotice(
+      (out.message ?? itemDesc).trim() || itemDesc,
+      teaResult.obtainedNewTea,
+    ),
   };
 }

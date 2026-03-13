@@ -1,5 +1,6 @@
 import type {
   GameState,
+  JuicyTopic,
   PlayerScoreId,
   StatusEffect,
   StatusId,
@@ -94,6 +95,7 @@ export interface Item {
   isPushable?: boolean;
   isReflective?: boolean;
   scoreId?: PlayerScoreId;
+  containsTea?: JuicyTopic[];
 }
 
 export type LivingMeta = {

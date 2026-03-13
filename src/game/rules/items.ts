@@ -29,6 +29,13 @@ export function updateItemLocation(
         it.id === itemId ? { ...it, location } : it,
       ),
     },
+    itemState: {
+      ...state.itemState,
+      itemRoomId: {
+        ...state.itemState.itemRoomId,
+        [itemId]: location,
+      },
+    },
   };
 }
 

@@ -1,10 +1,7 @@
 import { playerMemoryMap, playerScoreMap } from "@game/constants";
 import { DNAResult } from "@game/rules/dnaReader";
 import { ItemId, RoomId } from "@game/types/ids";
-import type {
-  NpcConversationState,
-  RadioState,
-} from "@game/types/npcTypes";
+import type { NpcConversationState, RadioState } from "@game/types/npcTypes";
 import type { DoorDefinition, DoorState } from "./doorTypes";
 import type { Item, ItemState } from "./itemTypes";
 import type { Direction, Room } from "./roomTypes";
@@ -132,6 +129,7 @@ export interface PlayerState {
   vitals: PlayerVitals;
   statusEffects: StatusEffect[];
   memoriesTriggered: Record<PlayerMemoryId, boolean>;
+  spiltTea: JuicyTopic[];
 }
 
 export interface Countdown {
@@ -244,6 +242,14 @@ type ConditionalExit = {
   conditionalTriggers?: string[];
   blockMsg: string;
   passMsg: string;
+};
+
+export type JuicyTopic = {
+  id: string;
+  title: string;
+  summary: string;
+  tags: string[];
+  type: "gossip" | "secret";
 };
 
 export interface WorldState {

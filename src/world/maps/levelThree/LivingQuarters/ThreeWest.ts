@@ -354,6 +354,17 @@ export const threeWestItems: Item[] = [
     itemWeight: 2,
     itemSize: 3,
     isReadable: true,
+    containsTea: [
+      {
+        id: "horny clone",
+        title:
+          "One of the Sanyi clones was hot for the Water Treatment supervisor",
+        summary:
+          "One of the Sanyi clones harbored a deep lust for Isosceles Onche, the Water Treatment supervisor, but hid it from the other two clones.",
+        tags: [],
+        type: "gossip",
+      },
+    ],
   },
   {
     id: "GimOneCorpse",

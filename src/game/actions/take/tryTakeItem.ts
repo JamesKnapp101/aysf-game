@@ -20,10 +20,7 @@ import {
   triggerAquariumReturnChoke,
 } from "src/world/Items/creatures/octopus";
 
-export function tryTakeItem(
-  state: GameState,
-  noun: string,
-): RuleResult {
+export function tryTakeItem(state: GameState, noun: string): RuleResult {
   const lower = noun.toLowerCase();
   const itemsHere = getItemsInCurrentRoom(state);
   const itemOnFloor = itemsHere.find(
@@ -96,9 +93,9 @@ export function tryTakeItem(
           next,
           getItemById(next, itemOnFloor.id)?.scoreId,
         );
-        msg += `\n\nYour score has just went up by ${
+        msg += `\n[Your score has just went up by ${
           playerScoreMap[scoreId]?.value ?? 0
-        } points!`;
+        } points!]`;
       }
       return { state: next, message: `${msg}${aquariumGoalTail}` };
     }

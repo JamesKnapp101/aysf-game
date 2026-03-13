@@ -85,7 +85,7 @@ export function OverlayHost({
     closeOverlay();
 
     // If the overlay defines a post-close message, append it to transcript AFTER close.
-    if (closed.kind === "reader" && closed.postCloseMessage) {
+    if (closed.kind !== "none" && closed.postCloseMessage) {
       setGameState((prev) => ({
         ...prev,
         log: [...prev.log, closed.postCloseMessage as string],

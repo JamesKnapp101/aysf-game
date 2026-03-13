@@ -4,7 +4,7 @@
     padding: 10px;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 96%;
     overflow: hidden;
 }
 
@@ -14,6 +14,31 @@
     padding: 4px 6px 10px 6px;
     border-bottom: 2px solid var(--crt-color);
     margin-bottom: 10px;
+}
+
+.logtab-subtabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.logtab-subtab {
+    border: 2px solid var(--crt-color);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--crt-color);
+    padding: 6px 12px;
+    cursor: pointer;
+    font: inherit;
+}
+
+.logtab-subtab.isActive {
+    background: rgba(var(--crt-color-rgb), 0.16);
+}
+
+.logtab-subtabCount {
+    font-weight: 700;
 }
 
 .logtab-list {
@@ -43,11 +68,21 @@
     outline-offset: 3px;
 }
 
+.logtab-row-static {
+    cursor: default;
+}
+
+.logtab-row-static:hover {
+    background: transparent;
+}
+
 .logtab-rowTop {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
     opacity: 0.9;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .logtab-rowTitle {
@@ -62,6 +97,10 @@
     margin-top: 4px;
     opacity: 0.95;
     font-style: italic;
+}
+
+.logtab-rowPreview--full {
+    font-style: normal;
 }
 
 .logtab-rowBody {
@@ -92,6 +131,28 @@
     height: 2px;
     background: var(--crt-color);
     box-shadow: 0 4px 0 var(--crt-color), 0 8px 0 var(--crt-color);
+}
+
+.logtab-rowIcon--gossip {
+    border-radius: 50%;
+}
+
+.logtab-rowIcon--gossip::before {
+    left: 3px;
+    top: 3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--crt-color);
+    box-shadow: none;
+}
+
+.logtab-rowTags {
+    margin-top: 6px;
+    font-size: 13px;
+    letter-spacing: 0.8px;
+    opacity: 0.85;
+    text-transform: uppercase;
 }
 
 .logtab-empty {

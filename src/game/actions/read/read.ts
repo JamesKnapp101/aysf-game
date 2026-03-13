@@ -1,3 +1,7 @@
+import {
+  appendGossipNotice,
+  collectTeaFromItemResult,
+} from "@game/rules/gossip";
 import { removeFromAllBuckets } from "@game/rules/state";
 import { resolveItemByNoun } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
@@ -31,7 +35,8 @@ export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
   const isLoggable = item.isLoggable === true;
   const category = item.itemCategory;
 
-  let next: GameState = state;
+  const teaResult = collectTeaFromItemResult(state, item);
+  let next: GameState = teaResult.state;
   let postCloseMessage: string | undefined;
 
   if (isLoggable) {
@@ -71,6 +76,11 @@ export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
       },
     };
   }
+
+  postCloseMessage = appendGossipNotice(
+    postCloseMessage,
+    teaResult.obtainedNewTea,
+  );
 
   return {
     state: next,

@@ -88,6 +88,7 @@ export const createInitialState = (world: World): GameState => {
       inventory: startingInventory,
       log: [],
       dnaBank: [],
+      spiltTea: [],
       memoriesTriggered: {
         own_name: false,
         own_image: false,
