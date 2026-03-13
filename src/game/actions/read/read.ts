@@ -1,7 +1,9 @@
 import {
-  appendGossipNotice,
   collectTeaFromItemResult,
+  getPostCloseGossipNotifications,
 } from "@game/rules/gossip";
+import { updateItemLocation } from "@game/rules/items";
+import { buildLogNotification } from "@game/rules/notifications";
 import { removeFromAllBuckets } from "@game/rules/state";
 import { resolveItemByNoun } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
@@ -37,7 +39,9 @@ export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
 
   const teaResult = collectTeaFromItemResult(state, item);
   let next: GameState = teaResult.state;
-  let postCloseMessage: string | undefined;
+  const postCloseNotifications = getPostCloseGossipNotifications(
+    teaResult.obtainedNewTea,
+  );
 
   if (isLoggable) {
     const entry: PlayerLogEntry = {
@@ -54,33 +58,25 @@ export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
         log: [...next.player.log, entry],
       },
     };
-
-    postCloseMessage =
-      category === "collectable"
-        ? "You log the message for future reference, then discard the original."
-        : "You log the message for future reference.";
+    postCloseNotifications.unshift(
+      buildLogNotification(
+        category === "collectable"
+          ? "You log the message for future reference, then discard the original."
+          : "You log the message for future reference.",
+      ),
+    );
   }
 
   if (category !== "scenery" && isLoggable && category === "collectable") {
+    next = updateItemLocation(next, item.id, "unknown");
     next = {
       ...next,
       player: {
         ...next.player,
         inventory: removeFromAllBuckets(next.player.inventory, item.id),
       },
-      world: {
-        ...next.world,
-        items: next.world.items.map((it) =>
-          it.id === item.id ? { ...it, location: "unknown" } : it,
-        ),
-      },
     };
   }
-
-  postCloseMessage = appendGossipNotice(
-    postCloseMessage,
-    teaResult.obtainedNewTea,
-  );
 
   return {
     state: next,
@@ -89,7 +85,8 @@ export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
       title: item.name ?? "Read",
       body: text,
       sourceItemId: item.id,
-      postCloseMessage,
+      postCloseNotifications:
+        postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
     },
   };
 }

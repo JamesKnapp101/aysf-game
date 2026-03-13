@@ -1,8 +1,10 @@
 import type { PhoneMessage } from "../../world/maps/livingQuartersTemplate";
+import type { GameNotificationDraft } from "./gameTypes";
 import type { CoolerMode } from "./itemTypes";
 
 type OverlayPostClose = {
   postCloseMessage?: string;
+  postCloseNotifications?: GameNotificationDraft[];
 };
 
 export type OverlayIntent = {

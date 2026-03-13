@@ -1,7 +1,10 @@
 import type { GameState, JuicyTopic } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
-
-export const GOSSIP_OBTAINED_MESSAGE = "[You obtained some salacious gossip!]";
+import {
+  GOSSIP_NOTIFICATION_TEXT,
+  enqueueNotifications,
+  getGossipNotifications,
+} from "./notifications";
 
 export type TeaCollectionResult = {
   state: GameState;
@@ -23,20 +26,6 @@ function getFreshTopics(
   }
 
   return freshTopics;
-}
-
-export function appendGossipNotice(
-  message: string | undefined,
-  obtainedNewTea: boolean,
-): string | undefined {
-  if (!obtainedNewTea) {
-    return message;
-  }
-
-  const trimmedMessage = message?.trim();
-  return trimmedMessage
-    ? `${trimmedMessage}\n\n${GOSSIP_OBTAINED_MESSAGE}`
-    : GOSSIP_OBTAINED_MESSAGE;
 }
 
 export function collectTeaResult(
@@ -86,3 +75,16 @@ export function collectTeaFromItemResult(
 ): TeaCollectionResult {
   return collectTeaResult(state, item?.containsTea);
 }
+
+export function queueGossipNotification(
+  state: GameState,
+  obtainedNewTea: boolean,
+): GameState {
+  return enqueueNotifications(state, getGossipNotifications(obtainedNewTea));
+}
+
+export function getPostCloseGossipNotifications(obtainedNewTea: boolean) {
+  return getGossipNotifications(obtainedNewTea);
+}
+
+export { GOSSIP_NOTIFICATION_TEXT };

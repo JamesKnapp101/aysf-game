@@ -21,6 +21,7 @@ import {
 } from "../world/World";
 import { dispatchAction } from "./actions/dispatchAction";
 import { LogPanel } from "./components/LogPanel";
+import { NotificationHost } from "./components/NotificationHost";
 import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 import { appendLog, handleCommand } from "./engine/handleCommand";
@@ -511,6 +512,8 @@ export const Game: React.FC = () => {
             data-flashlight-on={flashlightOn ? "true" : "false"}
             onClick={() => inputRef.current?.focus()}
           >
+            <NotificationHost state={gs} setGameState={setGameState} />
+
             {/* HEADER */}
             <div className="game-header">
               <div className="game-header-location">

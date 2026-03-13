@@ -1,6 +1,7 @@
 import {
-  appendGossipNotice,
   collectTeaFromItemResult,
+  getPostCloseGossipNotifications,
+  queueGossipNotification,
 } from "@game/rules/gossip";
 import { isItemOpen } from "@game/rules/containers";
 import { resolveDoorByNoun, resolveItemByNoun } from "../../rules/scope";
@@ -43,7 +44,11 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
 
   const teaResult = collectTeaFromItemResult(state, item);
   let next = teaResult.state;
-  const gossipNotice = appendGossipNotice(undefined, teaResult.obtainedNewTea);
+  const postCloseNotifications = getPostCloseGossipNotifications(
+    teaResult.obtainedNewTea,
+  );
+  const withImmediateGossip = (resultState: GameState) =>
+    queueGossipNotification(resultState, teaResult.obtainedNewTea);
 
   if (item.isReflective) {
     let reflectMsg: string = ``;
@@ -65,16 +70,13 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       };
     } else {
       return {
-        state: next,
-        message: appendGossipNotice(
-          "Still looking good!",
-          teaResult.obtainedNewTea,
-        ),
+        state: withImmediateGossip(next),
+        message: "Still looking good!",
       };
     }
     return {
-      state: next,
-      message: appendGossipNotice(reflectMsg, teaResult.obtainedNewTea),
+      state: withImmediateGossip(next),
+      message: reflectMsg,
     };
   }
 
@@ -83,7 +85,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       state: next,
       overlay: {
         kind: "teleportation-terminal",
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -95,7 +98,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
         kind: "message-machine",
         messages: item?.meta?.messages,
         messagesPlayedById: {},
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -106,7 +110,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       overlay: {
         kind: "camera-gun-viewer",
         currentViewIndex: 0,
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -116,7 +121,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       state: next,
       overlay: {
         kind: "hydroponics-admin-terminal",
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -128,7 +134,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
         kind: "plt-viewer",
         isOn: (next.itemState.itemSettings["PLT"] as any)?.isOn,
         hasLink: (next.itemState.itemSettings["PLT"] as any)?.hasLink,
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -136,11 +143,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   if (item.id === "PowerStationMonitor") {
     if (!next.worldState.powerRestoredSections["power-initialized"]) {
       return {
-        state: next,
-        message: appendGossipNotice(
-          item?.meta?.onNoPower ?? "The screen is dark.",
-          teaResult.obtainedNewTea,
-        ),
+        state: withImmediateGossip(next),
+        message: item?.meta?.onNoPower ?? "The screen is dark.",
       };
     }
     return {
@@ -148,7 +152,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       overlay: {
         kind: "power-station-terminal",
         isOn: true,
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -159,7 +164,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       overlay: {
         kind: "matter-transmitter",
         isOn: true,
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -169,7 +175,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       state: next,
       overlay: {
         kind: "mens-lockers",
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -179,7 +186,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       state: next,
       overlay: {
         kind: "womens-lockers",
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
@@ -228,16 +236,16 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
 
   if (!ex) {
     return {
-      state: next,
-      message: appendGossipNotice(itemDesc, teaResult.obtainedNewTea),
+      state: withImmediateGossip(next),
+      message: itemDesc,
     };
   }
 
   if (typeof ex === "string") {
     const msg = ex.trim() || itemDesc;
     return {
-      state: next,
-      message: appendGossipNotice(msg, teaResult.obtainedNewTea),
+      state: withImmediateGossip(next),
+      message: msg,
     };
   }
   const out = ex({ item, state: next });
@@ -245,8 +253,8 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   if (typeof out === "string") {
     const msg = out.trim() || itemDesc;
     return {
-      state: next,
-      message: appendGossipNotice(msg, teaResult.obtainedNewTea),
+      state: withImmediateGossip(next),
+      message: msg,
     };
   }
 
@@ -262,15 +270,13 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
       overlay: {
         kind: "cooler",
         mode,
-        postCloseMessage: gossipNotice,
+        postCloseNotifications:
+          postCloseNotifications.length > 0 ? postCloseNotifications : undefined,
       },
     };
   }
   return {
-    state: out.state ?? next,
-    message: appendGossipNotice(
-      (out.message ?? itemDesc).trim() || itemDesc,
-      teaResult.obtainedNewTea,
-    ),
+    state: withImmediateGossip(out.state ?? next),
+    message: (out.message ?? itemDesc).trim() || itemDesc,
   };
 }

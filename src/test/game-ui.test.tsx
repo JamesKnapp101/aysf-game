@@ -5,6 +5,7 @@ import { LogPanel } from "@game/components/LogPanel";
 import { LogTab } from "@game/components/LogTab";
 import { RoomCompass } from "@game/components/Compass";
 import { DNASampleTab } from "@game/components/DNASampleTab";
+import { NotificationHost } from "@game/components/NotificationHost";
 import { StatusTab } from "@game/components/StatusTab";
 import type { GameState } from "@game/types/gameTypes";
 import React from "react";
@@ -188,6 +189,35 @@ describe("UI panels", () => {
 
     expect(container.querySelectorAll(".compass-arm--active")).toHaveLength(8);
     expect(container.querySelectorAll(".compass-label--active")).toHaveLength(4);
+  });
+
+  it("renders queued notifications without touching the transcript", async () => {
+    const baseState = createTestState();
+    const state = {
+      ...baseState,
+      uiState: {
+        ...baseState.uiState,
+        notifications: [
+          {
+            id: 1,
+            kind: "gossip" as const,
+            text: "[You obtained some salacious gossip!]",
+          },
+        ],
+      },
+    };
+
+    render(
+      <NotificationHost
+        state={state}
+        setGameState={() => undefined}
+      />,
+    );
+
+    expect(
+      screen.getByText("[You obtained some salacious gossip!]"),
+    ).toBeInTheDocument();
+    expect(state.log).toHaveLength(0);
   });
 });
 

@@ -1,7 +1,7 @@
 import { tryListen } from "@game/actions/listen/tryListen";
 import {
-  appendGossipNotice,
   collectTeaFromItemResult,
+  queueGossipNotification,
 } from "@game/rules/gossip";
 import { resolveItemByNoun } from "@game/rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
@@ -24,16 +24,16 @@ export function doListen(state: GameState, cmd: ParsedCommand): ActionResult {
 
   if (item) {
     const teaResult = collectTeaFromItemResult(state, item);
-    const next = teaResult.state;
+    const next = queueGossipNotification(
+      teaResult.state,
+      teaResult.obtainedNewTea,
+    );
     const listenOverride = item.overrides?.listen;
 
     if (typeof listenOverride === "string") {
       return {
         state: next,
-        message: appendGossipNotice(
-          listenOverride,
-          teaResult.obtainedNewTea,
-        ),
+        message: listenOverride,
       };
     }
 
@@ -43,25 +43,19 @@ export function doListen(state: GameState, cmd: ParsedCommand): ActionResult {
       if (typeof out === "string") {
         return {
           state: next,
-          message: appendGossipNotice(out, teaResult.obtainedNewTea),
+          message: out,
         };
       }
 
       return {
         state: out?.state ?? next,
-        message: appendGossipNotice(
-          out?.message ?? "It doesn't make any sound.",
-          teaResult.obtainedNewTea,
-        ),
+        message: out?.message ?? "It doesn't make any sound.",
       };
     }
 
     return {
       state: next,
-      message: appendGossipNotice(
-        "It doesn't make any sound.",
-        teaResult.obtainedNewTea,
-      ),
+      message: "It doesn't make any sound.",
     };
   }
 

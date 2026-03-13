@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import type { Dispatch, SetStateAction } from "react";
+import { enqueueNotifications } from "@game/rules/notifications";
 import { useUIOverlayStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
@@ -85,11 +86,17 @@ export function OverlayHost({
     closeOverlay();
 
     // If the overlay defines a post-close message, append it to transcript AFTER close.
-    if (closed.kind !== "none" && closed.postCloseMessage) {
+    if (closed.postCloseMessage) {
       setGameState((prev) => ({
         ...prev,
         log: [...prev.log, closed.postCloseMessage as string],
       }));
+    }
+
+    if (closed.postCloseNotifications && closed.postCloseNotifications.length > 0) {
+      setGameState((prev) =>
+        enqueueNotifications(prev, closed.postCloseNotifications ?? []),
+      );
     }
   };
 

@@ -1,4 +1,3 @@
-import { playerScoreMap } from "@game/constants";
 import { getItemById } from "@game/helpers/itemHelpers";
 import { isItemOpen } from "@game/rules/containers";
 import { updateItemLocation } from "@game/rules/items";
@@ -84,21 +83,14 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
       ? "\n\nAs you wrench the control node free, the water outside the grotto convulses. A heavy tentacle surges through the lower trench and knots itself across the return run toward the lock."
       : "";
 
-    if (scoreId === "") {
-      return { state: next, message: `Taken.${aquariumGoalTail}` };
-    } else {
-      let msg = `Taken.`;
-      if (next.worldState.scoresTriggered[scoreId] !== true) {
-        next = triggerScoreOnce(
-          next,
-          getItemById(next, itemOnFloor.id)?.scoreId,
-        );
-        msg += `\n[Your score has just went up by ${
-          playerScoreMap[scoreId]?.value ?? 0
-        } points!]`;
-      }
-      return { state: next, message: `${msg}${aquariumGoalTail}` };
+    if (scoreId !== "" && next.worldState.scoresTriggered[scoreId] !== true) {
+      next = triggerScoreOnce(
+        next,
+        getItemById(next, itemOnFloor.id)?.scoreId,
+      );
     }
+
+    return { state: next, message: `Taken.${aquariumGoalTail}` };
   }
 
   const room = getCurrentRoom(state);

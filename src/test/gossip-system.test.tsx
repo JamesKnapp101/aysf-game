@@ -2,8 +2,10 @@ import { doExamine } from "@game/actions/examine/examine";
 import { doListen } from "@game/actions/listen/listen";
 import { doRead } from "@game/actions/read/read";
 import { LogTab } from "@game/components/LogTab";
+import { GOSSIP_NOTIFICATION_TEXT } from "@game/rules/notifications";
 import type {
   GameState,
+  GameNotificationDraft,
   JuicyTopic,
   PlayerLogEntry,
 } from "@game/types/gameTypes";
@@ -73,15 +75,15 @@ describe("gossip system", () => {
     const firstRead = doRead(state, command);
     const secondRead = doRead(firstRead.state, command);
     const secondOverlay = secondRead.overlay as
-      | { postCloseMessage?: string }
+      | { postCloseNotifications?: GameNotificationDraft[] }
       | undefined;
 
     expect(firstRead.state.player.spiltTea).toEqual([gossipTopic]);
     expect(firstRead.overlay).toMatchObject({
-      postCloseMessage: "[You obtained some salacious gossip!]",
+      postCloseNotifications: [{ kind: "gossip", text: GOSSIP_NOTIFICATION_TEXT }],
     });
     expect(secondRead.state.player.spiltTea).toEqual([gossipTopic]);
-    expect(secondOverlay?.postCloseMessage).toBeUndefined();
+    expect(secondOverlay?.postCloseNotifications).toBeUndefined();
   });
 
   it("collects gossip when examine opens an item overlay", () => {
@@ -111,7 +113,7 @@ describe("gossip system", () => {
 
     expect(result.overlay).toMatchObject({
       kind: "message-machine",
-      postCloseMessage: "[You obtained some salacious gossip!]",
+      postCloseNotifications: [{ kind: "gossip", text: GOSSIP_NOTIFICATION_TEXT }],
     });
     expect(result.state.player.spiltTea).toEqual([secretTopic]);
   });
@@ -142,8 +144,12 @@ describe("gossip system", () => {
     });
 
     expect(result.message).toMatch(/greenhouse blackout/i);
-    expect(result.message).toContain("[You obtained some salacious gossip!]");
     expect(result.state.player.spiltTea).toEqual([gossipTopic]);
+    expect(result.state.uiState.notifications).toContainEqual({
+      id: 1,
+      kind: "gossip",
+      text: GOSSIP_NOTIFICATION_TEXT,
+    });
   });
 
   it("splits log entries and gossip into separate subtabs", async () => {

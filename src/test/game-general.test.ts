@@ -9,6 +9,7 @@ import { getRadiationIntensity } from "@game/selectors/statusSelectors";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { AQUARIUM_BREATHER_ITEM_ID } from "src/world/Items/creatures/octopus";
+import { buildScoreNotification } from "../game/rules/notifications";
 import { getItemsInRoom } from "../game/selectors/roomSelectors";
 import {
   createTestState,
@@ -192,6 +193,10 @@ describe("General gameplay", () => {
 
     expect(next.worldState.scoresTriggered.obtained_power_key).toBe(true);
     expect(next.score).toBe(5);
+    expect(next.uiState.notifications).toContainEqual({
+      id: 1,
+      ...buildScoreNotification("obtained_power_key"),
+    });
   });
 
   it("updates memory rating when the player completes a memory-bearing task", async () => {

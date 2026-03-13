@@ -1,4 +1,5 @@
 import { GameState } from "@game/types/gameTypes";
+import { buildScoreNotification, enqueueNotification } from "./notifications";
 
 export function triggerScoreOnce(
   state: GameState,
@@ -9,7 +10,7 @@ export function triggerScoreOnce(
   const already = state.worldState.scoresTriggered?.[scoreId] === true;
   if (already) return state;
 
-  return {
+  const nextState = {
     ...state,
     worldState: {
       ...state.worldState,
@@ -19,6 +20,8 @@ export function triggerScoreOnce(
       },
     },
   };
+
+  return enqueueNotification(nextState, buildScoreNotification(scoreId));
 }
 
 export function triggerMemoryOnce(

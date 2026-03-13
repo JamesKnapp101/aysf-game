@@ -83,6 +83,10 @@ export const createInitialState = (world: World): GameState => {
     score: 0,
     rating: 0,
     moves: 0,
+    uiState: {
+      notifications: [],
+      nextNotificationId: 1,
+    },
     player: {
       roomId: INITIAL_PLAYER_ROOM_ID,
       inventory: startingInventory,

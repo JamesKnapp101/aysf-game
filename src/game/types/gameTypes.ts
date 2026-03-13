@@ -13,6 +13,7 @@ export interface GameState {
   score: number;
   rating: number;
   log: string[];
+  uiState: GameUiState;
   player: PlayerState;
   worldState: WorldState;
   itemState: ItemState;
@@ -60,6 +61,22 @@ export interface StatusEffect {
   intensity: number;
   remainingTurns?: number;
   source?: string;
+}
+
+export type GameNotificationKind = "score" | "gossip" | "log" | "system";
+
+export type GameNotificationDraft = {
+  kind: GameNotificationKind;
+  text: string;
+};
+
+export type GameNotification = GameNotificationDraft & {
+  id: number;
+};
+
+export interface GameUiState {
+  notifications: GameNotification[];
+  nextNotificationId: number;
 }
 
 type PendingNarration = {

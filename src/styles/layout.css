@@ -5,11 +5,89 @@
     width: 100vw;
     min-height: 0;
     overflow: hidden;
+    position: relative;
     /* nothing spills outside CRT frame */
     background: #000;
     padding: 4px 8px;
     box-sizing: border-box;
     animation: crtBoot 400ms ease-out;
+}
+
+.game-notifications {
+    position: absolute;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 12;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    width: min(560px, calc(100vw - 24px));
+    pointer-events: none;
+}
+
+.game-notification {
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.92);
+    background:
+        linear-gradient(180deg,
+            rgba(74, 255, 74, 0.96),
+            rgba(28, 214, 28, 0.96));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.25) inset,
+        0 0 30px rgba(48, 255, 48, 0.32);
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: 0.03em;
+    padding: 12px 16px;
+    text-align: center;
+    text-shadow: none;
+    animation: notificationIn 180ms ease-out;
+}
+
+.game-notification--score {
+    background:
+        linear-gradient(180deg,
+                rgba(87, 255, 87, 0.98),
+                rgba(31, 222, 31, 0.98));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.22) inset,
+        0 0 28px rgba(255, 219, 77, 0.24);
+}
+
+.game-notification--gossip {
+    background:
+        linear-gradient(180deg,
+            rgba(87, 255, 87, 0.98),
+            rgba(31, 222, 31, 0.98));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.22) inset,
+        0 0 32px rgba(31, 222, 31, 0.28);
+}
+
+.game-notification--log {
+    background:
+        linear-gradient(180deg,
+            rgba(120, 255, 120, 0.96),
+            rgba(52, 226, 52, 0.96));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.2) inset,
+        0 0 28px rgba(52, 226, 52, 0.22);
+}
+
+@keyframes notificationIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 /* FLASH LAYER */
