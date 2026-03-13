@@ -1,4 +1,4 @@
-import { CRT_COLOR_STORAGE_KEY, type LayoutPrefs } from "../Game";
+import type { LayoutPrefs } from "../hooks/useLayoutPrefs";
 import { getItemsInInventory } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 
@@ -215,7 +215,6 @@ export const LogPanel: React.FC<LogPanelProps> = ({
     if (typeof window === "undefined") return;
     try {
       applyCRTColor(crtColor);
-      window.localStorage.setItem(CRT_COLOR_STORAGE_KEY, crtColor);
     } catch {
       // ignore
     }

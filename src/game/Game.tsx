@@ -1,6 +1,5 @@
 import { SplashModal } from "@game/components/SplashModal";
 import { OPENING_SPLASH } from "@game/constants";
-import { overridePlayerBrainActivityLevel } from "@game/helpers/itemHelpers";
 import React, {
   useCallback,
   useEffect,
@@ -11,39 +10,25 @@ import {
   getCurrentMemory,
   getCurrentScore,
 } from "../game/selectors/scoreSelectors";
-import { parseCommand } from "../parse/parser";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
-  INITIAL_WORLD,
-  getPriorityWorldChunkIdsForRoom,
-  loadWorldChunk,
-  type WorldChunkId,
 } from "../world/World";
-import { dispatchAction } from "./actions/dispatchAction";
 import { LogPanel } from "./components/LogPanel";
 import { NotificationHost } from "./components/NotificationHost";
 import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
-import { appendLog, handleCommand } from "./engine/handleCommand";
-import { createInitialState, mergeWorldChunkIntoState } from "./gameInit";
-import { getPendingConversationLogMessage } from "./helpers/conversationHelpers";
+import { useGameSession } from "./hooks/useGameSession";
+import { useLayoutPrefs } from "./hooks/useLayoutPrefs";
+import { useWorldChunkHydration } from "./hooks/useWorldChunkHydration";
 import { isPlayerUnderwater } from "./helpers/environmentHelpers";
 import {
   getActiveStatusEffectIds,
   getRadiationIntensity,
 } from "./selectors/statusSelectors";
-import { useUIEffectsStore, useUIOverlayStore } from "./store/store";
+import { useUIEffectsStore } from "./store/store";
 import { buildRoomDescription } from "./text/roomDescription";
 import type { ActionRequest } from "./types/actionsTypes";
-import type { GameState, StatusEffect } from "./types/gameTypes";
-
-const LAYOUT_STORAGE_KEY = "aysf-layout-v1";
-export const CRT_COLOR_STORAGE_KEY = "aysf-crt-color-v1";
-
-export type LayoutPrefs = {
-  roomHeightRatio: number;
-  sidebarWidthRatio: number;
-};
+import type { StatusEffect } from "./types/gameTypes";
 
 export type SidebarTab =
   | "inventory"
@@ -53,266 +38,27 @@ export type SidebarTab =
   | "settings"
   | "dna";
 
-function loadInitialCrtColor(): string {
-  if (typeof window === "undefined") return "#00ff00";
-  try {
-    return window.localStorage.getItem(CRT_COLOR_STORAGE_KEY) || "#00ff00";
-  } catch {
-    return "#00ff00";
-  }
-}
-
-function loadLayoutPrefs(): LayoutPrefs {
-  const defaults: LayoutPrefs = {
-    roomHeightRatio: 0.33,
-    sidebarWidthRatio: 0.3,
-  };
-  if (typeof window === "undefined") return defaults;
-
-  try {
-    const raw = window.localStorage.getItem(LAYOUT_STORAGE_KEY);
-    if (!raw) return defaults;
-
-    const parsed = JSON.parse(raw) as Partial<LayoutPrefs>;
-    return {
-      roomHeightRatio:
-        typeof parsed.roomHeightRatio === "number"
-          ? parsed.roomHeightRatio
-          : defaults.roomHeightRatio,
-      sidebarWidthRatio:
-        typeof parsed.sidebarWidthRatio === "number"
-          ? parsed.sidebarWidthRatio
-          : defaults.sidebarWidthRatio,
-    };
-  } catch {
-    return defaults;
-  }
-}
-
-function waitForBackgroundTurn(): Promise<void> {
-  return new Promise((resolve) => {
-    if (typeof window === "undefined") {
-      resolve();
-      return;
-    }
-
-    const idleWindow = window as Window & {
-      requestIdleCallback?: (cb: () => void) => number;
-    };
-
-    if (idleWindow.requestIdleCallback) {
-      idleWindow.requestIdleCallback(() => resolve());
-      return;
-    }
-
-    window.setTimeout(resolve, 0);
-  });
-}
-
 export const Game: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SidebarTab>("status");
-
-  const [gs, setGs] = useState<GameState>(() => createInitialState(INITIAL_WORLD));
-
   const [showSplash, setShowSplash] = useState(true);
-
-  const stateRef = useRef(gs);
-  const isMountedRef = useRef(true);
-  const loadingWorldChunksRef = useRef<Map<WorldChunkId, Promise<void>>>(
-    new Map(),
-  );
-  const commandQueueRef = useRef<Promise<void>>(Promise.resolve());
-
-  const replaceState = useCallback((next: GameState) => {
-    stateRef.current = next;
-    setGs(next);
-  }, []);
-
-  const updateState = useCallback(
-    (updater: (prev: GameState) => GameState): GameState => {
-      const next = updater(stateRef.current);
-      replaceState(next);
-      return next;
-    },
-    [replaceState],
-  );
-
-  useEffect(() => {
-    stateRef.current = gs;
-  }, [gs]);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  const requestWorldChunk = useCallback(
-    (chunkId: WorldChunkId): Promise<void> => {
-      if (
-        Array.isArray(stateRef.current.world.meta?.loadedChunkIds) &&
-        stateRef.current.world.meta.loadedChunkIds.includes(chunkId)
-      ) {
-        return Promise.resolve();
-      }
-
-      const existing = loadingWorldChunksRef.current.get(chunkId);
-      if (existing) {
-        return existing;
-      }
-
-      const pending = loadWorldChunk(chunkId)
-        .then((chunk) => {
-          if (!isMountedRef.current) return;
-          updateState((prev) => mergeWorldChunkIntoState(prev, chunkId, chunk));
-        })
-        .catch((error) => {
-          console.error(`Failed to load world chunk "${chunkId}"`, error);
-        })
-        .finally(() => {
-          loadingWorldChunksRef.current.delete(chunkId);
-        });
-
-      loadingWorldChunksRef.current.set(chunkId, pending);
-      return pending;
-    },
-    [updateState],
-  );
-
-  useEffect(() => {
-    const hydrateDeferredWorld = async () => {
-      for (const chunkId of DEFERRED_WORLD_CHUNK_IDS) {
-        if (!isMountedRef.current) return;
-        await requestWorldChunk(chunkId);
-        if (!isMountedRef.current) return;
-        await waitForBackgroundTurn();
-      }
-    };
-
-    void hydrateDeferredWorld();
-  }, [requestWorldChunk]);
-
-  useEffect(() => {
-    for (const chunkId of getPriorityWorldChunkIdsForRoom(gs.player.roomId)) {
-      void requestWorldChunk(chunkId);
-    }
-  }, [gs.player.roomId, requestWorldChunk]);
-
-  useEffect(() => {
-    if (gs.world.rooms.some((room) => room.id === gs.player.roomId)) {
-      return;
-    }
-
-    let cancelled = false;
-
-    const hydrateCurrentRoom = async () => {
-      for (const chunkId of DEFERRED_WORLD_CHUNK_IDS) {
-        if (cancelled || !isMountedRef.current) return;
-
-        if (
-          stateRef.current.world.rooms.some(
-            (room) => room.id === stateRef.current.player.roomId,
-          )
-        ) {
-          return;
-        }
-
-        await requestWorldChunk(chunkId);
-        if (cancelled || !isMountedRef.current) return;
-        await waitForBackgroundTurn();
-      }
-    };
-
-    void hydrateCurrentRoom();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [gs.player.roomId, gs.world.rooms, requestWorldChunk]);
-
-  useEffect(() => {
-    const requestedChunkIds = Array.isArray(gs.world.meta?.requestedChunkIds)
-      ? (gs.world.meta.requestedChunkIds as WorldChunkId[])
-      : [];
-
-    for (const chunkId of requestedChunkIds) {
-      void requestWorldChunk(chunkId);
-    }
-  }, [gs.world.meta?.requestedChunkIds, requestWorldChunk]);
-
-  const [layout, setLayout] = useState<LayoutPrefs>(() => loadLayoutPrefs());
-  const [crtColor, setCrtColor] = useState<string>(() => loadInitialCrtColor());
+  const {
+    gs,
+    stateRef,
+    updateState,
+    enqueueCommand,
+    runAction,
+    setGameState,
+    setBrainActivityLevel,
+  } = useGameSession({
+    onInventoryCommand: () => setActiveTab("inventory"),
+    onDiagnoseCommand: () => setActiveTab("status"),
+  });
+  const { layout, setLayout, crtColor, setCrtColor } = useLayoutPrefs();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const openOverlay = useUIOverlayStore.getState().openOverlay;
-
-  const executeCommand = useCallback(
-    async (input: string) => {
-      const trimmed = input.trim();
-      if (!trimmed) return;
-
-      let current = stateRef.current;
-      const parsed = parseCommand(trimmed);
-      const pendingConversationLog = getPendingConversationLogMessage(
-        current,
-        parsed,
-      );
-
-      if (pendingConversationLog) {
-        current = appendLog(appendLog(current, `> ${trimmed}`), pendingConversationLog);
-        replaceState(current);
-      }
-
-      const nextState = await handleCommand(current, parsed, {
-        skipEcho: Boolean(pendingConversationLog),
-      });
-
-      if (parsed.type === "inventory") {
-        setActiveTab("inventory");
-      }
-
-      if (parsed.type === "diagnose") {
-        setActiveTab("status");
-      }
-
-      replaceState(nextState);
-    },
-    [replaceState],
-  );
-
-  const enqueueCommand = useCallback(
-    (input: string) => {
-      const trimmed = input.trim();
-      if (!trimmed) return;
-
-      commandQueueRef.current = commandQueueRef.current
-        .catch((error) => {
-          console.error("Previous command failed:", error);
-        })
-        .then(async () => {
-          try {
-            await executeCommand(trimmed);
-          } catch (error) {
-            console.error(`Failed to process command "${trimmed}"`, error);
-          }
-        });
-    },
-    [executeCommand],
-  );
-
-  // persist layout
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      window.localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(layout));
-    } catch {
-      // ignore
-    }
-  }, [layout]);
+  useWorldChunkHydration({ gs, stateRef, updateState });
 
   const nonce = useUIEffectsStore((s) => s.teleportFlashNonce);
 
@@ -325,36 +71,6 @@ export const Game: React.FC = () => {
     void el.offsetWidth;
     el.classList.add("teleport-flash");
   }, [nonce]);
-
-  const applyResult = useCallback(
-    (result: { state: GameState; message?: string; overlay?: any }) => {
-      let next = result.state;
-
-      if (result.message) {
-        next = appendLog(next, result.message);
-      }
-
-      replaceState(next);
-
-      if (result.overlay) {
-        openOverlay(result.overlay);
-      }
-    },
-    [openOverlay, replaceState],
-  );
-
-  const runAction = useCallback(
-    (req: ActionRequest) => {
-      if (req.verb === "command") {
-        enqueueCommand(req.payload.input ?? "");
-        return;
-      }
-
-      const current = stateRef.current;
-      void dispatchAction(current, req).then(applyResult);
-    },
-    [applyResult, enqueueCommand],
-  );
 
   // -------- horizontal resize: room vs main row -----------------------------
   const handleStartResizeHorizontal = useCallback(
@@ -386,7 +102,7 @@ export const Game: React.FC = () => {
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", onMouseUp);
     },
-    [layout.roomHeightRatio],
+    [layout.roomHeightRatio, setLayout],
   );
 
   const roomPanelFlexBasis = `${layout.roomHeightRatio * 100}%`;
@@ -445,34 +161,6 @@ export const Game: React.FC = () => {
       runAction({ verb, payload } as unknown as ActionRequest);
     },
     [runAction],
-  );
-
-  const setGameState = useCallback(
-    (value: GameState | ((prev: GameState) => GameState)) => {
-      if (typeof value === "function") {
-        const updater = value as (prev: GameState) => GameState;
-        updateState(updater);
-      } else {
-        replaceState(value);
-      }
-    },
-    [replaceState, updateState],
-  );
-
-  const setBrainActivityLevel = useCallback(
-    (val: number) => {
-      const result = overridePlayerBrainActivityLevel(stateRef.current, val) as
-        | GameState
-        | { state: GameState; message?: string; overlay?: any };
-      let nextState = "state" in result ? result.state : result;
-
-      if ("message" in result && result.message) {
-        nextState = appendLog(nextState, result.message);
-      }
-
-      replaceState(nextState);
-    },
-    [replaceState],
   );
 
   return (

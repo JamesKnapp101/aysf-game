@@ -1,0 +1,147 @@
+import { useCallback, useEffect, useRef, type MutableRefObject } from "react";
+import {
+  DEFERRED_WORLD_CHUNK_IDS,
+  getPriorityWorldChunkIdsForRoom,
+  loadWorldChunk,
+  type WorldChunkId,
+} from "../../world/World";
+import { mergeWorldChunkIntoState } from "../gameInit";
+import type { GameState } from "../types/gameTypes";
+
+type UseWorldChunkHydrationOptions = {
+  gs: GameState;
+  stateRef: MutableRefObject<GameState>;
+  updateState: (updater: (prev: GameState) => GameState) => GameState;
+};
+
+function waitForBackgroundTurn(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") {
+      resolve();
+      return;
+    }
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (cb: () => void) => number;
+    };
+
+    if (idleWindow.requestIdleCallback) {
+      idleWindow.requestIdleCallback(() => resolve());
+      return;
+    }
+
+    window.setTimeout(resolve, 0);
+  });
+}
+
+export function useWorldChunkHydration({
+  gs,
+  stateRef,
+  updateState,
+}: UseWorldChunkHydrationOptions) {
+  const isMountedRef = useRef(true);
+  const loadingWorldChunksRef = useRef<Map<WorldChunkId, Promise<void>>>(
+    new Map(),
+  );
+
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const requestWorldChunk = useCallback(
+    (chunkId: WorldChunkId): Promise<void> => {
+      if (
+        Array.isArray(stateRef.current.world.meta?.loadedChunkIds) &&
+        stateRef.current.world.meta.loadedChunkIds.includes(chunkId)
+      ) {
+        return Promise.resolve();
+      }
+
+      const existing = loadingWorldChunksRef.current.get(chunkId);
+      if (existing) {
+        return existing;
+      }
+
+      const pending = loadWorldChunk(chunkId)
+        .then((chunk) => {
+          if (!isMountedRef.current) return;
+          updateState((prev) => mergeWorldChunkIntoState(prev, chunkId, chunk));
+        })
+        .catch((error) => {
+          console.error(`Failed to load world chunk "${chunkId}"`, error);
+        })
+        .finally(() => {
+          loadingWorldChunksRef.current.delete(chunkId);
+        });
+
+      loadingWorldChunksRef.current.set(chunkId, pending);
+      return pending;
+    },
+    [stateRef, updateState],
+  );
+
+  useEffect(() => {
+    const hydrateDeferredWorld = async () => {
+      for (const chunkId of DEFERRED_WORLD_CHUNK_IDS) {
+        if (!isMountedRef.current) return;
+        await requestWorldChunk(chunkId);
+        if (!isMountedRef.current) return;
+        await waitForBackgroundTurn();
+      }
+    };
+
+    void hydrateDeferredWorld();
+  }, [requestWorldChunk]);
+
+  useEffect(() => {
+    for (const chunkId of getPriorityWorldChunkIdsForRoom(gs.player.roomId)) {
+      void requestWorldChunk(chunkId);
+    }
+  }, [gs.player.roomId, requestWorldChunk]);
+
+  useEffect(() => {
+    if (gs.world.rooms.some((room) => room.id === gs.player.roomId)) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const hydrateCurrentRoom = async () => {
+      for (const chunkId of DEFERRED_WORLD_CHUNK_IDS) {
+        if (cancelled || !isMountedRef.current) return;
+
+        if (
+          stateRef.current.world.rooms.some(
+            (room) => room.id === stateRef.current.player.roomId,
+          )
+        ) {
+          return;
+        }
+
+        await requestWorldChunk(chunkId);
+        if (cancelled || !isMountedRef.current) return;
+        await waitForBackgroundTurn();
+      }
+    };
+
+    void hydrateCurrentRoom();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [gs.player.roomId, gs.world.rooms, requestWorldChunk, stateRef]);
+
+  useEffect(() => {
+    const requestedChunkIds = Array.isArray(gs.world.meta?.requestedChunkIds)
+      ? (gs.world.meta.requestedChunkIds as WorldChunkId[])
+      : [];
+
+    for (const chunkId of requestedChunkIds) {
+      void requestWorldChunk(chunkId);
+    }
+  }, [gs.world.meta?.requestedChunkIds, requestWorldChunk]);
+}
