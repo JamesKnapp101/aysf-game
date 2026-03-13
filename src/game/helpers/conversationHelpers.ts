@@ -123,6 +123,12 @@ function hasNpcTopicBeenUsed(
   return Boolean(getNpcConversationState(state, npcId)?.topicsUsed?.[topic]);
 }
 
+function getNpcTopicUsageKey(
+  input: Pick<ConversationHistoryEntry, "type" | "topic">,
+): string {
+  return input.type === "tell" ? `tell:${input.topic}` : input.topic;
+}
+
 function getNpcConversationHistory(
   state: GameState,
   npcId: string,
@@ -141,6 +147,21 @@ function appendNpcConversationHistory(
   return setNpcConversationState(state, npcId, {
     ...prevConversation,
     conversationHistory: [...conversationHistory, historyEntry],
+  });
+}
+
+function recordNpcConversationTurn(
+  state: GameState,
+  npcId: string,
+  input: Pick<ConversationHistoryEntry, "type" | "topic">,
+  response: string,
+): GameState {
+  const nextState = markNpcTopicUsed(state, npcId, getNpcTopicUsageKey(input));
+  return appendNpcConversationHistory(nextState, npcId, {
+    turn: state.moves,
+    type: input.type,
+    topic: input.topic,
+    response,
   });
 }
 
@@ -264,15 +285,8 @@ async function getNpcAiResponse(
       return { state, response: null };
     }
 
-    const historyEntry: ConversationHistoryEntry = {
-      turn: state.moves,
-      type: playerInput.type,
-      topic: playerInput.topic,
-      response: claudeResponse,
-    };
-
     return {
-      state: appendNpcConversationHistory(state, npc.id, historyEntry),
+      state: recordNpcConversationTurn(state, npc.id, playerInput, claudeResponse),
       response: claudeResponse,
     };
   } catch (error) {
@@ -283,6 +297,58 @@ async function getNpcAiResponse(
 
 function wrapRadioLine(text: string): string {
   return `*pop* ${text} *pop*`;
+}
+
+function formatDirectSpeech(text: string): string {
+  if (text.startsWith(`"`) && text.endsWith(`"`)) {
+    return text;
+  }
+
+  return `"${text}"`;
+}
+
+function defaultDirectAskRepeatLine(): string {
+  return `I already told you all I know about that.`;
+}
+
+function defaultDirectTellRepeatLine(npc: ConversationNpc): string {
+  if (npc.id === "RangerBot") {
+    return `You already told me that, sir.`;
+  }
+
+  return `You already told me that.`;
+}
+
+function getDirectAskFallbackLine(
+  npc: ConversationNpc,
+  topic: string,
+): string | undefined {
+  const dialogLine = NPC_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)];
+  if (dialogLine) {
+    return dialogLine;
+  }
+
+  if (npc.id === "RangerBot") {
+    return defaultRangerAskLine();
+  }
+
+  return undefined;
+}
+
+function getDirectTellFallbackLine(
+  npc: ConversationNpc,
+  topic: string,
+): string | undefined {
+  const dialogLine = NPC_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)];
+  if (dialogLine) {
+    return dialogLine;
+  }
+
+  if (npc.id === "RangerBot") {
+    return defaultRangerTellLine();
+  }
+
+  return undefined;
 }
 
 async function askRadioNpc(
@@ -299,18 +365,26 @@ async function askRadioNpc(
   }
 
   if (hasNpcTopicBeenUsed(state, npc.id, topic)) {
+    const repeatLine = `"I don't know anything more about that (cough)..."`;
     return {
-      state,
-      message: wrapRadioLine(`"I don't know anything more about that (cough)..."`),
+      state: recordNpcConversationTurn(
+        state,
+        npc.id,
+        { type: "ask", topic },
+        repeatLine,
+      ),
+      message: wrapRadioLine(repeatLine),
     };
   }
 
-  const nextState = markNpcTopicUsed(state, npc.id, topic);
   const line =
     NPC_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)] ??
     defaultRadioAskLine(topic);
 
-  return { state: nextState, message: wrapRadioLine(line) };
+  return {
+    state: recordNpcConversationTurn(state, npc.id, { type: "ask", topic }, line),
+    message: wrapRadioLine(line),
+  };
 }
 
 async function tellRadioNpc(
@@ -331,17 +405,25 @@ async function tellRadioNpc(
 
   const topicKey = `tell:${topic}`;
   if (hasNpcTopicBeenUsed(state, npc.id, topicKey)) {
+    const repeatLine = `"I know (cough)...you (cough) told me..."`;
     return {
-      state,
-      message: wrapRadioLine(`"I know (cough)...you (cough) told me..."`),
+      state: recordNpcConversationTurn(
+        state,
+        npc.id,
+        { type: "tell", topic },
+        repeatLine,
+      ),
+      message: wrapRadioLine(repeatLine),
     };
   }
 
-  const nextState = markNpcTopicUsed(state, npc.id, topicKey);
   const line =
     NPC_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ?? defaultRadioTellLine();
 
-  return { state: nextState, message: wrapRadioLine(line) };
+  return {
+    state: recordNpcConversationTurn(state, npc.id, { type: "tell", topic }, line),
+    message: wrapRadioLine(line),
+  };
 }
 
 export async function askRadioDevice(
@@ -380,13 +462,23 @@ export async function askNpc(
     };
   }
 
-  if (npc.id === "RangerBot") {
-    const line =
-      NPC_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)] ?? defaultRangerAskLine();
-    return { state, message: `"${line}"` };
+  const fallbackLine = getDirectAskFallbackLine(npc, topic);
+  if (fallbackLine) {
+    const line = hasNpcTopicBeenUsed(state, npc.id, topic)
+      ? defaultDirectAskRepeatLine()
+      : fallbackLine;
+
+    return {
+      state: recordNpcConversationTurn(state, npc.id, { type: "ask", topic }, line),
+      message: formatDirectSpeech(line),
+    };
   }
 
-  return { state, message: `${npc.name} has nothing to say about that.` };
+  const line = `${npc.name} has nothing to say about that.`;
+  return {
+    state: recordNpcConversationTurn(state, npc.id, { type: "ask", topic }, line),
+    message: line,
+  };
 }
 
 export async function tellNpc(
@@ -410,14 +502,24 @@ export async function tellNpc(
     };
   }
 
-  if (npc.id === "RangerBot") {
-    const line =
-      NPC_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ??
-      defaultRangerTellLine();
-    return { state, message: `"${line}"` };
+  const fallbackLine = getDirectTellFallbackLine(npc, topic);
+  if (fallbackLine) {
+    const topicKey = `tell:${topic}`;
+    const line = hasNpcTopicBeenUsed(state, npc.id, topicKey)
+      ? defaultDirectTellRepeatLine(npc)
+      : fallbackLine;
+
+    return {
+      state: recordNpcConversationTurn(state, npc.id, { type: "tell", topic }, line),
+      message: formatDirectSpeech(line),
+    };
   }
 
-  return { state, message: `${npc.name} doesn't seem to care.` };
+  const line = `${npc.name} doesn't seem to care.`;
+  return {
+    state: recordNpcConversationTurn(state, npc.id, { type: "tell", topic }, line),
+    message: line,
+  };
 }
 
 function defaultRadioAskLine(topic: string): string {

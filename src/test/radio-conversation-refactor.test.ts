@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { handleCommand } from "../game/engine/handleCommand";
 import { getPendingConversationLogMessage } from "../game/helpers/conversationHelpers";
 import { parseCommand } from "../parse/parser";
@@ -8,6 +8,10 @@ import {
 } from "./helpers/gameTestHelpers";
 
 describe("conversation system refactor", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("keeps the first radio call state separate from NPC conversation state", async () => {
     let state = setInventory(createTestState({ roomId: "StairSix" }), [
       "Radio",
@@ -84,5 +88,48 @@ describe("conversation system refactor", () => {
         rangerConversation?.topicsUsed?.["what to do"] === true ||
         /park|pass|relate/i.test(lastLog),
     ).toBe(true);
+  });
+
+  it("tracks direct fallback conversations and suppresses repeated canned replies", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: false,
+      status: 429,
+    } as Response);
+
+    let state = createTestState({ roomId: "ParkEntrance" });
+
+    state = await handleCommand(state, parseCommand("ask ranger about hours"));
+    const afterFirstAsk = state.conversation?.npcs?.RangerBot ?? null;
+    expect(afterFirstAsk?.topicsUsed?.hours).toBe(true);
+    expect(afterFirstAsk?.conversationHistory?.at(-1)).toMatchObject({
+      type: "ask",
+      topic: "hours",
+    });
+    expect(afterFirstAsk?.conversationHistory?.at(-1)?.response).toMatch(
+      /park|clock|pass/i,
+    );
+
+    state = await handleCommand(state, parseCommand("ask ranger about hours"));
+    expect(state.log.at(-1) ?? "").toMatch(/already told you all i know/i);
+    expect(
+      state.conversation?.npcs?.RangerBot?.conversationHistory?.at(-1)?.response,
+    ).toMatch(/already told you all i know/i);
+
+    state = await handleCommand(state, parseCommand("tell ranger about reactor"));
+    const afterFirstTell = state.conversation?.npcs?.RangerBot ?? null;
+    expect(afterFirstTell?.topicsUsed?.["tell:reactor"]).toBe(true);
+    expect(afterFirstTell?.conversationHistory?.at(-1)).toMatchObject({
+      type: "tell",
+      topic: "reactor",
+    });
+    expect(afterFirstTell?.conversationHistory?.at(-1)?.response).toMatch(
+      /roger that, sir/i,
+    );
+
+    state = await handleCommand(state, parseCommand("tell ranger about reactor"));
+    expect(state.log.at(-1) ?? "").toMatch(/already told me that/i);
+    expect(
+      state.conversation?.npcs?.RangerBot?.conversationHistory?.at(-1)?.response,
+    ).toMatch(/already told me that/i);
   });
 });
