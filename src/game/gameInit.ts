@@ -367,6 +367,7 @@ export const createInitialState = (world: World): GameState => {
         menLocker15: false,
         menLocker16: false,
       },
+      npcSecrets: {},
       womensLockersOpened: {
         womenLocker1: false,
         womenLocker2: false,

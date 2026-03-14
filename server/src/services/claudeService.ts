@@ -24,17 +24,39 @@ export interface PlayerInput {
   topic: string;
 }
 
+export interface JuicyTopic {
+  id: string;
+  title: string;
+  summary: string;
+  tags: string[];
+  type: "gossip" | "secret";
+}
+
+export interface NpcSecretContext {
+  text: string;
+  requiresGossipCount: number;
+  currentCount: number;
+}
+
+export interface GossipContext {
+  gossipSharedWithNpc: string[]; // IDs of gossip told to this NPC
+  playerGossipInventory: JuicyTopic[]; // Gossip the player has collected
+  npcSecret?: NpcSecretContext; // Secret this NPC knows (if any)
+}
+
 interface GenerateParams {
   npcId: string;
   characterProfile: CharacterProfile;
   conversationHistory: ConversationEntry[];
   playerInput: PlayerInput;
+  gossipContext?: GossipContext;
 }
 
 export async function generateClaudeResponse(
   params: GenerateParams,
 ): Promise<string> {
-  const { characterProfile, conversationHistory, playerInput } = params;
+  const { characterProfile, conversationHistory, playerInput, gossipContext } =
+    params;
 
   // Create Anthropic client with API key from environment
   // This ensures the API key is loaded before the client is created
@@ -43,12 +65,12 @@ export async function generateClaudeResponse(
   });
 
   // Build system prompt with character context
-  const systemPrompt = buildSystemPrompt(characterProfile);
+  const systemPrompt = buildSystemPrompt(characterProfile, gossipContext);
 
   // Build conversation history for Claude
   const messages = buildMessages(conversationHistory, playerInput);
 
-const response = await client.messages.create({
+  const response = await client.messages.create({
     model: "claude-haiku-4-5-20251001", // Cheapest option, fast and efficient
     max_tokens: 200, // Keep responses concise
     temperature: 0.8, // Some variety but mostly consistent
@@ -64,10 +86,39 @@ const response = await client.messages.create({
   return content.text.trim();
 }
 
-function buildSystemPrompt(characterProfile: CharacterProfile): string {
+function buildSystemPrompt(
+  characterProfile: CharacterProfile,
+  gossipContext?: GossipContext,
+): string {
   const conversationContext =
     characterProfile.conversationContext ??
     "This conversation takes place inside an interactive fiction game.";
+
+  let gossipInstructions = "";
+  if (gossipContext?.npcSecret) {
+    const { requiresGossipCount, currentCount, text } = gossipContext.npcSecret;
+    const remaining = requiresGossipCount - currentCount;
+
+    if (currentCount >= requiresGossipCount) {
+      gossipInstructions = `\n\n**GOSSIP REQUIREMENT MET:**
+You have received ${currentCount} pieces of gossip from the player, meeting your requirement of ${requiresGossipCount}.
+You can now reveal your secret: "${text}"
+
+When appropriate (especially if the player shares more gossip or asks you something), include this secret in your response naturally and in character.`;
+    } else {
+      gossipInstructions = `\n\n**GOSSIP REQUIREMENT:**
+You are a gossip hound and LOVE hearing juicy secrets. You know a secret, but you'll only share it after the player tells you ${requiresGossipCount} different pieces of gossip.
+- So far, they've told you ${currentCount} piece(s) of gossip
+- You need ${remaining} more before you'll share your secret
+- When they share gossip, respond enthusiastically and fish for more
+- Be eager and excited about gossip - it's what you live for!`;
+    }
+
+    if (gossipContext.gossipSharedWithNpc.length > 0) {
+      gossipInstructions += `\n\n**Gossip the player has shared with you:**
+${gossipContext.gossipSharedWithNpc.map((id) => `- ${id}`).join("\n")}`;
+    }
+  }
 
   return `You are playing the character of ${characterProfile.name} in an interactive fiction game.
 ${conversationContext}
@@ -85,7 +136,7 @@ ${characterProfile.knowledge.map((k) => `- ${k}`).join("\n")}
 ${characterProfile.ignorance.map((k) => `- ${k}`).join("\n")}
 
 **Your objectives (hint at these when relevant):**
-${characterProfile.objectives.map((o) => `- ${o}`).join("\n")}
+${characterProfile.objectives.map((o) => `- ${o}`).join("\n")}${gossipInstructions}
 
 **Critical Instructions:**
 1. Stay in character at ALL times - you are ${characterProfile.name}, not an AI

@@ -1,9 +1,13 @@
 import { appendLog } from "@game/engine/handleCommand";
-import { getCharacterProfile } from "@game/npcProfiles";
 import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
+import { getCharacterProfile } from "@game/npcProfiles";
 import { getNpcById } from "@game/npcRegistry";
+import { getSecretForNpc } from "@game/npcSecrets";
 import { normalize, resolveConversationTarget } from "@game/rules/scope";
-import { getClaudeResponse } from "@game/services/claudeClient";
+import {
+  getClaudeResponse,
+  type GossipContext,
+} from "@game/services/claudeClient";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
@@ -150,6 +154,52 @@ function appendNpcConversationHistory(
   });
 }
 
+function addGossipToldToNpc(
+  state: GameState,
+  npcId: string,
+  gossipId: string,
+): GameState {
+  const prevConversation = getNpcConversationState(state, npcId) ?? {};
+  const gossipToldIds = prevConversation.gossipToldIds ?? [];
+
+  // Don't add duplicates
+  if (gossipToldIds.includes(gossipId)) {
+    return state;
+  }
+
+  return setNpcConversationState(state, npcId, {
+    ...prevConversation,
+    gossipToldIds: [...gossipToldIds, gossipId],
+  });
+}
+
+function getGossipToldToNpc(state: GameState, npcId: string): string[] {
+  return getNpcConversationState(state, npcId)?.gossipToldIds ?? [];
+}
+
+function buildGossipContext(
+  state: GameState,
+  npcId: string,
+): GossipContext | undefined {
+  const secret = getSecretForNpc(npcId);
+  if (!secret) {
+    return undefined;
+  }
+
+  const gossipSharedWithNpc = getGossipToldToNpc(state, npcId);
+  const currentCount = gossipSharedWithNpc.length;
+
+  return {
+    gossipSharedWithNpc,
+    playerGossipInventory: state.player.spiltTea ?? [],
+    npcSecret: {
+      text: secret.text,
+      requiresGossipCount: secret.requiredGossipCount,
+      currentCount,
+    },
+  };
+}
+
 function recordNpcConversationTurn(
   state: GameState,
   npcId: string,
@@ -272,6 +322,7 @@ async function getNpcAiResponse(
   }
 
   const conversationHistory = getNpcConversationHistory(state, npc.id);
+  const gossipContext = buildGossipContext(state, npc.id);
 
   try {
     const claudeResponse = await getClaudeResponse(
@@ -279,14 +330,32 @@ async function getNpcAiResponse(
       profile,
       conversationHistory,
       playerInput,
+      gossipContext,
     );
 
     if (!claudeResponse) {
       return { state, response: null };
     }
 
+    // If this was a 'tell' about gossip, track it
+    let nextState = state;
+    if (playerInput.type === "tell") {
+      const gossipId = normalize(playerInput.topic);
+      const playerHasGossip = state.player.spiltTea?.some(
+        (tea) => normalize(tea.id) === gossipId,
+      );
+      if (playerHasGossip) {
+        nextState = addGossipToldToNpc(nextState, npc.id, gossipId);
+      }
+    }
+
     return {
-      state: recordNpcConversationTurn(state, npc.id, playerInput, claudeResponse),
+      state: recordNpcConversationTurn(
+        nextState,
+        npc.id,
+        playerInput,
+        claudeResponse,
+      ),
       response: claudeResponse,
     };
   } catch (error) {
@@ -382,7 +451,12 @@ async function askRadioNpc(
     defaultRadioAskLine(topic);
 
   return {
-    state: recordNpcConversationTurn(state, npc.id, { type: "ask", topic }, line),
+    state: recordNpcConversationTurn(
+      state,
+      npc.id,
+      { type: "ask", topic },
+      line,
+    ),
     message: wrapRadioLine(line),
   };
 }
@@ -418,10 +492,16 @@ async function tellRadioNpc(
   }
 
   const line =
-    NPC_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ?? defaultRadioTellLine();
+    NPC_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ??
+    defaultRadioTellLine();
 
   return {
-    state: recordNpcConversationTurn(state, npc.id, { type: "tell", topic }, line),
+    state: recordNpcConversationTurn(
+      state,
+      npc.id,
+      { type: "tell", topic },
+      line,
+    ),
     message: wrapRadioLine(line),
   };
 }
@@ -469,14 +549,24 @@ export async function askNpc(
       : fallbackLine;
 
     return {
-      state: recordNpcConversationTurn(state, npc.id, { type: "ask", topic }, line),
+      state: recordNpcConversationTurn(
+        state,
+        npc.id,
+        { type: "ask", topic },
+        line,
+      ),
       message: formatDirectSpeech(line),
     };
   }
 
   const line = `${npc.name} has nothing to say about that.`;
   return {
-    state: recordNpcConversationTurn(state, npc.id, { type: "ask", topic }, line),
+    state: recordNpcConversationTurn(
+      state,
+      npc.id,
+      { type: "ask", topic },
+      line,
+    ),
     message: line,
   };
 }
@@ -510,14 +600,24 @@ export async function tellNpc(
       : fallbackLine;
 
     return {
-      state: recordNpcConversationTurn(state, npc.id, { type: "tell", topic }, line),
+      state: recordNpcConversationTurn(
+        state,
+        npc.id,
+        { type: "tell", topic },
+        line,
+      ),
       message: formatDirectSpeech(line),
     };
   }
 
   const line = `${npc.name} doesn't seem to care.`;
   return {
-    state: recordNpcConversationTurn(state, npc.id, { type: "tell", topic }, line),
+    state: recordNpcConversationTurn(
+      state,
+      npc.id,
+      { type: "tell", topic },
+      line,
+    ),
     message: line,
   };
 }

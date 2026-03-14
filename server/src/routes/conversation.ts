@@ -3,6 +3,7 @@ import {
   CharacterProfile,
   ConversationEntry,
   generateClaudeResponse,
+  GossipContext,
   PlayerInput,
 } from "../services/claudeService.js";
 
@@ -13,6 +14,7 @@ interface ConversationRequest {
   characterProfile: CharacterProfile;
   conversationHistory: ConversationEntry[];
   playerInput: PlayerInput;
+  gossipContext?: GossipContext;
 }
 
 // In-memory cache to avoid re-asking same questions
@@ -29,8 +31,13 @@ function getCacheKey(npcId: string, type: string, topic: string): string {
 
 router.post("/ask", async (req: Request, res: Response) => {
   try {
-    const { npcId, characterProfile, conversationHistory, playerInput } =
-      req.body as ConversationRequest;
+    const {
+      npcId,
+      characterProfile,
+      conversationHistory,
+      playerInput,
+      gossipContext,
+    } = req.body as ConversationRequest;
 
     // Validate request
     if (!npcId || !characterProfile || !playerInput) {
@@ -73,6 +80,7 @@ router.post("/ask", async (req: Request, res: Response) => {
       characterProfile,
       conversationHistory: conversationHistory || [],
       playerInput,
+      gossipContext,
     });
 
     // Cache the response

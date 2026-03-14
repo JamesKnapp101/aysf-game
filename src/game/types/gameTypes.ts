@@ -225,6 +225,11 @@ export type CatState = {
   isWearingCollar: boolean;
 };
 
+export type NpcSecretState = {
+  gossipSharedIds: string[]; // Which gossip IDs have been shared
+  secretRevealed: boolean; // Whether the NPC has revealed their secret
+};
+
 export interface World {
   doors: DoorDefinition[];
   items: Item[];
@@ -341,6 +346,7 @@ export interface WorldState {
   hydroponicsSpider: HydroponicsSpiderState;
   mensLockerContents: LockerContents<MensLockerId>;
   mensLockersOpened: LockerOpenedState<MensLockerId>;
+  npcSecrets: Record<string, NpcSecretState>; // Track NPC secret states by NPC ID
   octopusState: OctopusState;
   pendingNarration?: PendingNarration;
   playerDeaths: Record<RoomId, PlayerDeath>;

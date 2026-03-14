@@ -47,6 +47,7 @@ export interface ConversationHistoryEntry {
 export interface NpcConversationState {
   conversationHistory?: ConversationHistoryEntry[];
   topicsUsed?: Record<string, true>;
+  gossipToldIds?: string[]; // Track which gossip IDs have been shared with this NPC
 }
 
 export interface RadioState {

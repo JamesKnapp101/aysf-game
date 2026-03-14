@@ -1,6 +1,7 @@
 // Frontend client for Claude conversation API
 // This runs in the browser but calls your secure backend
 
+import type { JuicyTopic } from "@game/types/gameTypes";
 import type {
   CharacterProfile,
   ConversationHistoryEntry,
@@ -14,6 +15,18 @@ const API_BASE =
 export interface PlayerInput {
   type: "ask" | "tell";
   topic: string;
+}
+
+export interface NpcSecretContext {
+  text: string;
+  requiresGossipCount: number;
+  currentCount: number;
+}
+
+export interface GossipContext {
+  gossipSharedWithNpc: string[];
+  playerGossipInventory: JuicyTopic[];
+  npcSecret?: NpcSecretContext;
 }
 
 interface ClaudeResponse {
@@ -40,6 +53,7 @@ export async function getClaudeResponse(
   characterProfile: CharacterProfile,
   conversationHistory: ConversationHistoryEntry[],
   playerInput: PlayerInput,
+  gossipContext?: GossipContext,
 ): Promise<string | null> {
   // Check if there's already a pending request for this exact question
   const requestKey = getRequestKey(npcId, playerInput.type, playerInput.topic);
@@ -63,6 +77,7 @@ export async function getClaudeResponse(
           characterProfile,
           conversationHistory,
           playerInput,
+          gossipContext,
         }),
       });
 
