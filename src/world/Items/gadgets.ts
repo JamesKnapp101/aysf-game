@@ -21,16 +21,16 @@ export const specialItems: Item[] = [
     isOn: false,
   },
 
-  // 2. PLT (portable library terminal) --------------------------------------
+  // 2. Comet terminal ---------------------------------------------------------
   {
-    id: "PLT",
-    name: "portable library terminal",
+    id: "Comet",
+    name: "Comet terminal",
     description:
-      "A slim, portable library terminal—basically a ruggedized tablet with a matte display and a scattering of status LEDs along one edge.",
+      "A slim, portable library terminalÃ¢â‚¬â€basically a ruggedized tablet with a matte display and a scattering of status LEDs along one edge.",
     initialDescription:
       "Lying on the bed is a slim electronic device of some kind.",
     location: "INVENTORY", //"SixWestBed",
-    vocab: ["plt", "terminal", "library", "device", "portable"],
+    vocab: ["comet", "terminal", "library", "device", "portable"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -41,7 +41,7 @@ export const specialItems: Item[] = [
     isSwitchable: true,
     isOn: false,
     meta: {
-      kind: "plt-viewer",
+      kind: "comet-viewer",
     },
   },
 
@@ -50,7 +50,7 @@ export const specialItems: Item[] = [
     id: "EMP",
     name: "metallic capsule",
     description:
-      "A sleek capsule-shaped metallic device, about seven inches long and three inches in diameter. A subtle seam divides it into two halves, and a recessed LED on one side sits dark above the letters “E.M.P.” etched along the seam.",
+      "A sleek capsule-shaped metallic device, about seven inches long and three inches in diameter. A subtle seam divides it into two halves, and a recessed LED on one side sits dark above the letters Ã¢â‚¬Å“E.M.P.Ã¢â‚¬Â etched along the seam.",
     location: "LevelTwoSafe",
     vocab: ["emp", "capsule", "grenade", "device"],
     itemClass: "solid",
@@ -246,7 +246,7 @@ export const specialItems: Item[] = [
     description:
       "A pair of high-tech goggles with a black elastic strap. Beside the right eyepiece sits a selector lens that can switch between several imaging modes.",
     initialDescription:
-      "Hanging around your twin’s neck is a pair of high-tech goggles.",
+      "Hanging around your twinÃ¢â‚¬â„¢s neck is a pair of high-tech goggles.",
     location: "LivingQuartersThreeEast", //"Warehouse",
     vocab: ["goggles", "night", "vision"],
     itemClass: "solid",

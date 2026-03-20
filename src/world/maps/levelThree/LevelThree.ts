@@ -171,16 +171,6 @@ export const LEVEL_THREE: WorldChunk = {
         { direction: "east", doorId: "OncheResidenceDoor" },
       ],
     },
-    // {
-    //   id: "LevelThreeCorridorSixPointSix",
-    //   name: "Damaged Corridor",
-    //   description: `This section of the corridor begins to show signs of significant damage up ahead to the north.`,
-    //   exits: [
-    //     { direction: "north", toRoomId: "LevelThreeCorridorSeven" },
-    //     { direction: "south", toRoomId: "LevelThreeCorridorSix" },
-    //     { direction: "west", doorId: "DOOR3FW" },
-    //   ],
-    // },
     {
       id: "LevelThreeCorridorSeven",
       name: "Ruined Corridor",
@@ -227,42 +217,13 @@ export const LEVEL_THREE: WorldChunk = {
 
     // SECONDARY CORRIDOR BRANCH
     {
-      id: "LevelThreeSecondCorridorConnector",
-      name: "Level Three Secondary Corridor Connector",
-      description: `The corridor continues to the east and west.`,
-      exits: [
-        { direction: "east", toRoomId: "LevelThreeCorridorBranch" },
-        { direction: "west", toRoomId: "LevelThreeSecondCorridorTwo" },
-      ],
-    },
-    {
       id: "ParkEntrance",
       name: "Level Three Secondary Corridor",
-      description: `This is another T in the corridor, where the corridor branch connects with a secondary corridor. The secondary corridor extends north and south from here. There is also a large, sturdy-looking wooden door to the west, engraved with a leaf and floral pattern. Mounted on the wall next to the door is a metal panel with a thin horizontal slot in it. Just below the slot is a flat metal tray. Mounted over the door is a bronze plaque. The bronze plaque is engraved with the words 'THE HUB'`,
+      description: `This short stretch of corridor branches west off the main residential hall and ends at a large, sturdy-looking wooden door engraved with a leaf and floral pattern. Mounted on the wall next to the door is a metal panel with a thin horizontal slot in it. Just below the slot is a flat metal tray. Mounted over the door is a bronze plaque engraved with the words 'THE HUB'.`,
       exits: [
-        //{ direction: "north", toRoomId: "LevelThreeSecondCorridorThree" },
-        // { direction: "south", toRoomId: "LevelThreeSecondCorridorOne" },
-        { direction: "west", toRoomId: "ParkEast" },
+        { direction: "west", doorId: "ParkDoor" },
         { direction: "east", toRoomId: "LevelThreeCorridorBranch" },
       ],
     },
-    // {
-    //   id: "LevelThreeSecondCorridorThree",
-    //   name: "Level Three Secondary Corridor",
-    //   description: `The secondary corridor ends here. There is a large glass door with an aluminum frame to the west.`,
-    //   exits: [
-    //     { direction: "south", toRoomId: "LevelThreeSecondCorridorTwo" },
-    //     { direction: "north", doorId: "LevelThreeSecondCorrThreeDoor" },
-    //   ],
-    // },
-    // {
-    //   id: "LevelThreeSecondCorridorOne",
-    //   name: "Level Three Secondary Corridor",
-    //   description: `The secondary corridor ends here. There is a set of double doors to the south with a plastic sign mounted overhead. The sign is white with black block lettering which reads 'DeM Main Medical Facility'`,
-    //   exits: [
-    //     { direction: "north", toRoomId: "LevelThreeSecondCorridorTwo" },
-    //     { direction: "south", toRoomId: "MedicalEntrance" },
-    //   ],
-    // },
   ],
 };

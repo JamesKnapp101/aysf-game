@@ -45,7 +45,6 @@ export const catItems: Item[] = [
       homeRegion: [
         "LevelThreeCorridorFive",
         "LevelThreeCorridorSix",
-        "LevelThreeCorridorSixPointSix",
         "LevelThreeCorridorSeven",
         "LevelThreeCubby",
         "LevelThreeDuct",

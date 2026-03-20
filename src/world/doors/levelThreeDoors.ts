@@ -321,21 +321,6 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     initiallyLocked: false,
   },
   {
-    id: "SixWestBDoor",
-    name: "bathroom door",
-    descriptionFromA: "To the south is a wooden door.",
-    descriptionFromB: "The bathroom door is to the north.",
-    kind: "standard",
-    vocab: ["bathroom door"],
-    connects: {
-      roomAId: "LivingQuartersSixWest",
-      roomBId: "SixWestBath",
-    },
-    directions: { fromA: "south", fromB: "north" },
-    initiallyOpen: true,
-    initiallyLocked: false,
-  },
-  {
     id: "SixEastBDoor",
     name: "bathroom door",
     descriptionFromA: "To the south is a wooden door.",
@@ -348,21 +333,6 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     },
     directions: { fromA: "south", fromB: "north" },
     initiallyOpen: true,
-    initiallyLocked: false,
-  },
-  {
-    id: "DOOR3FW",
-    name: "living quarters door 3FW",
-    descriptionFromA:
-      "To the west is a door affixed with a neat black plastic label indicating '3FW'. A strip of yellow and black tape has been stretched across the western door.",
-    kind: "standard",
-    vocab: ["west door", "door 3fw"],
-    connects: {
-      roomAId: "LevelThreeCorridorSixPointSix",
-      roomBId: "LivingQuartersSixWest",
-    },
-    directions: { fromA: "west", fromB: "east" },
-    initiallyOpen: false,
     initiallyLocked: false,
   },
   {
@@ -394,7 +364,7 @@ export const levelThreeParkDoors: DoorDefinition[] = [
     kind: "keyed",
     vocab: ["wooden door", "engraved door", "engraved wooden door"],
     connects: {
-      roomAId: "LevelThreeSecondCorridorTwo",
+      roomAId: "ParkEntrance",
       roomBId: "ParkEast",
     },
     directions: { fromA: "west", fromB: "east" },
@@ -421,24 +391,6 @@ export const levelThreeParkDoors: DoorDefinition[] = [
 ];
 
 export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
-  // Second Corridor
-  {
-    id: "LevelThreeSecondCorrThreeDoor",
-    name: "aluminum and glass door",
-    descriptionFromA:
-      "To the north is a large glass door with an aluminum frame.",
-    descriptionFromB:
-      "To the south is a large glass door with an aluminum frame.",
-    kind: "keyed",
-    vocab: ["door", "aluminum door", "glass door", "aluminum and glass door"],
-    connects: {
-      roomAId: "LevelThreeSecondCorridorThree",
-      roomBId: "Spa",
-    },
-    directions: { fromA: "north", fromB: "south" },
-    initiallyOpen: false,
-    initiallyLocked: false,
-  },
   // SPA
   {
     id: "CedarDoor",

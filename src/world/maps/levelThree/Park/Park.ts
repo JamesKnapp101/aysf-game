@@ -6,7 +6,7 @@ export const parkRooms: Room[] = [
     name: "Park East",
     description: `This is a large, open, circular area with a high domed ceiling, and does a pretty good approximation of making one feel as though they have just stepped outside; the ground is actually covered in topsoil which is in turn covered with real grass, and gentle slopes have actually been landscaped in. The center of the circular court is dominated by a circular dias of brick, upon which is mounted a large, squat obelisk of granite. The obelisk has a large plaque which is carved into part of its base. The area surrounding the dias and obelisk is paved in smooth, tan-colored brick, and four similarly paved footpaths radiate out from the center. To your east is a large, sturdy-looking wooden door engraved with a leaf and floral pattern. Mounted on the wall next to the door is a metal panel with a thin horizontal slot in it, and just below the slot is a flat metal tray. You notice a small surveillance camera mounted high on the wall, just before the dome of the ceiling begins, pointed at the entrance`,
     exits: [
-      { direction: "east", toRoomId: "ParkEntrance" },
+      { direction: "east", doorId: "ParkDoor" },
       { direction: "north", toRoomId: "GymEntrance" },
       { direction: "south", toRoomId: "BarEntrance" },
       { direction: "west", toRoomId: "ParkCenter" },

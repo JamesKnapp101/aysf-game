@@ -671,7 +671,7 @@ export const levelThreeItems: Item[] = [
       "A polished bronze plaque mounted at eye level, the words “THE HUB” engraved into its surface in heavy, confident lettering.",
     sceneryDescription:
       "The plaque catches the ambient light with a soft, warm sheen, every stroke of the letters burnished smooth by years of incidental contact. Small scratches and scuffs surround the mounting bolts, hinting at how often people have leaned on it, tapped it for luck, or just used it as a landmark before moving on.",
-    location: "LevelThreeSecondCorridorTwo",
+    location: "ParkEntrance",
     vocab: ["bronze", "plaque", "park"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -843,7 +843,7 @@ export const levelThreeItems: Item[] = [
       "A thin horizontal slot in a mounted electronic reader. It looks like it takes some sort of card.",
     sceneryDescription:
       "Next to the engraved door is mounted some kind of electronic reader, with a thin horizontal slot at its base.",
-    location: "LevelThreeSecondCorridorTwo",
+    location: "ParkEntrance",
     vocab: ["card reader", "reader", "slot"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -876,7 +876,7 @@ export const levelThreeItems: Item[] = [
       "A mirrored metal panel inset into the corridor wall, its only feature a narrow horizontal slot at chest height.",
     sceneryDescription:
       "The corridor lights smear across the panel in elongated reflections, making it hard to tell where the metal ends and the room begins. The slot itself is utterly dark, a slim mouth in the surface waiting for something specific—or nothing at all, now that the system that needed it might be dead.",
-    location: "LevelThreeSecondCorridorTwo",
+    location: "ParkEntrance",
     vocab: ["metal", "panel", "slot"],
     itemClass: "solid",
     itemCategory: "scenery",
