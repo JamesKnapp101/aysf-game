@@ -2,7 +2,7 @@ import { appendLog } from "@game/engine/handleCommand";
 import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
 import { getCharacterProfile } from "@game/npcProfiles";
 import { getNpcById } from "@game/npcRegistry";
-import { getSecretForNpc } from "@game/npcSecrets";
+import { getSecretForNpc, revealNpcSecretIfEligible } from "@game/npcSecrets";
 import { normalize, resolveConversationTarget } from "@game/rules/scope";
 import {
   getClaudeResponse,
@@ -191,7 +191,6 @@ function buildGossipContext(
 
   return {
     gossipSharedWithNpc,
-    playerGossipInventory: state.player.spiltTea ?? [],
     npcSecret: {
       text: secret.text,
       requiresGossipCount: secret.requiredGossipCount,
@@ -321,8 +320,20 @@ async function getNpcAiResponse(
     return { state, response: null };
   }
 
-  const conversationHistory = getNpcConversationHistory(state, npc.id);
-  const gossipContext = buildGossipContext(state, npc.id);
+  // If this is a 'tell' about gossip, track it BEFORE sending to Claude
+  let nextState = state;
+  if (playerInput.type === "tell") {
+    const gossipId = normalize(playerInput.topic);
+    const playerHasGossip = state.player.spiltTea?.some(
+      (tea) => normalize(tea.id) === gossipId,
+    );
+    if (playerHasGossip) {
+      nextState = addGossipToldToNpc(nextState, npc.id, gossipId);
+    }
+  }
+
+  const conversationHistory = getNpcConversationHistory(nextState, npc.id);
+  const gossipContext = buildGossipContext(nextState, npc.id);
 
   try {
     const claudeResponse = await getClaudeResponse(
@@ -337,25 +348,15 @@ async function getNpcAiResponse(
       return { state, response: null };
     }
 
-    // If this was a 'tell' about gossip, track it
-    let nextState = state;
-    if (playerInput.type === "tell") {
-      const gossipId = normalize(playerInput.topic);
-      const playerHasGossip = state.player.spiltTea?.some(
-        (tea) => normalize(tea.id) === gossipId,
-      );
-      if (playerHasGossip) {
-        nextState = addGossipToldToNpc(nextState, npc.id, gossipId);
-      }
-    }
+    const respondedState = recordNpcConversationTurn(
+      nextState,
+      npc.id,
+      playerInput,
+      claudeResponse,
+    );
 
     return {
-      state: recordNpcConversationTurn(
-        nextState,
-        npc.id,
-        playerInput,
-        claudeResponse,
-      ),
+      state: revealNpcSecretIfEligible(respondedState, npc.id),
       response: claudeResponse,
     };
   } catch (error) {

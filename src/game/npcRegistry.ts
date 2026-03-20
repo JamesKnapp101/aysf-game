@@ -70,8 +70,8 @@ export const NPCS: Record<string, ConversationNpc> = {
   },
   DoomedChef: {
     id: "DoomedChef",
-    name: "The doomed man",
-    vocab: ["chef", "doomed", "man", "guy"],
+    name: "The unfortunate chef",
+    vocab: ["chef", "doomed", "unfortunate", "man", "guy"],
     aiEnabled: true,
     characterProfileId: "doomed_chef",
   },

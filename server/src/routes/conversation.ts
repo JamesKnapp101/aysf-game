@@ -25,8 +25,17 @@ const responseCache = new Map<string, string>();
 const lastRequestTime = new Map<string, number>();
 const RATE_LIMIT_MS = 100; // 1 second between requests
 
-function getCacheKey(npcId: string, type: string, topic: string): string {
-  return `${npcId}:${type}:${topic.toLowerCase().trim()}`;
+export function getConversationCacheKey(request: ConversationRequest): string {
+  return JSON.stringify({
+    npcId: request.npcId,
+    characterProfile: request.characterProfile,
+    conversationHistory: request.conversationHistory ?? [],
+    playerInput: {
+      type: request.playerInput.type,
+      topic: request.playerInput.topic.toLowerCase().trim(),
+    },
+    gossipContext: request.gossipContext ?? null,
+  });
 }
 
 router.post("/ask", async (req: Request, res: Response) => {
@@ -63,10 +72,18 @@ router.post("/ask", async (req: Request, res: Response) => {
     lastRequestTime.set(npcId, now);
 
     // Check cache first
-    const cacheKey = getCacheKey(npcId, playerInput.type, playerInput.topic);
+    const cacheKey = getConversationCacheKey({
+      npcId,
+      characterProfile,
+      conversationHistory: conversationHistory || [],
+      playerInput,
+      gossipContext,
+    });
     const cached = responseCache.get(cacheKey);
     if (cached) {
-      console.log(`Cache hit for ${cacheKey}`);
+      console.log(
+        `Cache hit for ${npcId}: ${playerInput.type} "${playerInput.topic}"`,
+      );
       res.json({ success: true, response: cached, cached: true });
       return;
     }

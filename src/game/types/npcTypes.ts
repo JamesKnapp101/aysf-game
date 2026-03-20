@@ -1,6 +1,17 @@
 import type { Item } from "@game/types/itemTypes";
 
-export interface CharacterProfile {
+export interface CompactCharacterProfile {
+  directives?: string[];
+  goals: string[];
+  identity: string;
+  knownFacts: string[];
+  name: string;
+  scene: string;
+  unknownFacts: string[];
+  voice: string[];
+}
+
+export interface LegacyCharacterProfile {
   background: string;
   conversationContext?: string;
   ignorance: string[];
@@ -11,6 +22,8 @@ export interface CharacterProfile {
   physicalState: string;
   timeContext: string;
 }
+
+export type CharacterProfile = CompactCharacterProfile | LegacyCharacterProfile;
 
 export type CharacterProfileId = string;
 

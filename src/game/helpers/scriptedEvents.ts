@@ -55,7 +55,7 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       ctx.commandVerb === "blow" &&
       Boolean(
         ctx.commandDirect?.includes("whistle") ||
-          ctx.commandDirect?.includes("robot"),
+        ctx.commandDirect?.includes("robot"),
       ) &&
       ctx.roomId === "L3Warehouse",
     run: (state) => {
@@ -73,6 +73,26 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       next = queueAfterRoomDescription(
         next,
         `Something heard it though, because a second later you hear an electronic beep from the east side of the warehouse. A thump follows, then, on the east wall behind the lowest storage rack, a hidden panel slides up to reveal a two meter high doorway that leads to a dimly lit room.`,
+      );
+      return next;
+    },
+  },
+  {
+    id: "nailsalon_whistle",
+    once: false,
+    when: (state, ctx) =>
+      ctx.kind === "onCommand" &&
+      ctx.commandVerb === "blow" &&
+      Boolean(
+        ctx.commandDirect?.includes("whistle") ||
+        ctx.commandDirect?.includes("robot"),
+      ) &&
+      ctx.roomId === "NailSalon",
+    run: (state) => {
+      let next = state;
+      next = queueAfterRoomDescription(
+        next,
+        `The robot perks up, its rendered face smiling.`,
       );
       return next;
     },

@@ -1,7 +1,6 @@
 // Frontend client for Claude conversation API
 // This runs in the browser but calls your secure backend
 
-import type { JuicyTopic } from "@game/types/gameTypes";
 import type {
   CharacterProfile,
   ConversationHistoryEntry,
@@ -25,8 +24,8 @@ export interface NpcSecretContext {
 
 export interface GossipContext {
   gossipSharedWithNpc: string[];
-  playerGossipInventory: JuicyTopic[];
   npcSecret?: NpcSecretContext;
+  playerGossipInventory?: unknown[];
 }
 
 interface ClaudeResponse {

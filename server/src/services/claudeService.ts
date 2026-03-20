@@ -1,16 +1,29 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-export interface CharacterProfile {
+export interface CompactCharacterProfile {
+  directives?: string[];
+  goals: string[];
+  identity: string;
+  knownFacts: string[];
   name: string;
-  personality: string;
-  background: string;
-  knowledge: string[];
-  ignorance: string[];
-  physicalState: string;
-  objectives: string[];
-  timeContext: string;
-  conversationContext?: string;
+  scene: string;
+  unknownFacts: string[];
+  voice: string[];
 }
+
+export interface LegacyCharacterProfile {
+  background: string;
+  conversationContext?: string;
+  ignorance: string[];
+  knowledge: string[];
+  name: string;
+  objectives: string[];
+  personality: string;
+  physicalState: string;
+  timeContext: string;
+}
+
+export type CharacterProfile = CompactCharacterProfile | LegacyCharacterProfile;
 
 export interface ConversationEntry {
   turn: number;
@@ -24,14 +37,6 @@ export interface PlayerInput {
   topic: string;
 }
 
-export interface JuicyTopic {
-  id: string;
-  title: string;
-  summary: string;
-  tags: string[];
-  type: "gossip" | "secret";
-}
-
 export interface NpcSecretContext {
   text: string;
   requiresGossipCount: number;
@@ -40,8 +45,8 @@ export interface NpcSecretContext {
 
 export interface GossipContext {
   gossipSharedWithNpc: string[]; // IDs of gossip told to this NPC
-  playerGossipInventory: JuicyTopic[]; // Gossip the player has collected
   npcSecret?: NpcSecretContext; // Secret this NPC knows (if any)
+  playerGossipInventory?: unknown[]; // Legacy field kept for compatibility
 }
 
 interface GenerateParams {
@@ -65,7 +70,11 @@ export async function generateClaudeResponse(
   });
 
   // Build system prompt with character context
-  const systemPrompt = buildSystemPrompt(characterProfile, gossipContext);
+  const systemPrompt = buildSystemPrompt(
+    characterProfile,
+    playerInput,
+    gossipContext,
+  );
 
   // Build conversation history for Claude
   const messages = buildMessages(conversationHistory, playerInput);
@@ -86,77 +95,109 @@ export async function generateClaudeResponse(
   return content.text.trim();
 }
 
-function buildSystemPrompt(
+export function buildSystemPrompt(
   characterProfile: CharacterProfile,
+  playerInput: PlayerInput,
   gossipContext?: GossipContext,
 ): string {
-  const conversationContext =
-    characterProfile.conversationContext ??
-    "This conversation takes place inside an interactive fiction game.";
-
+  const profile = normalizeCharacterProfile(characterProfile);
   let gossipInstructions = "";
   if (gossipContext?.npcSecret) {
     const { requiresGossipCount, currentCount, text } = gossipContext.npcSecret;
     const remaining = requiresGossipCount - currentCount;
 
     if (currentCount >= requiresGossipCount) {
-      gossipInstructions = `\n\n**GOSSIP REQUIREMENT MET:**
-You have received ${currentCount} pieces of gossip from the player, meeting your requirement of ${requiresGossipCount}.
-You can now reveal your secret: "${text}"
+      const revealInstruction =
+        playerInput.type === "tell"
+          ? "The player's current message is gossip you accepted. In this response, you must react to it and explicitly reveal your secret."
+          : "Your gossip requirement is already satisfied. In this response, explicitly reveal your secret instead of hinting at it or saving it for later.";
 
-When appropriate (especially if the player shares more gossip or asks you something), include this secret in your response naturally and in character.`;
+      gossipInstructions = `\nGossip:
+- Requirement met (${currentCount}/${requiresGossipCount})
+- ${revealInstruction}
+- Secret to reveal now: "${text}"
+- Do not withhold this secret, tease it, or postpone it to a later response.`;
     } else {
-      gossipInstructions = `\n\n**GOSSIP REQUIREMENT:**
-You are a gossip hound and LOVE hearing juicy secrets. You know a secret, but you'll only share it after the player tells you ${requiresGossipCount} different pieces of gossip.
-- So far, they've told you ${currentCount} piece(s) of gossip
-- You need ${remaining} more before you'll share your secret
-- When they share gossip, respond enthusiastically and fish for more
-- Be eager and excited about gossip - it's what you live for!`;
+      gossipInstructions = `\nGossip:
+- Share your secret only after ${requiresGossipCount} different gossip items
+- Current count: ${currentCount}
+- Still needed: ${remaining}
+- When the player shares gossip, react enthusiastically and ask for more`;
     }
 
     if (gossipContext.gossipSharedWithNpc.length > 0) {
-      gossipInstructions += `\n\n**Gossip the player has shared with you:**
-${gossipContext.gossipSharedWithNpc.map((id) => `- ${id}`).join("\n")}`;
+      gossipInstructions += `\n- Already heard:
+${gossipContext.gossipSharedWithNpc.map((id) => `  - ${id}`).join("\n")}`;
     }
   }
 
-  return `You are playing the character of ${characterProfile.name} in an interactive fiction game.
-${conversationContext}
+  return `Roleplay as ${profile.name}.
 
-**Character Profile:**
-- Personality: ${characterProfile.personality}
-- Background: ${characterProfile.background}
-- Physical State: ${characterProfile.physicalState}
-- Time Pressure: ${characterProfile.timeContext}
+Setting:
+- A catastrophe hit a generation ship more than a thousand years into its voyage.
+- The ship has huge indoor outdoor-like spaces, including a Park, Preserve, and Aviary.
+- Deep Storage holds vast numbers of humans in stasis. Daytime crews wake for three-year shifts, then return to stasis.
+- Most of the current crew is dead. Mostly robots and a few survivors remain active.
 
-**What you know about:**
-${characterProfile.knowledge.map((k) => `- ${k}`).join("\n")}
+NPC:
+- Identity: ${profile.identity}
+${formatInlineList("Voice", profile.voice)}
+- Scene: ${profile.scene}
+${formatBulletList("Goals", profile.goals)}
+${formatBulletList("Known facts", profile.knownFacts)}
+${formatBulletList("Unknown facts", profile.unknownFacts)}
+${formatBulletList("Directives", profile.directives ?? [])}${gossipInstructions}
 
-**What you DON'T know (respond vaguely or express confusion):**
-${characterProfile.ignorance.map((k) => `- ${k}`).join("\n")}
+Reply rules:
+- Stay in character. You are ${profile.name}, not an AI.
+- Reply in 1-3 short sentences.
+- Let the voice and scene shape the wording.
+- Treat the listed Directives as hard constraints on phrasing and delivery.
+- Use only known facts. If asked about an unknown fact, respond with natural uncertainty.
+- Reference prior conversation when useful.
+- Do not use stage directions, speaker labels, asterisks, or narrative asides like "*shallow breath*". Express tone, pain, and effort only through the spoken words unless literally spoken.
+- No fourth-wall breaks, em dashes, or profanity.
+- Anything from the player's present day counts as ancient history in this setting.`;
+}
 
-**Your objectives (hint at these when relevant):**
-${characterProfile.objectives.map((o) => `- ${o}`).join("\n")}${gossipInstructions}
+function formatBulletList(label: string, items: string[]): string {
+  if (items.length === 0) {
+    return `${label}:\n- none`;
+  }
 
-**Critical Instructions:**
-1. Stay in character at ALL times - you are ${characterProfile.name}, not an AI
-2. Keep responses VERY SHORT (1-3 sentences max)
-3. Let the personality, background, physical state, and conversation context shape the wording
-4. If asked about something you don't know, express uncertainty naturally and in character
-5. Don't break the fourth wall or acknowledge being an AI assistant
-6. Reference past conversation when relevant
-7. Do not add formatting like "*pop*", speaker labels, or stage directions unless the character would literally say them
-8. Keep the response grounded in what the character knows, wants, and is currently capable of saying
+  return `${label}:\n${items.map((item) => `- ${item}`).join("\n")}`;
+}
 
-**Example Good Responses:**
-- "I know what you mean. Keep moving."
-- "I'm not sure. Memory's a mess right now."
-- "That tracks. Be careful."
+function formatInlineList(label: string, items: string[]): string {
+  return `- ${label}: ${items.length > 0 ? items.join(", ") : "none"}`;
+}
 
-**Example Bad Responses:**
-- "*pop* I can help you with that information *pop*" (includes formatting the game should add)
-- "As this character, I would say..." (breaking character)
-- Long explanations (keep it brief!)`;
+function normalizeCharacterProfile(
+  profile: CharacterProfile,
+): CompactCharacterProfile {
+  if ("identity" in profile) {
+    return profile;
+  }
+
+  return {
+    directives: [],
+    goals: profile.objectives,
+    identity: profile.background,
+    knownFacts: profile.knowledge,
+    name: profile.name,
+    scene: [
+      profile.conversationContext,
+      profile.physicalState,
+      profile.timeContext,
+    ]
+      .filter(Boolean)
+      .join(" "),
+    unknownFacts: profile.ignorance,
+    voice: profile.personality
+      .split(",")
+      .map((part) => part.trim())
+      .filter(Boolean),
+  };
 }
 
 function buildMessages(

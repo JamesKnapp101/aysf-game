@@ -40,7 +40,7 @@ export const spaItems: Item[] = [
     id: "RobotWhistle",
     name: "a small metal whistle",
     description: `It's a small, pipe-shaped metal whistle, about the length of your index finger.`,
-    location: "INVENTORY", //"seeded"
+    location: "seeded",
     vocab: ["whistle", "robot", "metal"],
     itemClass: "solid",
     itemCategory: "collectable",
