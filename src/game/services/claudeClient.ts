@@ -53,6 +53,7 @@ export async function getClaudeResponse(
   conversationHistory: ConversationHistoryEntry[],
   playerInput: PlayerInput,
   gossipContext?: GossipContext,
+  assistantContext?: string,
 ): Promise<string | null> {
   // Check if there's already a pending request for this exact question
   const requestKey = getRequestKey(npcId, playerInput.type, playerInput.topic);
@@ -77,6 +78,7 @@ export async function getClaudeResponse(
           conversationHistory,
           playerInput,
           gossipContext,
+          assistantContext,
         }),
       });
 

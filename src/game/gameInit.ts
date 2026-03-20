@@ -30,6 +30,30 @@ export const DEV_PLAYER_START_ROOM_ID: string | undefined = undefined;
 export const INITIAL_PLAYER_ROOM_ID =
   DEV_PLAYER_START_ROOM_ID ?? FINAL_PLAYER_START_ROOM_ID;
 
+const TRANSMITTER_COORD_EXCLUDE_PATTERNS = [/Elevator/i, /Shaft/i];
+const TRANSMITTER_ANCHOR_ROOM_IDS = [
+  "ShuttleBay",
+  "InsideShuttle",
+  INITIAL_PLAYER_ROOM_ID,
+  "LevelSixCorridorBend",
+] as const;
+
+function deriveTransmitterMeta(world: World) {
+  const roomIds = new Set(world.rooms.map((room) => room.id));
+  const anchorRoomId =
+    TRANSMITTER_ANCHOR_ROOM_IDS.find((roomId) => roomIds.has(roomId)) ??
+    world.rooms[0]?.id;
+
+  if (!anchorRoomId) {
+    throw new Error("deriveTransmitterMeta: world has no rooms");
+  }
+
+  return deriveRoomCoordMaps(world.rooms, world.doors, anchorRoomId, {
+    ignoreIslands: true,
+    excludeRoomIdPatterns: TRANSMITTER_COORD_EXCLUDE_PATTERNS,
+  });
+}
+
 export const createInitialState = (world: World): GameState => {
   const uniqueItems = Array.from(
     new Map(world.items.map((it) => [it.id, it])).values(),
@@ -40,14 +64,8 @@ export const createInitialState = (world: World): GameState => {
     items: uniqueItems,
   };
 
-  const { coordByRoomId, roomIdByCoord } = deriveRoomCoordMaps(
-    normalizedWorld.rooms,
-    normalizedWorld.doors,
-    "InsideShuttle",
-    {
-      ignoreIslands: true,
-      excludeRoomIdPatterns: [/Elevator/i, /Shaft/i],
-    },
+  const { coordByRoomId, roomIdByCoord } = deriveTransmitterMeta(
+    normalizedWorld,
   );
 
   const worldWithMeta: World = {
@@ -207,7 +225,7 @@ export const createInitialState = (world: World): GameState => {
         "gravity-level-five": true,
         "gravity-level-six": true,
         "gravity-level-seven": true,
-        "library-power": false,
+        "library-power": true,
         "park-security": true,
         "teleport-pads-green": true,
         "teleport-pads-blue": true,
@@ -256,7 +274,7 @@ export const createInitialState = (world: World): GameState => {
         activated_level_two_lights: false,
         activated_main_power: false,
         activated_movie_projector: false,
-        activated_plt_link: false,
+        activated_comet_link: false,
         completed_engine_shut_down: false,
         defeated_xl999: false,
         discovered_magic_word: false,
@@ -457,7 +475,7 @@ export const createInitialState = (world: World): GameState => {
       itemSettings: {
         Cooler: { kind: "cooler", mode: "off" },
         NVGoggles: { kind: "goggles", isOn: false },
-        PLT: { kind: "plt-viewer", isOn: false, hasLink: false },
+        Comet: { kind: "comet-viewer", isOn: false, hasLink: false },
         flashlight: { kind: "flashlight", isOn: false },
       },
       frozenItems: {},
@@ -588,15 +606,8 @@ export function mergeWorldChunkIntoState(
   }
 
   const mergedWorldBase = mergeWorldChunks(state.world, chunk);
-  const { coordByRoomId, roomIdByCoord } = deriveRoomCoordMaps(
-    mergedWorldBase.rooms,
-    mergedWorldBase.doors,
-    "InsideShuttle",
-    {
-      ignoreIslands: true,
-      excludeRoomIdPatterns: [/Elevator/i, /Shaft/i],
-    },
-  );
+  const { coordByRoomId, roomIdByCoord } =
+    deriveTransmitterMeta(mergedWorldBase);
 
   const nextItemRoomId = { ...state.itemState.itemRoomId };
   const nextInventory = {

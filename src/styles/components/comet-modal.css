@@ -1,0 +1,614 @@
+:root {
+    --comet-radius: 14px;
+    --comet-radius-sm: 10px;
+    --comet-key-radius: 8px;
+
+    /* Tie everything to CRT color */
+    --comet-c: var(--crt-color, #39ff14);
+
+    /* A few derived â€œtintsâ€ (keep them light so any CRT color works) */
+    --comet-c-weak: color-mix(in srgb, var(--comet-c) 70%, transparent);
+    --comet-c-faint: color-mix(in srgb, var(--comet-c) 35%, transparent);
+    --comet-c-ultra: color-mix(in srgb, var(--comet-c) 18%, transparent);
+}
+
+.crt-overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: grid;
+    place-items: center;
+    z-index: 9999;
+}
+
+.crt-overlay-window {
+    border-radius: calc(var(--comet-radius) + 6px);
+    overflow: hidden;
+    /* so the glow/scanlines don't spill */
+}
+
+.comet-top,
+.comet-reader,
+.comet-searchRow,
+.comet-kbd {
+    border-radius: var(--comet-radius);
+}
+
+.crt-overlay-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--comet-c);
+}
+
+.crt-overlay-title {
+    font-family: var(--crt-font, monospace);
+    color: var(--comet-c);
+    letter-spacing: 0.08em;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.crt-overlay-close {
+    background: transparent;
+    border: 1px solid var(--comet-c);
+    color: var(--comet-c);
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+/* Comet layout */
+.comet {
+    position: relative;
+    isolation: isolate;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    gap: 14px;
+    padding: 18px 18px 16px;
+    box-sizing: border-box;
+    border-radius: 28px;
+    border: 1px solid color-mix(in srgb, var(--comet-c) 16%, rgba(255, 255, 255, 0.18));
+    background:
+        linear-gradient(160deg, rgba(14, 18, 14, 0.98), rgba(2, 5, 2, 0.98) 72%),
+        radial-gradient(circle at top, color-mix(in srgb, var(--comet-c) 8%, transparent), transparent 52%);
+    box-shadow:
+        0 24px 48px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -22px 30px rgba(0, 0, 0, 0.38);
+    overflow: hidden;
+}
+
+.comet::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 18%),
+        linear-gradient(95deg, transparent 0%, rgba(255, 255, 255, 0.025) 45%, transparent 78%);
+}
+
+.comet::after {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border-radius: 22px;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.035);
+}
+
+/* top strip */
+.comet-top {
+    border: 2px solid var(--comet-c);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 108px;
+    box-sizing: border-box;
+    gap: 2rem;
+    background:
+        linear-gradient(180deg, rgba(8, 14, 8, 0.92), rgba(0, 0, 0, 0.88)),
+        radial-gradient(circle at top left, color-mix(in srgb, var(--comet-c) 9%, transparent), transparent 58%);
+}
+
+.comet-brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.comet-brandMark {
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    border-radius: 20px;
+    border: 1px solid color-mix(in srgb, var(--comet-c) 38%, transparent);
+    background:
+        radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--comet-c) 18%, transparent), transparent 60%),
+        rgba(0, 0, 0, 0.55);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 0 24px color-mix(in srgb, var(--comet-c) 10%, transparent);
+}
+
+.comet-brandIcon {
+    width: 58px;
+    height: 58px;
+    overflow: visible;
+}
+
+.comet-brandOrbit,
+.comet-brandTailGlow,
+.comet-brandTail,
+.comet-brandBody,
+.comet-brandStar {
+    stroke: var(--comet-c);
+    fill: transparent;
+}
+
+.comet-brandOrbit {
+    stroke-width: 3.2;
+    opacity: 0.88;
+}
+
+.comet-brandStar {
+    fill: color-mix(in srgb, var(--comet-c) 86%, white 14%);
+    stroke: color-mix(in srgb, var(--comet-c) 72%, transparent);
+    stroke-width: 1.4;
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--comet-c) 34%, transparent));
+}
+
+.comet-brandBody {
+    fill: color-mix(in srgb, var(--comet-c) 92%, white 8%);
+    stroke: color-mix(in srgb, var(--comet-c) 70%, transparent);
+    stroke-width: 1.2;
+    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--comet-c) 26%, transparent));
+}
+
+.comet-brandTailGlow {
+    stroke-width: 6.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.18;
+    filter: blur(1.8px);
+}
+
+.comet-brandTail {
+    stroke-width: 4.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.88;
+}
+
+.comet-brandTail--faint {
+    stroke-width: 2.8;
+    opacity: 0.4;
+}
+
+.comet-logoArea {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.comet-logoLine1 {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.comet-logoText {
+    font-family: var(--crt-font, monospace);
+    color: var(--comet-c);
+    font-size: clamp(40px, 4vw, 54px);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-shadow: 0 0 22px color-mix(in srgb, var(--comet-c) 14%, transparent);
+}
+
+.comet-logoStrap {
+    width: 100%;
+    font-family: var(--crt-font, monospace);
+    color: var(--comet-c-weak);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.comet-logoTag {
+    font-family: var(--crt-font, monospace);
+    color: var(--comet-c-weak);
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.comet-indicators {
+    display: flex;
+    gap: 18px;
+    margin-left: auto;
+    justify-content: flex-end;
+    align-items: center;
+    align-self: stretch;
+}
+
+.comet-indicatorStack {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 8px;
+}
+
+.comet-light {
+    width: 18px;
+    height: 54px;
+    border: 2px solid var(--comet-c);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.65);
+    background: black; 
+    border-radius: var(--comet-radius-sm);
+}
+
+.comet-light.is-on {
+    background: color-mix(in srgb, var(--comet-c) 48%, transparent);
+    box-shadow:
+        0 0 16px color-mix(in srgb, var(--comet-c) 50%, transparent),
+        inset 0 0 20px color-mix(in srgb, var(--comet-c) 18%, transparent);
+}
+
+.comet-lightLabel {
+    font-family: var(--crt-font, monospace);
+    color: var(--comet-c);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+}
+
+/* reader */
+.comet-reader {
+    position: relative;
+    border: 2px solid var(--comet-c);
+    padding: 14px;
+    height: clamp(220px, 34vh, 340px);
+    overflow: hidden;
+    /* readerText scrolls */
+    box-sizing: border-box;
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.82)),
+        radial-gradient(circle at top center, color-mix(in srgb, var(--comet-c) 10%, transparent), transparent 58%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 0 22px color-mix(in srgb, var(--comet-c) 6%, transparent);
+}
+
+/* scanlines */
+.comet-reader::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background: repeating-linear-gradient(to bottom,
+            color-mix(in srgb, var(--comet-c) 18%, transparent) 0px,
+            color-mix(in srgb, var(--comet-c) 18%, transparent) 1px,
+            rgba(0, 0, 0, 0) 3px,
+            rgba(0, 0, 0, 0) 5px);
+
+    opacity: 0.20;
+    mix-blend-mode: screen;
+}
+
+/* rolling band */
+.comet-reader::after {
+    content: "";
+    position: absolute;
+    inset: -30% 0;
+    /* give it room to move */
+    pointer-events: none;
+
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            color-mix(in srgb, var(--comet-c) 22%, transparent) 45%,
+            color-mix(in srgb, var(--comet-c) 12%, transparent) 50%,
+            rgba(0, 0, 0, 0) 60%,
+            rgba(0, 0, 0, 0) 100%);
+
+    opacity: 0.11;
+    animation: comet-scan-roll 5.2s linear infinite;
+}
+
+.comet-readerText {
+    position: relative;
+    z-index: 1;
+
+    /* FIX: wrap text instead of running off the side */
+    margin: 0;
+    height: 100%;
+    overflow: auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+
+    white-space: pre-wrap;
+    /* preserves newlines but wraps */
+    overflow-wrap: anywhere;
+    /* breaks long tokens */
+    word-break: break-word;
+
+    font-family: var(--crt-font, monospace);
+    color: var(--comet-c);
+    font-size: 15px;
+    line-height: 1.45;
+    text-shadow: 0 0 10px color-mix(in srgb, var(--comet-c) 12%, transparent);
+
+    /* subtle overall flicker */
+    animation: comet-text-flicker 6.5s infinite;
+}
+
+/* Make scrollbars subtle (optional, but looks nicer) */
+.comet-readerText::-webkit-scrollbar {
+    width: 10px;
+}
+
+.comet-readerText::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--comet-c) 18%, transparent);
+    border-radius: 999px;
+    border: 2px solid rgba(0, 0, 0, 0.85);
+}
+
+.comet-readerText::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.55);
+}
+
+@keyframes comet-scan-roll {
+    0% {
+        transform: translateY(-25%);
+    }
+
+    100% {
+        transform: translateY(25%);
+    }
+}
+
+@keyframes comet-text-flicker {
+
+    0%,
+    100% {
+        filter: brightness(1);
+        opacity: 1;
+    }
+
+    10% {
+        filter: brightness(1.03);
+        opacity: 0.99;
+    }
+
+    11% {
+        filter: brightness(0.98);
+        opacity: 0.985;
+    }
+
+    20% {
+        filter: brightness(1.02);
+        opacity: 0.995;
+    }
+
+    21% {
+        filter: brightness(0.97);
+        opacity: 0.985;
+    }
+
+    60% {
+        filter: brightness(1.01);
+        opacity: 0.995;
+    }
+
+    61% {
+        filter: brightness(0.985);
+        opacity: 0.99;
+    }
+}
+
+/* search */
+.comet-searchRow {
+    border: 2px solid var(--comet-c);
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    /* FIX: stop input from visually bleeding past rounded border */
+    background:
+        linear-gradient(180deg, rgba(8, 10, 8, 0.94), rgba(0, 0, 0, 0.84));
+}
+
+.comet-searchLabel {
+    font-family: var(--crt-font, monospace);
+    color: var(--comet-c);
+    letter-spacing: 0.16em;
+    font-size: 12px;
+}
+
+.comet-searchInput {
+    /* FIX: prevent overflow from padding/border quirks */
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid color-mix(in srgb, var(--comet-c) 70%, transparent);
+    color: var(--comet-c);
+    padding: 10px 10px;
+    font-family: var(--crt-font, monospace);
+    font-size: 14px;
+    outline: none;
+
+    border-radius: var(--comet-radius-sm);
+}
+
+.comet-searchInput:disabled {
+    opacity: 0.6;
+}
+
+/* (kept in case you still have it somewhere; harmless otherwise) */
+.comet-searchBtn {
+    background: transparent;
+    border: 1px solid var(--comet-c);
+    color: var(--comet-c);
+    padding: 10px 14px;
+    cursor: pointer;
+    letter-spacing: 0.12em;
+    font-family: var(--crt-font, monospace);
+    text-transform: uppercase;
+}
+
+.comet-searchBtn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+/* keyboard */
+.comet-kbd {
+    border: 2px solid var(--comet-c);
+    padding: 14px 18px;
+    box-sizing: border-box;
+    min-height: 128px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(180deg, rgba(6, 10, 6, 0.92), rgba(0, 0, 0, 0.72));
+    box-shadow:
+        inset 0 0 0 1px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.comet-kbdTitle {
+    font-family: var(--crt-font, monospace);
+    color: var(--comet-c);
+    letter-spacing: 0.16em;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.comet-kbdGrid {
+    display: grid;
+    gap: 4px;
+    width: fit-content;
+    margin-inline: auto;
+    transform: translateX(-10px);
+}
+
+.comet-kbdRow {
+    display: flex;
+    gap: 11px;
+    justify-content: center;
+}
+
+/* keyboard row staggering */
+.comet-kbdGrid .comet-kbdRow:nth-child(1) {
+    padding-left: 0px;
+}
+
+.comet-kbdGrid .comet-kbdRow:nth-child(2) {
+    padding-left: 14px;
+}
+
+.comet-kbdGrid .comet-kbdRow:nth-child(3) {
+    padding-left: 28px;
+}
+
+.comet-kbdGrid .comet-kbdRow:nth-child(4) {
+    padding-left: 42px;
+}
+
+/* KEY SIZE TWEAK:
+   - shorter
+   - a hair wider
+   - less vertical space overall
+*/
+.comet-key {
+    width: 36px;
+    /* wider */
+    height: 20px;
+    /* shorter */
+
+    border: 1px solid color-mix(in srgb, var(--comet-c) 70%, transparent);
+    border-radius: var(--comet-key-radius);
+    display: grid;
+    place-items: center;
+
+    font-family: var(--crt-font, monospace);
+    font-size: 11px;
+
+    color: color-mix(in srgb, var(--comet-c) 92%, transparent);
+    background: color-mix(in srgb, var(--comet-c) 8%, rgba(0, 0, 0, 0.85));
+    box-shadow:
+        inset 0 0 0 1px rgba(0, 0, 0, 0.75),
+        0 1px 0 color-mix(in srgb, var(--comet-c) 14%, transparent);
+
+    user-select: none;
+}
+
+.comet-key.is-flash {
+    background: color-mix(in srgb, var(--comet-c) 30%, transparent);
+    color: #001400;
+    box-shadow:
+        0 0 18px color-mix(in srgb, var(--comet-c) 30%, transparent),
+        inset 0 0 18px color-mix(in srgb, var(--comet-c) 22%, transparent),
+        0 1px 0 color-mix(in srgb, var(--comet-c) 22%, transparent);
+    transform: translateY(-1px);
+}
+
+.comet-kbdHint {
+    margin-top: 10px;
+    font-family: var(--crt-font, monospace);
+    font-size: 12px;
+    color: var(--comet-c-weak);
+}
+
+@media (max-width: 820px) {
+    .comet {
+        padding: 14px;
+        gap: 12px;
+        border-radius: 24px;
+    }
+
+    .comet-top {
+        align-items: flex-start;
+        flex-direction: column;
+        min-height: unset;
+    }
+
+    .comet-brand {
+        width: 100%;
+    }
+
+    .comet-indicators {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
+    }
+
+    .comet-brandMark {
+        width: 60px;
+        height: 60px;
+    }
+
+    .comet-kbdGrid {
+        transform: translateX(-6px);
+    }
+}

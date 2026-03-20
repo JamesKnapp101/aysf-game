@@ -51,6 +51,7 @@ export interface GossipContext {
 
 interface GenerateParams {
   npcId: string;
+  assistantContext?: string;
   characterProfile: CharacterProfile;
   conversationHistory: ConversationEntry[];
   playerInput: PlayerInput;
@@ -60,8 +61,13 @@ interface GenerateParams {
 export async function generateClaudeResponse(
   params: GenerateParams,
 ): Promise<string> {
-  const { characterProfile, conversationHistory, playerInput, gossipContext } =
-    params;
+  const {
+    assistantContext,
+    characterProfile,
+    conversationHistory,
+    playerInput,
+    gossipContext,
+  } = params;
 
   // Create Anthropic client with API key from environment
   // This ensures the API key is loaded before the client is created
@@ -74,6 +80,7 @@ export async function generateClaudeResponse(
     characterProfile,
     playerInput,
     gossipContext,
+    assistantContext,
   );
 
   // Build conversation history for Claude
@@ -99,9 +106,13 @@ export function buildSystemPrompt(
   characterProfile: CharacterProfile,
   playerInput: PlayerInput,
   gossipContext?: GossipContext,
+  assistantContext?: string,
 ): string {
   const profile = normalizeCharacterProfile(characterProfile);
   let gossipInstructions = "";
+  const contextInstructions = assistantContext?.trim()
+    ? `\nLive context for this interaction:\n${assistantContext.trim()}`
+    : "";
   if (gossipContext?.npcSecret) {
     const { requiresGossipCount, currentCount, text } = gossipContext.npcSecret;
     const remaining = requiresGossipCount - currentCount;
@@ -146,7 +157,7 @@ ${formatInlineList("Voice", profile.voice)}
 ${formatBulletList("Goals", profile.goals)}
 ${formatBulletList("Known facts", profile.knownFacts)}
 ${formatBulletList("Unknown facts", profile.unknownFacts)}
-${formatBulletList("Directives", profile.directives ?? [])}${gossipInstructions}
+${formatBulletList("Directives", profile.directives ?? [])}${gossipInstructions}${contextInstructions}
 
 Reply rules:
 - Stay in character. You are ${profile.name}, not an AI.

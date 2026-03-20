@@ -159,7 +159,7 @@ export type ItemSettings =
   | { isOn: boolean; kind: "flashlight" }
   | { isOn: boolean; kind: "goggles" }
   | { currentViewIndex: number; kind: "camera-gun-viewer" }
-  | { hasLink: boolean; isOn: boolean; kind: "plt-viewer" };
+  | { hasLink: boolean; isOn: boolean; kind: "comet-viewer" };
 
 export type PlayerClothes = {
   body: ItemId | undefined;

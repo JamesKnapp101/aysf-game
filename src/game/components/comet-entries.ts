@@ -1,6 +1,6 @@
-import type { PltEntry } from "./plt-index";
+import type { CometEntry } from "./comet-index";
 
-export const DEFAULT_PLT_ENTRIES: PltEntry[] = [
+export const DEFAULT_COMET_ENTRIES: CometEntry[] = [
   {
     id: "amnesia",
     terms: ["amnesia"],
@@ -19,7 +19,7 @@ export const DEFAULT_PLT_ENTRIES: PltEntry[] = [
   {
     id: "artificial_intelligence",
     terms: ["AI", "artificial", "intelligence"],
-    body: "Artificial Intelligence was first successfully demonstrated over 100 years ago and has become incorporated in many aspects of modern technology, including the Central Library.",
+    body: "Artificial Intelligence was first successfully demonstrated over 1000 years ago and has become incorporated in many aspects of modern technology, including the Central Library.",
   },
   {
     id: "baton",
@@ -127,6 +127,32 @@ export const DEFAULT_PLT_ENTRIES: PltEntry[] = [
     body: "An IDF, or Inertial Dampening Field, is a form of personal shield protection which usually comes in the form of a belt, or harness. An inertial dampening field extends around the wearer, and converts inertial energy to electrical energy, which it then absorbs. The incoming projectile or projectiles, robbed of their inertial energy, fall to the ground harmlessly as long as the field is effective. The belt contains the power source as well as the electronics which absorb the charge. An IDF will eventually wear out under persistent attack, as the absorbed energy burns out a portion of its self-contained fuse system each time it is struck. When the fuse system is completely burned out, the field disintegrates. The fuse system is currently not field replacable. IDFs come in two classes; Class One will absorb anything up to and including a gauss projectile, and will also convert heat and electrical attacks. Class Two is the same as Class One, except it will not repell heat or electricity.",
   },
   {
+    id: "isosceles_onche",
+    terms: [
+      "isosceles",
+      "onche",
+      "water treatment",
+      "supervisor",
+      "awards",
+      "supervisor",
+    ],
+    body: "Isosceles Onche is one of the most accomplished scientists in the field of Water Treatment, having won several awards in that field which include the 'Outstanding Achievement in Porous Membrane Filtration Award', the 'Skoglund Prize for Advances in Recursive Osmosis', the 'Platinum Drop', the 'Bevelheimer-Chang Decoration for Exemplary Contributions to the Field of Water Conservation', the 'Hixton Estate Science Bestowal', the 'Brillings Tiara of Scientific Achievement', the 'Curioso Medal of Discovery for her study of sublimation', as well as an eighth award, the 'Hottest Legs Trophy', which Onche insists on displaying with the rest in all marketing material, to the chagrin of her critics, and the delight of her fans. Her current occupation is Water Treatment Supervisor. She is often photographed, and even painted, with her cat Iggy.",
+  },
+  {
+    id: "iggy_onche",
+    terms: [
+      "iggy",
+      "onche",
+      "cat",
+      "pet",
+      "collar",
+      "pendant",
+      "onyx",
+      "secret",
+    ],
+    body: "Iggy Onche is primarily known for being the cat of Isosceles Onche, and he is frequently photographed with her wearing his signature collar, from which hangs an onyx pendant. He captured attention as he began showing up at press conferences, important video calls, and other high-profile events. His exact breed in unknown (a mutt, in essence) but he is a short-haired, black and white cat with one ragged ear, scratched in a fight. As of this writing he is nine years of age. It is rumored that the pendant he wears contains a secret, but this has not been confirmed.",
+  },
+  {
     id: "jacovski_zhang_disease",
     terms: ["jackovsky", "zhang", "jz"],
     body: "Named for the unfortunate husband and wife medical team who first contracted it, and who, prior to their deaths, were responsible for uncovering a wealth of valuable information about the condition, this disease primarily effects the blood, causing rapid interior clotting which begins at the extremities and works its way in over the course of days to the lungs, heart and brain. It is generally treated with pentatrosin.",
@@ -187,9 +213,9 @@ export const DEFAULT_PLT_ENTRIES: PltEntry[] = [
     body: "So's your Mom.",
   },
   {
-    id: "plt",
-    terms: ["plt"],
-    body: "A convenient, portable method of communicating with the central library without having to physically travel to a library terminal.",
+    id: "comet",
+    terms: ["comet", "terminal", "library terminal"],
+    body: "Comet is a convenient, portable method of communicating with the central library without having to physically travel to a library terminal.",
   },
   {
     id: "plugh",
@@ -228,7 +254,7 @@ export const DEFAULT_PLT_ENTRIES: PltEntry[] = [
   },
   {
     id: "seritroxin",
-    terms: ["seritroxin"],
+    terms: ["seritroxin", "radiation", "cure"],
     body: "Seritroxin is a powerful drug used to counteract the effects of radiation exposure.",
   },
   {

@@ -60,7 +60,7 @@ export const playerScoreMap = {
   activated_level_two_lights: { value: 5 },
   activated_main_power: { value: 5 },
   activated_movie_projector: { value: 5 },
-  activated_plt_link: { value: 5 },
+  activated_comet_link: { value: 5 },
   completed_engine_shut_down: { value: 5 },
   defeated_xl999: { value: 5 },
   discovered_magic_word: { value: 5 },

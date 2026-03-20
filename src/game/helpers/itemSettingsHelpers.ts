@@ -62,35 +62,35 @@ export function areGogglesOn(
 }
 
 // ============================================================================
-// PLT Viewer Settings
+// Comet Viewer Settings
 // ============================================================================
 
-export interface PLTViewerSettings {
-  kind: "plt-viewer";
+export interface CometViewerSettings {
+  kind: "comet-viewer";
   isOn: boolean;
   hasLink: boolean;
 }
 
-export function getPLTViewerSettings(
+export function getCometViewerSettings(
   state: GameState,
-  itemId: ItemId = "PLT",
-): PLTViewerSettings | undefined {
+  itemId: ItemId = "Comet",
+): CometViewerSettings | undefined {
   const settings = state.itemState.itemSettings[itemId];
   if (!settings) return undefined;
-  if (settings.kind !== "plt-viewer") return undefined;
+  if (settings.kind !== "comet-viewer") return undefined;
   return settings;
 }
 
-export function isPLTViewerOn(
+export function isCometViewerOn(
   state: GameState,
-  itemId: ItemId = "PLT",
+  itemId: ItemId = "Comet",
 ): boolean {
-  const settings = getPLTViewerSettings(state, itemId);
+  const settings = getCometViewerSettings(state, itemId);
   return settings?.isOn ?? false;
 }
 
-export function hasPLTLink(state: GameState, itemId: ItemId = "PLT"): boolean {
-  const settings = getPLTViewerSettings(state, itemId);
+export function hasCometLink(state: GameState, itemId: ItemId = "Comet"): boolean {
+  const settings = getCometViewerSettings(state, itemId);
   return settings?.hasLink ?? false;
 }
 

@@ -118,14 +118,14 @@ function buildHydroponicsTerminalOverlay(ctx: ExamineItemContext): ActionResult 
   };
 }
 
-function buildPltOverlay(ctx: ExamineItemContext): ActionResult {
+function buildCometOverlay(ctx: ExamineItemContext): ActionResult {
   return {
     state: ctx.state,
     overlay: withPostCloseNotifications(
       {
-        kind: "plt-viewer" as const,
-        isOn: (ctx.state.itemState.itemSettings["PLT"] as any)?.isOn,
-        hasLink: (ctx.state.itemState.itemSettings["PLT"] as any)?.hasLink,
+        kind: "comet-viewer" as const,
+        isOn: (ctx.state.itemState.itemSettings["Comet"] as any)?.isOn,
+        hasLink: (ctx.state.itemState.itemSettings["Comet"] as any)?.hasLink,
       },
       ctx.postCloseNotifications,
     ),
@@ -225,8 +225,8 @@ const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
     handle: buildHydroponicsTerminalOverlay,
   },
   {
-    matches: (item) => item.meta?.kind === "plt-viewer",
-    handle: buildPltOverlay,
+    matches: (item) => item.meta?.kind === "comet-viewer",
+    handle: buildCometOverlay,
   },
   {
     matches: (item) => item.id === "PowerStationMonitor",

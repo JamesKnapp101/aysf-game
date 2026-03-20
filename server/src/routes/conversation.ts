@@ -11,6 +11,7 @@ const router = express.Router();
 
 interface ConversationRequest {
   npcId: string;
+  assistantContext?: string;
   characterProfile: CharacterProfile;
   conversationHistory: ConversationEntry[];
   playerInput: PlayerInput;
@@ -28,6 +29,7 @@ const RATE_LIMIT_MS = 100; // 1 second between requests
 export function getConversationCacheKey(request: ConversationRequest): string {
   return JSON.stringify({
     npcId: request.npcId,
+    assistantContext: request.assistantContext ?? null,
     characterProfile: request.characterProfile,
     conversationHistory: request.conversationHistory ?? [],
     playerInput: {
@@ -42,6 +44,7 @@ router.post("/ask", async (req: Request, res: Response) => {
   try {
     const {
       npcId,
+      assistantContext,
       characterProfile,
       conversationHistory,
       playerInput,
@@ -74,6 +77,7 @@ router.post("/ask", async (req: Request, res: Response) => {
     // Check cache first
     const cacheKey = getConversationCacheKey({
       npcId,
+      assistantContext,
       characterProfile,
       conversationHistory: conversationHistory || [],
       playerInput,
@@ -94,6 +98,7 @@ router.post("/ask", async (req: Request, res: Response) => {
     );
     const response = await generateClaudeResponse({
       npcId,
+      assistantContext,
       characterProfile,
       conversationHistory: conversationHistory || [],
       playerInput,
@@ -115,7 +120,6 @@ router.post("/ask", async (req: Request, res: Response) => {
     });
   }
 });
-
 // Health check endpoint
 router.get("/health", (req: Request, res: Response) => {
   res.json({

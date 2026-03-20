@@ -133,14 +133,14 @@ function getNpcTopicUsageKey(
   return input.type === "tell" ? `tell:${input.topic}` : input.topic;
 }
 
-function getNpcConversationHistory(
+export function getNpcConversationHistory(
   state: GameState,
   npcId: string,
 ): ConversationHistoryEntry[] {
   return getNpcConversationState(state, npcId)?.conversationHistory ?? [];
 }
 
-function appendNpcConversationHistory(
+export function appendNpcConversationHistory(
   state: GameState,
   npcId: string,
   historyEntry: ConversationHistoryEntry,
