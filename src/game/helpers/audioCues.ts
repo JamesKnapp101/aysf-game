@@ -3,17 +3,25 @@ import { getAdjacentItemContacts } from "@game/helpers/adjacentContacts";
 import { GameState } from "@game/types/gameTypes";
 import { Direction } from "@game/types/roomTypes";
 
-type AudioCueContext = {
+export type AudioCueContext = {
   state: GameState;
   item: any;
   dirFromPlayer: Direction;
 };
 
-type AudioCue = string | ((ctx: AudioCueContext) => string | null | undefined);
+export type AudioCue =
+  | string
+  | ((ctx: AudioCueContext) => string | null | undefined);
 
-type AudioCueRegistry = Record<string, AudioCue>; // keyed by itemId
+export type AudioCueRegistry = Record<string, AudioCue>; // keyed by itemId
 
-function resolveAudioCue(
+export type ResolvedAdjacentAudioCue = {
+  dirFromPlayer: Direction;
+  itemId: string;
+  text: string;
+};
+
+export function resolveAudioCue(
   ctx: AudioCueContext,
   registry?: AudioCueRegistry,
 ): string | null {
@@ -40,6 +48,58 @@ function resolveAudioCue(
     return `You hear a strange shifting sound coming from the ${dirFromPlayer}. There's something in the darkness there.`;
   }
   return null;
+}
+
+export function getResolvedAdjacentAudioCues(
+  state: GameState,
+  opts?: {
+    includeItem?: (item: any) => boolean;
+    registry?: AudioCueRegistry;
+    region?: Set<string>;
+  },
+): ResolvedAdjacentAudioCue[] {
+  const playerRoomId = state.player.roomId;
+  const region = opts?.region;
+
+  if (region && !region.has(playerRoomId)) {
+    return [];
+  }
+
+  const includeItem =
+    opts?.includeItem ??
+    ((item: any) =>
+      item?.itemCategory === "animate" ||
+      typeof item?.meta?.audioCue === "string" ||
+      typeof item?.meta?.audioCue === "function" ||
+      item?.id?.toLowerCase()?.includes("bomb"));
+
+  const contacts = getAdjacentItemContacts(state, includeItem);
+  if (contacts.length === 0) {
+    return [];
+  }
+
+  const candidates: ResolvedAdjacentAudioCue[] = [];
+
+  for (const contact of contacts) {
+    const item = (state.world.items as any[]).find(
+      (candidate) => candidate.id === contact.itemId,
+    );
+    if (!item) continue;
+
+    const text = resolveAudioCue(
+      { state, item, dirFromPlayer: contact.dirFromPlayer },
+      opts?.registry,
+    );
+    if (!text) continue;
+
+    candidates.push({
+      dirFromPlayer: contact.dirFromPlayer,
+      itemId: contact.itemId,
+      text,
+    });
+  }
+
+  return candidates;
 }
 
 export function emitAdjacentAudioCues(
@@ -75,17 +135,10 @@ export function emitAdjacentAudioCues(
   const contacts = getAdjacentItemContacts(state, includeItem);
   if (contacts.length === 0) return state;
 
-  const candidates: Array<{ itemId: string; text: string }> = [];
-  for (const c of contacts) {
-    const item = (state.world.items as any[]).find((it) => it.id === c.itemId);
-    if (!item) continue;
-
-    const text = resolveAudioCue(
-      { state, item, dirFromPlayer: c.dirFromPlayer },
-      opts?.registry,
-    );
-    if (text) candidates.push({ itemId: c.itemId, text });
-  }
+  const candidates = getResolvedAdjacentAudioCues(state, {
+    includeItem,
+    registry: opts?.registry,
+  });
 
   if (candidates.length === 0) {
     if (contacts.length === 0) {
@@ -129,11 +182,17 @@ export function emitAdjacentAudioCues(
 
   // Pick up to N (random-ish)
   // let next = state;
-  for (let i = 0; i < Math.min(maxLinesPerTick, candidates.length); i++) {
+  const remainingCandidates = [...candidates];
+  for (
+    let i = 0;
+    i < Math.min(maxLinesPerTick, remainingCandidates.length);
+    i++
+  ) {
     const idx = Math.floor(
-      (typeof rng === "function" ? rng() : Math.random()) * candidates.length,
+      (typeof rng === "function" ? rng() : Math.random()) *
+        remainingCandidates.length,
     );
-    const [picked] = candidates.splice(idx, 1);
+    const [picked] = remainingCandidates.splice(idx, 1);
     updatedAudioState = appendLog(updatedAudioState, picked.text);
   }
 

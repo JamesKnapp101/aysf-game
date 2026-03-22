@@ -5,7 +5,64 @@ export type CometDisplayOptions = {
   analysisBlock?: string;
   confidenceLabel?: string;
   confidenceScore?: number;
+  idBase?: string;
+  pendingText?: string;
 };
+
+export type CometDisplayMessageRole = "assistant" | "system" | "user";
+
+export type CometDisplayMessageTone =
+  | "analysis"
+  | "confidence"
+  | "default"
+  | "pending"
+  | "status"
+  | "welcome";
+
+export type CometDisplayMessage = {
+  id: string;
+  label: string;
+  role: CometDisplayMessageRole;
+  text: string;
+  tone: CometDisplayMessageTone;
+};
+
+function buildMessage(
+  id: string,
+  role: CometDisplayMessageRole,
+  text: string,
+  tone: CometDisplayMessageTone,
+  label: string,
+): CometDisplayMessage {
+  return {
+    id,
+    label,
+    role,
+    text,
+    tone,
+  };
+}
+
+function buildUserMessage(idBase: string, text: string): CometDisplayMessage {
+  return buildMessage(`${idBase}-user`, "user", text, "default", "YOU");
+}
+
+function buildAssistantMessage(
+  idBase: string,
+  text: string,
+  tone: CometDisplayMessageTone = "default",
+): CometDisplayMessage {
+  return buildMessage(`${idBase}-assistant`, "assistant", text, tone, "COMET");
+}
+
+function buildSystemMessage(
+  idBase: string,
+  text: string,
+  tone: CometDisplayMessageTone,
+  label: string,
+): CometDisplayMessage {
+  return buildMessage(`${idBase}-system`, "system", text, tone, label);
+}
 
 export function renderLibraryText(raw: string): string {
   const stripped = raw.replace(/~/g, "");
@@ -14,41 +71,101 @@ export function renderLibraryText(raw: string): string {
   return withBreaks.trim();
 }
 
-export function historyToDisplaySegments(
+export function historyToDisplayMessages(
   history: ConversationHistoryEntry[],
-): string[] {
-  return history.map(
-    (entry) =>
-      `You: ${entry.topic}\nComet: ${renderLibraryText(entry.response)}`,
-  );
+): CometDisplayMessage[] {
+  return history.flatMap((entry, index) => {
+    const idBase = `turn-${entry.turn}-${index}`;
+    return [
+      buildUserMessage(idBase, entry.topic),
+      buildAssistantMessage(idBase, renderLibraryText(entry.response)),
+    ];
+  });
 }
 
-export function formatDisplaySegment(
+export function buildCometExchangeMessages(
   input: string,
   response: string,
   opts?: CometDisplayOptions,
-): string {
-  const lines = [`You: ${input}`];
+): CometDisplayMessage[] {
+  const idBase = opts?.idBase ?? "exchange";
+  const messages: CometDisplayMessage[] = [buildUserMessage(idBase, input)];
 
   if (opts?.analysisBlock) {
-    lines.push(opts.analysisBlock);
+    messages.push(
+      buildSystemMessage(
+        `${idBase}-analysis`,
+        opts.analysisBlock,
+        "analysis",
+        "ANALYSIS",
+      ),
+    );
   }
 
   if (
     typeof opts?.confidenceScore === "number" &&
     typeof opts.confidenceLabel === "string"
   ) {
-    lines.push(
-      `Confidence Score: ${opts.confidenceScore}/100 (${opts.confidenceLabel})`,
+    messages.push(
+      buildSystemMessage(
+        `${idBase}-confidence`,
+        `Confidence Score: ${opts.confidenceScore}/100 (${opts.confidenceLabel})`,
+        "confidence",
+        "CONFIDENCE",
+      ),
     );
   }
 
-  lines.push(`Comet: ${renderLibraryText(response)}`);
-  return lines.join("\n");
+  messages.push(
+    buildAssistantMessage(idBase, renderLibraryText(response)),
+  );
+
+  return messages;
 }
 
-export function getCometWelcomeText(): string {
-  return "Comet is online. Ask about indexed topics, or ask for a best-guess assessment of your current surroundings.";
+export function buildCometPendingMessages(
+  input: string,
+  opts?: CometDisplayOptions,
+): CometDisplayMessage[] {
+  const idBase = opts?.idBase ?? "pending";
+  const messages: CometDisplayMessage[] = [buildUserMessage(idBase, input)];
+
+  if (opts?.analysisBlock) {
+    messages.push(
+      buildSystemMessage(
+        `${idBase}-analysis`,
+        opts.analysisBlock,
+        "analysis",
+        "ANALYSIS",
+      ),
+    );
+  }
+
+  if (opts?.pendingText) {
+    messages.push(
+      buildAssistantMessage(`${idBase}-pending`, opts.pendingText, "pending"),
+    );
+  }
+
+  return messages;
+}
+
+export function getCometWelcomeMessages(): CometDisplayMessage[] {
+  return [
+    buildAssistantMessage(
+      "welcome",
+      "Hello, I'm Comet, your AI Assistant. How can I help you today?",
+      "welcome",
+    ),
+  ];
+}
+
+export function buildCometStatusMessages(
+  text: string,
+  tone: CometDisplayMessageTone = "status",
+  label = "STATUS",
+): CometDisplayMessage[] {
+  return [buildSystemMessage(`status-${tone}`, text, tone, label)];
 }
 
 export function getCometEditReminderText(): string {

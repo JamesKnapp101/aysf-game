@@ -18,6 +18,7 @@ import type { ActionRequest, ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 
 type UseGameSessionOptions = {
+  onCometCommand: () => void;
   onInventoryCommand: () => void;
   onDiagnoseCommand: () => void;
 };
@@ -35,6 +36,7 @@ type UseGameSessionResult = {
 type ResultLike = Pick<ActionResult, "state" | "message" | "overlay">;
 
 export function useGameSession({
+  onCometCommand,
   onInventoryCommand,
   onDiagnoseCommand,
 }: UseGameSessionOptions): UseGameSessionResult {
@@ -96,9 +98,13 @@ export function useGameSession({
         onDiagnoseCommand();
       }
 
+      if (parsed.type === "comet") {
+        onCometCommand();
+      }
+
       replaceState(nextState);
     },
-    [onDiagnoseCommand, onInventoryCommand, replaceState],
+    [onCometCommand, onDiagnoseCommand, onInventoryCommand, replaceState],
   );
 
   const enqueueCommand = useCallback(

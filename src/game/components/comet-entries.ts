@@ -17,6 +17,36 @@ export const DEFAULT_COMET_ENTRIES: CometEntry[] = [
     body: "Anterograde amnesia is a form of amnesia where the afflicted person can not recall events after the incidence of a physical trauma.",
   },
   {
+    id: "octopus",
+    terms: ["octopus", "devilfish", "aquarium", "zoological", "zoo"],
+    body: "The aquarium in the zoological sector on level four is home to an octopus genetically engineered to be massive in size, weighing in at an estimated 2,200 pounds, or around 1,000 kilos. Its species is a patented species called 'Magnus Polypus Rex' and has been enhanced with both massive size and long life, currently over two hundred years old",
+  },
+  {
+    id: "aquarium",
+    terms: ["aquarium", "octopus", "zoological", "zoo"],
+    body: "There is a huge aquarium located in the zoological sector that contains a variety of fish, as well as a giant octopus",
+  },
+  {
+    id: "giant_bull",
+    terms: ["bull", "preserve", "grassland", "zoological", "zoo"],
+    body: "The zoological sector is home to a large grassland preserve, a simulated outdoor setting inhabited by a very large bull weighing in at 1,800 pounds, or 820 kilos. Its species is a patented species called 'Dominus Taurorum' and is generally docile",
+  },
+  {
+    id: "preserve",
+    terms: ["preserve", "bull", "zoological", "zoo", "grassland"],
+    body: "The preserve is in the zoological sector, and is home to a variety of animal life, including a giant bull",
+  },
+  {
+    id: "giant_owl",
+    terms: ["owl", "aviary", "zoological", "zoo", "birds"],
+    body: "The zoological sector is home to a large aviary, a simulated enclosed outdoor setting inhabited by a variety of different birds, including the exhibit's crown jewel, a giant owl. Its species is a patented species called 'Regina Bubonis Ingens'. The giant owl comes out during periods of simulated night",
+  },
+  {
+    id: "aviary",
+    terms: ["aviary", "birds", "zoological", "zoo", "owl"],
+    body: "The Aviary is in the zoological sector, and is home to a variety of bird life, including a giant owl. The aviary has night and day cycles",
+  },
+  {
     id: "artificial_intelligence",
     terms: ["AI", "artificial", "intelligence"],
     body: "Artificial Intelligence was first successfully demonstrated over 1000 years ago and has become incorporated in many aspects of modern technology, including the Central Library.",

@@ -25,6 +25,7 @@ import type { ActionRequest } from "./types/actionsTypes";
 import type { StatusEffect } from "./types/gameTypes";
 
 export type SidebarTab =
+  | "comet"
   | "inventory"
   | "status"
   | "log"
@@ -32,8 +33,12 @@ export type SidebarTab =
   | "settings"
   | "dna";
 
+type PromptFocusOwner = "game" | "comet";
+
 export const Game: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<SidebarTab>("status");
+  const [activeTab, setActiveTab] = useState<SidebarTab>("comet");
+  const [lastFocusedPrompt, setLastFocusedPrompt] =
+    useState<PromptFocusOwner>("game");
   const [showSplash, setShowSplash] = useState(true);
   const {
     gs,
@@ -44,13 +49,38 @@ export const Game: React.FC = () => {
     setGameState,
     setBrainActivityLevel,
   } = useGameSession({
+    onCometCommand: () => setActiveTab("comet"),
     onInventoryCommand: () => setActiveTab("inventory"),
     onDiagnoseCommand: () => setActiveTab("status"),
   });
   const { layout, setLayout, crtColor, setCrtColor } = useLayoutPrefs();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const cometInputRef = useRef<HTMLInputElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  const restorePromptFocus = useCallback(() => {
+    if (
+      lastFocusedPrompt === "comet" &&
+      cometInputRef.current &&
+      !cometInputRef.current.disabled
+    ) {
+      cometInputRef.current.focus();
+      return;
+    }
+
+    if (inputRef.current && !inputRef.current.disabled) {
+      inputRef.current.focus();
+    }
+  }, [lastFocusedPrompt]);
+
+  const handleGamePromptFocus = useCallback(() => {
+    setLastFocusedPrompt("game");
+  }, []);
+
+  const handleCometPromptFocus = useCallback(() => {
+    setLastFocusedPrompt("comet");
+  }, []);
 
   useWorldChunkHydration({ gs, stateRef, updateState });
 
@@ -191,7 +221,7 @@ export const Game: React.FC = () => {
             data-player-can-see={playerCanSee ? "true" : "false"}
             data-player-light-mode={playerLightMode}
             data-flashlight-on={flashlightOn ? "true" : "false"}
-            onClick={() => inputRef.current?.focus()}
+            onClick={restorePromptFocus}
           >
             <NotificationHost state={gs} setGameState={setGameState} />
 
@@ -214,6 +244,7 @@ export const Game: React.FC = () => {
               exits={exits}
               roomPanelFlexBasis={roomPanelFlexBasis}
               inputRef={inputRef}
+              restorePromptFocus={restorePromptFocus}
               activeEffects={activeEffects.join(" ")}
               roomIsDark={roomIsDark}
               roomAmbientLight={roomAmbientLight}
@@ -235,6 +266,7 @@ export const Game: React.FC = () => {
             {/* MAIN ROW: log + sidebar */}
             <LogPanel
               state={gs}
+              setGameState={setGameState}
               onCommand={enqueueCommand}
               layout={layout}
               setLayout={setLayout}
@@ -242,8 +274,12 @@ export const Game: React.FC = () => {
               setCrtColor={setCrtColor}
               roomPanelFlexBasis={roomPanelFlexBasis}
               inputRef={inputRef}
+              cometInputRef={cometInputRef}
               rootRef={rootRef}
               activeTab={activeTab}
+              isCometFocusOwner={lastFocusedPrompt === "comet"}
+              onCometPromptFocus={handleCometPromptFocus}
+              onGamePromptFocus={handleGamePromptFocus}
               setActiveTab={(tab: SidebarTab) => setActiveTab(tab)}
             />
           </div>

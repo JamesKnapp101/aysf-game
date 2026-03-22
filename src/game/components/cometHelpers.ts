@@ -17,6 +17,8 @@ const EDIT_REQUEST_PATTERNS = [
 const ASK_PATTERNS = [
   /\?$/,
   /^\s*(?:comet,?\s*)?(?:tell me about|ask comet about)\b/i,
+  /^\s*(?:comet,?\s*)?(?:(?:can|could|would)\s+you\s+)?tell me(?:\s+more)?\s+about\b/i,
+  /^\s*(?:comet,?\s*)?(?:anything else about|what about|more about|describe|explain|do you know)\b/i,
   /^\s*(?:comet,?\s*)?(?:how|what|why|where|when|who|can|could|would|should|is|are|do|does)\b/i,
 ];
 

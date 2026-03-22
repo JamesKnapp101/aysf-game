@@ -36,6 +36,64 @@
     background: rgb(var(--crt-color-rgb) / 0.08);
 }
 
+.game-tab-comet {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.12),
+            rgb(var(--crt-color-rgb) / 0.04));
+    box-shadow:
+        inset 0 0 0 1px rgb(var(--crt-color-rgb) / 0.12),
+        0 0 10px rgb(var(--crt-color-rgb) / 0.08);
+}
+
+.game-tab-comet:hover {
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.18),
+            rgb(var(--crt-color-rgb) / 0.06));
+}
+
+.game-tab-comet.game-tab-active {
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.26),
+            rgb(var(--crt-color-rgb) / 0.1));
+    box-shadow:
+        inset 0 0 0 1px rgb(var(--crt-color-rgb) / 0.2),
+        0 0 16px rgb(var(--crt-color-rgb) / 0.14);
+}
+
+.game-tab-cometText {
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.game-tab-cometStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.game-tab-cometDot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    border: 1px solid var(--crt-color);
+    background: transparent;
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.65);
+}
+
+.game-tab-cometDot.is-on {
+    background: rgb(var(--crt-color-rgb) / 0.65);
+    box-shadow:
+        0 0 8px rgb(var(--crt-color-rgb) / 0.55),
+        inset 0 0 8px rgb(var(--crt-color-rgb) / 0.35);
+}
+
 .game-sidebar-content {
     flex: 1 1 auto;
     min-height: 0;
@@ -47,6 +105,23 @@
             #000 0,
             #000 1px,
             #001100 2px);
+}
+
+.game-sidebar-content--comet {
+    display: flex;
+    padding: 8px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgb(0 0 0 / 0.94), rgb(0 0 0 / 0.96)),
+        repeating-linear-gradient(to bottom,
+            rgb(var(--crt-color-rgb) / 0.03) 0,
+            rgb(var(--crt-color-rgb) / 0.03) 1px,
+            transparent 2px,
+            transparent 4px);
+}
+
+.game-sidebar-content--comet>.comet {
+    flex: 1 1 auto;
 }
 
 .game-list {

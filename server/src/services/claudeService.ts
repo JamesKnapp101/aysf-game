@@ -168,7 +168,8 @@ Reply rules:
 - Reference prior conversation when useful.
 - Do not use stage directions, speaker labels, asterisks, or narrative asides like "*shallow breath*". Express tone, pain, and effort only through the spoken words unless literally spoken.
 - No fourth-wall breaks, em dashes, or profanity.
-- Anything from the player's present day counts as ancient history in this setting.`;
+- Real-world Earth events, people, and culture from the player's present day or earlier count as ancient history in this setting.
+- Do not treat in-voyage shipboard people, jobs, institutions, or supplied records as ancient unless the provided facts explicitly frame them as historical, obsolete, or archival.`;
 }
 
 function formatBulletList(label: string, items: string[]): string {

@@ -2,15 +2,24 @@ import type { LayoutPrefs } from "../hooks/useLayoutPrefs";
 import { getItemsInInventory } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 
+import { CometTerminal } from "@game/components/CometTerminal";
 import { DNASampleTab } from "@game/components/DNASampleTab";
 import { LogTab } from "@game/components/LogTab";
 import { QuantumTotePanel } from "@game/components/QuantumTotePanel";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { StatusTab } from "./StatusTab";
 
-type SidebarTab = "inventory" | "status" | "log" | "dna" | "hints" | "settings";
+type SidebarTab =
+  | "comet"
+  | "inventory"
+  | "status"
+  | "log"
+  | "dna"
+  | "hints"
+  | "settings";
 type LogPanelProps = {
   state: GameState;
+  setGameState?: (updater: (prev: GameState) => GameState) => void;
   onCommand: (input: string) => void;
   layout: LayoutPrefs;
   setLayout: React.Dispatch<React.SetStateAction<LayoutPrefs>>;
@@ -21,6 +30,10 @@ type LogPanelProps = {
   rootRef: React.RefObject<HTMLDivElement | null>;
   activeTab: SidebarTab;
   setActiveTab: (t: SidebarTab) => void;
+  cometInputRef?: React.RefObject<HTMLInputElement | null>;
+  isCometFocusOwner?: boolean;
+  onCometPromptFocus?: () => void;
+  onGamePromptFocus?: () => void;
 };
 
 function applyCRTColor(colorHex: string) {
@@ -69,6 +82,7 @@ function renderLogLine(line: string) {
 
 export const LogPanel: React.FC<LogPanelProps> = ({
   state,
+  setGameState = () => undefined,
   onCommand,
   layout,
   setLayout,
@@ -78,6 +92,10 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   rootRef,
   activeTab,
   setActiveTab,
+  cometInputRef,
+  isCometFocusOwner = false,
+  onCometPromptFocus = () => undefined,
+  onGamePromptFocus = () => undefined,
 }) => {
   const [input, setInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -86,6 +104,8 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   const inventoryItems = getItemsInInventory(state);
   const shouldStickToBottomRef = useRef(true);
   const logRef = useRef<HTMLDivElement | null>(null);
+  const internalCometInputRef = useRef<HTMLInputElement | null>(null);
+  const activeCometInputRef = cometInputRef ?? internalCometInputRef;
 
   const CRT_COLOR_OPTIONS = [
     { id: "green", label: "Green", value: "#00ff00" },
@@ -242,6 +262,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={onInputKeyDown}
+            onFocus={onGamePromptFocus}
             autoFocus
           />
         </form>
@@ -259,6 +280,20 @@ export const LogPanel: React.FC<LogPanelProps> = ({
         style={{ flex: `0 0 ${sidebarWidthPercent}%`, minWidth: 0 }}
       >
         <div className="game-tabs">
+          <button
+            type="button"
+            className={
+              "game-tab game-tab-comet" +
+              (activeTab === "comet" ? " game-tab-active" : "")
+            }
+            onClick={() => setActiveTab("comet")}
+          >
+            <span className="game-tab-cometText">Comet</span>
+            <span className="game-tab-cometStatus" aria-hidden="true">
+              <span className="game-tab-cometDot is-on" />
+              <span className="game-tab-cometDot is-on" />
+            </span>
+          </button>
           <button
             type="button"
             className={
@@ -315,7 +350,25 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           </button>
         </div>
 
-        <div className="game-sidebar-content">
+        <div
+          className={
+            "game-sidebar-content" +
+            (activeTab === "comet" ? " game-sidebar-content--comet" : "")
+          }
+        >
+          {activeTab === "comet" && (
+            <CometTerminal
+              forceLink={true}
+              forceOnline={true}
+              inputRef={activeCometInputRef}
+              isFocusOwner={isCometFocusOwner}
+              onPromptFocus={onCometPromptFocus}
+              setGameState={setGameState}
+              state={state}
+              variant="sidebar"
+            />
+          )}
+
           {activeTab === "inventory" && (
             <QuantumTotePanel state={state} inventoryItems={inventoryItems} />
           )}

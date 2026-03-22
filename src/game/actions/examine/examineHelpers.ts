@@ -118,20 +118,6 @@ function buildHydroponicsTerminalOverlay(ctx: ExamineItemContext): ActionResult 
   };
 }
 
-function buildCometOverlay(ctx: ExamineItemContext): ActionResult {
-  return {
-    state: ctx.state,
-    overlay: withPostCloseNotifications(
-      {
-        kind: "comet-viewer" as const,
-        isOn: (ctx.state.itemState.itemSettings["Comet"] as any)?.isOn,
-        hasLink: (ctx.state.itemState.itemSettings["Comet"] as any)?.hasLink,
-      },
-      ctx.postCloseNotifications,
-    ),
-  };
-}
-
 function buildPowerStationOverlay(ctx: ExamineItemContext): ActionResult {
   if (!ctx.state.worldState.powerRestoredSections["power-initialized"]) {
     return {
@@ -223,10 +209,6 @@ const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
   {
     matches: (item) => item.meta?.kind === "hydroponics-admin-terminal",
     handle: buildHydroponicsTerminalOverlay,
-  },
-  {
-    matches: (item) => item.meta?.kind === "comet-viewer",
-    handle: buildCometOverlay,
   },
   {
     matches: (item) => item.id === "PowerStationMonitor",

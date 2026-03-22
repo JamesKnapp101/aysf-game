@@ -5,8 +5,7 @@ import type {
   PlayerScoreId,
 } from "@game/types/gameTypes";
 
-export const GOSSIP_NOTIFICATION_TEXT =
-  "[You obtained some salacious gossip!]";
+export const GOSSIP_NOTIFICATION_TEXT = "You obtained some salacious gossip!";
 
 function getNextNotificationId(state: GameState): number {
   return state.uiState?.nextNotificationId ?? 1;
@@ -56,7 +55,9 @@ export function dismissNotification(
 ): GameState {
   const notifications = getNotifications(state);
 
-  if (!notifications.some((notification) => notification.id === notificationId)) {
+  if (
+    !notifications.some((notification) => notification.id === notificationId)
+  ) {
     return state;
   }
 
@@ -79,9 +80,9 @@ export function buildScoreNotification(
 ): GameNotificationDraft {
   return {
     kind: "score",
-    text: `[Your score has just went up by ${
+    text: `Your score has just went up by ${
       playerScoreMap[scoreId]?.value ?? 0
-    } points!]`,
+    } points!`,
   };
 }
 

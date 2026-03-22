@@ -50,7 +50,7 @@ export const LEVEL_FOUR: WorldChunk = {
       exits: [
         { direction: "south", toRoomId: "LevelFourCorridorTwo" },
         { direction: "west", doorId: "HydroponicsDoors" },
-        { direction: "north", toRoomId: "ZoologicalDoors" },
+        { direction: "north", doorId: "ZoologicalDoors" },
       ],
     },
     {

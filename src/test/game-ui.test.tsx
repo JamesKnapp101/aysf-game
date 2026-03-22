@@ -1,13 +1,13 @@
-import { HydroponicsAdminTerminalModal } from "@game/components/HydroponicsAdminTerminalModal";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { LogPanel } from "@game/components/LogPanel";
-import { LogTab } from "@game/components/LogTab";
 import { RoomCompass } from "@game/components/Compass";
 import { DNASampleTab } from "@game/components/DNASampleTab";
+import { HydroponicsAdminTerminalModal } from "@game/components/HydroponicsAdminTerminalModal";
+import { LogPanel } from "@game/components/LogPanel";
+import { LogTab } from "@game/components/LogTab";
 import { NotificationHost } from "@game/components/NotificationHost";
 import { StatusTab } from "@game/components/StatusTab";
 import type { GameState } from "@game/types/gameTypes";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it } from "vitest";
 import {
@@ -21,7 +21,10 @@ const layout = {
   sidebarWidthRatio: 0.3,
 };
 
-function renderLogPanel(state: GameState, activeTab: "inventory" | "log" | "dna" | "status" = "inventory") {
+function renderLogPanel(
+  state: GameState,
+  activeTab: "inventory" | "log" | "dna" | "status" = "inventory",
+) {
   return render(
     <LogPanel
       state={state}
@@ -102,7 +105,9 @@ describe("UI panels", () => {
     await user.click(employeeMenuItem as HTMLElement);
 
     expect(screen.getByTestId("hydro-log-count")).toHaveTextContent("1");
-    expect(screen.getByText(`Employee Record: ${employeeName}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`Employee Record: ${employeeName}`),
+    ).toBeInTheDocument();
 
     const sameEmployeeMenuItem = Array.from(
       container.querySelectorAll(".hints-menu-item"),
@@ -113,7 +118,9 @@ describe("UI panels", () => {
     await user.click(sameEmployeeMenuItem as HTMLElement);
 
     expect(screen.getByTestId("hydro-log-count")).toHaveTextContent("1");
-    expect(screen.getAllByText(`Employee Record: ${employeeName}`)).toHaveLength(1);
+    expect(
+      screen.getAllByText(`Employee Record: ${employeeName}`),
+    ).toHaveLength(1);
   });
 
   it("renders banked DNA samples in the DNA tab", async () => {
@@ -125,7 +132,9 @@ describe("UI panels", () => {
     render(<DNASampleTab gameState={state} />);
 
     expect(screen.getByText("Joelson Dend")).toBeInTheDocument();
-    expect(screen.getByText(/Severe liquefactive necrosis/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Severe liquefactive necrosis/i),
+    ).toBeInTheDocument();
   });
 
   it("reflects health, oxygen, temperature, radiation, and EEG state in the status tab", async () => {
@@ -188,7 +197,9 @@ describe("UI panels", () => {
     );
 
     expect(container.querySelectorAll(".compass-arm--active")).toHaveLength(8);
-    expect(container.querySelectorAll(".compass-label--active")).toHaveLength(4);
+    expect(container.querySelectorAll(".compass-label--active")).toHaveLength(
+      4,
+    );
   });
 
   it("renders queued notifications without touching the transcript", async () => {
@@ -201,21 +212,16 @@ describe("UI panels", () => {
           {
             id: 1,
             kind: "gossip" as const,
-            text: "[You obtained some salacious gossip!]",
+            text: "You obtained some salacious gossip!",
           },
         ],
       },
     };
 
-    render(
-      <NotificationHost
-        state={state}
-        setGameState={() => undefined}
-      />,
-    );
+    render(<NotificationHost state={state} setGameState={() => undefined} />);
 
     expect(
-      screen.getByText("[You obtained some salacious gossip!]"),
+      screen.getByText("You obtained some salacious gossip!"),
     ).toBeInTheDocument();
     expect(state.log).toHaveLength(0);
   });
@@ -247,4 +253,3 @@ function renderHydroponicsTerminal(initialState: GameState) {
 
   return render(<Harness />);
 }
-

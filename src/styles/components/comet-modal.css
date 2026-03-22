@@ -80,6 +80,16 @@
     overflow: hidden;
 }
 
+.comet--sidebar {
+    gap: 10px;
+    padding: 12px 12px 10px;
+    border-radius: 20px;
+    box-shadow:
+        0 16px 32px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 -16px 24px rgba(0, 0, 0, 0.32);
+}
+
 .comet::before {
     content: "";
     position: absolute;
@@ -115,12 +125,22 @@
         radial-gradient(circle at top left, color-mix(in srgb, var(--comet-c) 9%, transparent), transparent 58%);
 }
 
+.comet--sidebar .comet-top {
+    min-height: 64px;
+    padding: 10px 12px;
+    gap: 0.9rem;
+}
+
 .comet-brand {
     display: flex;
     align-items: center;
     gap: 18px;
     min-width: 0;
     flex: 1 1 auto;
+}
+
+.comet--sidebar .comet-brand {
+    gap: 12px;
 }
 
 .comet-brandMark {
@@ -138,10 +158,21 @@
         0 0 24px color-mix(in srgb, var(--comet-c) 10%, transparent);
 }
 
+.comet--sidebar .comet-brandMark {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+}
+
 .comet-brandIcon {
     width: 58px;
     height: 58px;
     overflow: visible;
+}
+
+.comet--sidebar .comet-brandIcon {
+    width: 44px;
+    height: 44px;
 }
 
 .comet-brandOrbit,
@@ -199,11 +230,19 @@
     min-width: 0;
 }
 
+.comet--sidebar .comet-logoArea {
+    gap: 5px;
+}
+
 .comet-logoLine1 {
     display: flex;
     align-items: baseline;
     gap: 16px;
     flex-wrap: wrap;
+}
+
+.comet--sidebar .comet-logoLine1 {
+    gap: 10px;
 }
 
 .comet-logoText {
@@ -216,13 +255,22 @@
     text-shadow: 0 0 22px color-mix(in srgb, var(--comet-c) 14%, transparent);
 }
 
+.comet--sidebar .comet-logoText {
+    font-size: clamp(24px, 2.2vw, 32px);
+}
+
 .comet-logoStrap {
     width: 100%;
     font-family: var(--crt-font, monospace);
     color: var(--comet-c-weak);
-    font-size: 10px;
+    font-size: 14px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
+}
+
+.comet--sidebar .comet-logoStrap {
+    font-size: 10px;
+    letter-spacing: 0.12em;
 }
 
 .comet-logoTag {
@@ -235,6 +283,11 @@
     line-height: 1;
 }
 
+.comet--sidebar .comet-logoTag {
+    font-size: clamp(12px, 1.4vw, 16px);
+    letter-spacing: 0.2em;
+}
+
 .comet-indicators {
     display: flex;
     gap: 18px;
@@ -244,11 +297,19 @@
     align-self: stretch;
 }
 
+.comet--sidebar .comet-indicators {
+    gap: 12px;
+}
+
 .comet-indicatorStack {
     display: grid;
     justify-items: center;
     align-content: center;
     gap: 8px;
+}
+
+.comet--sidebar .comet-indicatorStack {
+    gap: 5px;
 }
 
 .comet-light {
@@ -258,6 +319,11 @@
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.65);
     background: black; 
     border-radius: var(--comet-radius-sm);
+}
+
+.comet--sidebar .comet-light {
+    width: 14px;
+    height: 38px;
 }
 
 .comet-light.is-on {
@@ -272,6 +338,10 @@
     color: var(--comet-c);
     font-size: 12px;
     letter-spacing: 0.12em;
+}
+
+.comet--sidebar .comet-lightLabel {
+    font-size: 10px;
 }
 
 /* reader */
@@ -289,6 +359,12 @@
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.03),
         0 0 22px color-mix(in srgb, var(--comet-c) 6%, transparent);
+}
+
+.comet--sidebar .comet-reader {
+    height: auto;
+    min-height: 0;
+    padding: 12px;
 }
 
 /* scanlines */
@@ -330,29 +406,151 @@
 .comet-readerText {
     position: relative;
     z-index: 1;
-
-    /* FIX: wrap text instead of running off the side */
-    margin: 0;
     height: 100%;
     overflow: auto;
     overflow-y: auto;
     overscroll-behavior: contain;
     scroll-behavior: smooth;
+    padding-right: 4px;
+}
 
+.comet--sidebar .comet-readerText {
+    padding-right: 2px;
+}
+
+.comet-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 100%;
+    animation: comet-text-flicker 6.5s infinite;
+}
+
+.comet--sidebar .comet-thread {
+    gap: 10px;
+}
+
+.comet-messageRow {
+    display: flex;
+    width: 100%;
+}
+
+.comet-messageRow--assistant {
+    justify-content: flex-start;
+}
+
+.comet-messageRow--user {
+    justify-content: flex-end;
+}
+
+.comet-messageRow--system {
+    justify-content: center;
+}
+
+.comet-message {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: min(100%, 34rem);
+    padding: 10px 12px 11px;
+    border: 1px solid color-mix(in srgb, var(--comet-c) 52%, transparent);
+    border-radius: 16px;
+    background:
+        linear-gradient(180deg, rgba(6, 12, 6, 0.92), rgba(0, 0, 0, 0.84));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 0 18px color-mix(in srgb, var(--comet-c) 8%, transparent);
+}
+
+.comet--sidebar .comet-message {
+    max-width: min(100%, 20rem);
+    padding: 9px 10px 10px;
+    gap: 5px;
+}
+
+.comet-message--assistant {
+    border-radius: 16px 16px 16px 6px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--comet-c) 10%, rgba(0, 0, 0, 0.88)),
+            rgba(0, 0, 0, 0.84)),
+        linear-gradient(135deg, color-mix(in srgb, var(--comet-c) 8%, transparent), transparent 48%);
+}
+
+.comet-message--user {
+    text-align: right;
+    align-items: flex-end;
+    border-radius: 16px 16px 6px 16px;
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.76)),
+        linear-gradient(135deg, transparent, color-mix(in srgb, var(--comet-c) 10%, transparent));
+    border-color: color-mix(in srgb, var(--comet-c) 42%, transparent);
+}
+
+.comet-message--system {
+    width: min(100%, 24rem);
+    max-width: 100%;
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--comet-c) 32%, transparent);
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.64));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02),
+        0 0 12px color-mix(in srgb, var(--comet-c) 5%, transparent);
+}
+
+.comet-message--welcome {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 0 22px color-mix(in srgb, var(--comet-c) 10%, transparent);
+}
+
+.comet-message--pending {
+    animation: comet-pending-pulse 1.3s ease-in-out infinite;
+}
+
+.comet-message--analysis,
+.comet-message--confidence,
+.comet-message--status {
+    width: min(100%, 24rem);
+}
+
+.comet-message--analysis .comet-messageBody {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.comet-message--confidence .comet-messageBody,
+.comet-message--status .comet-messageBody {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.comet-messageLabel {
+    font-family: var(--crt-font, monospace);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--comet-c-weak);
+}
+
+.comet-message--user .comet-messageLabel {
+    text-align: right;
+}
+
+.comet-messageBody {
     white-space: pre-wrap;
-    /* preserves newlines but wraps */
     overflow-wrap: anywhere;
-    /* breaks long tokens */
     word-break: break-word;
-
     font-family: var(--crt-font, monospace);
     color: var(--comet-c);
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.45;
     text-shadow: 0 0 10px color-mix(in srgb, var(--comet-c) 12%, transparent);
+}
 
-    /* subtle overall flicker */
-    animation: comet-text-flicker 6.5s infinite;
+.comet--sidebar .comet-messageBody {
+    font-size: 13px;
+    line-height: 1.42;
 }
 
 /* Make scrollbars subtle (optional, but looks nicer) */
@@ -419,6 +617,22 @@
     }
 }
 
+@keyframes comet-pending-pulse {
+
+    0%,
+    100% {
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.04),
+            0 0 14px color-mix(in srgb, var(--comet-c) 8%, transparent);
+    }
+
+    50% {
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.06),
+            0 0 22px color-mix(in srgb, var(--comet-c) 14%, transparent);
+    }
+}
+
 /* search */
 .comet-searchRow {
     border: 2px solid var(--comet-c);
@@ -434,11 +648,20 @@
         linear-gradient(180deg, rgba(8, 10, 8, 0.94), rgba(0, 0, 0, 0.84));
 }
 
+.comet--sidebar .comet-searchRow {
+    padding: 10px 12px;
+    gap: 8px;
+}
+
 .comet-searchLabel {
     font-family: var(--crt-font, monospace);
     color: var(--comet-c);
     letter-spacing: 0.16em;
     font-size: 12px;
+}
+
+.comet--sidebar .comet-searchLabel {
+    font-size: 11px;
 }
 
 .comet-searchInput {
@@ -457,6 +680,11 @@
     outline: none;
 
     border-radius: var(--comet-radius-sm);
+}
+
+.comet--sidebar .comet-searchInput {
+    padding: 9px 10px;
+    font-size: 13px;
 }
 
 .comet-searchInput:disabled {
@@ -496,6 +724,11 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.025);
 }
 
+.comet--sidebar .comet-kbd {
+    min-height: 98px;
+    padding: 10px 12px;
+}
+
 .comet-kbdTitle {
     font-family: var(--crt-font, monospace);
     color: var(--comet-c);
@@ -512,10 +745,19 @@
     transform: translateX(-10px);
 }
 
+.comet--sidebar .comet-kbdGrid {
+    gap: 3px;
+    transform: none;
+}
+
 .comet-kbdRow {
     display: flex;
     gap: 11px;
     justify-content: center;
+}
+
+.comet--sidebar .comet-kbdRow {
+    gap: 6px;
 }
 
 /* keyboard row staggering */
@@ -561,6 +803,12 @@
         0 1px 0 color-mix(in srgb, var(--comet-c) 14%, transparent);
 
     user-select: none;
+}
+
+.comet--sidebar .comet-key {
+    width: 28px;
+    height: 18px;
+    font-size: 10px;
 }
 
 .comet-key.is-flash {

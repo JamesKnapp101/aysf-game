@@ -11,9 +11,6 @@ import { ReaderModal } from "./ReaderModal";
 
 type RunAction = (verb: string, args?: Record<string, unknown>) => void;
 
-const LazyCometModal = lazy(() =>
-  import("./CometModal").then((mod) => ({ default: mod.CometModal })),
-);
 const LazyPowerStationTerminalModal = lazy(() =>
   import("./PowerStationTerminalModal").then((mod) => ({
     default: mod.PowerStationTerminalModal,
@@ -134,14 +131,6 @@ export function OverlayHost({
           }}
           onClose={onClose}
         />
-      );
-    }
-
-    case "comet-viewer": {
-      return (
-        <Suspense fallback={<OverlayLoadingModal onClose={onClose} title="Loading Comet" />}>
-          <LazyCometModal onClose={onClose} state={state} setGameState={setGameState} />
-        </Suspense>
       );
     }
 

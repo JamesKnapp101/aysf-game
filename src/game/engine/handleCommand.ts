@@ -266,6 +266,12 @@ export async function handleCommand(
       break;
     }
 
+    case "comet": {
+      consumesTurn = false;
+      message = `You open Comet.`;
+      break;
+    }
+
     case "unknown":
     default: {
       consumesTurn = false;
@@ -434,6 +440,8 @@ export async function handleCommand(
     logWithEcho = `> ${cmd.raw ?? "?"}\n${message}`;
   } else if (cmd.type === "diagnose") {
     logWithEcho = `> diagnose\n${message}`;
+  } else if (cmd.type === "comet") {
+    logWithEcho = `> comet\n${message}`;
   } else {
     // fallback
     logWithEcho = message;

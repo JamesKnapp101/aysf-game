@@ -17,6 +17,7 @@ type RoomDescriptionPanelProps = {
   exits: Direction[];
   roomPanelFlexBasis: number | string;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  restorePromptFocus?: () => void;
   activeEffects: string;
   roomIsDark: boolean;
   roomAmbientLight: boolean;
@@ -163,6 +164,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   exits,
   roomPanelFlexBasis,
   inputRef,
+  restorePromptFocus,
   activeEffects,
   roomIsDark,
   roomAmbientLight,
@@ -540,7 +542,14 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     <section
       className="game-room-panel"
       style={{ flex: `0 0 ${roomPanelFlexBasis}`, minHeight: 0 }}
-      onClick={() => inputRef.current?.focus()}
+      onClick={() => {
+        if (restorePromptFocus) {
+          restorePromptFocus();
+          return;
+        }
+
+        inputRef.current?.focus();
+      }}
       data-status={activeEffects}
       data-room-is-dark={roomIsDark}
       data-room-ambient-light={roomAmbientLight}
