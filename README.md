@@ -25,7 +25,14 @@ The project is playable as a standalone frontend. When the optional backend is r
 
 ### Main Game
 
-![And Ye Shall Find](src/assets/screenshot1.png)
+![And Ye Shall Find](src/assets/Full-with-AI.png)
+
+### AI Powered In-Game Assistant
+
+<p align="center">
+  <img src="src/assets/Sidebar-AI.png" alt="AI Companion" width="49%" />
+  <img src="src/assets/Comet-Settings.png" alt="AI Settings" width="49%" />
+</p>
 
 ### AI NPC Conversations
 

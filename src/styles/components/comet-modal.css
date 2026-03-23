@@ -81,7 +81,7 @@
 }
 
 .comet--sidebar {
-    gap: 10px;
+    gap: 8px;
     padding: 12px 12px 10px;
     border-radius: 20px;
     box-shadow:
@@ -126,9 +126,9 @@
 }
 
 .comet--sidebar .comet-top {
-    min-height: 64px;
-    padding: 10px 12px;
-    gap: 0.9rem;
+    min-height: 56px;
+    padding: 8px 10px;
+    gap: 0.75rem;
 }
 
 .comet-brand {
@@ -140,7 +140,7 @@
 }
 
 .comet--sidebar .comet-brand {
-    gap: 12px;
+    gap: 10px;
 }
 
 .comet-brandMark {
@@ -159,9 +159,9 @@
 }
 
 .comet--sidebar .comet-brandMark {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
 }
 
 .comet-brandIcon {
@@ -171,8 +171,8 @@
 }
 
 .comet--sidebar .comet-brandIcon {
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
 }
 
 .comet-brandOrbit,
@@ -231,7 +231,7 @@
 }
 
 .comet--sidebar .comet-logoArea {
-    gap: 5px;
+    gap: 3px;
 }
 
 .comet-logoLine1 {
@@ -242,7 +242,7 @@
 }
 
 .comet--sidebar .comet-logoLine1 {
-    gap: 10px;
+    gap: 8px;
 }
 
 .comet-logoText {
@@ -256,7 +256,7 @@
 }
 
 .comet--sidebar .comet-logoText {
-    font-size: clamp(24px, 2.2vw, 32px);
+    font-size: clamp(22px, 2vw, 28px);
 }
 
 .comet-logoStrap {
@@ -269,8 +269,8 @@
 }
 
 .comet--sidebar .comet-logoStrap {
-    font-size: 10px;
-    letter-spacing: 0.12em;
+    font-size: 9px;
+    letter-spacing: 0.1em;
 }
 
 .comet-logoTag {
@@ -284,8 +284,8 @@
 }
 
 .comet--sidebar .comet-logoTag {
-    font-size: clamp(12px, 1.4vw, 16px);
-    letter-spacing: 0.2em;
+    font-size: clamp(11px, 1.25vw, 14px);
+    letter-spacing: 0.16em;
 }
 
 .comet-indicators {
@@ -298,7 +298,7 @@
 }
 
 .comet--sidebar .comet-indicators {
-    gap: 12px;
+    gap: 10px;
 }
 
 .comet-indicatorStack {
@@ -309,7 +309,7 @@
 }
 
 .comet--sidebar .comet-indicatorStack {
-    gap: 5px;
+    gap: 4px;
 }
 
 .comet-light {
@@ -322,8 +322,8 @@
 }
 
 .comet--sidebar .comet-light {
-    width: 14px;
-    height: 38px;
+    width: 12px;
+    height: 32px;
 }
 
 .comet-light.is-on {
@@ -341,7 +341,7 @@
 }
 
 .comet--sidebar .comet-lightLabel {
-    font-size: 10px;
+    font-size: 9px;
 }
 
 /* reader */
@@ -725,8 +725,8 @@
 }
 
 .comet--sidebar .comet-kbd {
-    min-height: 98px;
-    padding: 10px 12px;
+    min-height: 80px;
+    padding: 8px 10px;
 }
 
 .comet-kbdTitle {
@@ -746,7 +746,7 @@
 }
 
 .comet--sidebar .comet-kbdGrid {
-    gap: 3px;
+    gap: 2px;
     transform: none;
 }
 
@@ -757,7 +757,19 @@
 }
 
 .comet--sidebar .comet-kbdRow {
-    gap: 6px;
+    gap: 5px;
+}
+
+.comet--sidebar .comet-kbdGrid .comet-kbdRow:nth-child(2) {
+    padding-left: 12px;
+}
+
+.comet--sidebar .comet-kbdGrid .comet-kbdRow:nth-child(3) {
+    padding-left: 22px;
+}
+
+.comet--sidebar .comet-kbdGrid .comet-kbdRow:nth-child(4) {
+    padding-left: 30px;
 }
 
 /* keyboard row staggering */
@@ -806,8 +818,8 @@
 }
 
 .comet--sidebar .comet-key {
-    width: 28px;
-    height: 18px;
+    width: 31px;
+    height: 16px;
     font-size: 10px;
 }
 

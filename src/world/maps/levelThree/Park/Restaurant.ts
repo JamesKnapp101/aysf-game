@@ -5,7 +5,7 @@ export const restaurantRooms: Room[] = [
   {
     id: "RestaurantEntrance",
     name: "Restaurant Entrance",
-    description: `This is the entrance to a restaurant with a small outdoor-cafe area. There are several round tables, each surrounded by several chairs, situated on a level area covered in red, white, and green colored tile. Mounted over the door leading in is a large, rustic-looking painted sign which reads 'ALBERTOS'. A paved brick path leads northeast through a grassy area toward a large, stone obelisk. The path around the park's perimeter also leads north and east. A glass door leads southwest into the establishment.`,
+    description: `This is the entrance to a restaurant with a small outdoor-cafe area. There are several round tables, each surrounded by several chairs, situated on a level area covered in red, white, and green colored tile. Mounted over the door leading in is a large, rustic-looking painted sign which reads 'Saveurs du Passé'. A paved brick path leads northeast through a grassy area toward a large, stone obelisk. The path around the park's perimeter also leads north and east. A glass door leads southwest into the establishment.`,
     exits: [
       { direction: "northwest", toRoomId: "ParkWest" },
       { direction: "northeast", toRoomId: "ParkCenter" },

@@ -8,9 +8,10 @@ import {
 } from "@game/selectors/doorSelectors";
 import { getCurrentRoom, getItemsInRoom } from "@game/selectors/roomSelectors";
 import { buildRoomDescription } from "@game/text/roomDescription";
-import type { CometPersonalityMode, GameState } from "../types/gameTypes";
 import type { DoorDefinition } from "../types/doorTypes";
+import type { CometPersonalityMode, GameState } from "../types/gameTypes";
 import type { Direction, Exit, Room } from "../types/roomTypes";
+import type { CometEntry } from "./comet-index";
 import { renderLibraryText } from "./cometDisplayHelpers";
 import {
   buildCometConfidence,
@@ -20,7 +21,6 @@ import {
   type CometEntryMatch,
   type CometInteractionMode,
 } from "./cometHelpers";
-import type { CometEntry } from "./comet-index";
 
 export type CometPromptContext = {
   analysisBlock?: string;
@@ -73,8 +73,11 @@ const COMET_PERSONALITY_PROMPTS: Record<
   snarky: {
     description: "A sharper library assistant with attitude.",
     guidance: [
-      "Use mild sardonic phrasing and dry humor while remaining useful.",
-      "Do not become cruel, hostile, or dismissive of the player.",
+      // "Use sardonic phrasing and dry humor while remaining useful.",
+      // "Be sarcastic and barbed, but always relate the information correctly.",
+      "Use the style and cadence of the world's most put out teenager who doesn't want to be here, doesn't want to help the player, and doesn't like the player",
+      "Always refer to the player using slang terms that are made up, never explained, but in context seem insulting",
+      "In spite of being constantly put out and moaning about it, always relate the correct information",
     ],
     label: "Snarky",
     traits: ["wry", "sardonic", "dryly funny", "sharp", "still helpful"],
@@ -228,7 +231,9 @@ function buildVisibleDoorContext(
     searchTexts.push(summary, door.name, ...door.vocab);
 
     if (door.badgeItemId) {
-      searchTexts.push(...buildRequiredItemSearchTexts(state, door.badgeItemId));
+      searchTexts.push(
+        ...buildRequiredItemSearchTexts(state, door.badgeItemId),
+      );
     }
 
     return summary;
@@ -344,8 +349,8 @@ function buildAmbientCueContext(
 
   const cues = Array.from(
     new Set(
-      [currentRoomCue, ...adjacentCues].filter(
-        (cue): cue is string => Boolean(cue),
+      [currentRoomCue, ...adjacentCues].filter((cue): cue is string =>
+        Boolean(cue),
       ),
     ),
   ).slice(0, 3);
