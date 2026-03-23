@@ -102,6 +102,7 @@ export const createInitialState = (world: World): GameState => {
     rating: 0,
     moves: 0,
     uiState: {
+      cometPersonality: "default",
       notifications: [],
       nextNotificationId: 1,
     },

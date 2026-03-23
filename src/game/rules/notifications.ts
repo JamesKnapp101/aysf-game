@@ -24,6 +24,11 @@ export function enqueueNotification(
   return {
     ...state,
     uiState: {
+      ...(state.uiState ?? {
+        cometPersonality: "default",
+        notifications: [],
+        nextNotificationId: 1,
+      }),
       notifications: [
         ...getNotifications(state),
         {
@@ -65,6 +70,7 @@ export function dismissNotification(
     ...state,
     uiState: {
       ...(state.uiState ?? {
+        cometPersonality: "default",
         notifications: [],
         nextNotificationId: 1,
       }),

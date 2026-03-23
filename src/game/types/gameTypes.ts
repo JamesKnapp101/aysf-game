@@ -76,7 +76,10 @@ export type GameNotification = GameNotificationDraft & {
   id: number;
 };
 
+export type CometPersonalityMode = "default" | "robotic" | "snarky";
+
 export interface GameUiState {
+  cometPersonality: CometPersonalityMode;
   nextNotificationId: number;
   notifications: GameNotification[];
 }

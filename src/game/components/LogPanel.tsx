@@ -6,6 +6,7 @@ import { CometTerminal } from "@game/components/CometTerminal";
 import { DNASampleTab } from "@game/components/DNASampleTab";
 import { LogTab } from "@game/components/LogTab";
 import { QuantumTotePanel } from "@game/components/QuantumTotePanel";
+import { SettingsTab } from "@game/components/SettingsTab";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { StatusTab } from "./StatusTab";
 
@@ -106,15 +107,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   const logRef = useRef<HTMLDivElement | null>(null);
   const internalCometInputRef = useRef<HTMLInputElement | null>(null);
   const activeCometInputRef = cometInputRef ?? internalCometInputRef;
-
-  const CRT_COLOR_OPTIONS = [
-    { id: "green", label: "Green", value: "#00ff00" },
-    { id: "amber", label: "Amber", value: "#ffbf00" },
-    { id: "white", label: "White", value: "#f8f8f8" },
-    { id: "blue", label: "Ice Blue", value: "#7fdfff" },
-    { id: "yellow", label: "Yellow", value: "#ffff4a" },
-    { id: "orange", label: "Orange", value: "#ff7b00" },
-  ];
+  const cometPersonality = state.uiState.cometPersonality ?? "default";
   const sidebarWidthPercent = layout.sidebarWidthRatio * 100;
 
   const onSubmit = (e: React.FormEvent) => {
@@ -239,6 +232,18 @@ export const LogPanel: React.FC<LogPanelProps> = ({
       // ignore
     }
   }, [crtColor]);
+
+  const handleCometPersonalityChange = (
+    cometPersonality: "default" | "robotic" | "snarky",
+  ) => {
+    setGameState((prev) => ({
+      ...prev,
+      uiState: {
+        ...prev.uiState,
+        cometPersonality,
+      },
+    }));
+  };
 
   return (
     <div className="game-main-row">
@@ -388,24 +393,12 @@ export const LogPanel: React.FC<LogPanelProps> = ({
             </div>
           )} */}
           {activeTab === "settings" && (
-            <div className="settings-panel">
-              <p className="crt-color-header">CRT Color</p>
-              <div className="settings-color-row">
-                {CRT_COLOR_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    className={
-                      "crt-swatch" +
-                      (crtColor === opt.value ? " crt-swatch-selected" : "")
-                    }
-                    style={{ backgroundColor: opt.value }}
-                    onClick={() => setCrtColor(opt.value)}
-                    aria-label={opt.label}
-                  />
-                ))}
-              </div>
-            </div>
+            <SettingsTab
+              cometPersonality={cometPersonality}
+              crtColor={crtColor}
+              onCometPersonalityChange={handleCometPersonalityChange}
+              setCrtColor={setCrtColor}
+            />
           )}
         </div>
       </aside>

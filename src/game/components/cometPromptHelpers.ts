@@ -8,7 +8,7 @@ import {
 } from "@game/selectors/doorSelectors";
 import { getCurrentRoom, getItemsInRoom } from "@game/selectors/roomSelectors";
 import { buildRoomDescription } from "@game/text/roomDescription";
-import type { GameState } from "../types/gameTypes";
+import type { CometPersonalityMode, GameState } from "../types/gameTypes";
 import type { DoorDefinition } from "../types/doorTypes";
 import type { Direction, Exit, Room } from "../types/roomTypes";
 import { renderLibraryText } from "./cometDisplayHelpers";
@@ -39,6 +39,46 @@ type CometDoorContext = {
 type CometAmbientCueContext = {
   searchTexts: string[];
   summaries: string[];
+};
+
+type CometPersonalityPrompt = {
+  description: string;
+  guidance: string[];
+  label: string;
+  traits: string[];
+};
+
+const COMET_PERSONALITY_PROMPTS: Record<
+  CometPersonalityMode,
+  CometPersonalityPrompt
+> = {
+  default: {
+    description: "Balanced in-universe library assistant voice.",
+    guidance: [
+      "Use a dry, quietly helpful tone.",
+      "Stay concise, clear, and grounded.",
+    ],
+    label: "Default",
+    traits: ["wise", "pragmatic", "dryly helpful", "concise"],
+  },
+  robotic: {
+    description: "Clipped terminal-like delivery.",
+    guidance: [
+      "Favor precise, formal phrasing over warmth.",
+      "Sound efficient, literal, and lightly clinical without becoming rude.",
+    ],
+    label: "Robotic",
+    traits: ["formal", "precise", "clinical", "restrained", "literal"],
+  },
+  snarky: {
+    description: "A sharper library assistant with attitude.",
+    guidance: [
+      "Use mild sardonic phrasing and dry humor while remaining useful.",
+      "Do not become cruel, hostile, or dismissive of the player.",
+    ],
+    label: "Snarky",
+    traits: ["wry", "sardonic", "dryly funny", "sharp", "still helpful"],
+  },
 };
 
 function getItemSearchTerms(
@@ -91,6 +131,8 @@ export function buildCometPromptContext(
     ...roomContextMatches,
   ]);
   const mode = useRoomContext ? "guess" : "library";
+  const personalityMode = state.uiState.cometPersonality ?? "default";
+  const personalityPrompt = COMET_PERSONALITY_PROMPTS[personalityMode];
   const confidence = buildCometConfidence(combinedMatches.length, mode);
   const analysisBlock = useRoomContext
     ? buildAnalysisBlock(room.name, itemNames, combinedMatches.length)
@@ -107,6 +149,10 @@ export function buildCometPromptContext(
       : "- Answer from the indexed library context when relevant, and say clearly if no relevant entry was found.",
     "- Treat matched library entries as current Central Library records unless an entry explicitly describes the information as historical, archival, obsolete, or outdated.",
     "- The UI will display any numeric confidence score separately, so do not output a numeric confidence score yourself.",
+    `- Active Comet personality mode: ${personalityPrompt.label}`,
+    `- Personality traits to emphasize: ${personalityPrompt.traits.join(", ")}`,
+    `- Personality description: ${personalityPrompt.description}`,
+    ...personalityPrompt.guidance.map((line) => `- ${line}`),
     `- Current room: ${room.name}`,
     `- Room description: ${sanitizePromptLine(roomDescription)}`,
     `- Visible room items: ${
