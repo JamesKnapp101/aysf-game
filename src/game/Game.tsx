@@ -35,6 +35,30 @@ export type SidebarTab =
 
 type PromptFocusOwner = "game" | "comet";
 
+function shouldPreserveNativeControlFocus(target: EventTarget | null): boolean {
+  const element = target instanceof HTMLElement ? target : null;
+  if (!element) return false;
+
+  return Boolean(
+    element.closest(
+      [
+        "a",
+        "button",
+        "input",
+        "label",
+        "option",
+        "select",
+        "summary",
+        "textarea",
+        "[contenteditable='true']",
+        "[role='button']",
+        "[role='link']",
+        "[role='option']",
+      ].join(", "),
+    ),
+  );
+}
+
 export const Game: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SidebarTab>("comet");
   const [lastFocusedPrompt, setLastFocusedPrompt] =
@@ -81,6 +105,17 @@ export const Game: React.FC = () => {
   const handleCometPromptFocus = useCallback(() => {
     setLastFocusedPrompt("comet");
   }, []);
+
+  const handleRootClick = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (shouldPreserveNativeControlFocus(event.target)) {
+        return;
+      }
+
+      restorePromptFocus();
+    },
+    [restorePromptFocus],
+  );
 
   useWorldChunkHydration({ gs, stateRef, updateState });
 
@@ -221,7 +256,7 @@ export const Game: React.FC = () => {
             data-player-can-see={playerCanSee ? "true" : "false"}
             data-player-light-mode={playerLightMode}
             data-flashlight-on={flashlightOn ? "true" : "false"}
-            onClick={restorePromptFocus}
+            onClick={handleRootClick}
           >
             <NotificationHost state={gs} setGameState={setGameState} />
 

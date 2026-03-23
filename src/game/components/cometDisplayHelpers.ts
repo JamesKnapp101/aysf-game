@@ -27,6 +27,8 @@ export type CometDisplayMessage = {
   tone: CometDisplayMessageTone;
 };
 
+const COMET_EM_DASH_PATTERN = /\u2014/g;
+
 function buildMessage(
   id: string,
   role: CometDisplayMessageRole,
@@ -65,10 +67,14 @@ function buildSystemMessage(
 }
 
 export function renderLibraryText(raw: string): string {
-  const stripped = raw.replace(/~/g, "");
+  const stripped = normalizeCometResponseText(raw).replace(/~/g, "");
   const withBreaks = stripped.replace(/\^\^/g, "\n\n").replace(/\^/g, "\n");
 
   return withBreaks.trim();
+}
+
+export function normalizeCometResponseText(raw: string): string {
+  return raw.replace(COMET_EM_DASH_PATTERN, " - ");
 }
 
 export function historyToDisplayMessages(

@@ -1,3 +1,7 @@
+import {
+  COMET_PERSONALITY_OPTIONS,
+  type CometSettingsDescription,
+} from "@game/constants/cometPersonalities";
 import type { CometPersonalityMode } from "@game/types/gameTypes";
 import type { Dispatch, SetStateAction } from "react";
 
@@ -17,27 +21,15 @@ const CRT_COLOR_OPTIONS = [
   { id: "orange", label: "Orange", value: "#ff7b00" },
 ];
 
-const COMET_PERSONALITY_OPTIONS: Array<{
-  description: string;
-  label: string;
-  value: CometPersonalityMode;
-}> = [
-  {
-    description: "Balanced and dryly helpful.",
-    label: "Default",
-    value: "default",
-  },
-  {
-    description: "Precise, clipped, and clinical.",
-    label: "Robotic",
-    value: "robotic",
-  },
-  {
-    description: "Still useful, but wry and lightly sharp-edged.",
-    label: "Snarky",
-    value: "snarky",
-  },
-];
+function renderSettingsDescription(description: CometSettingsDescription) {
+  if (typeof description === "string") {
+    return description;
+  }
+
+  return description.map((part, index) =>
+    part.italic ? <em key={index}>{part.text}</em> : <span key={index}>{part.text}</span>,
+  );
+}
 
 export function SettingsTab({
   cometPersonality,
@@ -45,6 +37,10 @@ export function SettingsTab({
   onCometPersonalityChange,
   setCrtColor,
 }: SettingsTabProps) {
+  const selectedPersonality =
+    COMET_PERSONALITY_OPTIONS.find((opt) => opt.value === cometPersonality) ??
+    COMET_PERSONALITY_OPTIONS[0];
+
   return (
     <div className="settings-panel">
       <section className="settings-section">
@@ -67,26 +63,31 @@ export function SettingsTab({
 
       <section className="settings-section">
         <p className="crt-color-header">Comet Personality</p>
-        <div className="settings-choice-column">
-          {COMET_PERSONALITY_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              className={
-                "settings-choice" +
-                (cometPersonality === opt.value
-                  ? " settings-choice-selected"
-                  : "")
+        <div className="settings-select-stack">
+          <div className="settings-select-wrap">
+            <select
+              className="settings-select"
+              value={cometPersonality}
+              onChange={(event) =>
+                onCometPersonalityChange(
+                  event.target.value as CometPersonalityMode,
+                )
               }
-              onClick={() => onCometPersonalityChange(opt.value)}
-              aria-pressed={cometPersonality === opt.value}
+              aria-label="Comet personality"
             >
-              <span className="settings-choiceLabel">{opt.label}</span>
-              <span className="settings-choiceDescription">
-                {opt.description}
-              </span>
-            </button>
-          ))}
+              {COMET_PERSONALITY_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <span className="settings-select-chevron" aria-hidden="true">
+              v
+            </span>
+          </div>
+          <p className="settings-select-description">
+            {renderSettingsDescription(selectedPersonality.description)}
+          </p>
         </div>
       </section>
     </div>

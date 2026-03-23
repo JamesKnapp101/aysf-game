@@ -1,4 +1,5 @@
 import { audioRegistry } from "@game/audioRegistry";
+import { COMET_PERSONALITY_PROMPTS } from "@game/constants/cometPersonalities";
 import { Moan } from "@game/engine/ticks/hydroponicsTick";
 import { getResolvedAdjacentAudioCues } from "@game/helpers/audioCues";
 import { playerHasBadge } from "@game/rules/doors";
@@ -9,7 +10,7 @@ import {
 import { getCurrentRoom, getItemsInRoom } from "@game/selectors/roomSelectors";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import type { DoorDefinition } from "../types/doorTypes";
-import type { CometPersonalityMode, GameState } from "../types/gameTypes";
+import type { GameState } from "../types/gameTypes";
 import type { Direction, Exit, Room } from "../types/roomTypes";
 import type { CometEntry } from "./comet-index";
 import { renderLibraryText } from "./cometDisplayHelpers";
@@ -39,49 +40,6 @@ type CometDoorContext = {
 type CometAmbientCueContext = {
   searchTexts: string[];
   summaries: string[];
-};
-
-type CometPersonalityPrompt = {
-  description: string;
-  guidance: string[];
-  label: string;
-  traits: string[];
-};
-
-const COMET_PERSONALITY_PROMPTS: Record<
-  CometPersonalityMode,
-  CometPersonalityPrompt
-> = {
-  default: {
-    description: "Balanced in-universe library assistant voice.",
-    guidance: [
-      "Use a dry, quietly helpful tone.",
-      "Stay concise, clear, and grounded.",
-    ],
-    label: "Default",
-    traits: ["wise", "pragmatic", "dryly helpful", "concise"],
-  },
-  robotic: {
-    description: "Clipped terminal-like delivery.",
-    guidance: [
-      "Favor precise, formal phrasing over warmth.",
-      "Sound efficient, literal, and lightly clinical without becoming rude.",
-    ],
-    label: "Robotic",
-    traits: ["formal", "precise", "clinical", "restrained", "literal"],
-  },
-  snarky: {
-    description: "A sharper library assistant with attitude.",
-    guidance: [
-      // "Use sardonic phrasing and dry humor while remaining useful.",
-      // "Be sarcastic and barbed, but always relate the information correctly.",
-      "Use the style and cadence of the world's most put out teenager who doesn't want to be here, doesn't want to help the player, and doesn't like the player",
-      "Always refer to the player using slang terms that are made up, never explained, but in context seem insulting",
-      "In spite of being constantly put out and moaning about it, always relate the correct information",
-    ],
-    label: "Snarky",
-    traits: ["wry", "sardonic", "dryly funny", "sharp", "still helpful"],
-  },
 };
 
 function getItemSearchTerms(
@@ -152,6 +110,7 @@ export function buildCometPromptContext(
       : "- Answer from the indexed library context when relevant, and say clearly if no relevant entry was found.",
     "- Treat matched library entries as current Central Library records unless an entry explicitly describes the information as historical, archival, obsolete, or outdated.",
     "- The UI will display any numeric confidence score separately, so do not output a numeric confidence score yourself.",
+    "- Never use em dashes. Use commas, periods, or plain hyphens instead.",
     `- Active Comet personality mode: ${personalityPrompt.label}`,
     `- Personality traits to emphasize: ${personalityPrompt.traits.join(", ")}`,
     `- Personality description: ${personalityPrompt.description}`,

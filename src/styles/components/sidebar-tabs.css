@@ -186,63 +186,74 @@
     box-shadow: 0 0 8px var(--crt-green, var(--crt-color));
 }
 
-.settings-choice-column {
+.settings-select-stack {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.settings-choice {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+.settings-select-wrap {
+    position: relative;
+}
+
+.settings-select {
+    appearance: none;
     width: 100%;
-    padding: 10px 12px;
+    padding: 10px 36px 10px 12px;
     border: 1px solid color-mix(in srgb, var(--crt-color) 50%, transparent);
     background:
         linear-gradient(180deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.72));
     color: var(--crt-color);
     cursor: pointer;
     font-family: var(--crt-font, monospace);
-    text-align: left;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.03),
         0 0 8px color-mix(in srgb, var(--crt-color) 6%, transparent);
 }
 
-.settings-choice:focus-visible {
+.settings-select:hover {
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--crt-color) 8%, rgba(0, 0, 0, 0.88)),
+            color-mix(in srgb, var(--crt-color) 4%, rgba(0, 0, 0, 0.72)));
+}
+
+.settings-select:focus-visible {
     outline: 2px solid var(--crt-color);
     outline-offset: 2px;
 }
 
-.settings-choice-selected {
-    border-color: var(--crt-color);
-    box-shadow:
-        inset 0 0 0 1px color-mix(in srgb, var(--crt-color) 24%, transparent),
-        0 0 12px color-mix(in srgb, var(--crt-color) 18%, transparent);
-    background:
-        linear-gradient(180deg,
-            color-mix(in srgb, var(--crt-color) 20%, rgba(0, 0, 0, 0.86)),
-            color-mix(in srgb, var(--crt-color) 10%, rgba(0, 0, 0, 0.74))),
-        linear-gradient(90deg,
-            color-mix(in srgb, var(--crt-color) 12%, transparent),
-            transparent 55%);
+.settings-select option {
+    background: #000;
+    color: var(--crt-color);
 }
 
-.settings-choiceLabel {
-    font-size: 13px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+.settings-select-chevron {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: color-mix(in srgb, var(--crt-color) 82%, white 18%);
+    font-family: var(--crt-font, monospace);
+    font-size: 14px;
+    pointer-events: none;
 }
 
-.settings-choiceDescription {
-    font-size: 11px;
+.settings-select-description {
+    margin: 0;
+    font-size: 14px;
     line-height: 1.35;
     color: color-mix(in srgb, var(--crt-color) 78%, white 22%);
 }
 
-/* Drop this near your sidebar styles */
+.settings-select-description em {
+    font-style: italic;
+    font-weight: bold;
+}
+
 .inv-tree-list {
     list-style: none;
     margin: 0;
@@ -251,7 +262,6 @@
 
 .inv-tree-item {
     margin-left: 1.5rem;
-    /* matches your current indentation */
     margin-bottom: 6px;
 }
 
@@ -262,7 +272,6 @@
 .inv-tree-contents {
     margin: 0.25rem 0 0;
     padding-left: 2.25rem;
-    /* indent children under container */
     list-style: none;
 }
 
@@ -274,10 +283,8 @@
 .inv-tree-glyph {
     display: inline-block;
     min-width: 2.25rem;
-    /* keeps names aligned even if you switch glyphs later */
     white-space: pre;
     opacity: 0.95;
-    /* optional */
 }
 
 .inv-tree-child-name {

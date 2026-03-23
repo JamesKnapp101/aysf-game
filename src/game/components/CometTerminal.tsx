@@ -25,6 +25,7 @@ import {
   getCometWelcomeMessages,
   getCometWordLimitText,
   historyToDisplayMessages,
+  normalizeCometResponseText,
 } from "./cometDisplayHelpers";
 import {
   classifyCometIntent,
@@ -352,11 +353,13 @@ export function CometTerminal({
         promptContext.assistantContext,
       );
 
-      const response = claudeResponse?.trim() || staticFallback;
+      const response = normalizeCometResponseText(
+        claudeResponse?.trim() || staticFallback,
+      );
       persistTurn({ type: inputType, topic: trimmed }, response);
     } catch (error) {
       console.warn("Comet integration error, using fallback:", error);
-      const response = staticFallback;
+      const response = normalizeCometResponseText(staticFallback);
       persistTurn({ type: inputType, topic: trimmed }, response);
     } finally {
       setPendingMessages([]);

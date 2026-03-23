@@ -1,3 +1,4 @@
+import type { CometPersonalityMode as SharedCometPersonalityMode } from "@game/constants/cometPersonalities";
 import { playerMemoryMap, playerScoreMap } from "@game/constants";
 import type { DNAResult } from "@game/rules/dnaReader";
 import type { ItemId, RoomId } from "@game/types/ids";
@@ -76,7 +77,7 @@ export type GameNotification = GameNotificationDraft & {
   id: number;
 };
 
-export type CometPersonalityMode = "default" | "robotic" | "snarky";
+export type CometPersonalityMode = SharedCometPersonalityMode;
 
 export interface GameUiState {
   cometPersonality: CometPersonalityMode;

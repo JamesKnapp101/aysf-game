@@ -1,6 +1,6 @@
 import type { LayoutPrefs } from "../hooks/useLayoutPrefs";
 import { getItemsInInventory } from "../selectors/itemSelectors";
-import type { GameState } from "../types/gameTypes";
+import type { CometPersonalityMode, GameState } from "../types/gameTypes";
 
 import { CometTerminal } from "@game/components/CometTerminal";
 import { DNASampleTab } from "@game/components/DNASampleTab";
@@ -234,7 +234,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   }, [crtColor]);
 
   const handleCometPersonalityChange = (
-    cometPersonality: "default" | "robotic" | "snarky",
+    cometPersonality: CometPersonalityMode,
   ) => {
     setGameState((prev) => ({
       ...prev,
