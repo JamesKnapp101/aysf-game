@@ -61,25 +61,62 @@ This pipeline ensures that **AI never directly mutates application state** and a
 ## 🔹 Detailed Interaction Flow
 
 ```
-[User Action]
-   ↓
-Parse Input ("tell robot about Bob")
-   ↓
-AI Interpretation
-   ↓
-Map to Known Concepts
-   ↓
-Check Preconditions
-  - inventory
-  - discovered knowledge
-  - location/context
-   ↓
-Apply Valid Outcome
-  - unlock item
-  - trigger event
-  - update log
-   ↓
-Render Result + Feedback
+                    ┌─────────────────────────┐
+                    │        UI Layer         │
+                    │  (React Components)     │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │  Interaction Controller │
+                    │  (Input handling,       │
+                    │   command routing)      │
+                    └────────────┬────────────┘
+                                 │
+             ┌───────────────────┴───────────────────┐
+             ▼                                       ▼
+┌──────────────────────────┐           ┌──────────────────────────┐
+│   AI Interpretation      │           │  Deterministic Systems   │
+│  (LLM / Prompt Layer)    │           │                          │
+│                          │           │  - Inventory             │
+│  - intent extraction     │           │  - World State           │
+│  - entity recognition    │           │  - Event System          │
+│  - response generation   │           │  - Progression Rules     │
+└────────────┬─────────────┘           └────────────┬─────────────┘
+             │                                      │
+             └──────────────┬───────────────────────┘
+                            ▼
+               ┌─────────────────────────┐
+               │     Validation Layer    │
+               │                         │
+               │  - rule enforcement     │
+               │  - context checks       │
+               │  - guardrails           │
+               └────────────┬────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │     State Manager       │
+               │                         │
+               │  - apply changes        │
+               │  - maintain consistency │
+               │  - trigger events       │
+               └────────────┬────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │     Logging System      │
+               │                         │
+               │  - user actions         │
+               │  - AI responses         │
+               │  - system events        │
+               └────────────┬────────────┘
+                            │
+                            ▼
+             ┌──────────────────────────┐
+             │        UI Update         │
+             │   (Render + Feedback)    │
+             └──────────────────────────┘
 ```
 
 ---
