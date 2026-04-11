@@ -1,4 +1,7 @@
-import { getItemSceneryDescription } from "@game/helpers/descriptionHelpers";
+import {
+  buildRoomItemsDescription,
+  getItemSceneryDescription,
+} from "@game/helpers/descriptionHelpers";
 import { canPlayerSeeInRoom } from "../helpers/visibilityHelpers";
 import { generateTerminalTpadDescription } from "../helpers/gameHelpers";
 import { isItemOpen } from "../rules/containers";
@@ -25,6 +28,10 @@ type BuildRoomDescriptionOptions = {
   mode?: RoomDescriptionMode;
   forceFull?: boolean;
   omitItems?: boolean;
+};
+
+type BuildTranscriptRoomDescriptionOptions = {
+  isFirstVisit?: boolean;
 };
 
 export function buildRoomDescription(
@@ -256,4 +263,27 @@ export function buildRoomDescription(
   }
 
   return parts.join("\n\n");
+}
+
+export function buildTranscriptRoomDescription(
+  state: GameState,
+  roomId: string,
+  opts: BuildTranscriptRoomDescriptionOptions = {},
+): string {
+  const canSee = canPlayerSeeInRoom(state, roomId);
+  if (!canSee) {
+    return buildRoomDescription(state, roomId, { mode: "log" });
+  }
+
+  const visitedRooms = state.worldState.visitedRooms ?? {};
+  const isFirstVisit = opts.isFirstVisit ?? !visitedRooms[roomId];
+
+  if (isFirstVisit) {
+    return buildRoomDescription(state, roomId, {
+      mode: "panel",
+      forceFull: true,
+    });
+  }
+
+  return buildRoomItemsDescription(state, roomId);
 }

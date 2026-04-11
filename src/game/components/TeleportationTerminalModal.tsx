@@ -4,7 +4,7 @@ import { appendLog } from "@game/engine/handleCommand";
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { useUIEffectsStore } from "@game/store/store";
-import { buildRoomDescription } from "@game/text/roomDescription";
+import { buildTranscriptRoomDescription } from "@game/text/roomDescription";
 import { GameState } from "@game/types/gameTypes";
 import React, { useMemo } from "react";
 import "../../styles/teleport-terminal.css";
@@ -137,11 +137,20 @@ export function TeleportationTerminalModal({
 
   const teleportTo = (roomId: string) => {
     setGameState((prev) => {
-      // let next = {
-      //   ...prev,
-      //   player: { ...prev.player, roomId },
-      // };
+      const wasVisitedBeforeTeleport = Boolean(
+        (prev.worldState.visitedRooms ?? {})[roomId],
+      );
       let next = movePlayerToRoom(prev, roomId);
+      next = {
+        ...next,
+        worldState: {
+          ...next.worldState,
+          visitedRooms: {
+            ...next.worldState.visitedRooms,
+            [roomId]: true,
+          },
+        },
+      };
 
       next = appendLog(
         next,
@@ -150,9 +159,12 @@ export function TeleportationTerminalModal({
       const roomName = `${ROOM_NAME_TOKEN_START}${
         getRoomById(next, next.player.roomId)?.name
       }${ROOM_NAME_TOKEN_END}`;
+      const roomTranscriptDesc = buildTranscriptRoomDescription(next, roomId, {
+        isFirstVisit: !wasVisitedBeforeTeleport,
+      });
       next = appendLog(
         next,
-        `${roomName}\n${buildRoomDescription(next, roomId, { mode: "log" })}`,
+        [roomName, roomTranscriptDesc].filter(Boolean).join("\n"),
       );
       return next;
     });

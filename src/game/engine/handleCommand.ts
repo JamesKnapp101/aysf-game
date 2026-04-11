@@ -5,7 +5,6 @@ import {
   initializeEncounterStateOnEnter,
 } from "@game/encounters/retryableEncounters";
 import { drainRadioQueuedLog } from "@game/helpers/conversationHelpers";
-import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import {
   drainAfterRoomDescription,
   movePlayerToRoom,
@@ -24,7 +23,7 @@ import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";
 import { getCurrentRoom } from "../selectors/roomSelectors";
 import { useUIOverlayStore } from "../store/store";
-import { buildRoomDescription } from "../text/roomDescription";
+import { buildTranscriptRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
 import type { ParsedCommand } from "../types/parserTypes";
 import { advanceTurn } from "./turn";
@@ -360,42 +359,31 @@ export async function handleCommand(
   // If room changed, append destination room details from the UPDATED world state.
   if (nextState.player.roomId !== state.player.roomId && !diedThisTurn) {
     const destRoomId = nextState.player.roomId;
+    const wasVisitedBeforeCommand = Boolean(
+      (state.worldState.visitedRooms ?? {})[destRoomId],
+    );
     const destRoomName = `${ROOM_NAME_TOKEN_START}${
       getRoomById(nextState, destRoomId)?.name
     }${ROOM_NAME_TOKEN_END}`;
-
-    const roomDescNoItems = buildRoomDescription(nextState, destRoomId, {
-      mode: "log",
-      omitItems: true,
-    });
+    const roomTranscriptDesc = buildTranscriptRoomDescription(
+      nextState,
+      destRoomId,
+      {
+        isFirstVisit: !wasVisitedBeforeCommand,
+      },
+    );
+    const roomEntryBlock = roomTranscriptDesc.trim()
+      ? `${destRoomName}\n${roomTranscriptDesc.trim()}`
+      : destRoomName;
 
     const drained = drainAfterRoomDescription(nextState);
     nextState = drained.state;
 
     const scripted = drained.lines.map((s) => s.trim()).filter(Boolean);
 
-    const itemsDesc = buildRoomItemsDescription(nextState, destRoomId);
-
-    if (cmd.type === "action") {
-      message = [
-        message.trim(),
-        destRoomName,
-        roomDescNoItems.trim(),
-        ...scripted,
-        itemsDesc.trim(),
-      ]
-        .filter(Boolean)
-        .join("\n\n");
-    } else {
-      message = [
-        message.trim(),
-        roomDescNoItems.trim(),
-        ...scripted,
-        itemsDesc.trim(),
-      ]
-        .filter(Boolean)
-        .join("\n\n");
-    }
+    message = [message.trim(), roomEntryBlock, ...scripted]
+      .filter(Boolean)
+      .join("\n\n");
   }
 
   // Surface scripted narration queued by onCommand events even if no room change.
@@ -412,26 +400,12 @@ export async function handleCommand(
         .join("\n\n");
     }
   }
-  const roomName = `${ROOM_NAME_TOKEN_START}${
-    getRoomById(nextState, nextState.player.roomId)?.name
-  }${ROOM_NAME_TOKEN_END}`;
-
   // Build echo block
   let logWithEcho = "";
   if (options.skipEcho) {
     logWithEcho = message;
   } else if (cmd.type === "move") {
-    if (nextState.player.roomId !== state.player.roomId) {
-      if (diedThisTurn) {
-        logWithEcho = [`> ${cmd.direction}`, message.trim()]
-          .filter(Boolean)
-          .join("\n");
-      } else {
-        logWithEcho = `> ${cmd.direction}\n${roomName}\n${message}`;
-      }
-    } else {
-      logWithEcho = `> ${cmd.direction}\n${message}`;
-    }
+    logWithEcho = `> ${cmd.direction}\n${message}`;
   } else if (cmd.type === "inventory") {
     logWithEcho = `> inventory\n${message}`;
   } else if (cmd.type === "action") {
@@ -474,20 +448,24 @@ export async function handleCommand(
   }
 
   if (diedThisTurn) {
+    const wasRespawnRoomVisitedBeforeCommand = Boolean(
+      (state.worldState.visitedRooms ?? {})[nextState.player.roomId],
+    );
     const respawnRoomName = `${ROOM_NAME_TOKEN_START}${
       getRoomById(nextState, nextState.player.roomId)?.name
     }${ROOM_NAME_TOKEN_END}`;
-    const respawnRoomDesc = buildRoomDescription(
+    const respawnRoomDesc = buildTranscriptRoomDescription(
       nextState,
       nextState.player.roomId,
       {
-        mode: "log",
+        isFirstVisit: !wasRespawnRoomVisitedBeforeCommand,
       },
     );
 
     nextState = appendLog(
       nextState,
-      `${respawnRoomName}\n${respawnRoomDesc}`.trim() + "\n\n",
+      [respawnRoomName, respawnRoomDesc].filter(Boolean).join("\n").trim() +
+        "\n\n",
     );
   }
 

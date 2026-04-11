@@ -1,8 +1,10 @@
+import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
 import { advanceTurn } from "@game/engine/turn";
 import {
   AQUARIUM_DROWNING_DAMAGE_PER_TURN,
   AQUARIUM_OXYGEN_LOSS_PER_TURN,
 } from "@game/helpers/environmentHelpers";
+import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { getRadiationIntensity } from "@game/selectors/statusSelectors";
@@ -37,6 +39,56 @@ describe("General gameplay", () => {
 
     expect(next.player.roomId).toBe("LivingQuartersOneEast");
     expect(getLastLogEntry(next)).toContain("You open the door and step through.");
+  });
+
+  it("logs the full panel description the first time the player enters a room", async () => {
+    const start = createTestState({
+      roomId: "LevelThreeCorridorThree",
+      visitedRooms: ["LevelThreeCorridorThree"],
+    });
+
+    const next = await runCommand(start, "east");
+    const fullPanelDescription = buildRoomDescription(
+      next,
+      "LivingQuartersThreeEast",
+      {
+        mode: "panel",
+        forceFull: true,
+      },
+    );
+    const roomName = `${ROOM_NAME_TOKEN_START}${
+      next.world.rooms.find((room) => room.id === "LivingQuartersThreeEast")
+        ?.name
+    }${ROOM_NAME_TOKEN_END}`;
+    const lastLogEntry = getLastLogEntry(next);
+
+    expect(lastLogEntry).toContain("You open the door and step through.");
+    expect(lastLogEntry).toContain(`${roomName}\n${fullPanelDescription}`);
+    expect(
+      lastLogEntry.indexOf("You open the door and step through."),
+    ).toBeLessThan(lastLogEntry.indexOf(roomName));
+  });
+
+  it("logs only non-scenery objects on revisiting a room", async () => {
+    const start = createTestState({
+      roomId: "LevelThreeCorridorThree",
+      visitedRooms: ["LevelThreeCorridorThree", "LivingQuartersThreeEast"],
+    });
+
+    const next = await runCommand(start, "east");
+    const itemOnlyDescription = buildRoomItemsDescription(
+      next,
+      "LivingQuartersThreeEast",
+    );
+    const lastLogEntry = getLastLogEntry(next);
+
+    expect(lastLogEntry).toContain(itemOnlyDescription);
+    expect(lastLogEntry).not.toContain(
+      "This is a small living room dominated by a large seating area",
+    );
+    expect(lastLogEntry).not.toContain(
+      "To the west is the unit's front door.",
+    );
   });
 
   it("lets the player pick up collectable items", async () => {

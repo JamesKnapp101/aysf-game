@@ -1,10 +1,11 @@
+import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
 
 export const parkRooms: Room[] = [
   {
     id: "ParkEast",
     name: "Park East",
-    description: `This is a large, open, circular area with a high domed ceiling, and does a pretty good approximation of making one feel as though they have just stepped outside; the ground is actually covered in topsoil which is in turn covered with real grass, and gentle slopes have actually been landscaped in. The center of the circular court is dominated by a circular dias of brick, upon which is mounted a large, squat obelisk of granite. The obelisk has a large plaque which is carved into part of its base. The area surrounding the dias and obelisk is paved in smooth, tan-colored brick, and four similarly paved footpaths radiate out from the center. To your east is a large, sturdy-looking wooden door engraved with a leaf and floral pattern. Mounted on the wall next to the door is a metal panel with a thin horizontal slot in it, and just below the slot is a flat metal tray. You notice a small surveillance camera mounted high on the wall, just before the dome of the ceiling begins, pointed at the entrance`,
+    description: `This is a large, open, rectangular court where [[SCENERY]] `,
     exits: [
       { direction: "east", doorId: "ParkDoor" },
       { direction: "north", toRoomId: "GymEntrance" },
@@ -75,5 +76,68 @@ export const parkRooms: Room[] = [
       { direction: "southwest", toRoomId: "RestaurantEntrance" },
       { direction: "northwest", toRoomId: "MovieEntrance" },
     ],
+  },
+];
+
+export const parkItems: Item[] = [
+  {
+    id: "ParkEastDomedCeiling",
+    name: "domed ceiling",
+    description: `It's impressive. The effect is very convincing.`,
+    sceneryDescription: `a high domed ceiling does a pretty good approximation of making one feel as though they have just stepped outside.`,
+    location: "ParkEast",
+    vocab: ["ceiling", "dome", "domed", "sky"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ParkEastGrass",
+    name: "park grass",
+    description: `The grass is green, and lush.`,
+    sceneryDescription: `The ground is covered in topsoil which is in turn covered with grass, and gentle slopes have been landscaped in giving it a convincing natural look.`,
+    location: "ParkEast",
+    vocab: ["grass", "ground", "dirt"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ParkEastDistantBuildings",
+    name: "distant buildings",
+    description: `It looks like it's open for business, but you'll need to get closer.`,
+    sceneryDescription: `The park is home to several buildings which can be seen in the distance; to the north you can see a gymnasium, and to the south is what looks like a bar.`,
+    location: "ParkEast",
+    vocab: ["bar", "gym", "gymnasium", "building", "buildings"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ParkEastDistantObelisk",
+    name: "distant obelisk",
+    description: `Some kind of monument, maybe? It's hard to tell from this distance.`,
+    sceneryDescription: `The park continues west, where a squat obelisk stands above a circle of hedges, and beyond that, several more buildings.`,
+    location: "ParkEast",
+    vocab: ["obelisk", "hedges", "circle"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
+    itemWeight: 2,
+    itemSize: 3,
   },
 ];

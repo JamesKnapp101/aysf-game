@@ -1,6 +1,3 @@
-import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
-import { getRoomById } from "@game/helpers/itemHelpers";
-import { buildRoomDescription } from "@game/text/roomDescription";
 import "../../../styles/layout.css";
 import { anyIn, movePlayerToRoom } from "../../helpers/gameHelpers";
 import { useUIEffectsStore } from "../../store/store";
@@ -53,13 +50,8 @@ export function tryStandItem(
       }
 
       if (nextDisk?.location) {
-        teleportMsg += `You stand on the disk and feel a tingle of energy at your scalp, which then travels down the length of your body before your vision warps. For just a second everything seems to turn inside out and then snaps back, only you are no longer standing where you used to be.\n\n`;
-        const roomName = `${ROOM_NAME_TOKEN_START}${
-          getRoomById(next, nextDisk?.location)?.name
-        }${ROOM_NAME_TOKEN_END}`;
-
+        teleportMsg += `You stand on the disk and feel a tingle of energy at your scalp, which then travels down the length of your body before your vision warps. For just a second everything seems to turn inside out and then snaps back, only you are no longer standing where you used to be.`;
         next = movePlayerToRoom(next, nextDisk.location);
-        teleportMsg += `${roomName}\n${buildRoomDescription(next, next.player.roomId, { mode: "log" })}`;
         useUIEffectsStore.getState().triggerTeleportFlash();
 
         return { state: next, message: teleportMsg };

@@ -142,7 +142,7 @@ export const createInitialState = (world: World): GameState => {
           unlockTriggers: ["ParkPass"],
           direction: "west",
           blockMsg: `The robot scans you then repositions itself gently, but firmly, between you and the park entrance.\n\n"Sorry to be a stickler, but I will need to see that park pass." it says.`,
-          passMsg: `The robot scans you, then the rendered face lights up with a smile.\n\n"You park pass is valid, enjoy your time in Vivarium Park!"`,
+          passMsg: `The robot scans you, then the rendered face lights up with a smile.\n\n"Your park pass is valid, enjoy your time in Vivarium Park!"`,
         },
         LevelThreeCorridorSeven: {
           roomId: "LevelThreeCorridorSeven",
