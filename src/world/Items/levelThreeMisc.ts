@@ -668,7 +668,7 @@ export const levelThreeItems: Item[] = [
     id: "ParkPlaque",
     name: "bronze plaque",
     description:
-      "A polished bronze plaque mounted at eye level, the words “THE HUB” engraved into its surface in heavy, confident lettering.",
+      "A polished bronze plaque mounted at eye level, the words “WELCOME TO VIVARIUM PARK” engraved into its surface in heavy, confident lettering.",
     sceneryDescription:
       "The plaque catches the ambient light with a soft, warm sheen, every stroke of the letters burnished smooth by years of incidental contact. Small scratches and scuffs surround the mounting bolts, hinting at how often people have leaned on it, tapped it for luck, or just used it as a landmark before moving on.",
     location: "ParkEntrance",

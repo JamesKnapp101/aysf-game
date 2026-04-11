@@ -264,7 +264,7 @@ export const threeWestItems: Item[] = [
     itemSize: 1,
     isWearable: false,
     isReadable: true,
-    readableText: "HUB PASS\n" + "24 Hours\n" + "Day: Any\n",
+    readableText: "VIVARIUM PARK - PARK PASS\n" + "24 Hours\n" + "Day: Any\n",
     isContainer: false,
     scoreId: "obtained_park_pass",
   },

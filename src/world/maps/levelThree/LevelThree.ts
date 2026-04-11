@@ -219,7 +219,7 @@ export const LEVEL_THREE: WorldChunk = {
     {
       id: "ParkEntrance",
       name: "Level Three Secondary Corridor",
-      description: `This short stretch of corridor branches west off the main residential hall and ends at a large, sturdy-looking wooden door engraved with a leaf and floral pattern. Mounted on the wall next to the door is a metal panel with a thin horizontal slot in it. Just below the slot is a flat metal tray. Mounted over the door is a bronze plaque engraved with the words 'THE HUB'.`,
+      description: `This short stretch of corridor branches west off the main residential hall and ends at a large, sturdy-looking wooden door engraved with a leaf and floral pattern. Mounted on the wall next to the door is a metal panel with a thin horizontal slot in it. Just below the slot is a flat metal tray. Mounted over the door is a bronze plaque engraved with the words 'WELCOME TO VIVARIUM PARK'.`,
       exits: [
         { direction: "west", doorId: "ParkDoor" },
         { direction: "east", toRoomId: "LevelThreeCorridorBranch" },

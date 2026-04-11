@@ -375,16 +375,16 @@ export const levelThreeParkDoors: DoorDefinition[] = [
     id: "WalkInDoor",
     name: "walk-in door",
     descriptionFromA:
-      "To the north is a large, heavy-looking door of polished steel, with a pull handle.",
+      "To the west is a large, heavy-looking door of polished steel, with a pull handle.",
     descriptionFromB:
-      "To the south is the freezer door, covered with a thin layer of frost.",
+      "To the east is the freezer door, covered with a thin layer of frost.",
     kind: "keyed",
     vocab: ["freezer door", "walk-in door", "walk in door"],
     connects: {
       roomAId: "Kitchen",
       roomBId: "WalkIn",
     },
-    directions: { fromA: "north", fromB: "south" },
+    directions: { fromA: "west", fromB: "east" },
     initiallyOpen: true,
     initiallyLocked: false,
   },
