@@ -1,8 +1,53 @@
 import { queueAfterRoomDescription } from "@game/helpers/gameHelpers";
 import { moveItemToRoom } from "@game/helpers/itemHelpers";
+import {
+  armParkEastPowerKeySnatch,
+  canTriggerParkEastPowerKeySnatch,
+  isParkEastPowerKeySnatchArmed,
+  PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE,
+  shouldArmParkEastPowerKeySnatch,
+  triggerParkEastPowerKeySnatch,
+} from "@game/helpers/parkKeyHijack";
 import { ScriptedEvent } from "@game/types/eventTypes";
 
+function runParkEastPowerKeySnatch(state: Parameters<ScriptedEvent["run"]>[0]) {
+  let next = triggerParkEastPowerKeySnatch(state);
+  next = queueAfterRoomDescription(
+    next,
+    PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE,
+  );
+  return next;
+}
+
 export const SCRIPTED_EVENTS: ScriptedEvent[] = [
+  {
+    id: "park_key_snatch_arm",
+    once: false,
+    when: (state, ctx) =>
+      ctx.kind === "onEnterRoom" &&
+      shouldArmParkEastPowerKeySnatch(state, ctx.roomId),
+    run: (state) => armParkEastPowerKeySnatch(state),
+  },
+  {
+    id: "park_key_snatch_on_command",
+    once: false,
+    when: (state, ctx) =>
+      ctx.kind === "onCommand" &&
+      isParkEastPowerKeySnatchArmed(state) &&
+      canTriggerParkEastPowerKeySnatch(state) &&
+      (ctx.roomId === "ParkEast" || ctx.fromRoomId === "ParkEast"),
+    run: (state) => runParkEastPowerKeySnatch(state),
+  },
+  {
+    id: "park_key_snatch_on_turn_end",
+    once: false,
+    when: (state, ctx) =>
+      ctx.kind === "onTurnEnd" &&
+      isParkEastPowerKeySnatchArmed(state) &&
+      canTriggerParkEastPowerKeySnatch(state) &&
+      ctx.fromRoomId === "ParkEast",
+    run: (state) => runParkEastPowerKeySnatch(state),
+  },
   {
     id: "cat_meet",
     when: (state, ctx) =>

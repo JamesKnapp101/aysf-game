@@ -21,11 +21,12 @@ import { seedItemRoomLocations } from "./helpers/itemHelpers";
 import type { DoorDefinition, DoorState } from "./types/doorTypes";
 import type { GameState, World, WorldChunk } from "./types/gameTypes";
 
-export const FINAL_PLAYER_START_ROOM_ID = "LevelThreeCorridorThree"; //"VeterinaryCenter";
+export const FINAL_PLAYER_START_ROOM_ID = "StairWellSeven";
 
 // Set this to a room id while testing another area. Leave undefined for the
 // normal game start at FINAL_PLAYER_START_ROOM_ID.
-export const DEV_PLAYER_START_ROOM_ID: string | undefined = undefined;
+export const DEV_PLAYER_START_ROOM_ID: string | undefined =
+  "LevelThreeCorridorThree"; // "ParkEast";
 
 export const INITIAL_PLAYER_ROOM_ID =
   DEV_PLAYER_START_ROOM_ID ?? FINAL_PLAYER_START_ROOM_ID;
@@ -158,6 +159,22 @@ export const createInitialState = (world: World): GameState => {
           direction: "east",
           blockMsg: `You can't go that way.`,
           passMsg: `You duck underneath the lowest rack and climb through the opening.`,
+        },
+        ParkMaintenance: {
+          roomId: "ParkMaintenance",
+          unlockTriggers: [],
+          conditionalTriggers: ["TrashBotMaintenanceDoorOpen"],
+          direction: "in",
+          blockMsg: `You don't see an opening there.`,
+          passMsg: `You slip through the hidden opening in the tree.`,
+        },
+        ParkMaintenanceInterior: {
+          roomId: "ParkMaintenanceInterior",
+          unlockTriggers: [],
+          conditionalTriggers: ["TrashBotMaintenanceDoorOpen"],
+          direction: "out",
+          blockMsg: `The hidden panel is closed.`,
+          passMsg: `You step back out through the hidden opening.`,
         },
         LevelSixCorridorEnd: {
           roomId: "LevelSixCorridorEnd",
@@ -417,6 +434,10 @@ export const createInitialState = (world: World): GameState => {
       playerDeaths: {},
       aviarySpotlight: createInitialAviarySpotlightState(),
       bullEncounter: createInitialBullEncounterState(),
+      trashBot: {
+        cooldownTurns: 0,
+        mode: "wandering",
+      },
       hydroponicsSpider: {
         ...createInitialHydroponicsSpiderState(),
       },
@@ -430,6 +451,7 @@ export const createInitialState = (world: World): GameState => {
       conditionalTriggers: {
         MysteriousNoteFound: false,
         RobotRefugeAccess: false,
+        TrashBotMaintenanceDoorOpen: false,
         HydroponicsDoorUnblocked: false,
         EscapedWithYellowBadge: false,
       },
@@ -459,6 +481,7 @@ export const createInitialState = (world: World): GameState => {
       syringe: { loadedCartridgeId: undefined },
       openItems: {
         PowerStationKeyhole: true,
+        ParkDumpster: true,
       },
       containerContents: {},
       containerFilled: {},
@@ -498,6 +521,11 @@ export const createInitialState = (world: World): GameState => {
         },
       },
     },
+  };
+
+  initialGameState.itemState.attachedTo = {
+    ...initialGameState.itemState.attachedTo,
+    TrashBotBin: "TrashBot",
   };
 
   const seededState = seedInitialPlacements(initialGameState);

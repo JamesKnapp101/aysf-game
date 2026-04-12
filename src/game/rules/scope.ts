@@ -112,6 +112,8 @@ export function resolveItemByNoun(
 
   const isOpen = (itemId: string): boolean =>
     state.itemState.openItems?.[itemId] === true;
+  const isTransparentContainer = (itemId: string): boolean =>
+    itemsById.get(itemId)?.meta?.transparentContainer === true;
 
   const liveLocById = (itemId: string): string | undefined => {
     const it = itemsById.get(itemId);
@@ -137,7 +139,7 @@ export function resolveItemByNoun(
   // Seed with open items that are physically in the room
   for (const id of inScopeIds) {
     const loc = liveLocById(id);
-    if (loc === room.id && isOpen(id)) {
+    if (loc === room.id && (isOpen(id) || isTransparentContainer(id))) {
       queue.push(id);
       visitedContainers.add(id);
     }
@@ -153,7 +155,10 @@ export function resolveItemByNoun(
 
       if (!inScopeIds.has(child.id)) inScopeIds.add(child.id);
 
-      if (isOpen(child.id) && !visitedContainers.has(child.id)) {
+      if (
+        (isOpen(child.id) || isTransparentContainer(child.id)) &&
+        !visitedContainers.has(child.id)
+      ) {
         visitedContainers.add(child.id);
         queue.push(child.id);
       }

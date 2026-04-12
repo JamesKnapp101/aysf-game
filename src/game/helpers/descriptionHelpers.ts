@@ -53,6 +53,32 @@ export function buildRoomItemsDescription(
 
   const parts: string[] = [];
 
+  // Fresh initial descriptions (non-scenery)
+  const seen = state.itemState.pickedUpByPlayer ?? {};
+  const freshItems = nonSceneryItems.filter(
+    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id],
+  );
+
+  if (freshItems.length > 0) {
+    parts.push(
+      freshItems.map((it) => it.initialDescription!.trim()).join("\n\n"),
+    );
+  }
+
+  // Basic listing
+  const listItems = nonSceneryItems.filter(
+    (it) => !freshItems.some((f) => f.id === it.id),
+  );
+
+  if (listItems.length > 0) {
+    if (listItems.length === 1) {
+      parts.push(`There is ${listItems[0].name} here.`);
+    } else {
+      const names = formatNameList(listItems.map((it) => it.name));
+      parts.push(`There are ${names} here.`);
+    }
+  }
+
   // Things in other things
   const containersHere = itemsHere.filter((item) => item.isContainer);
   const containerLines: string[] = [];
@@ -88,32 +114,6 @@ export function buildRoomItemsDescription(
   }
 
   if (surfaceLines.length > 0) parts.push(surfaceLines.join(" "));
-
-  // Fresh initial descriptions (non-scenery)
-  const seen = state.itemState.pickedUpByPlayer ?? {};
-  const freshItems = nonSceneryItems.filter(
-    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id],
-  );
-
-  if (freshItems.length > 0) {
-    parts.push(
-      freshItems.map((it) => it.initialDescription!.trim()).join("\n\n"),
-    );
-  }
-
-  // Basic listing
-  const listItems = nonSceneryItems.filter(
-    (it) => !freshItems.some((f) => f.id === it.id),
-  );
-
-  if (listItems.length > 0) {
-    if (listItems.length === 1) {
-      parts.push(`There is ${listItems[0].name} here.`);
-    } else {
-      const names = formatNameList(listItems.map((it) => it.name));
-      parts.push(`There are ${names} here.`);
-    }
-  }
 
   return parts.join("\n\n");
 }

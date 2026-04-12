@@ -41,9 +41,7 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     voice: ["urgent", "helpful", "informal", "strained", "fading"],
   },
   ranger_bot: {
-    directives: [
-      "Redirect unrelated topics to the Park or Park Passes.",
-    ],
+    directives: ["Redirect unrelated topics to the Park or Park Passes."],
     goals: ["Keep anyone without a Park Pass out of the Park"],
     identity:
       "A ranger robot stationed at the Park entrance to enforce Park Pass rules.",
@@ -89,13 +87,22 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     voice: ["friendly", "quiet", "pensive", "lonely", "grateful"],
   },
   trash_bot: {
-    goals: [],
-    identity: "",
-    knownFacts: [],
-    name: "",
-    scene: "",
-    unknownFacts: [],
-    voice: [],
+    directives: [
+      "Anything in TrashBot's bin is trash, no exceptions.",
+      "Any question about something in TrashBot's bin counts as trash related.",
+      "If the player query isn't trash related, ignore it and deliver a random motto about not littering",
+      "If the query is trash related, always respond with a brief PSA about responsible trash disposal",
+      "Refuse to part with any trash in TrashBot's bin if asked",
+    ],
+    goals: ["Pick up trash"],
+    identity: "A simple trash collecting robot",
+    knownFacts: ["Trash goes in the trashcan"],
+    name: "Sweepy",
+    scene: "Wanders around the Park area looking for trash",
+    unknownFacts: [
+      "The trash robot is very simple and knows nothing about anything non-trash related",
+    ],
+    voice: ["simplistic", "brief", "emotionless"],
   },
   spot_bot: {
     directives: [

@@ -220,6 +220,20 @@ export type BullEncounterState = {
   stunnedTurns: number;
 };
 
+export type TrashBotMode =
+  | "wandering"
+  | "returning_to_maintenance"
+  | "door_open_for_entry"
+  | "inside_waiting_to_dump"
+  | "inside_waiting_to_exit"
+  | "door_open_for_exit"
+  | "outside_waiting_to_close";
+
+export type TrashBotState = {
+  cooldownTurns: number;
+  mode: TrashBotMode;
+};
+
 export type BrainSlugState = {
   attachedTo: string;
   isHydrated: boolean;
@@ -360,6 +374,7 @@ export interface WorldState {
   roomTemp: Record<string, RoomTemperature>;
   scoresTriggered: Record<PlayerScoreId, boolean>;
   scriptedEventsTripped: Record<string, boolean>;
+  trashBot: TrashBotState;
   visitedRooms: Record<string, boolean>;
   womensLockerContents: LockerContents<WomensLockerId>;
   womensLockersOpened: LockerOpenedState<WomensLockerId>;

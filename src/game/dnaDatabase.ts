@@ -34,4 +34,15 @@ export const DNA_DATABASE: Record<string, DNAResult> = {
     occupation: "Scientist",
     info: "That boy ain't right.",
   },
+  OmarkBoutrosCorpse: {
+    id: "omarkBoutrosCorpse",
+    title: `Discovered on level three just inside Vivarium Park`,
+    loggedAtTurn: 0,
+    causeOfDeath: `Severe liquefactive necrosis`,
+    name: "Omark Boutros",
+    gender: "Male",
+    age: 41,
+    occupation: "Power Grid Supervisor",
+    info: "Omark Boutros is a high-value citizen, and is in excellent standing with an excellent social score.\nHe has worked in Utilities and the Power Grid for over twenty rotations now, and has shown exemplary initiative there. He currently holds the position of Supervisor.\nMinor social infractions include: Fornicating in a careless manner. Public intoxication. Attempting to solicit an intelligent robot.",
+  },
 };

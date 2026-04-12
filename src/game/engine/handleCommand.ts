@@ -395,9 +395,19 @@ export async function handleCommand(
     nextState = drained.state;
 
     if (drained.lines.length > 0) {
-      message = [message.trim(), ...drained.lines.map((s) => s.trim())]
-        .filter(Boolean)
-        .join("\n\n");
+      const scriptedLines = drained.lines.map((s) => s.trim()).filter(Boolean);
+      const trimmedMessage = message.trim();
+
+      if (
+        trimmedMessage === "You don't see that here." &&
+        scriptedLines.length > 0
+      ) {
+        message = scriptedLines.join("\n\n");
+      } else {
+        message = [trimmedMessage, ...scriptedLines]
+          .filter(Boolean)
+          .join("\n\n");
+      }
     }
   }
   // Build echo block

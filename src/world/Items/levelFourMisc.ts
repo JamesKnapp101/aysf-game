@@ -354,29 +354,6 @@ export const levelFourItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "PowerStationKey",
-    name: "large yellow and black key",
-    description:
-      "A large, heavy key with a rectangular grip striped in yellow and black hazard colors. It was clearly designed to make whoever turns it feel important and slightly terrified.",
-    sceneryDescription:
-      "The grip is textured and over-engineered, like someone wanted to make absolutely sure you understood that turning this thing does not count as a small decision.",
-    location: "PowerGrid",
-    vocab: ["large", "key", "black", "yellow", "rectangular"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isTurnable: true,
-    isContainer: false,
-    overrides: {
-      take: "You wrap your hand around the oversized grip. It comes free only if the system isn’t keyed on; otherwise it refuses to budge, like the hardware equivalent of a disapproving look.",
-    },
-    meta: {
-      kind: "key",
-    },
-    scoreId: "obtained_power_key",
-  },
-  {
     id: "PowerStationMonitor",
     name: "view screen",
     description:

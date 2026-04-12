@@ -240,8 +240,25 @@ describe("General gameplay", () => {
 
   it("updates score when the player completes a score-bearing task", async () => {
     const start = setInventory(createTestState({ roomId: "PowerGrid" }), []);
-
-    const next = await runCommand(start, "take key");
+    const seeded = {
+      ...start,
+      world: {
+        ...start.world,
+        items: start.world.items.map((item) =>
+          item.id === "PowerStationKey"
+            ? { ...item, location: "PowerGrid" }
+            : item,
+        ),
+      },
+      itemState: {
+        ...start.itemState,
+        itemRoomId: {
+          ...start.itemState.itemRoomId,
+          PowerStationKey: "PowerGrid",
+        },
+      },
+    };
+    const next = await runCommand(seeded, "take key");
 
     expect(next.worldState.scoresTriggered.obtained_power_key).toBe(true);
     expect(next.score).toBe(5);

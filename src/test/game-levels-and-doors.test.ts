@@ -1,5 +1,6 @@
 import { advanceTurn } from "@game/engine/turn";
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
+import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { LEVEL_FIVE } from "../world/maps/levelFive/LevelFive";
@@ -22,6 +23,122 @@ import {
   runCommands,
   setInventory,
 } from "./helpers/gameTestHelpers";
+
+function setItemRoom(
+  state: ReturnType<typeof createTestState>,
+  itemId: string,
+  roomId: string,
+) {
+  return {
+    ...state,
+    world: {
+      ...state.world,
+      items: state.world.items.map((item) =>
+        item.id === itemId ? { ...item, location: roomId } : item,
+      ),
+    },
+    itemState: {
+      ...state.itemState,
+      itemRoomId: {
+        ...state.itemState.itemRoomId,
+        [itemId]: roomId,
+      },
+    },
+  };
+}
+
+function removeIdsFromPlacementList(
+  lists: Record<string, string[]>,
+  itemIds: string[],
+) {
+  const blockedIds = new Set(itemIds);
+
+  return Object.fromEntries(
+    Object.entries(lists).map(([hostId, ids]) => [
+      hostId,
+      (ids ?? []).filter((id) => !blockedIds.has(id)),
+    ]),
+  );
+}
+
+function setContainerContents(
+  state: ReturnType<typeof createTestState>,
+  containerId: string,
+  itemIds: string[],
+) {
+  const itemSet = new Set(itemIds);
+
+  return {
+    ...state,
+    world: {
+      ...state.world,
+      items: state.world.items.map((item) =>
+        itemSet.has(item.id) ? { ...item, location: containerId } : item,
+      ),
+    },
+    itemState: {
+      ...state.itemState,
+      itemRoomId: {
+        ...state.itemState.itemRoomId,
+        ...Object.fromEntries(itemIds.map((itemId) => [itemId, containerId])),
+      },
+      containerContents: {
+        ...removeIdsFromPlacementList(state.itemState.containerContents, itemIds),
+        [containerId]: [...itemIds],
+      },
+      surfaceContents: removeIdsFromPlacementList(
+        state.itemState.surfaceContents,
+        itemIds,
+      ),
+      underContents: removeIdsFromPlacementList(
+        state.itemState.underContents,
+        itemIds,
+      ),
+      searchableContents: removeIdsFromPlacementList(
+        state.itemState.searchableContents,
+        itemIds,
+      ),
+    },
+  };
+}
+
+function freezeTickingItemsExcept(
+  state: ReturnType<typeof createTestState>,
+  keepIds: string[],
+) {
+  const keep = new Set(keepIds);
+  const frozenItems = state.world.items.reduce<Record<string, boolean>>(
+    (acc, item) => {
+      if (keep.has(item.id)) return acc;
+      if (item.meta?.isAlive !== true) return acc;
+      if (!item.overrides?.tick) return acc;
+      acc[item.id] = true;
+      return acc;
+    },
+    {},
+  );
+
+  return {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      frozenItems: {
+        ...state.itemState.frozenItems,
+        ...frozenItems,
+      },
+    },
+  };
+}
+
+function sequenceRng(values: number[]) {
+  let index = 0;
+  const fallback = values[values.length - 1] ?? 0;
+  return () => {
+    const next = values[index] ?? fallback;
+    index += 1;
+    return next;
+  };
+}
 
 describe("Doors and level mechanics", () => {
   it("authors the hydroponics cocoons as distinct scenery items", async () => {
@@ -258,6 +375,405 @@ describe("Doors and level mechanics", () => {
     const next = await runCommand(start, "west");
 
     expect(next.player.roomId).toBe("ParkEast");
+  });
+
+  it("arms the park key snatch on first entry and triggers it on the next action", async () => {
+    const start = setInventory(
+      createTestState({ roomId: "ParkEntrance" }),
+      ["ParkPass"],
+    );
+
+    const entered = await runCommand(start, "west");
+    const next = await runCommand(entered, "look");
+
+    expect(entered.itemState.itemRoomId.PowerStationKey).toBe("ParkEast");
+    expect(next.itemState.containerContents.TrashBotBin).toContain(
+      "PowerStationKey",
+    );
+    expect(next.itemState.itemRoomId.PowerStationKey).toBe("TrashBotBin");
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkCenter");
+    expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkCenter");
+    expect(getLastLogEntry(next)).toContain(
+      "A trashbot suddenly darts in, whisks the large key into its wire bin, and putters off toward the center of the park.",
+    );
+  });
+
+  it("triggers the park key snatch when the player leaves ParkEast after first entering it", async () => {
+    const start = setInventory(
+      createTestState({ roomId: "ParkEntrance" }),
+      ["ParkPass"],
+    );
+
+    const entered = await runCommand(start, "west");
+    const next = await runCommand(entered, "west");
+
+    expect(next.player.roomId).toBe("ParkCenter");
+    expect(next.itemState.containerContents.TrashBotBin).toContain(
+      "PowerStationKey",
+    );
+    expect(next.itemState.itemRoomId.PowerStationKey).toBe("TrashBotBin");
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkCenter");
+    expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkCenter");
+    expect(getLastLogEntry(next)).toContain(
+      "A trashbot suddenly darts in, whisks the large key into its wire bin, and putters off toward the center of the park.",
+    );
+  });
+
+  it("has the trash bot steal the park key into its bin and flee to Park Center without awarding the key score", async () => {
+    const start = createTestState({ roomId: "ParkEast" });
+
+    const next = await runCommand(start, "take key");
+
+    expect(expectInventoryToContain(next, "PowerStationKey")).toBe(false);
+    expect(next.itemState.containerContents.TrashBotBin).toContain(
+      "PowerStationKey",
+    );
+    expect(next.itemState.itemRoomId.PowerStationKey).toBe("TrashBotBin");
+    expect(
+      next.world.items.find((item) => item.id === "PowerStationKey")?.location,
+    ).toBe("TrashBotBin");
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkCenter");
+    expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkCenter");
+    expect(next.itemState.attachedTo.TrashBotBin).toBe("TrashBot");
+    expect(next.worldState.scoresTriggered.obtained_power_key).toBe(false);
+    expect(next.score).toBe(0);
+    expect(getLastLogEntry(next)).toContain(
+      "The trashbot ran in from out of nowhere and took it!.",
+    );
+    expect(getLastLogEntry(next)).not.toContain("Taken.");
+  });
+
+  it("suppresses the generic take failure text when the trash bot key-steal event fires", async () => {
+    const start = createTestState({ roomId: "ParkEast" });
+
+    const next = await runCommand(start, "get large key");
+
+    expect(getLastLogEntry(next)).toContain(
+      "The trashbot ran in from out of nowhere and took it!.",
+    );
+    expect(getLastLogEntry(next)).not.toContain("You don't see that here.");
+  });
+
+  it("lets the player examine the key in the trash bot bin without taking it", async () => {
+    const start = createTestState({ roomId: "ParkEast" });
+
+    const intercepted = await runCommand(start, "take key");
+    const pausedBot = {
+      ...intercepted,
+      worldState: {
+        ...intercepted.worldState,
+        trashBot: {
+          ...intercepted.worldState.trashBot,
+          cooldownTurns: 1,
+        },
+      },
+    };
+    const atCenter = await runCommand(pausedBot, "west");
+    const examined = await runCommand(atCenter, "examine yellow key");
+    const blockedTake = await runCommand(atCenter, "take yellow key");
+
+    expect(examined.log.join("\n\n")).toContain(
+      "A large, heavy key with a rectangular grip striped with black and yellow.",
+    );
+    expect(expectInventoryToContain(blockedTake, "PowerStationKey")).toBe(false);
+    expect(blockedTake.worldState.scoresTriggered.obtained_power_key).toBe(false);
+    expect(blockedTake.log.join("\n\n")).toContain(
+      "You can see through the wire mesh, but you can't get at anything inside the trash bot's bin.",
+    );
+  });
+
+  it("mentions the trash bot before listing what is inside its bin", async () => {
+    const start = createTestState({ roomId: "ParkEast" });
+
+    const intercepted = await runCommand(start, "take key");
+    const atCenter = await runCommand(intercepted, "west");
+
+    const panelDescription = buildRoomDescription(atCenter, "ParkCenter", {
+      mode: "panel",
+      forceFull: true,
+    });
+    const itemOnlyDescription = buildRoomItemsDescription(atCenter, "ParkCenter");
+    const robotText = "A little robot with treads putters around nearby.";
+    const binText = "Inside the trash bot bin you can see large yellow and black key.";
+
+    expect(panelDescription).toContain(robotText);
+    expect(panelDescription).toContain(binText);
+    expect(panelDescription.indexOf(robotText)).toBeLessThan(
+      panelDescription.indexOf(binText),
+    );
+
+    expect(itemOnlyDescription).toContain(robotText);
+    expect(itemOnlyDescription).toContain(binText);
+    expect(itemOnlyDescription.indexOf(robotText)).toBeLessThan(
+      itemOnlyDescription.indexOf(binText),
+    );
+  });
+
+  it("has the trash bot putter into the player's room when it arrives there", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkEast", rng: sequenceRng([0.6, 0.6]) }),
+        "TrashBot",
+        "ParkCenter",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkCenter");
+
+    const next = await runCommand(withBin, "wait");
+
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkEast");
+    expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkEast");
+    expect(getLastLogEntry(next)).toContain("The trashbot putters in from the west.");
+  });
+
+  it("reports when the player and the trash bot pass each other", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkEast", rng: sequenceRng([0.6, 0.6]) }),
+        "TrashBot",
+        "ParkCenter",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkCenter");
+
+    const next = await runCommand(withBin, "west");
+
+    expect(next.player.roomId).toBe("ParkCenter");
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkEast");
+    expect(getLastLogEntry(next)).toContain(
+      "You pass the trashbot as it putters by, its wire bin rattling softly.",
+    );
+  });
+
+  it("reports the trash bot nearby when it ends one room away in the park", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkEast", rng: sequenceRng([0.6, 0]) }),
+        "TrashBot",
+        "ParkMaintenance",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkMaintenance");
+
+    const next = await runCommand(withBin, "wait");
+
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkCenter");
+    expect(getLastLogEntry(next)).toContain(
+      "The trashbot putters around off to the west.",
+    );
+  });
+
+  it("has the trash bot scoop up ground items into its bin", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkEast", rng: sequenceRng([0.6, 0]) }),
+        "TrashBot",
+        "ParkMaintenance",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkMaintenance");
+    const withTrash = setItemRoom(withBin, "Scalpel", "ParkCenter");
+
+    const next = await runCommand(withTrash, "wait");
+
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkCenter");
+    expect(next.itemState.itemRoomId.Scalpel).toBe("TrashBotBin");
+    expect(next.itemState.containerContents.TrashBotBin).toContain("Scalpel");
+  });
+
+  it("sometimes lingers in place instead of moving", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkEast", rng: sequenceRng([0.2]) }),
+        "TrashBot",
+        "ParkCenter",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkCenter");
+
+    const next = await runCommand(withBin, "wait");
+
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkCenter");
+    expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkCenter");
+  });
+
+  it("does not report a pass-by when the player stands still", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({
+          roomId: "ParkCenter",
+          rng: sequenceRng([0.6, 0]),
+        }),
+        "TrashBot",
+        "ParkCenter",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkCenter");
+
+    const next = await runCommand(withBin, "examine robot");
+
+    expect(next.log.join("\n\n")).not.toContain(
+      "You pass the trashbot as it putters by, its wire bin rattling softly.",
+    );
+    expect(next.log.join("\n\n")).toContain("The trashbot putters off to the north.");
+  });
+
+  it("keeps the maintenance opening hidden until the trash bot starts emptying", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkMaintenance", rng: sequenceRng([0.2]) }),
+        "TrashBot",
+        "ParkMaintenance",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkMaintenance");
+
+    const blocked = await runCommand(withBin, "in");
+
+    expect(blocked.player.roomId).toBe("ParkMaintenance");
+    expect(getLastLogEntry(blocked)).toContain("You don't see an opening there.");
+  });
+
+  it("has the trash bot head straight to maintenance once its bin is full", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkCenter" }),
+        "TrashBot",
+        "ParkCenter",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkCenter");
+    const primed = setContainerContents(withBin, "TrashBotBin", [
+      "PowerStationKey",
+      "Scalpel",
+      "ShedCellarKey",
+    ]);
+
+    const next = await runCommand(primed, "wait");
+
+    expect(next.itemState.itemRoomId.TrashBot).toBe("ParkMaintenance");
+    expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkMaintenance");
+    expect(next.worldState.trashBot.mode).toBe("door_open_for_entry");
+    expect(next.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
+      true,
+    );
+    expect(next.log.join("\n\n")).toContain(
+      '"Trash collection bin full. Initiating bin emptying sequence."',
+    );
+  });
+
+  it("lets the player follow the trash bot inside and witness it dump the bin into the dumpster", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkMaintenance" }),
+        "TrashBot",
+        "ParkMaintenance",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkMaintenance");
+    const primed = setContainerContents(withBin, "TrashBotBin", [
+      "PowerStationKey",
+      "Scalpel",
+      "ShedCellarKey",
+    ]);
+
+    const opened = await runCommand(primed, "wait");
+    const entered = await runCommand(opened, "in");
+    const dumped = await runCommand(entered, "wait");
+
+    expect(opened.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
+      true,
+    );
+    expect(opened.log.join("\n\n")).toContain(
+      '"Trash collection bin full. Initiating bin emptying sequence."',
+    );
+    expect(opened.log.join("\n\n")).toContain("hidden panel slides open");
+
+    expect(entered.player.roomId).toBe("ParkMaintenanceInterior");
+    expect(entered.itemState.itemRoomId.TrashBot).toBe("ParkMaintenanceInterior");
+    expect(entered.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
+      true,
+    );
+    expect(entered.log.join("\n\n")).toContain(
+      "The trashbot putters in through the opening and rolls toward the dumpster.",
+    );
+
+    expect(dumped.itemState.itemRoomId.PowerStationKey).toBe("ParkDumpster");
+    expect(dumped.itemState.itemRoomId.Scalpel).toBe("ParkDumpster");
+    expect(dumped.itemState.itemRoomId.ShedCellarKey).toBe("ParkDumpster");
+    expect(dumped.itemState.containerContents.ParkDumpster).toEqual(
+      expect.arrayContaining(["PowerStationKey", "Scalpel", "ShedCellarKey"]),
+    );
+    expect(dumped.itemState.containerContents.TrashBotBin ?? []).toEqual([]);
+    expect(dumped.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
+      false,
+    );
+    expect(dumped.log.join("\n\n")).toContain("The trashbot tips");
+    expect(dumped.log.join("\n\n")).toContain("into the dumpster.");
+    expect(dumped.log.join("\n\n")).toContain("The hidden panel slides shut again.");
+  });
+
+  it("can repeat the maintenance-emptying cycle after the bin fills again", async () => {
+    const start = freezeTickingItemsExcept(
+      setItemRoom(
+        createTestState({ roomId: "ParkMaintenance" }),
+        "TrashBot",
+        "ParkMaintenance",
+      ),
+      ["TrashBot"],
+    );
+    const withBin = setItemRoom(start, "TrashBotBin", "ParkMaintenance");
+    const primed = setContainerContents(withBin, "TrashBotBin", [
+      "PowerStationKey",
+      "Scalpel",
+      "ShedCellarKey",
+    ]);
+
+    const opened = await runCommand(primed, "wait");
+    const entered = await runCommand(opened, "in");
+    const dumped = await runCommand(entered, "wait");
+    const reopened = await runCommand(dumped, "wait");
+    const exited = await runCommand(reopened, "wait");
+    const closed = await runCommand(exited, "wait");
+    const refilled = setContainerContents(closed, "TrashBotBin", [
+      "PowerStationKey",
+      "Scalpel",
+      "ShedCellarKey",
+    ]);
+    const triggeredAgain = await runCommand(refilled, "wait");
+
+    expect(reopened.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
+      true,
+    );
+    expect(reopened.log.join("\n\n")).toContain("hidden panel slides open");
+
+    expect(exited.itemState.itemRoomId.TrashBot).toBe("ParkMaintenance");
+    expect(exited.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
+      true,
+    );
+    expect(exited.log.join("\n\n")).toContain(
+      "The trashbot putters back out through the opening.",
+    );
+
+    expect(closed.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
+      false,
+    );
+    expect(closed.worldState.trashBot.mode).toBe("wandering");
+
+    expect(triggeredAgain.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
+      true,
+    );
+    expect(triggeredAgain.worldState.trashBot.mode).toBe("door_open_for_entry");
+    expect(triggeredAgain.log.join("\n\n")).toContain("hidden panel slides open");
   });
 
   it("unlocks keyed doors with the correct key", async () => {

@@ -115,10 +115,7 @@ export function movePlayerToRoom(
   // If something tries to "move" to same room, don't pollute history.
   if (fromRoomId === toRoomId) return state;
 
-  const atTurn =
-    (state as any).turnNumber ??
-    (state.worldState as any).turnNumber ??
-    undefined;
+  const atTurn = state.moves;
 
   const prevMoves = state.player.recentMoves ?? [];
   const nextEvent: PlayerMoveEvent = { fromRoomId, toRoomId, via, atTurn };
