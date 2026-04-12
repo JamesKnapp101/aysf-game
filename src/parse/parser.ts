@@ -37,6 +37,10 @@ const VERB_ALIASES: Record<string, string> = {
   diagnose: "diagnose",
   status: "diagnose",
   comet: "comet",
+  save: "save",
+  restore: "restore",
+  load: "restore",
+  restart: "restart",
 
   go: "go",
 
@@ -112,6 +116,9 @@ export function parseCommand(rawInput: string): ParsedCommand {
   if (verb === "inventory") return { type: "inventory" };
   if (verb === "diagnose") return { type: "diagnose" };
   if (verb === "comet") return { type: "comet" };
+  if (verb === "save") return { type: "save" };
+  if (verb === "restore") return { type: "restore" };
+  if (verb === "restart") return { type: "restart" };
 
   if (verb === "go" && rest0.length === 1 && DIR_MAP[rest0[0]]) {
     return { type: "move", direction: DIR_MAP[rest0[0]] };

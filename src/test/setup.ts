@@ -8,6 +8,8 @@ afterEach(() => {
 });
 
 beforeEach(() => {
+  window.localStorage.clear();
+
   useUIOverlayStore.setState({
     overlay: { kind: "none" },
   });
@@ -55,5 +57,29 @@ beforeEach(() => {
     configurable: true,
     writable: true,
     value: vi.fn(),
+  });
+
+  Object.defineProperty(HTMLElement.prototype, "scrollTo", {
+    configurable: true,
+    writable: true,
+    value: vi.fn(),
+  });
+
+  class ResizeObserverMock {
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+  }
+
+  Object.defineProperty(window, "ResizeObserver", {
+    configurable: true,
+    writable: true,
+    value: ResizeObserverMock,
+  });
+
+  Object.defineProperty(globalThis, "ResizeObserver", {
+    configurable: true,
+    writable: true,
+    value: ResizeObserverMock,
   });
 });

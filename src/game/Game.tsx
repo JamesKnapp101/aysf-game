@@ -63,9 +63,11 @@ export const Game: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SidebarTab>("comet");
   const [lastFocusedPrompt, setLastFocusedPrompt] =
     useState<PromptFocusOwner>("game");
-  const [showSplash, setShowSplash] = useState(true);
   const {
+    dismissOpeningSplash,
     gs,
+    isSessionReady,
+    showOpeningSplash,
     stateRef,
     updateState,
     enqueueCommand,
@@ -117,7 +119,12 @@ export const Game: React.FC = () => {
     [restorePromptFocus],
   );
 
-  useWorldChunkHydration({ gs, stateRef, updateState });
+  useWorldChunkHydration({
+    enabled: isSessionReady,
+    gs,
+    stateRef,
+    updateState,
+  });
 
   const nonce = useUIEffectsStore((s) => s.teleportFlashNonce);
 
@@ -224,12 +231,16 @@ export const Game: React.FC = () => {
   return (
     <>
       <SplashModal
-        isOpen={showSplash}
-        onContinue={() => setShowSplash(false)}
+        continueDisabled={false}
+        continueLabel="Continue"
+        isOpen={isSessionReady && showOpeningSplash}
+        onContinue={() => {
+          dismissOpeningSplash();
+        }}
         text={OPENING_SPLASH}
       />
 
-      {!showSplash && (
+      {isSessionReady && !showOpeningSplash && (
         <>
           {/* The OverlayHost handles all the screen effects */}
           <OverlayHost

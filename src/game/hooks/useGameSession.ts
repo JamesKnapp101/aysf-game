@@ -13,7 +13,12 @@ import { dispatchAction } from "../actions/dispatchAction";
 import { appendLog, handleCommand } from "../engine/handleCommand";
 import { createInitialState } from "../gameInit";
 import { getPendingConversationLogMessage } from "../helpers/conversationHelpers";
-import { useUIOverlayStore } from "../store/store";
+import {
+  clearResumeSnapshot,
+  restoreResumeSnapshot,
+  saveResumeSnapshot,
+} from "../persistence/resumeStorage";
+import { useUIEffectsStore, useUIOverlayStore } from "../store/store";
 import type { ActionRequest, ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 
@@ -24,7 +29,10 @@ type UseGameSessionOptions = {
 };
 
 type UseGameSessionResult = {
+  dismissOpeningSplash: () => void;
   gs: GameState;
+  isSessionReady: boolean;
+  showOpeningSplash: boolean;
   stateRef: MutableRefObject<GameState>;
   updateState: (updater: (prev: GameState) => GameState) => GameState;
   enqueueCommand: (input: string) => void;
@@ -43,6 +51,8 @@ export function useGameSession({
   const [gs, setGs] = useState<GameState>(() =>
     createInitialState(INITIAL_WORLD),
   );
+  const [isSessionReady, setIsSessionReady] = useState(false);
+  const [showOpeningSplash, setShowOpeningSplash] = useState(false);
   const stateRef = useRef(gs);
   const commandQueueRef = useRef<Promise<void>>(Promise.resolve());
   const isUnmountingRef = useRef(false);
@@ -65,6 +75,50 @@ export function useGameSession({
   useEffect(() => {
     stateRef.current = gs;
   }, [gs]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const initializeSession = async () => {
+      let restored = false;
+
+      try {
+        const savedSession = await restoreResumeSnapshot();
+        if (cancelled) return;
+
+        if (savedSession) {
+          replaceState(savedSession);
+          restored = true;
+        }
+      } catch (error) {
+        console.error("Failed to initialize saved session.", error);
+        clearResumeSnapshot();
+      } finally {
+        if (cancelled) return;
+        setShowOpeningSplash(!restored);
+        useUIOverlayStore.getState().closeOverlay();
+        const uiEffects = useUIEffectsStore.getState();
+        uiEffects.clearMindFlash();
+        uiEffects.clearOrganismDeath();
+        setIsSessionReady(true);
+      }
+    };
+
+    void initializeSession();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [replaceState]);
+
+  useEffect(() => {
+    if (!isSessionReady) return;
+    saveResumeSnapshot(stateRef.current);
+  }, [gs, isSessionReady]);
+
+  const dismissOpeningSplash = useCallback(() => {
+    setShowOpeningSplash(false);
+  }, []);
 
   const executeCommand = useCallback(
     async (input: string) => {
@@ -103,6 +157,10 @@ export function useGameSession({
       }
 
       replaceState(nextState);
+
+      if (parsed.type === "restart") {
+        setShowOpeningSplash(true);
+      }
     },
     [onCometCommand, onDiagnoseCommand, onInventoryCommand, replaceState],
   );
@@ -194,7 +252,10 @@ export function useGameSession({
   }, []);
 
   return {
+    dismissOpeningSplash,
     gs,
+    isSessionReady,
+    showOpeningSplash,
     stateRef,
     updateState,
     enqueueCommand,

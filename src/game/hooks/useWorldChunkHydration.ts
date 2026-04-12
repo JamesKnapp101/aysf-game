@@ -9,6 +9,7 @@ import { mergeWorldChunkIntoState } from "../gameInit";
 import type { GameState } from "../types/gameTypes";
 
 type UseWorldChunkHydrationOptions = {
+  enabled?: boolean;
   gs: GameState;
   stateRef: MutableRefObject<GameState>;
   updateState: (updater: (prev: GameState) => GameState) => GameState;
@@ -35,6 +36,7 @@ function waitForBackgroundTurn(): Promise<void> {
 }
 
 export function useWorldChunkHydration({
+  enabled = true,
   gs,
   stateRef,
   updateState,
@@ -103,6 +105,8 @@ export function useWorldChunkHydration({
   );
 
   useEffect(() => {
+    if (!enabled) return;
+
     const hydrateDeferredWorld = async () => {
       for (const chunkId of DEFERRED_WORLD_CHUNK_IDS) {
         if (!isMountedRef.current) return;
@@ -113,15 +117,19 @@ export function useWorldChunkHydration({
     };
 
     void hydrateDeferredWorld();
-  }, [requestWorldChunk]);
+  }, [enabled, requestWorldChunk]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     for (const chunkId of getPriorityWorldChunkIdsForRoom(gs.player.roomId)) {
       void requestWorldChunk(chunkId);
     }
-  }, [gs.player.roomId, requestWorldChunk]);
+  }, [enabled, gs.player.roomId, requestWorldChunk]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     if (gs.world.rooms.some((room) => room.id === gs.player.roomId)) {
       return;
     }
@@ -151,9 +159,11 @@ export function useWorldChunkHydration({
     return () => {
       cancelled = true;
     };
-  }, [gs.player.roomId, gs.world.rooms, requestWorldChunk, stateRef]);
+  }, [enabled, gs.player.roomId, gs.world.rooms, requestWorldChunk, stateRef]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const requestedChunkIds = Array.isArray(gs.world.meta?.requestedChunkIds)
       ? (gs.world.meta.requestedChunkIds as WorldChunkId[])
       : [];
@@ -161,5 +171,5 @@ export function useWorldChunkHydration({
     for (const chunkId of requestedChunkIds) {
       void requestWorldChunk(chunkId);
     }
-  }, [gs.world.meta?.requestedChunkIds, requestWorldChunk]);
+  }, [enabled, gs.world.meta?.requestedChunkIds, requestWorldChunk]);
 }

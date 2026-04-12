@@ -11,7 +11,13 @@ import {
   createInitialOctopusState,
 } from "src/world/Items/creatures/octopus";
 import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
-import { mergeWorldChunks, type WorldChunkId } from "../world/World";
+import {
+  DEFERRED_WORLD_CHUNK_IDS,
+  INITIAL_WORLD,
+  loadWorldChunk,
+  mergeWorldChunks,
+  type WorldChunkId,
+} from "../world/World";
 import {
   INITIAL_CONTAINER_CONTENTS,
   INITIAL_SURFACE_CONTENTS,
@@ -534,6 +540,40 @@ export const createInitialState = (world: World): GameState => {
     seededState.player.roomId,
   );
 };
+
+export async function createFreshGameState(): Promise<GameState> {
+  let world: World = INITIAL_WORLD;
+
+  if (!world.rooms.some((room) => room.id === INITIAL_PLAYER_ROOM_ID)) {
+    let loadedChunkIds = Array.isArray(world.meta?.loadedChunkIds)
+      ? [...world.meta.loadedChunkIds]
+      : [];
+
+    for (const chunkId of DEFERRED_WORLD_CHUNK_IDS) {
+      const chunk = await loadWorldChunk(chunkId);
+
+      world = {
+        ...mergeWorldChunks(world, chunk),
+        meta: {
+          ...world.meta,
+          loadedChunkIds: loadedChunkIds.includes(chunkId)
+            ? loadedChunkIds
+            : [...loadedChunkIds, chunkId],
+        },
+      };
+
+      loadedChunkIds = Array.isArray(world.meta?.loadedChunkIds)
+        ? [...world.meta.loadedChunkIds]
+        : loadedChunkIds;
+
+      if (world.rooms.some((room) => room.id === INITIAL_PLAYER_ROOM_ID)) {
+        break;
+      }
+    }
+  }
+
+  return createInitialState(world);
+}
 
 function initDoorStates(doorDefs: DoorDefinition[]): DoorState[] {
   return doorDefs.map((def) => ({

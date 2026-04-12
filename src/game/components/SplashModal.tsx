@@ -3,6 +3,8 @@ import React from "react";
 import "../../styles/components/splash-modal.css";
 
 type SplashModalProps = {
+  continueDisabled?: boolean;
+  continueLabel?: string;
   isOpen: boolean;
   onContinue: () => void;
   text?: React.ReactNode;
@@ -26,6 +28,8 @@ const DEFAULT_SPLASH: React.ReactNode = (
 );
 
 export const SplashModal: React.FC<SplashModalProps> = ({
+  continueDisabled = false,
+  continueLabel = "Continue",
   isOpen,
   onContinue,
   text,
@@ -38,8 +42,13 @@ export const SplashModal: React.FC<SplashModalProps> = ({
       <CrtModal title={title} onClose={onContinue} showHeader={false}>
         <div className="splash-modal-body">{text ?? DEFAULT_SPLASH}</div>
         <div className="splash-modal-actions">
-          <button className="crt-button" onClick={onContinue} autoFocus>
-            Continue
+          <button
+            className="crt-button"
+            onClick={onContinue}
+            autoFocus
+            disabled={continueDisabled}
+          >
+            {continueLabel}
           </button>
         </div>
       </CrtModal>

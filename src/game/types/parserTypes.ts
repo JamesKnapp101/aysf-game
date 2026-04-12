@@ -16,6 +16,9 @@ export type ParsedCommand =
   | { type: "inventory" }
   | { type: "diagnose" }
   | { type: "comet" }
+  | { type: "save" }
+  | { type: "restore" }
+  | { type: "restart" }
   | { type: "wait" }
   | { direction: Direction; type: "move" }
   | {

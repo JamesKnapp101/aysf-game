@@ -13,7 +13,14 @@ import {
 } from "@game/helpers/gameHelpers";
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
+import { createFreshGameState } from "@game/gameInit";
 import { inventoryHasAll } from "@game/rules/state";
+import {
+  clearManualSnapshot,
+  clearResumeSnapshot,
+  restoreManualSnapshot,
+  saveManualSnapshot,
+} from "@game/persistence/resumeStorage";
 import {
   getDeferredWorldChunkForEntryRoom,
   isWorldChunkLoaded,
@@ -59,6 +66,7 @@ export async function handleCommand(
   let nextState = state;
   let message = "I don't understand that.";
   let consumesTurn = false;
+  let forceRoomDescription = false;
 
   switch (cmd.type) {
     case "move": {
@@ -271,6 +279,38 @@ export async function handleCommand(
       break;
     }
 
+    case "save": {
+      consumesTurn = false;
+      message = saveManualSnapshot(state)
+        ? "Progress saved."
+        : "Unable to save your progress right now.";
+      break;
+    }
+
+    case "restore": {
+      consumesTurn = false;
+      const restored = await restoreManualSnapshot();
+
+      if (!restored) {
+        message = "You don't have a saved game to restore.";
+        break;
+      }
+
+      nextState = restored;
+      message = "Progress restored.";
+      break;
+    }
+
+    case "restart": {
+      consumesTurn = false;
+      nextState = await createFreshGameState();
+      clearManualSnapshot();
+      clearResumeSnapshot();
+      forceRoomDescription = true;
+      message = "Game restarted.";
+      break;
+    }
+
     case "unknown":
     default: {
       consumesTurn = false;
@@ -357,11 +397,14 @@ export async function handleCommand(
   }
 
   // If room changed, append destination room details from the UPDATED world state.
-  if (nextState.player.roomId !== state.player.roomId && !diedThisTurn) {
+  if (
+    (nextState.player.roomId !== state.player.roomId || forceRoomDescription) &&
+    !diedThisTurn
+  ) {
     const destRoomId = nextState.player.roomId;
-    const wasVisitedBeforeCommand = Boolean(
-      (state.worldState.visitedRooms ?? {})[destRoomId],
-    );
+    const wasVisitedBeforeCommand = forceRoomDescription
+      ? false
+      : Boolean((state.worldState.visitedRooms ?? {})[destRoomId]);
     const destRoomName = `${ROOM_NAME_TOKEN_START}${
       getRoomById(nextState, destRoomId)?.name
     }${ROOM_NAME_TOKEN_END}`;
@@ -426,6 +469,12 @@ export async function handleCommand(
     logWithEcho = `> diagnose\n${message}`;
   } else if (cmd.type === "comet") {
     logWithEcho = `> comet\n${message}`;
+  } else if (cmd.type === "save") {
+    logWithEcho = `> save\n${message}`;
+  } else if (cmd.type === "restore") {
+    logWithEcho = `> restore\n${message}`;
+  } else if (cmd.type === "restart") {
+    logWithEcho = `> restart\n${message}`;
   } else {
     // fallback
     logWithEcho = message;
