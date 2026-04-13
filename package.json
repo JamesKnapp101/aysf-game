@@ -10,10 +10,12 @@
     "start": "pnpm run dev:full",
     "build": "tsc -b && vite build",
     "build:server": "cd server && pnpm run build",
+    "build:prod": "pnpm run build && pnpm run build:server",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
+    "start:prod": "cd server && pnpm start",
     "drift:check": "node scripts/drift-check.mjs"
   },
   "dependencies": {

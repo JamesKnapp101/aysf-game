@@ -7,7 +7,7 @@ import type {
 } from "@game/types/npcTypes";
 
 const API_BASE =
-  process.env.NODE_ENV === "production"
+  import.meta.env.PROD
     ? "/api" // Production uses same domain
     : "http://localhost:3001/api"; // Dev uses proxy or direct
 

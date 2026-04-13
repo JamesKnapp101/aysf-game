@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: aysf-game
+    runtime: node
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && cd server && pnpm install --frozen-lockfile && pnpm run build && cd .. && pnpm run build
+    startCommand: cd server && pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20
+      - key: ANTHROPIC_API_KEY
+        sync: false
