@@ -5,6 +5,7 @@ import {
   initializeEncounterStateOnEnter,
 } from "@game/encounters/retryableEncounters";
 import { drainRadioQueuedLog } from "@game/helpers/conversationHelpers";
+import { removeItemFromPlacementLists } from "@game/helpers/itemPlacement";
 import {
   drainAfterRoomDescription,
   movePlayerToRoom,
@@ -14,7 +15,8 @@ import {
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
 import { createFreshGameState } from "@game/gameInit";
-import { inventoryHasAll } from "@game/rules/state";
+import { updateItemLocation } from "@game/rules/items";
+import { addToInventory, inventoryHasAll } from "@game/rules/state";
 import {
   clearManualSnapshot,
   clearResumeSnapshot,
@@ -38,6 +40,60 @@ import { advanceTurn } from "./turn";
 // Maximum number of log entries to keep in memory
 // Older entries are pruned to prevent unbounded memory growth during long play sessions
 const MAX_LOG_ENTRIES = 500;
+const DEVELOPER_MODE_ITEM_IDS = [
+  "inframaroonbadge",
+  "ultravioletbadge",
+  "maroonbadge",
+  "violetbadge",
+  "bluebadge",
+  "orangebadge",
+  "greenbadge",
+  "yellowbadge",
+  "whitebadge",
+  "flashlight",
+  "ParkPass",
+] as const;
+
+function moveItemIntoPlayerInventory(state: GameState, itemId: string): GameState {
+  let next = {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      containerContents: removeItemFromPlacementLists(
+        state.itemState.containerContents,
+        itemId,
+      ),
+      surfaceContents: removeItemFromPlacementLists(
+        state.itemState.surfaceContents,
+        itemId,
+      ),
+      underContents: removeItemFromPlacementLists(
+        state.itemState.underContents,
+        itemId,
+      ),
+      searchableContents: removeItemFromPlacementLists(
+        state.itemState.searchableContents,
+        itemId,
+      ),
+      attachedTo: {
+        ...state.itemState.attachedTo,
+        [itemId]: undefined,
+      },
+    },
+  };
+
+  next = updateItemLocation(next, itemId, "INVENTORY");
+  next = addToInventory(next, itemId);
+
+  return next;
+}
+
+function grantDeveloperModeItems(state: GameState): GameState {
+  return DEVELOPER_MODE_ITEM_IDS.reduce(
+    (nextState, itemId) => moveItemIntoPlayerInventory(nextState, itemId),
+    state,
+  );
+}
 
 export function appendLog(state: GameState, text: string): GameState {
   const newLog = [...state.log, text];
@@ -311,6 +367,13 @@ export async function handleCommand(
       break;
     }
 
+    case "developerMode": {
+      consumesTurn = false;
+      nextState = grantDeveloperModeItems(state);
+      message = "Developer mode enabled. Test items granted.";
+      break;
+    }
+
     case "unknown":
     default: {
       consumesTurn = false;
@@ -475,6 +538,8 @@ export async function handleCommand(
     logWithEcho = `> restore\n${message}`;
   } else if (cmd.type === "restart") {
     logWithEcho = `> restart\n${message}`;
+  } else if (cmd.type === "developerMode") {
+    logWithEcho = `> ${cmd.raw}\n${message}`;
   } else {
     // fallback
     logWithEcho = message;

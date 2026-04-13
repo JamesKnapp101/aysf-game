@@ -6,7 +6,7 @@ export const badgeItems: Item[] = [
     name: "inframaroon plastic badge",
     description:
       "This is a slim, rectangular plastic badge that is entirely inframaroon. It doesn't have any insignia, name, rank, or bar code.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["badge", "inframaroon", "plastic", "inframaroon badge"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -27,7 +27,7 @@ export const badgeItems: Item[] = [
       "Peeking out of the Captain's breast pocket is what looks like a black badge.",
     description:
       "This is another slim plastic badge, but it doesn't have a clip like the others. It is a glossy jet black.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["ultraviolet", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -47,7 +47,7 @@ export const badgeItems: Item[] = [
     name: "maroon plastic badge",
     description:
       "This is a slim, rectangular plastic badge that is entirely maroon except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'ORVILLE BRIGGS, BC2' and beneath that a bar code of some kind.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["badge", "maroon", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -69,7 +69,7 @@ export const badgeItems: Item[] = [
       "From inside the shredded torso of the space suit, you can see a violet badge peeking out of the corpse's breast pocket.",
     description:
       "This is a slim, rectangular plastic badge that is entirely violet except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'EDWARD GAINS, E1' and beneath that a bar code of some kind.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["badge", "violet", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -89,7 +89,7 @@ export const badgeItems: Item[] = [
     name: "blue plastic badge",
     description:
       "This is a slim, rectangular plastic badge that is entirely blue except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'KIRA DANKO, 2ME' and beneath that a bar code of some kind.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["blue", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -108,7 +108,7 @@ export const badgeItems: Item[] = [
     name: "orange plastic badge",
     description:
       "This is a slim, rectangular plastic badge that is entirely orange except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name '' and beneath that a bar code of some kind.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["orange", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -127,7 +127,7 @@ export const badgeItems: Item[] = [
     name: "green plastic badge",
     description:
       "This is a slim, rectangular plastic badge that is entirely green except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'A. RIDDEL, 2BE' and beneath that a bar code of some kind.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["green", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -168,7 +168,7 @@ export const badgeItems: Item[] = [
     name: "white plastic badge",
     description:
       "This is a slim, rectangular plastic badge that is entirely white except for a black insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'WILLIAM VESCO, C0' and beneath that a bar code of some kind.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["white", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",

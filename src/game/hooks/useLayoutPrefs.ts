@@ -4,7 +4,7 @@ const LAYOUT_STORAGE_KEY = "aysf-layout-v1";
 const CRT_COLOR_STORAGE_KEY = "aysf-crt-color-v1";
 const DEFAULT_CRT_COLOR = "#00ff00";
 const DEFAULT_LAYOUT_PREFS: LayoutPrefs = {
-  roomHeightRatio: 0.33,
+  roomHeightRatio: 0.35706005644260297,
   sidebarWidthRatio: 0.3,
 };
 
@@ -17,7 +17,9 @@ function loadInitialCrtColor(): string {
   if (typeof window === "undefined") return DEFAULT_CRT_COLOR;
 
   try {
-    return window.localStorage.getItem(CRT_COLOR_STORAGE_KEY) || DEFAULT_CRT_COLOR;
+    return (
+      window.localStorage.getItem(CRT_COLOR_STORAGE_KEY) || DEFAULT_CRT_COLOR
+    );
   } catch {
     return DEFAULT_CRT_COLOR;
   }

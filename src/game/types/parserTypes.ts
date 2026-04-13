@@ -19,6 +19,7 @@ export type ParsedCommand =
   | { type: "save" }
   | { type: "restore" }
   | { type: "restart" }
+  | { raw: string; type: "developerMode" }
   | { type: "wait" }
   | { direction: Direction; type: "move" }
   | {

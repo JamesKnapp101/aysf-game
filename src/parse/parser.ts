@@ -92,6 +92,7 @@ const SWITCH_VERBS = new Set(["switch", "turn", "flip"]);
 export function parseCommand(rawInput: string): ParsedCommand {
   const input = rawInput.trim().toLowerCase();
   if (!input) return { type: "unknown", raw: rawInput };
+  if (input === "iljio") return { type: "developerMode", raw: rawInput };
 
   const tokens = input.split(/\s+/);
 

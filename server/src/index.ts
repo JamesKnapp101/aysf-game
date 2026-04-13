@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import cors from "cors";
 import express from "express";
 import conversationRouter from "./routes/conversation.js";
+import { getClientIp, getUserAgent } from "./utils/requestMeta.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -17,6 +18,7 @@ const frontendDistDir = path.resolve(__dirname, "../../dist");
 const frontendIndexPath = path.join(frontendDistDir, "index.html");
 const hasBuiltFrontend = existsSync(frontendIndexPath);
 const isProduction = process.env.NODE_ENV === "production";
+let nextRequestId = 1;
 
 // Check for API key
 if (!process.env.ANTHROPIC_API_KEY) {
@@ -26,6 +28,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
 }
 
 app.disable("x-powered-by");
+app.set("trust proxy", true);
 
 // Middleware
 if (!isProduction) {
@@ -39,9 +42,66 @@ if (!isProduction) {
 
 app.use(express.json({ limit: "1mb" }));
 
+function classifyRequestPath(pathname: string): "api" | "page" | "asset" {
+  if (pathname.startsWith("/api/")) return "api";
+  if (
+    pathname.startsWith("/assets/") ||
+    pathname === "/favicon.png" ||
+    /\.(?:css|js|map|png|jpg|jpeg|gif|svg|ico|webp|woff2?|txt)$/i.test(pathname)
+  ) {
+    return "asset";
+  }
+
+  return "page";
+}
+
+function formatDurationMs(startNs: bigint): string {
+  const durationMs = Number(process.hrtime.bigint() - startNs) / 1_000_000;
+  return `${durationMs.toFixed(durationMs >= 100 ? 0 : 1)}ms`;
+}
+
+function formatBytes(value: unknown): string {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return `${value}b`;
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    return `${value}b`;
+  }
+
+  return "?";
+}
+
 // Logging middleware
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
+  const requestId = String(nextRequestId++).padStart(6, "0");
+  const startedAtNs = process.hrtime.bigint();
+  const pathWithQuery = req.originalUrl || req.url;
+  const clientIp = getClientIp(req);
+  const userAgent = getUserAgent(req);
+  const requestKind = classifyRequestPath(req.path);
+  const shouldLogRequest = requestKind !== "asset";
+
+  res.locals.requestId = requestId;
+  res.locals.clientIp = clientIp;
+  res.setHeader("x-request-id", requestId);
+
+  if (shouldLogRequest) {
+    console.log(
+      `[REQ ${requestId}] ${requestKind.toUpperCase()} ${req.method} ${pathWithQuery} ip=${clientIp} ua="${userAgent}"`,
+    );
+  }
+
+  res.on("finish", () => {
+    if (!shouldLogRequest) return;
+
+    console.log(
+      `[RES ${requestId}] ${requestKind.toUpperCase()} ${req.method} ${pathWithQuery} status=${res.statusCode} duration=${formatDurationMs(startedAtNs)} bytes=${formatBytes(
+        res.getHeader("content-length"),
+      )} ip=${clientIp}`,
+    );
+  });
+
   next();
 });
 
@@ -102,5 +162,6 @@ app.listen(PORT, () => {
     `   API Key configured: ${process.env.ANTHROPIC_API_KEY ? "Yes" : "No"}`,
   );
   console.log(`   Serving frontend build: ${hasBuiltFrontend ? "Yes" : "No"}`);
+  console.log(`   Request logging: page + api requests`);
   console.log(`\n   Try: http://localhost:${PORT}/api/health\n`);
 });

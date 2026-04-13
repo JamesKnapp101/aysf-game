@@ -334,7 +334,7 @@ export const levelTwoItems: Item[] = [
   {
     id: "edsNecklace",
     name: "thin necklace",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["thin", "necklace"],
     description:
       "A delicate-looking silver necklace that clearly isn’t just silver. The chain survived the flames without even warping, ending in a pendant shaped like a star cradling two intertwined hearts.",

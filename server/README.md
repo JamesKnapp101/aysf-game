@@ -10,7 +10,7 @@ The frontend can still run without this service. If the API is unavailable, the 
 - Build character-aware prompts from NPC profile data and conversation history
 - Call the Anthropic Messages API
 - Cache repeated prompts in memory
-- Apply a per-NPC rate limit
+- Apply lightweight in-memory abuse protection
 - Return fallback-friendly error payloads to the client
 
 ## Requirements
@@ -80,7 +80,9 @@ Example response:
 ```json
 {
   "status": "ok",
-  "cacheSize": 3
+  "cacheSize": 3,
+  "trackedClients": 2,
+  "trackedNpcCooldowns": 2
 }
 ```
 
@@ -148,9 +150,13 @@ Example response:
 
 - Request bodies are limited to `1mb`
 - Development CORS origin is `http://localhost:5173`
-- Production CORS origin comes from `FRONTEND_URL`
 - Cache keys are based on `npcId`, input type, and normalized topic text
-- Rate limiting is currently per NPC with a `100ms` minimum interval between requests
+- Request logs include request id, method, path, status, duration, client IP, and a shortened user agent for page and API requests
+- Conversation requests are rate-limited in memory per client with:
+  - a burst limit of `6` requests per `10` seconds
+  - a sustained limit of `20` requests per `60` seconds
+  - a per-client per-NPC cooldown of `1500ms`
+- Cached conversation responses are capped in memory to limit unbounded growth
 - The configured Claude model and prompt strategy live in `src/services/claudeService.ts`
 
 ## Scripts
@@ -162,4 +168,5 @@ Example response:
 ## Notes
 
 - Cache and rate-limit state are stored in memory, so they reset on restart.
+- `POST /api/conversation/clear-cache` is available only outside production.
 - This service currently has no standalone test or lint script in `server/package.json`.

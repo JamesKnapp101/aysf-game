@@ -34,7 +34,7 @@ export const levelThreeItems: Item[] = [
     name: "blue locker key, labeled '5'",
     description:
       "It's a small key with a blue rubber grip. The grip has the number '5' pressed into it.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["key", "locker key", "five", "5"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -51,7 +51,7 @@ export const levelThreeItems: Item[] = [
     name: "white locker key, labeled '12'",
     description:
       "It's a small key with a white rubber grip. The grip has the number '12' pressed into it.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["key", "locker key", "twelve", "12"],
     itemClass: "solid",
     itemCategory: "collectable",

@@ -205,7 +205,7 @@ export const threeWestItems: Item[] = [
     name: "blue locker key, labeled '11'",
     description:
       "It's a small key with a blue rubber grip. The grip has the number '11' pressed into it.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["key", "locker key", "eleven", "11"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -222,7 +222,7 @@ export const threeWestItems: Item[] = [
     name: "blue locker key, labeled '9'",
     description:
       "It's a small key with a blue rubber grip. The grip has the number '9' pressed into it.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["key", "locker key", "nine", "9"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -239,7 +239,7 @@ export const threeWestItems: Item[] = [
     name: "blue locker key, labeled '2'",
     description:
       "It's a small key with a blue rubber grip. The grip has the number '2' pressed into it.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["key", "locker key", "two", "2"],
     itemClass: "solid",
     itemCategory: "collectable",
