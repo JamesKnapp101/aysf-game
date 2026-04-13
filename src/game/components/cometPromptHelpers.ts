@@ -103,12 +103,14 @@ export function buildCometPromptContext(
     `- Interaction mode: ${
       useRoomContext
         ? "informed guess from local surroundings"
-        : "indexed library response"
+        : "indexed knowledge response"
     }`,
     useRoomContext
       ? "- You must explicitly say this is a guess based on limited information."
-      : "- Answer from the indexed library context when relevant, and say clearly if no relevant entry was found.",
-    "- Treat matched library entries as current Central Library records unless an entry explicitly describes the information as historical, archival, obsolete, or outdated.",
+      : "- Answer from the indexed knowledge context when relevant, and say clearly if no relevant entry was found.",
+    "- Indexed entries may come from either Central Library records or a built-in player interface guide.",
+    "- Treat player interface guide entries as authoritative instructions for the game's UI and tabs.",
+    "- Treat matched Central Library entries as current records unless an entry explicitly describes the information as historical, archival, obsolete, or outdated.",
     "- The UI will display any numeric confidence score separately, so do not output a numeric confidence score yourself.",
     "- Never use em dashes. Use commas, periods, or plain hyphens instead.",
     `- Active Comet personality mode: ${personalityPrompt.label}`,
@@ -346,15 +348,16 @@ function formatPromptSection(label: string, values: string[]): string {
 
 function formatPromptEntries(matches: CometEntryMatch[]): string {
   if (matches.length === 0) {
-    return "Matched library entries:\n- none";
+    return "Matched indexed entries:\n- none";
   }
 
   return [
-    "Matched library entries:",
+    "Matched indexed entries:",
     ...matches.map((match) => {
-      const title = match.entry.terms[0] ?? match.entry.id;
+      const title = match.entry.title ?? match.entry.terms[0] ?? match.entry.id;
+      const sourceLabel = getCometEntrySourceLabel(match.entry);
       return [
-        `- ${title} (${match.entry.id})`,
+        `- ${title} [${sourceLabel}] (${match.entry.id})`,
         `  Matched by: ${match.matchedBy.join(", ")}`,
         `  Entry: ${sanitizePromptLine(match.entry.body)}`,
       ].join("\n");
@@ -380,10 +383,17 @@ function buildCometFallbackResponse(
 
   if (matches.length > 1) {
     const topics = matches.map(
-      (match) => match.entry.terms[0] ?? match.entry.id,
+      (match) =>
+        `${match.entry.title ?? match.entry.terms[0] ?? match.entry.id} [${
+          getCometEntrySourceLabel(match.entry)
+        }]`,
     );
-    return `I found several possibly relevant entries: ${topics.join(", ")}. Please narrow the question if you need something more exact.`;
+    return `I found several possibly relevant indexed entries: ${topics.join(", ")}. Please narrow the question if you need something more exact.`;
   }
 
   return "I found no relevant indexed entry for that question.";
+}
+
+function getCometEntrySourceLabel(entry: CometEntry): string {
+  return entry.source === "help" ? "Player Interface Guide" : "Central Library";
 }

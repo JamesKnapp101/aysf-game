@@ -34,8 +34,8 @@ import {
   COMET_HISTORY_LIMIT,
   COMET_MAX_INPUT_CHARS,
   COMET_MAX_INPUT_WORDS,
-  countCometWords,
   type CometIntent,
+  countCometWords,
 } from "./cometHelpers";
 import { CometKeyboard, isCometKeyboardKey } from "./CometKeyboard";
 import { buildCometPromptContext } from "./cometPromptHelpers";
@@ -69,13 +69,7 @@ function getCometStaticFallbackResponse(
   return libraryFallback;
 }
 
-function CometBrand({
-  hasLink,
-  isOn,
-}: {
-  hasLink: boolean;
-  isOn: boolean;
-}) {
+function CometBrand({ hasLink, isOn }: { hasLink: boolean; isOn: boolean }) {
   return (
     <div className="comet-top">
       <div className="comet-brand">
@@ -176,9 +170,9 @@ export function CometTerminal({
 
     let cancelled = false;
 
-    import("./comet-entries").then((mod) => {
+    import("./comet-indexed-entries").then((mod) => {
       if (cancelled) return;
-      setLoadedEntries(mod.DEFAULT_COMET_ENTRIES);
+      setLoadedEntries(mod.DEFAULT_COMET_INDEXED_ENTRIES);
     });
 
     return () => {
@@ -219,7 +213,8 @@ export function CometTerminal({
     forceOnline ||
     Boolean((state.itemState.itemSettings["Comet"] as any)?.isOn);
   const hasLink =
-    forceLink || Boolean(state.worldState.powerRestoredSections["library-power"]);
+    forceLink ||
+    Boolean(state.worldState.powerRestoredSections["library-power"]);
   const canChat = isOn && hasLink && Boolean(loadedEntries) && !isSubmitting;
 
   useEffect(() => {
@@ -336,7 +331,9 @@ export function CometTerminal({
     setPendingMessages(
       buildCometPendingMessages(trimmed, {
         analysisBlock:
-          promptContext.mode === "guess" ? promptContext.analysisBlock : undefined,
+          promptContext.mode === "guess"
+            ? promptContext.analysisBlock
+            : undefined,
         idBase: `pending-${Date.now()}`,
         pendingText,
       }),
@@ -427,7 +424,7 @@ export function CometTerminal({
               ? hasLink
                 ? isSubmitting
                   ? "Comet is responding..."
-                  : "I'm Comet! Help me to help you to help me to help you!"
+                  : "I can not be held legally responsible for injury or death \u2665"
                 : "LINK unavailable"
               : "Power off"
           }

@@ -1,9 +1,13 @@
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 
+type SwitchTargetState = "off" | "on";
+
 export function trySwitchItem(
   state: GameState,
   item: Item,
+  targetState?: SwitchTargetState,
+  verb: "switch" | "turn" = "switch",
 ): { state: GameState; message: string } {
   if (!item.isSwitchable) {
     return { state, message: "You can't switch that." };
@@ -14,8 +18,27 @@ export function trySwitchItem(
   }
 
   const currentSettings = state.itemState.itemSettings[item.id];
-  const currentlyOn = !!(currentSettings as any)?.isOn;
-  const newIsOn = !currentlyOn;
+  const currentlyOn = ((currentSettings as any)?.isOn ?? item.isOn) === true;
+  const newIsOn =
+    targetState === "on"
+      ? true
+      : targetState === "off"
+        ? false
+        : !currentlyOn;
+
+  if (targetState === "on" && currentlyOn) {
+    return {
+      state,
+      message: `The ${item.name} is already on.`,
+    };
+  }
+
+  if (targetState === "off" && !currentlyOn) {
+    return {
+      state,
+      message: `The ${item.name} is already off.`,
+    };
+  }
 
   let next: GameState = {
     ...state,
@@ -43,9 +66,10 @@ export function trySwitchItem(
       },
     };
   }
+
   const baseMsg =
     item?.overrides?.switch ??
-    `You switch the ${item.name} ${newIsOn ? "on" : "off"}`;
+    `You ${verb} the ${item.name} ${newIsOn ? "on" : "off"}.`;
 
   return {
     state: next,

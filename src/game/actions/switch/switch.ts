@@ -19,5 +19,10 @@ export function doSwitch(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "There's nothing to switch." };
   }
 
-  return trySwitchItem(state, item);
+  const targetState =
+    cmd.preposition === "on" || cmd.preposition === "off"
+      ? cmd.preposition
+      : undefined;
+
+  return trySwitchItem(state, item, targetState, "switch");
 }

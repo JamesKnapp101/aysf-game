@@ -4,6 +4,7 @@ export type Preposition =
   | "in"
   | "into"
   | "on"
+  | "off"
   | "with"
   | "from"
   | "at"

@@ -122,9 +122,7 @@ export function buildCometExchangeMessages(
     );
   }
 
-  messages.push(
-    buildAssistantMessage(idBase, renderLibraryText(response)),
-  );
+  messages.push(buildAssistantMessage(idBase, renderLibraryText(response)));
 
   return messages;
 }
@@ -160,7 +158,7 @@ export function getCometWelcomeMessages(): CometDisplayMessage[] {
   return [
     buildAssistantMessage(
       "welcome",
-      "Hello, I'm Comet, your AI Assistant. How can I help you today?",
+      "Hello, I'm Comet, your AI Assistant. Need a question answered about your interface? Need help surviving in an existential hell? I can help, probably!",
       "welcome",
     ),
   ];
