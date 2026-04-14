@@ -357,7 +357,7 @@ export interface WorldState {
   catState: CatState;
   conditionalExits: Record<RoomId, ConditionalExit>;
   conditionalTriggers: Record<string, boolean>;
-  damagedFlashlight: DamagedFlashlightState;
+  damagedFlashlight?: DamagedFlashlightState;
   darkRooms: Record<string, boolean>;
   doors: Record<string, DoorState>;
   hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;

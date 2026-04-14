@@ -120,7 +120,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "CryoStairDoors",
     name: "cryo access door",
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a white horizontal stripe across it at eye level. Stenciled across the banner is the word 'CRYONICS', and mounted above the doorway is a small panel marked '7'.",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a white horizontal stripe across it at eye level. Stenciled across the banner are the words 'DEEP STORAGE', and mounted above the doorway is a small panel marked '7'.",
     descriptionFromB:
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",

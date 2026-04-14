@@ -1,37 +1,29 @@
 import type { GameState } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
 import type { ItemSettings } from "../types/itemTypes";
+import {
+  type FlashlightSettings,
+  getFlashlightSettings as getSharedFlashlightSettings,
+  isFlashlightOn as isSharedFlashlightOn,
+} from "./flashlightHelpers";
 
 /**
  * Type-safe accessors for item settings to avoid `as any` casts.
  * These functions provide proper type narrowing for discriminated unions.
  */
 
-// ============================================================================
-// Flashlight Settings
-// ============================================================================
-
-export interface FlashlightSettings {
-  kind: "flashlight";
-  isOn: boolean;
-}
-
 export function getFlashlightSettings(
   state: GameState,
   itemId: ItemId = "flashlight",
 ): FlashlightSettings | undefined {
-  const settings = state.itemState.itemSettings[itemId];
-  if (!settings) return undefined;
-  if (settings.kind !== "flashlight") return undefined;
-  return settings;
+  return getSharedFlashlightSettings(state, itemId);
 }
 
 export function isFlashlightOn(
   state: GameState,
   itemId: ItemId = "flashlight",
 ): boolean {
-  const settings = getFlashlightSettings(state, itemId);
-  return settings?.isOn ?? false;
+  return isSharedFlashlightOn(state, itemId);
 }
 
 // ============================================================================

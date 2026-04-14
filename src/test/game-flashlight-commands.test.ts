@@ -1,5 +1,11 @@
+import { getDisplayedFlashlightStatus } from "@game/helpers/flashlightHelpers";
 import { describe, expect, it } from "vitest";
-import { createTestState, runCommand, setInventory } from "./helpers/gameTestHelpers";
+import {
+  createTestState,
+  runCommand,
+  runCommands,
+  setInventory,
+} from "./helpers/gameTestHelpers";
 
 describe("Flashlight command handling", () => {
   it("lets the player use turn on/off with the LED flashlight", async () => {
@@ -12,6 +18,10 @@ describe("Flashlight command handling", () => {
     expect(turnedOn.itemState.itemSettings.flashlight).toMatchObject({
       kind: "flashlight",
       isOn: true,
+      maxCharge: 100,
+      currentCharge: 99.95,
+      drainRate: 0.05,
+      rechargeRate: 10,
     });
     expect(turnedOn.log.at(-1)).toContain("> turn on flashlight");
     expect(turnedOn.log.at(-1)).toContain("You turn the LED flashlight on.");
@@ -21,6 +31,7 @@ describe("Flashlight command handling", () => {
     expect(turnedOff.itemState.itemSettings.flashlight).toMatchObject({
       kind: "flashlight",
       isOn: false,
+      currentCharge: 100,
     });
     expect(turnedOff.log.at(-1)).toContain("> turn off flashlight");
     expect(turnedOff.log.at(-1)).toContain("You turn the LED flashlight off.");
@@ -33,7 +44,14 @@ describe("Flashlight command handling", () => {
 
     const switchedOn = await runCommand(start, "switch on broken flashlight");
 
-    expect(switchedOn.worldState.damagedFlashlight.isOn).toBe(true);
+    expect(switchedOn.itemState.itemSettings.damagedFlashlight).toMatchObject({
+      kind: "flashlight",
+      isOn: true,
+      maxCharge: 6,
+      currentCharge: 5,
+      drainRate: 1,
+      rechargeRate: 1,
+    });
     expect(switchedOn.log.at(-1)).toContain("> switch on broken flashlight");
     expect(switchedOn.log.at(-1)).toContain(
       "You switch the broken flashlight on.",
@@ -44,7 +62,11 @@ describe("Flashlight command handling", () => {
       "switch off broken flashlight",
     );
 
-    expect(switchedOff.worldState.damagedFlashlight.isOn).toBe(false);
+    expect(switchedOff.itemState.itemSettings.damagedFlashlight).toMatchObject({
+      kind: "flashlight",
+      isOn: false,
+      currentCharge: 6,
+    });
     expect(switchedOff.log.at(-1)).toContain("> switch off broken flashlight");
     expect(switchedOff.log.at(-1)).toContain(
       "You switch the broken flashlight off.",
@@ -63,5 +85,23 @@ describe("Flashlight command handling", () => {
       isOn: false,
     });
     expect(next.log.at(-1)).toContain("The LED flashlight is already off.");
+  });
+
+  it("prefers the LED flashlight for the room indicator when both flashlights are on", async () => {
+    const start = setInventory(createTestState({ roomId: "StairWellSeven" }), [
+      "flashlight",
+      "damagedFlashlight",
+    ]);
+
+    const bothOn = await runCommands(start, [
+      "switch on broken flashlight",
+      "turn on flashlight",
+    ]);
+    const flashlightStatus = getDisplayedFlashlightStatus(bothOn);
+
+    expect(flashlightStatus.hasFlashlight).toBe(true);
+    expect(flashlightStatus.isActive).toBe(true);
+    expect(flashlightStatus.itemId).toBe("flashlight");
+    expect(flashlightStatus.settings?.currentCharge).toBe(99.95);
   });
 });

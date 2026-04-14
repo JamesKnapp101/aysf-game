@@ -1,6 +1,6 @@
 import { audioRegistry } from "@game/audioRegistry";
 import { tickAviarySpotlight } from "@game/engine/ticks/aviaryTick";
-import { tickDamagedFlashlight } from "@game/engine/ticks/damagedFlashlightTick";
+import { tickFlashlights } from "@game/engine/ticks/flashlightTick";
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
 import { tickRadioConversation } from "@game/helpers/conversationHelpers";
@@ -460,7 +460,7 @@ export function advanceTurn(state: GameState): GameState {
       "The radio channel collapses into a steady hiss, then goes quiet.",
     );
   }
-  next = tickDamagedFlashlight(next);
+  next = tickFlashlights(next);
   next = tickAviarySpotlight(next);
   next = tickHydroponics(next);
   next = tickAttachedItems(next);

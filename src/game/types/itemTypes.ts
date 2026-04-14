@@ -156,7 +156,14 @@ export type ItemSettings =
   | { kind: "cooler"; mode: CoolerMode }
   | { dials: number[]; kind: "safe" }
   | { code: string; kind: "transmitter" }
-  | { isOn: boolean; kind: "flashlight" }
+  | {
+      currentCharge: number;
+      drainRate: number;
+      isOn: boolean;
+      kind: "flashlight";
+      maxCharge: number;
+      rechargeRate: number;
+    }
   | { isOn: boolean; kind: "goggles" }
   | { currentViewIndex: number; kind: "camera-gun-viewer" }
   | { hasLink: boolean; isOn: boolean; kind: "comet-viewer" };

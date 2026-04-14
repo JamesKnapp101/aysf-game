@@ -832,7 +832,14 @@ describe("Doors and level mechanics", () => {
         ...start.itemState,
         itemSettings: {
           ...start.itemState.itemSettings,
-          flashlight: { kind: "flashlight" as const, isOn: true },
+          flashlight: {
+            kind: "flashlight" as const,
+            isOn: true,
+            currentCharge: 100,
+            maxCharge: 100,
+            drainRate: 0.05,
+            rechargeRate: 10,
+          },
         },
       },
     };

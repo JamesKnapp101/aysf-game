@@ -1,3 +1,8 @@
+import {
+  buildFlashlightSettings,
+  getFlashlightSettings,
+  isFlashlightItemId,
+} from "@game/helpers/flashlightHelpers";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 
@@ -17,8 +22,12 @@ export function trySwitchItem(
     return { state, message: item.meta.onSwitch };
   }
 
+  const flashlightSettings = isFlashlightItemId(item.id)
+    ? getFlashlightSettings(state, item.id)
+    : undefined;
   const currentSettings = state.itemState.itemSettings[item.id];
-  const currentlyOn = ((currentSettings as any)?.isOn ?? item.isOn) === true;
+  const currentlyOn =
+    flashlightSettings?.isOn ?? (((currentSettings as any)?.isOn ?? item.isOn) === true);
   const newIsOn =
     targetState === "on"
       ? true
@@ -40,32 +49,27 @@ export function trySwitchItem(
     };
   }
 
+  const nextSettings = isFlashlightItemId(item.id)
+    ? buildFlashlightSettings(
+        item.id,
+        getFlashlightSettings(state, item.id),
+        { isOn: newIsOn },
+      )
+    : {
+        ...(state.itemState.itemSettings[item.id] as any),
+        isOn: newIsOn,
+      };
+
   let next: GameState = {
     ...state,
     itemState: {
       ...state.itemState,
       itemSettings: {
         ...state.itemState.itemSettings,
-        [item.id]: {
-          ...(state.itemState.itemSettings[item.id] as any),
-          isOn: newIsOn,
-        },
+        [item.id]: nextSettings,
       },
     },
   };
-
-  if (item.id === "damagedFlashlight") {
-    next = {
-      ...next,
-      worldState: {
-        ...next.worldState,
-        damagedFlashlight: {
-          ...next.worldState.damagedFlashlight,
-          isOn: newIsOn,
-        },
-      },
-    };
-  }
 
   const baseMsg =
     item?.overrides?.switch ??

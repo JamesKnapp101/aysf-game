@@ -1,5 +1,6 @@
 import { initializeEncounterStateOnEnter } from "@game/encounters/retryableEncounters";
 import { createInitialAviarySpotlightState } from "@game/engine/ticks/aviaryTick";
+import { getFlashlightDefaults } from "@game/helpers/flashlightHelpers";
 import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
 import { bucketForItem, inventoryHas } from "@game/rules/state";
 import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
@@ -461,12 +462,6 @@ export const createInitialState = (world: World): GameState => {
         HydroponicsDoorUnblocked: false,
         EscapedWithYellowBadge: false,
       },
-      damagedFlashlight: {
-        isOn: false,
-        maxCharge: 6,
-        currentCharge: 6,
-        chargeRate: 1,
-      },
     },
     itemState: {
       itemRoomId: Object.fromEntries(
@@ -505,7 +500,8 @@ export const createInitialState = (world: World): GameState => {
         Cooler: { kind: "cooler", mode: "off" },
         NVGoggles: { kind: "goggles", isOn: false },
         Comet: { kind: "comet-viewer", isOn: false, hasLink: false },
-        flashlight: { kind: "flashlight", isOn: false },
+        flashlight: getFlashlightDefaults("flashlight"),
+        damagedFlashlight: getFlashlightDefaults("damagedFlashlight"),
       },
       frozenItems: {},
       messagesPlayed: {},

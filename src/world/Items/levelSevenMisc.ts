@@ -1,3 +1,4 @@
+import { getFlashlightSettings } from "@game/helpers/flashlightHelpers";
 import type { Item } from "../../game/types/itemTypes";
 
 export const levelSevenItems: Item[] = [
@@ -57,9 +58,18 @@ export const levelSevenItems: Item[] = [
     description:
       "It sustained a pretty hard impact, cracking the housing and the lens cover, but the lens seems to be intact.",
     describe: (state) => {
-      const damagedFlashlightState = state.worldState.damagedFlashlight;
-      let desc = `It sustained a pretty hard impact, cracking the housing and the lens cover, but the lens seems to be intact. The battery is damaged, though, and seems only capable of holding a tiny fraction of its charge, with a little charge meter on one side that reads 'Battery: ${damagedFlashlightState.currentCharge}%' The flashlight is currently ${damagedFlashlightState.isOn ? "on, " : "off."}`;
-      if (damagedFlashlightState.isOn) {
+      const damagedFlashlightState = getFlashlightSettings(
+        state,
+        "damagedFlashlight",
+      );
+      const chargeText =
+        damagedFlashlightState &&
+        Number.isInteger(damagedFlashlightState.currentCharge)
+          ? String(damagedFlashlightState.currentCharge)
+          : damagedFlashlightState?.currentCharge.toFixed(2) ?? "0";
+
+      let desc = `It sustained a pretty hard impact, cracking the housing and the lens cover, but the lens seems to be intact. The battery is damaged, though, and seems only capable of holding a tiny fraction of its charge, with a little charge meter on one side that reads 'Battery: ${chargeText}%' The flashlight is currently ${damagedFlashlightState?.isOn ? "on, " : "off."}`;
+      if (damagedFlashlightState?.isOn) {
         if (damagedFlashlightState.currentCharge >= 3) {
           desc += `and casting a reasonably bright beam.`;
         }

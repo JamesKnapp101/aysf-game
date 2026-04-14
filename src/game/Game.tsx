@@ -11,7 +11,7 @@ import { NotificationHost } from "./components/NotificationHost";
 import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 import { isPlayerUnderwater } from "./helpers/environmentHelpers";
-import { isFlashlightOn } from "./helpers/itemSettingsHelpers";
+import { isAnyFlashlightOn } from "./helpers/flashlightHelpers";
 import { useGameSession } from "./hooks/useGameSession";
 import { useLayoutPrefs } from "./hooks/useLayoutPrefs";
 import { useWorldChunkHydration } from "./hooks/useWorldChunkHydration";
@@ -205,10 +205,7 @@ export const Game: React.FC = () => {
 
   const nightVisionActive = activeEffects.includes("nightvision-active");
 
-  const flashlightOn = (() => {
-    if (!gs.player.inventory.general.includes("flashlight")) return false;
-    return isFlashlightOn(gs);
-  })();
+  const flashlightOn = isAnyFlashlightOn(gs);
   const playerIsUnderwater = isPlayerUnderwater(gs);
 
   // Light and Dark

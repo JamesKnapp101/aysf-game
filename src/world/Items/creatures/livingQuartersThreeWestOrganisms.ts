@@ -1,5 +1,4 @@
 import { flashlightOn } from "@game/helpers/gameHelpers";
-import { inventoryHas } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
@@ -213,18 +212,14 @@ export function organismLQOverrideTick(
   const playerRoomId = getPlayerRoomId();
   const playerPrevRoomId: string | undefined = state.player.prevRoomId;
 
-  const flashlightOn = (() => {
-    if (!inventoryHas(state.player.inventory, "flashlight")) return false;
-    const fs = state.itemState.itemSettings["flashlight"];
-    return Boolean(fs && "isOn" in fs && fs.isOn === true);
-  })();
+  const playerFlashlightOn = flashlightOn(state);
 
   const isRoomLit = (roomId: string) => {
     // Ambiently lit if not dark
     if (!isRoomDark(roomId)) return true;
 
     // Player + lit flashlight makes the *player's* room lit
-    if (flashlightOn && roomId === playerRoomId) return true;
+    if (playerFlashlightOn && roomId === playerRoomId) return true;
 
     return false;
   };
@@ -258,7 +253,7 @@ export function organismLQOverrideTick(
         candidates[Math.max(0, Math.min(candidates.length - 1, idx))];
 
       // Rule 5: never voluntarily enter the player's lit room
-      if (!(flashlightOn && chosen === playerRoomId)) {
+      if (!(playerFlashlightOn && chosen === playerRoomId)) {
         nextState = moveItemToRoom(item.id, chosen);
         nextRoomId = chosen;
       }
@@ -270,7 +265,7 @@ export function organismLQOverrideTick(
   const sameRoom = nextRoomId === nowPlayerRoomId;
   const roomIsDark = isRoomDark(nowPlayerRoomId);
 
-  if (sameRoom && roomIsDark && !flashlightOn) {
+  if (sameRoom && roomIsDark && !playerFlashlightOn) {
     triggerPlayerDeath?.(
       "Something stirs in the darkness—too close. You feel it before you understand it.",
       "organism",

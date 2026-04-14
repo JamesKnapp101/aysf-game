@@ -1,11 +1,11 @@
 import { getRetryableEncounterDeathOverride } from "@game/encounters/retryableEncounters";
 import { appendLog } from "@game/engine/handleCommand";
 import { refreshPlayerOxygenForEnvironment } from "@game/helpers/environmentHelpers";
+import { isAnyFlashlightOn } from "@game/helpers/flashlightHelpers";
 import {
   getExitDestinationRoomId,
   getRoomExits,
 } from "@game/helpers/itemHelpers";
-import { inventoryHas } from "@game/rules/state";
 import { useUIEffectsStore } from "@game/store/store";
 import { secretOrganismMessage } from "@game/text/secretOrganismMessage";
 import { ScriptContext, ScriptedEvent } from "@game/types/eventTypes";
@@ -90,9 +90,7 @@ export function getItemRoomId(
 }
 
 export const flashlightOn = (state: GameState) => {
-  if (!inventoryHas(state.player.inventory, "flashlight")) return false;
-  const fs = state.itemState.itemSettings["flashlight"];
-  return Boolean(fs && "isOn" in fs && fs.isOn === true);
+  return isAnyFlashlightOn(state);
 };
 
 const MAX_RECENT_MOVES = 5;

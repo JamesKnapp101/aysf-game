@@ -1,4 +1,4 @@
-import { inventoryHas } from "@game/rules/state";
+import { flashlightOn } from "@game/helpers/gameHelpers";
 import { TickContext } from "@game/types/context";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
@@ -68,11 +68,7 @@ export function organismOverrideTick(
   if (!item.meta?.isAlive) return;
   if (!item.meta?.canMove) return;
 
-  const flashlightOn = (() => {
-    if (!inventoryHas(state.player.inventory, "flashlight")) return false;
-    const fs = state.itemState.itemSettings["flashlight"];
-    return Boolean(fs && "isOn" in fs && fs.isOn === true);
-  })();
+  const playerFlashlightOn = flashlightOn(state);
 
   const orgRoom = item.location;
   const playerRoom = getPlayerRoomId();
@@ -80,7 +76,7 @@ export function organismOverrideTick(
   if (!orgRoom) return;
 
   const orgInDark = isRoomDark(orgRoom);
-  const playerInDark = flashlightOn ? false : isRoomDark(playerRoom);
+  const playerInDark = playerFlashlightOn ? false : isRoomDark(playerRoom);
   const darkNeighbors = (roomId: string) =>
     getRoomExits(roomId)
       .map((e) => e.toRoomId)

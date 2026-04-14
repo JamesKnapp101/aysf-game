@@ -7,10 +7,23 @@ import React, {
 } from "react";
 import "../../styles/components/mind-gun-overlay.css";
 import "../../styles/organism-death-overlay.css";
+import { getDisplayedFlashlightStatus } from "../helpers/flashlightHelpers";
 import { useUIEffectsStore } from "../store/store";
 import type { GameState } from "../types/gameTypes"; // adjust path
 import type { Direction } from "../types/roomTypes";
-import { RoomCompass } from "./Compass";
+import { RoomStatusPanel } from "./RoomStatusPanel";
+import {
+  buildOrganismDeathTokens,
+  computeLingerMs,
+  type Flash,
+  hashString,
+  MIND_FLASH_TIMINGS,
+  makeRand,
+  resolveOrganismDeathRevealMode,
+  shuffleTokenIds,
+  splitMemory,
+  wait,
+} from "./roomDescriptionEffects";
 
 type RoomDescriptionPanelProps = {
   desc: string;
@@ -29,135 +42,6 @@ type RoomDescriptionPanelProps = {
   state: GameState;
   setBrainActivityLevel?: (val: number) => void;
 };
-
-type Flash = {
-  id: string;
-  text: string;
-  x: number;
-  y: number;
-  phase: "enter" | "steady" | "exit";
-};
-
-type OrganismDeathRevealMode = "fade" | "random-chunks";
-
-type OrganismDeathToken = {
-  id: number;
-  text: string;
-  revealable: boolean;
-};
-
-const START_DELAY_MS = 220;
-const FADE_IN_MS = 180;
-const FADE_OUT_MS = 160;
-const GAP_MS = 260;
-const WIND_DOWN_MS = 220;
-const MIN_LINGER_MS = 700;
-const MAX_LINGER_MS = 2600;
-const MS_PER_WORD = 220;
-
-function computeLingerMs(text: string): number {
-  const wordCount = text.trim().split(/\s+/).length;
-  const raw = wordCount * MS_PER_WORD;
-
-  return Math.max(MIN_LINGER_MS, Math.min(MAX_LINGER_MS, raw));
-}
-
-function splitMemory(memory: string): string[] {
-  return memory
-    .split(".")
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((s) => (s.endsWith(".") ? s : `${s}.`));
-}
-
-// tiny deterministic RNG so flashes feel consistent per run
-function makeRand(seed: number) {
-  let t = seed >>> 0;
-  return () => {
-    t += 0x6d2b79f5;
-    let r = Math.imul(t ^ (t >>> 15), 1 | t);
-    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
-    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function hashString(text: string): number {
-  let hash = 0;
-
-  for (let i = 0; i < text.length; i++) {
-    hash = (Math.imul(hash, 31) + text.charCodeAt(i)) | 0;
-  }
-
-  return hash >>> 0;
-}
-
-function wait(ms: number) {
-  return new Promise<void>((resolve) => setTimeout(resolve, ms));
-}
-
-const clamp = (n: number, lo: number, hi: number) =>
-  Math.max(lo, Math.min(hi, n));
-
-function resolveOrganismDeathRevealMode(
-  mode?: string,
-): OrganismDeathRevealMode {
-  return mode === "type" || mode === "random-chunks"
-    ? "random-chunks"
-    : "fade";
-}
-
-function buildOrganismDeathTokens(
-  text: string,
-  chunkSize: number,
-): OrganismDeathToken[] {
-  const normalizedChunkSize = Math.max(1, Math.floor(chunkSize));
-  const parts = text.match(/\s+|\S+/g) ?? [];
-  const tokens: OrganismDeathToken[] = [];
-  let tokenId = 0;
-
-  for (const part of parts) {
-    if (/^\s+$/.test(part)) {
-      tokens.push({ id: tokenId++, text: part, revealable: false });
-      continue;
-    }
-
-    for (let i = 0; i < part.length; i += normalizedChunkSize) {
-      tokens.push({
-        id: tokenId++,
-        text: part.slice(i, i + normalizedChunkSize),
-        revealable: true,
-      });
-    }
-  }
-
-  return tokens;
-}
-
-function shuffleTokenIds(tokens: OrganismDeathToken[], seed: number): number[] {
-  const ids = tokens
-    .filter((token) => token.revealable)
-    .map((token) => token.id);
-  const rand = makeRand(seed);
-
-  for (let i = ids.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [ids[i], ids[j]] = [ids[j], ids[i]];
-  }
-
-  return ids;
-}
-
-function titleize(s: string) {
-  return s
-    .split(" ")
-    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
-    .join(" ");
-}
-
-function audioToUnit(raw: number) {
-  if (!Number.isFinite(raw) || raw <= 0) return 0;
-  return clamp(raw / 10, 0, 1);
-}
 
 export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   desc,
@@ -286,7 +170,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     async function run() {
       setMindHijacked(true);
       setFlashes([]);
-      await wait(START_DELAY_MS);
+      await wait(MIND_FLASH_TIMINGS.START_DELAY_MS);
       if (cancelled || mindRunIdRef.current !== myRunId) return;
 
       const r = makeRand(mindSeed);
@@ -299,7 +183,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
         const id = `${mindSeed}-${i}-${Math.floor(r() * 1e9)}`;
 
         setFlashes([{ id, text, x, y, phase: "enter" }]);
-        await wait(FADE_IN_MS);
+        await wait(MIND_FLASH_TIMINGS.FADE_IN_MS);
         if (cancelled || mindRunIdRef.current !== myRunId) return;
 
         setFlashes([{ id, text, x, y, phase: "steady" }]);
@@ -307,15 +191,15 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
         if (cancelled || mindRunIdRef.current !== myRunId) return;
 
         setFlashes([{ id, text, x, y, phase: "exit" }]);
-        await wait(FADE_OUT_MS);
+        await wait(MIND_FLASH_TIMINGS.FADE_OUT_MS);
         if (cancelled || mindRunIdRef.current !== myRunId) return;
 
         setFlashes([]);
-        await wait(GAP_MS);
+        await wait(MIND_FLASH_TIMINGS.GAP_MS);
         if (cancelled || mindRunIdRef.current !== myRunId) return;
       }
 
-      await wait(WIND_DOWN_MS);
+      await wait(MIND_FLASH_TIMINGS.WIND_DOWN_MS);
       if (cancelled || mindRunIdRef.current !== myRunId) return;
 
       setFlashes([]);
@@ -443,93 +327,8 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     };
   }, [clearOrganismDeath, odRunKey, organismDeath, setBrainActivityLevel]);
 
-  // =========================
-  // Diagnostics (unchanged)
-  // =========================
-
-  const lightValue = useMemo(() => {
-    const flashlightIsOn =
-      flashlightOn === "true" || flashlightOn === "on" || flashlightOn === "1";
-
-    if (roomIsDark && playerLightMode === "none") return "None";
-    if (flashlightIsOn || playerLightMode === "flashlight") return "Low";
-    if (roomAmbientLight || playerLightMode === "ambient") return "Ambient";
-    return "Ambient";
-  }, [
-    flashlightOn,
-    roomIsDark,
-    roomAmbientLight,
-    playerLightMode,
-  ]);
-
-  const tempValue = useMemo(() => {
-    const t = state.worldState.roomTemp?.[roomId] ?? "temperate";
-    return titleize(t);
-  }, [state.worldState.roomTemp, roomId]);
-
-  const airValue = useMemo(() => {
-    const a = state.worldState.roomAirQuality?.[roomId] ?? "clean";
-    return titleize(a);
-  }, [state.worldState.roomAirQuality, roomId]);
-
-  const baseAudioRaw = useMemo(() => {
-    const raw = state.worldState.roomAudioLevel?.[roomId] ?? 0;
-    return Number.isFinite(raw) ? raw : 0;
-  }, [state.worldState.roomAudioLevel, roomId]);
-
-  const baseAudioUnit = useMemo(
-    () => audioToUnit(baseAudioRaw),
-    [baseAudioRaw],
-  );
-
-  const AUDIO_BARS = 12;
-  const baseBars = useMemo(() => {
-    return clamp(Math.round(baseAudioUnit * AUDIO_BARS), 0, AUDIO_BARS);
-  }, [baseAudioUnit]);
-
-  const [audioBarDelta, setAudioBarDelta] = useState(0);
-  const litBars = useMemo(() => {
-    if (baseBars <= 0) return 0;
-    return clamp(baseBars + audioBarDelta, 0, AUDIO_BARS);
-  }, [audioBarDelta, baseBars]);
-
-  useEffect(() => {
-    if (baseBars <= 0) return;
-
-    let cancelled = false;
-    let timeoutId: number | undefined;
-    let resetId: number | undefined;
-
-    const scheduleNext = () => {
-      const delay = 250 + Math.random() * 650;
-
-      timeoutId = window.setTimeout(() => {
-        if (cancelled) return;
-
-        if (Math.random() < 0.3) {
-          const delta = Math.random() < 0.65 ? 1 : -1;
-          setAudioBarDelta(delta);
-
-          resetId = window.setTimeout(() => {
-            if (cancelled) return;
-            setAudioBarDelta(0);
-            scheduleNext();
-          }, 160);
-        } else {
-          scheduleNext();
-        }
-      }, delay);
-    };
-
-    scheduleNext();
-
-    return () => {
-      cancelled = true;
-      if (timeoutId) window.clearTimeout(timeoutId);
-      if (resetId) window.clearTimeout(resetId);
-      setAudioBarDelta(0);
-    };
-  }, [baseBars]);
+  const roomAudioLevel = state.worldState.roomAudioLevel?.[roomId] ?? 0;
+  const flashlightStatus = getDisplayedFlashlightStatus(state);
 
   // =========================
   // Render helpers
@@ -561,42 +360,11 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       data-organismdeath={showOdLayer ? "true" : "false"}
     >
       <div className="game-room-inner">
-        <div className="room-compass-float">
-          <RoomCompass exits={exits} />
-
-          <div className="room-diagnostics" aria-label="Room diagnostics">
-            <div className="room-diag-row" data-kind="light">
-              <div className="room-diag-label">Light:</div>
-              <div className="room-diag-valueInline">{lightValue}</div>
-            </div>
-
-            <div className="room-diag-row" data-kind="temp">
-              <div className="room-diag-label">Temp:</div>
-              <div className="room-diag-valueInline">{tempValue}</div>
-            </div>
-
-            <div className="room-diag-row" data-kind="air">
-              <div className="room-diag-label">Air:</div>
-              <div className="room-diag-valueInline">{airValue}</div>
-            </div>
-
-            <div className="room-diag-block" data-kind="audio">
-              <div className="room-diag-title">AUDIO</div>
-              <div className="room-diag-meter" aria-hidden="true">
-                {Array.from({ length: AUDIO_BARS }).map((_, i) => {
-                  const on = baseBars > 0 && i < litBars;
-                  return (
-                    <div
-                      key={i}
-                      className="room-audio-bar"
-                      data-on={on ? "true" : "false"}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
+        <RoomStatusPanel
+          exits={exits}
+          audioLevel={Number.isFinite(roomAudioLevel) ? roomAudioLevel : 0}
+          flashlightStatus={flashlightStatus}
+        />
 
         <div className="game-room-textWrap">
           <div ref={scrollRef} className="game-room-text">
