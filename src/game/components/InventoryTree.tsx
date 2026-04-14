@@ -143,7 +143,7 @@ export function InventoryTree({
   return (
     <div className="inv-tree">
       {inventoryItems.length === 0 ? (
-        <p className="game-line">You are carrying nothing.</p>
+        <p className="game-line"></p>
       ) : (
         <>
           <ul className="game-list inv-tree-list">

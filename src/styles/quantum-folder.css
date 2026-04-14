@@ -1,17 +1,53 @@
 .qtote {
-    border: 2px solid var(--crt-color, var(--crt));
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.5);
     border-radius: 18px;
     padding: 4px;
     display: flex;
     flex-direction: column;
     height: 100%;
     gap: 10px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.035),
+            rgb(0 0 0 / 0.12) 22%,
+            transparent 100%);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.015),
+        inset 0 0 0 1px rgb(0 0 0 / 0.18);
+}
+
+.qtote-frameOuter {
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.5);
+    border-radius: 18px;
+    padding: 6px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.02),
+            transparent 46%);
+}
+
+.qtote-frameInner {
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.4);
+    border-radius: 16px;
+    padding: 6px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.012);
 }
 
 .qtote-top {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: 8px;
 }
 
 .qtote-brand {
@@ -20,29 +56,37 @@
     align-items: baseline;
     font-weight: 700;
     letter-spacing: 1px;
+    white-space: nowrap;
 }
 
 .qtote-brand-main {
     font-size: 30px;
+    padding: 2px 0 2px 2px;
     font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
         "Lucida Sans", Arial, sans-serif;
 }
 
 .qtote-brand-sub {
     font-size: 18px;
-    opacity: 0.9;
+    font-weight: 700;
+    opacity: 0.95;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .qtote-title {
     font-size: 18px;
     text-align: right;
+    line-height: 1;
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
+.qtote-tm {
+    opacity: 0.85;
+    font-size: 0.95em;
+}
+
 .qtote-toolbar {
-    border: none;
-    border: 2px solid var(--crt-color, var(--crt));
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.4);
     border-radius: 8px;
     padding: 6px 6px 10px 6px;
     display: flex;
@@ -52,6 +96,10 @@
     flex-wrap: nowrap;
     font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
         "Lucida Sans", Arial, sans-serif;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.028),
+            rgb(0 0 0 / 0.1) 100%);
 }
 
 .qtote-toolbar button {
@@ -60,6 +108,10 @@
     color: inherit;
     font: inherit;
     opacity: 0.4;
+}
+
+.qtote-tabRow {
+    min-width: 0;
 }
 
 .qtote-tabs {
@@ -96,7 +148,7 @@
     bottom: 2px;
     width: 1px;
     background: var(--crt-color, var(--crt));
-    opacity: 0.55;
+    opacity: 0.35;
 }
 
 .qtote-tabCount {
@@ -109,6 +161,7 @@
 .qtote-tab.isActive {
     opacity: 1;
     font-weight: 700;
+    text-shadow: 0 0 0.5px currentColor;
 }
 
 .qtote-tab.isActive::after {
@@ -119,16 +172,12 @@
     bottom: -6px;
     height: 4px;
     background: var(--crt-color, var(--crt));
-    opacity: 0.9;
+    opacity: 0.72;
     border-radius: 2px;
 }
 
 .qtote-tab.isActive::marker {
     content: "";
-}
-
-.qtote-tab.isActive {
-    text-shadow: 0 0 0.5px currentColor;
 }
 
 .qtote-tab.isActive>.qtote-tabCount {
@@ -178,8 +227,30 @@
     outline-offset: 2px;
 }
 
+.qtote-screenFrame {
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.4);
+    border-radius: 16px;
+    padding: 12px;
+    flex: 1 1 auto;
+    overflow: hidden;
+    min-height: 0;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.018),
+            rgb(0 0 0 / 0.06) 18%,
+            transparent 100%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.01);
+}
+
+.qtote-screen {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+}
+
 .qtote-body {
-    border: 2px solid var(--crt-color, var(--crt));
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.4);
     border-radius: 16px;
     padding: 12px;
     flex: 1;
@@ -193,8 +264,10 @@
 
 .qtote-footer {
     font-size: 14px;
-    opacity: 0.9;
+    opacity: 0.95;
     padding: 0 6px;
+    flex: 0 0 auto;
+    white-space: nowrap;
     font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
         "Lucida Sans", Arial, sans-serif;
 }

@@ -110,6 +110,8 @@ export const createInitialState = (world: World): GameState => {
     moves: 0,
     uiState: {
       cometPersonality: "default",
+      cometTextSize: "smaller",
+      visualEffectsMode: "full",
       notifications: [],
       nextNotificationId: 1,
     },

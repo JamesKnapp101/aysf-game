@@ -1,13 +1,15 @@
 .game-log-panel {
     flex: 1 1 auto;
     min-height: 0;
-    border: 2px solid var(--crt-color);
-    padding: 4px;
-    margin-bottom: 4px;
-    background: #000;
+    border: 1px solid var(--crt-panel-border);
+    border-radius: var(--crt-window-radius);
+    padding: 8px;
+    margin-bottom: 6px;
+    background: var(--crt-panel-surface);
     font-size: 18px;
     overflow: hidden;
     color: var(--crt-color);
+    box-shadow: var(--crt-panel-shadow);
 }
 
 .game-log-inner {
@@ -15,7 +17,14 @@
     min-height: 0;
     overflow: auto;
     overscroll-behavior: contain;
-    background: repeating-linear-gradient(to bottom,
+    border-radius: calc(var(--crt-window-radius) - 6px);
+    padding: 2px 4px 6px;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.04),
+            rgb(0 0 0 / 0.18) 14%,
+            rgb(0 0 0 / 0.32) 100%),
+        repeating-linear-gradient(to bottom,
             #000 0,
             #000 1px,
             #001100 2px);
@@ -31,32 +40,44 @@
     flex: 0 0 auto;
     display: flex;
     align-items: center;
-    border: 2px solid var(--crt-color);
-    padding: 2px 4px;
+    gap: 8px;
+    border: 1px solid var(--crt-panel-border);
+    border-radius: var(--crt-window-radius-sm);
+    padding: 6px 10px;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.08),
+            rgb(0 0 0 / 0.16) 20%,
+            rgb(0 0 0 / 0.46) 100%);
     color: var(--crt-color);
+    box-shadow:
+        0 0 0 1px rgb(var(--crt-color-rgb) / 0.05) inset,
+        0 10px 20px rgb(0 0 0 / 0.22);
 }
 
 .game-prompt {
-    margin-right: 8px;
+    margin-right: 0;
     font-weight: bold;
     font-size: 18px;
     color: var(--crt-color);
+    opacity: 0.9;
 }
 
 .game-input {
     flex: 1;
-    background: #000;
+    background: transparent;
     color: var(--crt-color);
     border: none;
     outline: none;
     font-family: inherit;
     font-size: 1rem;
+    padding: 2px 0;
 }
 
 .log-room-name {
     display: inline-block;
     opacity: 0.90;
-    padding: 2px 8px;
+    padding: 3px 10px;
     margin: 4px 0;
     background: color-mix(in srgb,
             var(--crt-color) 100%,
@@ -64,7 +85,7 @@
     color: #000;
     font-weight: 800;
     letter-spacing: 1px;
-    border-radius: 2px;
+    border-radius: 8px;
     box-shadow:
         0 0 4px rgba(0, 255, 0, 0.35),
         inset 0 0 0 1px rgba(0, 0, 0, 0.5);

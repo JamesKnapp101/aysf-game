@@ -1,6 +1,11 @@
 import type { LayoutPrefs } from "../hooks/useLayoutPrefs";
 import { getItemsInInventory } from "../selectors/itemSelectors";
-import type { CometPersonalityMode, GameState } from "../types/gameTypes";
+import type {
+  CometPersonalityMode,
+  CometTextSizeMode,
+  GameState,
+  VisualEffectsMode,
+} from "../types/gameTypes";
 
 import { CometTerminal } from "@game/components/CometTerminal";
 import { DNASampleTab } from "@game/components/DNASampleTab";
@@ -108,6 +113,8 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   const internalCometInputRef = useRef<HTMLInputElement | null>(null);
   const activeCometInputRef = cometInputRef ?? internalCometInputRef;
   const cometPersonality = state.uiState.cometPersonality ?? "default";
+  const cometTextSize = state.uiState.cometTextSize ?? "smaller";
+  const visualEffectsMode = state.uiState.visualEffectsMode ?? "full";
   const sidebarWidthPercent = layout.sidebarWidthRatio * 100;
 
   const onSubmit = (e: React.FormEvent) => {
@@ -241,6 +248,28 @@ export const LogPanel: React.FC<LogPanelProps> = ({
       uiState: {
         ...prev.uiState,
         cometPersonality,
+      },
+    }));
+  };
+
+  const handleCometTextSizeChange = (cometTextSize: CometTextSizeMode) => {
+    setGameState((prev) => ({
+      ...prev,
+      uiState: {
+        ...prev.uiState,
+        cometTextSize,
+      },
+    }));
+  };
+
+  const handleVisualEffectsModeChange = (
+    visualEffectsMode: VisualEffectsMode,
+  ) => {
+    setGameState((prev) => ({
+      ...prev,
+      uiState: {
+        ...prev.uiState,
+        visualEffectsMode,
       },
     }));
   };
@@ -395,9 +424,13 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           {activeTab === "settings" && (
             <SettingsTab
               cometPersonality={cometPersonality}
+              cometTextSize={cometTextSize}
               crtColor={crtColor}
               onCometPersonalityChange={handleCometPersonalityChange}
+              onCometTextSizeChange={handleCometTextSizeChange}
+              onVisualEffectsModeChange={handleVisualEffectsModeChange}
               setCrtColor={setCrtColor}
+              visualEffectsMode={visualEffectsMode}
             />
           )}
         </div>

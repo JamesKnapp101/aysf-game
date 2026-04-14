@@ -9,7 +9,7 @@ import "../../styles/components/mind-gun-overlay.css";
 import "../../styles/organism-death-overlay.css";
 import { getDisplayedFlashlightStatus } from "../helpers/flashlightHelpers";
 import { useUIEffectsStore } from "../store/store";
-import type { GameState } from "../types/gameTypes"; // adjust path
+import type { GameState, VisualEffectsMode } from "../types/gameTypes";
 import type { Direction } from "../types/roomTypes";
 import { RoomStatusPanel } from "./RoomStatusPanel";
 import {
@@ -41,6 +41,7 @@ type RoomDescriptionPanelProps = {
   roomId: string;
   state: GameState;
   setBrainActivityLevel?: (val: number) => void;
+  visualEffectsMode?: VisualEffectsMode;
 };
 
 export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
@@ -59,8 +60,11 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   roomId,
   state,
   setBrainActivityLevel,
+  visualEffectsMode,
 }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const resolvedVisualEffectsMode =
+    visualEffectsMode ?? state.uiState.visualEffectsMode ?? "full";
 
   // =========================
   // UI Effects
@@ -356,6 +360,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       data-player-light-mode={playerLightMode}
       data-flashlight-on={flashlightOn}
       data-underwater={isUnderwater ? "true" : "false"}
+      data-visual-effects={resolvedVisualEffectsMode}
       data-mindflash={showMindLayer ? "true" : "false"}
       data-organismdeath={showOdLayer ? "true" : "false"}
     >

@@ -445,3 +445,155 @@
 .game-room-text::after {
     z-index: 10;
 }
+
+/* ============================================================
+   VISUAL EFFECTS MODES
+   - Full: existing rules above
+   - Reduced: keep mood, remove most motion, soften distortion
+   - Off: remove decorative status-effect motion/overlays
+   ============================================================ */
+
+/* ---------- REDUCED ---------- */
+
+.game-root[data-visual-effects="reduced"][data-status~="drunk"] .game-left {
+    animation: none !important;
+}
+
+.game-root[data-visual-effects="reduced"][data-status~="drunk"] .game-left,
+.game-root[data-visual-effects="reduced"][data-status~="drunk"] .game-room-panel {
+    filter: blur(calc(0.12px + (var(--drunk) * 0.45px))) !important;
+}
+
+.game-root[data-visual-effects="reduced"][data-status~="trixophine"] .game-room-panel,
+.game-root[data-visual-effects="reduced"][data-status~="trixophine"] .game-left {
+    animation: none !important;
+    filter: saturate(1.18) contrast(1.04) brightness(1.02) hue-rotate(32deg) !important;
+    text-shadow:
+        0.35px 0 rgba(255, 0, 120, 0.28),
+        -0.35px 0 rgba(0, 200, 255, 0.24);
+}
+
+.game-root[data-visual-effects="reduced"][data-status~="trixophine"] .game-room-panel::before,
+.game-root[data-visual-effects="reduced"][data-status~="trixophine"] .game-left::before {
+    animation: none !important;
+    opacity: 0.08;
+}
+
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-room-panel,
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-left {
+    animation: none !important;
+}
+
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-room-panel::before,
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-left::before {
+    opacity: calc(0.1 + var(--rad, 0) * 0.24);
+}
+
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-room-panel::after,
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-left::after {
+    animation: none !important;
+    opacity: calc(0.03 + var(--rad, 0) * 0.12);
+    filter: none;
+}
+
+.game-root[data-visual-effects="reduced"][data-status~="possessed"] .game-room-panel,
+.game-root[data-visual-effects="reduced"][data-status~="possessed"] .game-left {
+    animation: none !important;
+    filter: saturate(0.45) contrast(0.96) brightness(0.99) hue-rotate(-12deg) blur(0.12px) !important;
+    text-shadow:
+        0 0 8px rgba(190, 230, 255, 0.12),
+        1px 0 rgba(0, 0, 0, 0.28),
+        -1px 0 rgba(0, 0, 0, 0.24);
+}
+
+.game-root[data-visual-effects="reduced"][data-status~="possessed"] .game-room-panel::before,
+.game-root[data-visual-effects="reduced"][data-status~="possessed"] .game-left::before {
+    animation: none !important;
+    opacity: 0.28;
+    filter: blur(10px);
+}
+
+.game-root[data-visual-effects="reduced"] .game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"] {
+    animation: none !important;
+    filter: contrast(0.96) brightness(0.93) saturate(0.76);
+}
+
+.game-root[data-visual-effects="reduced"] .game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"]::after {
+    animation: none !important;
+    opacity: 0.05;
+}
+
+/* ---------- OFF ---------- */
+
+.game-root[data-visual-effects="off"][data-status~="drunk"] .game-left {
+    animation: none !important;
+}
+
+.game-root[data-visual-effects="off"][data-status~="drunk"] .game-left,
+.game-root[data-visual-effects="off"][data-status~="drunk"] .game-room-panel {
+    filter: none !important;
+}
+
+.game-root[data-visual-effects="off"][data-status~="drunk"][style*="--drunk: 0.8"] {
+    filter: none !important;
+}
+
+.game-root[data-visual-effects="off"][data-status~="trixophine"] .game-room-panel,
+.game-root[data-visual-effects="off"][data-status~="trixophine"] .game-left {
+    animation: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+.game-root[data-visual-effects="off"][data-status~="trixophine"] .game-room-panel::before,
+.game-root[data-visual-effects="off"][data-status~="trixophine"] .game-left::before {
+    content: none;
+    animation: none !important;
+    opacity: 0;
+}
+
+.game-root[data-visual-effects="off"][data-status~="radiation"] .game-room-panel,
+.game-root[data-visual-effects="off"][data-status~="radiation"] .game-left {
+    animation: none !important;
+}
+
+.game-root[data-visual-effects="off"][data-status~="radiation"] .game-room-panel::before,
+.game-root[data-visual-effects="off"][data-status~="radiation"] .game-left::before,
+.game-root[data-visual-effects="off"][data-status~="radiation"] .game-room-panel::after,
+.game-root[data-visual-effects="off"][data-status~="radiation"] .game-left::after {
+    content: none;
+    animation: none !important;
+    opacity: 0;
+    filter: none !important;
+}
+
+.game-root[data-visual-effects="off"][data-status~="possessed"] .game-room-panel,
+.game-root[data-visual-effects="off"][data-status~="possessed"] .game-left {
+    animation: none !important;
+    filter: saturate(0.82) contrast(0.98) brightness(0.99) !important;
+    text-shadow: none !important;
+}
+
+.game-root[data-visual-effects="off"][data-status~="possessed"] .game-room-panel::before,
+.game-root[data-visual-effects="off"][data-status~="possessed"] .game-left::before {
+    content: none;
+    animation: none !important;
+    opacity: 0;
+    filter: none !important;
+}
+
+.game-root[data-visual-effects="off"] .game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"] {
+    animation: none !important;
+    filter: contrast(0.98) brightness(0.95) saturate(0.82);
+}
+
+.game-root[data-visual-effects="off"] .game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"]::before {
+    opacity: 0.18;
+    filter: blur(8px);
+}
+
+.game-root[data-visual-effects="off"] .game-room-panel[data-status~="nightvision-active"][data-room-ambient-light="false"]::after {
+    content: none;
+    animation: none !important;
+    opacity: 0;
+}

@@ -30,7 +30,10 @@ type GameSnapshotV1 = {
   itemState: GameState["itemState"];
   conversation?: GameState["conversation"];
   radio?: GameState["radio"];
-  uiState?: Pick<GameState["uiState"], "cometPersonality">;
+  uiState?: Pick<
+    GameState["uiState"],
+    "cometPersonality" | "cometTextSize" | "visualEffectsMode"
+  >;
 };
 
 function canUseLocalStorage(): boolean {
@@ -132,6 +135,8 @@ function buildSnapshot(state: GameState): GameSnapshotV1 {
     radio: state.radio,
     uiState: {
       cometPersonality: state.uiState.cometPersonality,
+      cometTextSize: state.uiState.cometTextSize,
+      visualEffectsMode: state.uiState.visualEffectsMode,
     },
   };
 }
@@ -243,6 +248,11 @@ async function restoreSnapshotFromStorage(
         ...baseState.uiState,
         cometPersonality:
           snapshot.uiState?.cometPersonality ?? baseState.uiState.cometPersonality,
+        cometTextSize:
+          snapshot.uiState?.cometTextSize ?? baseState.uiState.cometTextSize,
+        visualEffectsMode:
+          snapshot.uiState?.visualEffectsMode ??
+          baseState.uiState.visualEffectsMode,
         notifications: [],
         nextNotificationId: 1,
       },

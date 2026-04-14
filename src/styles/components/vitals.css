@@ -83,9 +83,13 @@
     letter-spacing: 2px;
     margin-bottom: 0.5rem;
     padding: 0.25rem 0.5rem;
-    background-color: var(--crt-green, var(--crt-color));
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--crt-green, var(--crt-color)) 78%, black 22%),
+            color-mix(in srgb, var(--crt-green, var(--crt-color)) 70%, black 30%));
     color: #000;
-    box-shadow: 0 0 8px var(--crt-green, var(--crt-color));
+    box-shadow: 0 0 4px color-mix(in srgb, var(--crt-green, var(--crt-color)) 20%, transparent);
 }
 
 .diagnosis-category {
@@ -129,7 +133,7 @@
 }
 
 .brain-state {
-    width: 4rem;
+    width: 3.5rem;
     text-align: right;
     font-size: 0.8rem;
     white-space: nowrap;

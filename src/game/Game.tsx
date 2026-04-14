@@ -202,6 +202,7 @@ export const Game: React.FC = () => {
   const roomIsDark = currentRoom
     ? Boolean(gs.worldState.darkRooms[currentRoom.id])
     : false;
+  const visualEffectsMode = gs.uiState.visualEffectsMode ?? "full";
 
   const nightVisionActive = activeEffects.includes("nightvision-active");
 
@@ -258,6 +259,7 @@ export const Game: React.FC = () => {
               } as React.CSSProperties
             }
             data-status={activeEffects.join(" ")}
+            data-visual-effects={visualEffectsMode}
             data-drunkenness={isDrunk?.intensity ?? 0}
             data-room-ambient-light={roomAmbientLight ? "true" : "false"}
             data-room-is-dark={roomIsDark ? "true" : "false"}
@@ -276,7 +278,6 @@ export const Game: React.FC = () => {
               <div className="game-header-stats">
                 <span>Score: {getCurrentScore(gs)}</span>
                 <span>Memory: {getCurrentMemory(gs)}%</span>
-                <span>Rating: {gs.rating}</span>
                 <span>Moves: {gs.moves}</span>
               </div>
             </div>
@@ -298,6 +299,7 @@ export const Game: React.FC = () => {
               roomId={currentRoom?.id ?? gs.player.roomId}
               state={gs}
               setBrainActivityLevel={setBrainActivityLevel}
+              visualEffectsMode={visualEffectsMode}
             />
 
             {/* horizontal resizer - between room and main row */}

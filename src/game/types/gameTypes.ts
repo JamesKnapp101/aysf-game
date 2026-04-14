@@ -78,9 +78,13 @@ export type GameNotification = GameNotificationDraft & {
 };
 
 export type CometPersonalityMode = SharedCometPersonalityMode;
+export type CometTextSizeMode = "smaller" | "larger";
+export type VisualEffectsMode = "full" | "reduced" | "off";
 
 export interface GameUiState {
   cometPersonality: CometPersonalityMode;
+  cometTextSize: CometTextSizeMode;
+  visualEffectsMode: VisualEffectsMode;
   nextNotificationId: number;
   notifications: GameNotification[];
 }

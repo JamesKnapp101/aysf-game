@@ -26,7 +26,7 @@ function audioToUnit(raw: number) {
 
 function getFlashlightKindLabel(status: FlashlightStatus) {
   if (status.itemId === "flashlight") return "LED";
-  if (status.itemId === "damagedFlashlight") return "\u03df BAD CHARGE";
+  if (status.itemId === "damagedFlashlight") return "\u03df ERR";
   return "NONE";
 }
 

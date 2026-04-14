@@ -138,6 +138,7 @@ export function CometTerminal({
   onPromptFocus = () => undefined,
   variant = "modal",
 }: CometTerminalProps) {
+  const cometTextSize = state.uiState.cometTextSize ?? "smaller";
   const [query, setQuery] = useState("");
   const [loadedEntries, setLoadedEntries] = useState<CometEntry[] | null>(
     entries ?? null,
@@ -366,7 +367,7 @@ export function CometTerminal({
 
   return (
     <div
-      className={`comet comet--${variant}`}
+      className={`comet comet--${variant} comet--text-${cometTextSize}`}
       onClick={handleShellInteraction}
       onMouseDown={(event) => event.stopPropagation()}
     >

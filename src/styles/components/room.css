@@ -1,8 +1,12 @@
 .game-room-panel {
+    --room-status-box-width: 148px;
+    --room-compass-box-size: 148px;
+    --room-diagnostics-height: 128px;
+    --room-status-meter-width: 134px;
     flex: 0 0 auto;
     /* basis may be set inline */
     min-height: 0;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     overflow: visible;
     /* classic behavior */
 }
@@ -15,19 +19,15 @@
 }
 
 .game-room-inner {
-    border: 2px solid var(--crt-color);
-    padding: 6px 8px;
+    border: 1px solid var(--crt-panel-border);
+    border-radius: var(--crt-window-radius);
+    padding: 8px 12px 8px 10px;
     min-height: 250px;
     width: 100%;
-    overflow-y: auto;
-    /* classic scroll */
-    overflow-x: hidden;
-
-    background: repeating-linear-gradient(to bottom,
-            #000 0,
-            #000 1px,
-            #001100 2px);
+    overflow: hidden;
+    background: var(--crt-panel-surface);
     position: relative;
+    box-shadow: var(--crt-panel-shadow);
 }
 
 .game-room-text {
@@ -96,8 +96,10 @@
 
 .room-compass-float {
     float: right;
-    margin-left: 8px;
-    margin-bottom: 4px;
+    width: var(--room-status-box-width);
+    margin-left: 10px;
+    margin-right: 3px;
+    margin-bottom: 2px;
 }
 
 /* Only show the bottom fade if overflowing */
@@ -125,16 +127,24 @@
 }
 
 .room-diagnostics {
-    margin-top: 5px;
-    padding: 6px;
-    border: 1px solid var(--crt-green, var(--crt-color));
-    box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.15) inset;
-    width: 180px;
-    min-height: 180px;
+    margin-top: 4px;
+    padding: 5px 5px 6px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.5);
+    border-radius: calc(var(--crt-window-radius) - 3px);
+    box-shadow:
+        0 0 0 1px rgb(var(--crt-color-rgb) / 0.08) inset,
+        0 0 12px rgb(var(--crt-color-rgb) / 0.06);
+    width: var(--room-status-box-width);
+    min-height: var(--room-diagnostics-height);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    gap: 8px;
+    gap: 5px;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.07),
+            rgb(0 0 0 / 0.2) 18%,
+            rgb(0 0 0 / 0.42) 100%);
 }
 
 .room-diag-block {
@@ -143,14 +153,14 @@
 
 .room-diag-divider {
     height: 1px;
-    margin: 0 6px;
+    margin: 0 4px;
     background: linear-gradient(90deg,
             transparent 0%,
-            rgba(0, 255, 0, 0.2) 18%,
-            rgba(0, 255, 0, 0.34) 50%,
-            rgba(0, 255, 0, 0.2) 82%,
+            rgb(var(--crt-color-rgb) / 0.16) 18%,
+            rgb(var(--crt-color-rgb) / 0.28) 50%,
+            rgb(var(--crt-color-rgb) / 0.16) 82%,
             transparent 100%);
-    opacity: 0.75;
+    opacity: 0.7;
 }
 
 .room-diag-title {
@@ -174,28 +184,45 @@
 
 .room-diag-meter {
     margin-top: 4px;
-    padding: 5px;
-    border: 1px solid var(--crt-green, var(--crt-color));
+    width: var(--room-status-meter-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 4px 5px;
+    border: 1px solid currentColor;
+    border-radius: 9px;
     display: flex;
-    gap: 4px;
+    gap: 3px;
     align-items: flex-end;
-    height: 32px;
+    height: 24px;
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.08),
+            rgb(0 0 0 / 0.2) 30%,
+            rgb(0 0 0 / 0.36) 100%);
+    box-shadow:
+        inset 0 0 0 1px rgb(255 255 255 / 0.015),
+        0 0 10px rgb(var(--crt-color-rgb) / 0.05);
 }
 
 .room-audio-bar {
     flex: 1 1 0;
     height: 100%;
-    border: 1px solid var(--crt-green, var(--crt-color));
-    opacity: 0.22;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.42;
+    background: transparent;
 }
 
 .room-audio-bar[data-on="true"] {
-    opacity: 1;
-    filter: drop-shadow(0 0 4px rgba(0, 255, 0, 0.5));
+    opacity: 0.95;
+    background: currentColor;
+    box-shadow:
+        0 0 5px rgb(var(--crt-color-rgb) / 0.28),
+        inset 0 0 8px rgb(var(--crt-color-rgb) / 0.16);
 }
 
 .room-flashlight-meter {
-    margin-top: 6px;
+    margin-top: 4px;
     display: flex;
     justify-content: center;
     color: #596359;
@@ -211,7 +238,7 @@
 
 .room-flashlight-icon {
     display: block;
-    width: 166px;
+    width: var(--room-status-meter-width);
     height: auto;
     overflow: visible;
 }
@@ -347,4 +374,40 @@
     100% {
         transform: translate3d(0, 0, 0);
     }
+}
+
+/* ---------- UNDERWATER VISUAL EFFECTS MODES ---------- */
+
+.game-room-panel[data-visual-effects="reduced"][data-underwater="true"] .game-room-inner::before,
+.game-room-panel[data-visual-effects="reduced"][data-underwater="true"] .game-room-inner::after,
+.game-room-panel[data-visual-effects="reduced"][data-underwater="true"] .game-room-desc {
+    animation: none !important;
+}
+
+.game-room-panel[data-visual-effects="reduced"][data-underwater="true"] .game-room-inner::before {
+    opacity: 0.34;
+}
+
+.game-room-panel[data-visual-effects="reduced"][data-underwater="true"] .game-room-inner::after {
+    opacity: 0.28;
+}
+
+.game-room-panel[data-visual-effects="reduced"][data-underwater="true"] .game-room-desc {
+    transform: none;
+}
+
+.game-room-panel[data-visual-effects="off"][data-underwater="true"] .game-room-inner::before,
+.game-room-panel[data-visual-effects="off"][data-underwater="true"] .game-room-inner::after {
+    content: none;
+    animation: none !important;
+    opacity: 0;
+}
+
+.game-room-panel[data-visual-effects="off"][data-underwater="true"] .game-room-text {
+    text-shadow: none;
+}
+
+.game-room-panel[data-visual-effects="off"][data-underwater="true"] .game-room-desc {
+    animation: none !important;
+    transform: none;
 }

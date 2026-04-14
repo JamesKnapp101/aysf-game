@@ -96,6 +96,28 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
 
 const NUM_BLOCKS = 10;
 
+function hexToRgb(color: string): string | null {
+  const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+  if (!match) return null;
+
+  return `${parseInt(match[1], 16)}, ${parseInt(match[2], 16)}, ${parseInt(match[3], 16)}`;
+}
+
+function getMeterBlockStyle(color: string): React.CSSProperties {
+  const rgb = hexToRgb(color);
+  if (!rgb) {
+    return {
+      backgroundColor: color,
+      boxShadow: `0 0 3px ${color}`,
+    };
+  }
+
+  return {
+    backgroundColor: `rgba(${rgb}, 0.78)`,
+    boxShadow: `0 0 3px rgba(${rgb}, 0.28), inset 0 0 4px rgba(${rgb}, 0.14)`,
+  };
+}
+
 interface MeterRowProps {
   label: string;
   icon: React.ReactNode;
@@ -137,14 +159,7 @@ const MeterRow: React.FC<MeterRowProps> = ({
             <div
               key={i}
               className={"meter-block" + (active ? " meter-block-active" : "")}
-              style={
-                active
-                  ? {
-                      backgroundColor: color,
-                      boxShadow: `0 0 6px ${color}`,
-                    }
-                  : undefined
-              }
+              style={active ? getMeterBlockStyle(color) : undefined}
             />
           );
         })}
@@ -192,14 +207,7 @@ const TempRow: React.FC<TempRowProps> = ({ value }) => {
             <div
               key={i}
               className={"meter-block" + (active ? " meter-block-active" : "")}
-              style={
-                active
-                  ? {
-                      backgroundColor: color,
-                      boxShadow: `0 0 6px ${color}`,
-                    }
-                  : undefined
-              }
+              style={active ? getMeterBlockStyle(color) : undefined}
             />
           );
         })}

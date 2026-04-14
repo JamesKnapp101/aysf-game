@@ -26,6 +26,8 @@ export function enqueueNotification(
     uiState: {
       ...(state.uiState ?? {
         cometPersonality: "default",
+        cometTextSize: "smaller",
+        visualEffectsMode: "full",
         notifications: [],
         nextNotificationId: 1,
       }),
@@ -71,6 +73,8 @@ export function dismissNotification(
     uiState: {
       ...(state.uiState ?? {
         cometPersonality: "default",
+        cometTextSize: "smaller",
+        visualEffectsMode: "full",
         notifications: [],
         nextNotificationId: 1,
       }),
