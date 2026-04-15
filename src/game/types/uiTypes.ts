@@ -23,6 +23,7 @@ export type Overlay =
       sourceItemId?: string;
       title: string;
     } & OverlayPostClose)
+  | ({ kind: "help" } & OverlayPostClose)
   | ({ kind: "cooler"; mode: CoolerMode } & OverlayPostClose)
   | ({
       kind: "message-machine";

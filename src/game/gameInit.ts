@@ -492,7 +492,6 @@ export const createInitialState = (world: World): GameState => {
       underContents: {},
       revealedUnder: {},
       searchableContents: {
-        FallenCorpse: ["MysteriousNote"],
         [AQUARIUM_BREATHER_CORPSE_ITEM_ID]: [AQUARIUM_BREATHER_ITEM_ID],
         [AQUARIUM_ELECTRIC_PROD_CORPSE_ITEM_ID]: [
           AQUARIUM_ELECTRIC_PROD_ITEM_ID,

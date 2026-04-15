@@ -42,6 +42,7 @@ type UseGameSessionResult = {
 };
 
 type ResultLike = Pick<ActionResult, "state" | "message" | "overlay">;
+const FIRST_RUN_HELP_HINT = "For instructions and other game info, type 'help'";
 
 export function useGameSession({
   onCometCommand,
@@ -53,6 +54,8 @@ export function useGameSession({
   );
   const [isSessionReady, setIsSessionReady] = useState(false);
   const [showOpeningSplash, setShowOpeningSplash] = useState(false);
+  const [shouldSeedFirstRunHelpHint, setShouldSeedFirstRunHelpHint] =
+    useState(false);
   const stateRef = useRef(gs);
   const commandQueueRef = useRef<Promise<void>>(Promise.resolve());
   const isUnmountingRef = useRef(false);
@@ -96,6 +99,7 @@ export function useGameSession({
       } finally {
         if (cancelled) return;
         setShowOpeningSplash(!restored);
+        setShouldSeedFirstRunHelpHint(!restored);
         useUIOverlayStore.getState().closeOverlay();
         const uiEffects = useUIEffectsStore.getState();
         uiEffects.clearMindFlash();
@@ -117,8 +121,13 @@ export function useGameSession({
   }, [gs, isSessionReady]);
 
   const dismissOpeningSplash = useCallback(() => {
+    if (shouldSeedFirstRunHelpHint) {
+      replaceState(appendLog(stateRef.current, FIRST_RUN_HELP_HINT));
+      setShouldSeedFirstRunHelpHint(false);
+    }
+
     setShowOpeningSplash(false);
-  }, []);
+  }, [replaceState, shouldSeedFirstRunHelpHint]);
 
   const executeCommand = useCallback(
     async (input: string) => {

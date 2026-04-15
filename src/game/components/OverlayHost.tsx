@@ -6,6 +6,7 @@ import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
 import { CoolerModal } from "./CoolerModal";
 import { CrtModal } from "./CrtModal";
+import { HelpModal } from "./HelpModal";
 import { MessageMachineModal } from "./MessageMachineModal";
 import { ReaderModal } from "./ReaderModal";
 
@@ -98,6 +99,9 @@ export function OverlayHost({
   };
 
   switch (overlay.kind) {
+    case "help":
+      return <HelpModal onClose={onClose} />;
+
     case "reader":
       return (
         <ReaderModal

@@ -335,6 +335,13 @@ export async function handleCommand(
       break;
     }
 
+    case "help": {
+      consumesTurn = false;
+      openOverlay({ kind: "help" });
+      message = "You open the help screen.";
+      break;
+    }
+
     case "save": {
       consumesTurn = false;
       message = saveManualSnapshot(state)
@@ -532,6 +539,8 @@ export async function handleCommand(
     logWithEcho = `> diagnose\n${message}`;
   } else if (cmd.type === "comet") {
     logWithEcho = `> comet\n${message}`;
+  } else if (cmd.type === "help") {
+    logWithEcho = `> help\n${message}`;
   } else if (cmd.type === "save") {
     logWithEcho = `> save\n${message}`;
   } else if (cmd.type === "restore") {

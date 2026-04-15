@@ -323,8 +323,10 @@ describe("Action smoke coverage", () => {
       "search corpse",
     );
 
-    expect(expectInventoryToContain(next, "MysteriousNote")).toBe(true);
-    expect(next.itemState.searchableContents.FallenCorpse).toEqual([]);
+    expect(expectInventoryToContain(next, "MysteriousNote")).toBe(false);
+    expect(getItemsInRoom(next, "StairWellSeven").map((item) => item.id)).toContain(
+      "MysteriousNote",
+    );
   });
 
   it("covers stand", async () => {
