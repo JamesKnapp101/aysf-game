@@ -42,7 +42,7 @@ export const levelSixDoors: DoorDefinition[] = [
         return `The damaged security door has been melted open down the middle. The remaining metal has sagged and curled away from a blackened opening large enough to step through. Beyond it you can see the hydroponics platform and its glassy green disk.`;
       }
 
-      let desc = `The door is damaged, becoming wedged tight in the frame. There's a badge reader next to it, but even if it wasn't damaged you don't think the door is functional. Through the gap along the side you can see a glassy green disk, or platform on the floor, large enough to stand on`;
+      let desc = `The door is wedged tight in the frame, but the hole burned through it isn't nearly big enough to crawl through, through you could fit your head through. There's a badge reader next to it, but even if it wasn't damaged you don't think the door is functional. Through the hole you can see a glassy green disk, or platform on the floor, large enough to stand on`;
       const greenTpadState =
         state.worldState.powerRestoredSections["teleport-pads-green"];
       if (greenTpadState) {
@@ -58,7 +58,7 @@ export const levelSixDoors: DoorDefinition[] = [
         return `To the south, the damaged Hydroponics door has been melted open down the middle. Blackened metal curls away from a ragged opening, and beyond it you can see the hydroponics platform with its smooth, glassy green disk on the floor.`;
       }
 
-      let desc = `To the south is a security door with no obvious handle, its frame skewed enough to leave an open gap along the right side. A badge reader is mounted next to the door, but it has scorching around the seam and doesn't appear to be functional. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the dented banner is the word 'HYDROPONICS.' `;
+      let desc = `To the south is a security door with no obvious handle, its frame skewed enough to leave an open gap along the right side, and the metal there has been melted by heat or acid leaving a decent sized hole that looks into a dimly lit room on the other side. A badge reader is mounted next to the door, but it has scorching around the seam and doesn't appear to be functional. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the dented banner is the word 'HYDROPONICS.' `;
       const greenTpadState =
         state.worldState.powerRestoredSections["teleport-pads-green"];
       if (greenTpadState) {

@@ -22,8 +22,8 @@ type HelpInterfaceSection = {
 
 const OPENING_PARAGRAPHS = [
   "This is a work of Interactive Fiction (IF) where you make the decisions as you attempt to solve a series of puzzles and hopefully prevent a terrible disaster. It's a mix of Science Fiction and Horror, so be aware there are some grody descriptions here and there. Feel free to explore and experiment; no puzzles are designed to cause hard or soft locks so you won't break the game, and while there are many ways to die, your character will never truly know the sweet release of death until you complete the game, which is itself currently not completed.",
-  "The game is a work in progress, so be warned; there's plenty to do and I'm always expanding it, but if you explore long enough you'll find issues or unfinished areas. Do feel free to make suggestions or report issues.",
-  "At its core, this is a web-based version of an IF game, in the spirit of the old Colossal Cave or Zork, but with a lot of bells and whistles, such as a pinned room description, a compass, and a sidebar that includes inventory, player vitals, logged messages, sampled DNA, and even an AI assistant that can answer questions about the game itself. It also acts as a sort of sidekick that you can ask about things you encounter in the game.",
+  "The game is a work in progress, so be warned; there's plenty to do and I'm always expanding it, but if you explore long enough you'll find issues or unfinished areas. Feel free to make suggestions or report issues.",
+  "At its core, this is a web-based version of an IF game, in the spirit of the old Colossal Cave or Zork. It has a lot of bells and whistles, like a pinned room description, a compass, and a sidebar that includes inventory, player vitals, logged messages, sampled DNA, and even an AI assistant that can answer questions, but underneath it all is a text driven adventure.",
   "The game also sometimes makes use of status effects that might alter the screen text, for example turning the interface wobbly when intoxicated. If you experience motion sickness with any of them, or they just annoy you, they can be turned off in the Settings tab of the sidebar.",
 ] as const;
 
@@ -31,19 +31,19 @@ const INTERFACE_SECTIONS: Record<HelpInterfaceSectionId, HelpInterfaceSection> =
   {
     header: {
       title: "Header Bar",
-      body: "The header bar shows your current location along with your score, memory percentage, and move count. It stays visible so you can keep your bearings without opening another panel.",
+      body: "The header bar shows your current location along with your score, memory percentage, and move count.",
     },
     room: {
       title: "Room Description Panel",
-      body: "This pinned panel keeps the current room description visible at the top of the screen. It updates as you move and is meant to reduce the need to scroll back through the transcript.",
+      body: "This pinned panel keeps the current room description visible at the top of the screen. It updates as you move and is meant to reduce the need to scroll back through the transcript, or refresh by using the 'look' command. This description stays current with any items taken or dropped.",
     },
     status: {
       title: "Compass / Flashlight / Audio Widget",
-      body: "The compass lights up to show available exits. The surrounding indicators report situational info such as flashlight status and nearby audio cues, and the corner icons cover up, down, in, and out.",
+      body: "The compass lights up to show available exits, with the corner icons representing up, down, in, and out. Below that is a flashlight indicator that will show whether you're carrying a flashlight, if it's lit, and how much charge it has. At the bottom is an audio indicator that will light up when something nearby is making noise.",
     },
     log: {
       title: "Log Panel",
-      body: "The log panel is the running transcript of what you typed and how the game responded. If you need to review clues, descriptions, or recent events, this is where to look first.",
+      body: "The log panel is the running transcript of what you typed and how the game responded. If you need to review clues, descriptions, or recent events, you can scroll back through the history here.",
     },
     command: {
       title: "Command Bar",
@@ -51,7 +51,7 @@ const INTERFACE_SECTIONS: Record<HelpInterfaceSectionId, HelpInterfaceSection> =
     },
     sidebarTabs: {
       title: "Sidebar Tabs",
-      body: "The sidebar tabs switch between Comet, Inventory, Status, Log, DNA, and Settings. They give you quick access to information and tools without leaving the main game screen.",
+      body: "The sidebar tabs switch between Comet, Inventory, Status, Log, DNA, and Settings. They give you quick access to information and tools without leaving the main game screen.\n\nComet Tab: This is an AI powered assistant that can answer questions about the game itself, and also act as a sidekick of sorts that you can ask about things you encounter in the game world.\nInventory Tab: You start the game with a 'Quantum Tote', a sci-fi gadget that is a slim tablet whose screen is a portal to a pocket dimension where you can effectively store infinite items, so no inventory juggling.\nStatus Tab: This tab tracks the player's vitals; health, oxygen, temperature, radiation, and brainwaves. These stats are all plugged in and can be affected by things in game. You can also see a summary diagnosis here.\nLog Tab: To prevent inventory clutter, things like notes, journals, etc. have their contents logged and the original item discarded. Gossip also gets logged here. Gossip can be discovered by reading through things you find in the game world, and can be shared with NPCs.\nDNA Tab: Once you find a DNA sampler, you can sample any bodies you find so you can see who's who.\nSettings Tab: Here you can change things like the CRT color, the Comet assistant's personality, text size, etc.",
     },
     sidebarPanel: {
       title: "Sidebar Panel",
@@ -190,6 +190,40 @@ function DiagramButton({
       ) : null}
     </button>
   );
+}
+
+function renderSectionBody(body: string) {
+  const blocks = body
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  return blocks.map((block, index) => {
+    const lines = block
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    if (lines.length > 1) {
+      return (
+        <ul
+          key={`block-${index}`}
+          className="help-diagram-tooltipList"
+          role="list"
+        >
+          {lines.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    return (
+      <p key={`block-${index}`} className="help-diagram-tooltipBody">
+        {block}
+      </p>
+    );
+  });
 }
 
 export function HelpModal({ onClose }: HelpModalProps) {
@@ -362,9 +396,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
                   <div className="help-diagram-tooltipTitle">
                     {selectedSection.title}
                   </div>
-                  <p className="help-diagram-tooltipBody">
-                    {selectedSection.body}
-                  </p>
+                  {renderSectionBody(selectedSection.body)}
                 </>
               ) : (
                 <p className="help-diagram-tooltipBody">

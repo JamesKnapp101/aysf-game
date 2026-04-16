@@ -27,9 +27,9 @@ export const corpseItems: Item[] = [
   {
     id: "HeadlessCorpse",
     name: "headless corpse",
-    description: `Whatever happened it looks like it happened fast, before he had a chance to struggle or even react. It's hard to say what removed the head, but it doesn't appear to have been cut by a blade. The entire neck is gone, leaving a gory divot between the shoulders.`,
+    description: `On closer inspection you can see that he was exposed to something highly acidic, strong enough to dissolve the head completely away and leave the bones of his chest and shoulders exposed.`,
     initialDescription:
-      "Sprawled on the floor in front of the door, chest down in a pool of blood, is the headless body of a man dressed in nothing but a flimsy, flowered silk robe. His arms are extended, fingertips still touching the door as if he'd knelt down in order to stick his head through the gap, when something on the other side took it clean off of his shoulders.",
+      "Sprawled on the floor in front of the corroded door is the body of a man dressed in nothing but a flimsy, flowered silk robe. His head is missing, burned away, maybe, and his arms are extended, fingertips still touching the door as if he'd been looking through the hole.",
     location: "LevelSixCorridorEnd",
     vocab: ["corpse", "body", "man", "robe"],
     itemClass: "solid",
