@@ -21,7 +21,7 @@ export const engineeringOrganismItems: Item[] = [
         `${getRandomOrganismAudioCue(dirFromPlayer)}`,
     },
     description: "You can't see it...",
-    location: "", //"LevelFiveStairAccess",
+    location: "LevelFiveStairAccess",
     vocab: ["organism"],
     itemClass: "solid",
     itemWeight: 8,
@@ -69,8 +69,7 @@ export function organismOverrideTick(
   if (!item.meta?.canMove) return;
 
   const playerFlashlightOn = flashlightOn(state);
-
-  const orgRoom = item.location;
+  const orgRoom = state.itemState.itemRoomId[item.id] ?? item.location;
   const playerRoom = getPlayerRoomId();
 
   if (!orgRoom) return;

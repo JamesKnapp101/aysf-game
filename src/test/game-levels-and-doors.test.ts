@@ -870,6 +870,28 @@ describe("Doors and level mechanics", () => {
     );
   });
 
+  it("lets the level five organism move through engineering and kill in darkness", async () => {
+    const start = setInventory(
+      createTestState({
+        roomId: "EngCorridorOne",
+        visitedRooms: ["EngCorridorOne", "PowerGrid"],
+      }),
+      [],
+    );
+
+    const afterStalk = advanceTurn(start);
+
+    expect(afterStalk.itemState.itemRoomId.organism6).toBe("EngCorridorOne");
+    expect(afterStalk.worldState.playerDeaths.EngCorridorOne).toBeUndefined();
+
+    const afterAttack = advanceTurn(afterStalk);
+
+    expect(afterAttack.player.roomId).not.toBe("EngCorridorOne");
+    expect(afterAttack.worldState.playerDeaths.EngCorridorOne?.cause).toBe(
+      "organism",
+    );
+  });
+
   it("opens the warehouse secret door after the robot whistle is blown", async () => {
     const start = setInventory(createTestState({ roomId: "L3Warehouse" }), [
       "RobotWhistle",
