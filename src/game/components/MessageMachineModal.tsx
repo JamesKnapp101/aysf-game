@@ -1,7 +1,12 @@
 import React, { useCallback, useMemo, useState } from "react";
 import "../../styles/components/message-machine.css";
-import type { PhoneMessage } from "../../world/maps/livingQuartersTemplate";
 import { CrtModal } from "./CrtModal";
+
+export type PhoneMessage = {
+  id: string;
+  title?: string;
+  transcript: string;
+};
 
 type MessageMachineModalProps = {
   messages: PhoneMessage[] | "off";
@@ -32,7 +37,7 @@ export function MessageMachineModal({
   const unlistenedCount = useMemo(() => {
     return safeMessages.reduce(
       (acc, m) => acc + (messagesPlayedById[m.id] ? 0 : 1),
-      0
+      0,
     );
   }, [safeMessages, messagesPlayedById]);
 
@@ -48,7 +53,7 @@ export function MessageMachineModal({
       const m = safeMessages[idx];
       return !!(m && messagesPlayedById[m.id]);
     },
-    [safeMessages, messagesPlayedById]
+    [safeMessages, messagesPlayedById],
   );
 
   const findFirstUnplayedIndex = useCallback((): number | null => {
@@ -77,7 +82,7 @@ export function MessageMachineModal({
       }
       return null;
     },
-    [safeMessages.length, playNewestFirst, isPlayed]
+    [safeMessages.length, playNewestFirst, isPlayed],
   );
 
   const playAtIndex = useCallback(
@@ -86,7 +91,7 @@ export function MessageMachineModal({
       const msg = safeMessages[nextIndex];
       if (msg && !messagesPlayedById[msg.id]) onMarkPlayed(msg.id);
     },
-    [safeMessages, messagesPlayedById, onMarkPlayed]
+    [safeMessages, messagesPlayedById, onMarkPlayed],
   );
 
   const playNext = useCallback(() => {
