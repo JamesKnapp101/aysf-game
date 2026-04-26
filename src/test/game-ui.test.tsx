@@ -1,5 +1,6 @@
 import { RoomCompass } from "@game/components/Compass";
 import { DNASampleTab } from "@game/components/DNASampleTab";
+import { GamePreserveTerminalModal } from "@game/components/GamePreserveTerminalModal";
 import { HydroponicsAdminTerminalModal } from "@game/components/HydroponicsAdminTerminalModal";
 import { LogPanel } from "@game/components/LogPanel";
 import { LogTab } from "@game/components/LogTab";
@@ -174,6 +175,35 @@ describe("UI panels", () => {
     expect(screen.getByText(/25.*mSv/i)).toBeInTheDocument();
     expect(screen.getByText("???")).toBeInTheDocument();
     expect(screen.getByText(/tipsy/i)).toBeInTheDocument();
+  });
+
+  it("dims completed game preserve difficulties in the terminal", async () => {
+    const baseState = createTestState({ roomId: "GamePreservePortal" });
+    const state: GameState = {
+      ...baseState,
+      worldState: {
+        ...baseState.worldState,
+        gamePreserve: {
+          ...baseState.worldState.gamePreserve,
+          completedDifficulties: {
+            moderate: true,
+          },
+          selectedDifficulty: "moderate",
+        },
+      },
+    };
+
+    render(
+      <GamePreserveTerminalModal
+        state={state}
+        setGameState={() => undefined}
+        onClose={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/completed/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /moderate/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /begin/i })).toBeDisabled();
   });
 
   it("lights the compass needles and labels for every available exit", async () => {

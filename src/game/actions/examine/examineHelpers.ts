@@ -189,6 +189,20 @@ function buildTeleportationTerminalOverlay(
   };
 }
 
+function buildGamePreserveTerminalOverlay(
+  ctx: ExamineItemContext,
+): ActionResult {
+  return {
+    state: ctx.state,
+    overlay: withPostCloseNotifications(
+      {
+        kind: "game-preserve-terminal" as const,
+      },
+      ctx.postCloseNotifications,
+    ),
+  };
+}
+
 const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
   {
     matches: (item) => item.isReflective === true,
@@ -197,6 +211,10 @@ const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
   {
     matches: (item) => item.id === "TelepadTerminal",
     handle: buildTeleportationTerminalOverlay,
+  },
+  {
+    matches: (item) => item.meta?.kind === "game-preserve-terminal",
+    handle: buildGamePreserveTerminalOverlay,
   },
   {
     matches: (item) => item.meta?.kind === "phone",

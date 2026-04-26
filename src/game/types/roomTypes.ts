@@ -1,4 +1,5 @@
 import type { GameState } from "@game/types/gameTypes";
+import type { PreserveExitRuleId } from "@game/preserve/preserveTypes";
 import type { DescriptionContext } from "@game/types/itemTypes";
 
 export type Direction =
@@ -28,6 +29,7 @@ export interface RoomExit {
 export interface Exit {
   direction: Direction;
   doorId?: string;
+  preserveRuleId?: PreserveExitRuleId;
   toRoomId?: string;
 }
 

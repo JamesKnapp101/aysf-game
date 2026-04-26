@@ -10,6 +10,9 @@ import {
   tickUnderwaterVitals,
 } from "@game/helpers/environmentHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
+import { tickGamePreserveAnimals } from "@game/preserve/preserveAnimals";
+import { tickGamePreserveFeedback } from "@game/preserve/preserveFeedback";
+import { tickGamePreserveRun } from "@game/preserve/preserveState";
 import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
 import {
@@ -483,6 +486,9 @@ export function advanceTurn(state: GameState): GameState {
   next = tickStatusEffects(next);
   next = tickSickness(next);
   next = tickAnimateActivities(next);
+  next = tickGamePreserveAnimals(next);
+  next = tickGamePreserveFeedback(next);
+  next = tickGamePreserveRun(next);
 
   next = emitAdjacentAudioCues(next, {
     registry: audioRegistry,

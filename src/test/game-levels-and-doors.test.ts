@@ -1,9 +1,11 @@
 import { advanceTurn } from "@game/engine/turn";
+import { startGamePreserveRun } from "@game/preserve/preserveState";
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { LEVEL_FIVE } from "../world/maps/levelFive/LevelFive";
+import { GAME_PRESERVE_SPAWN_ROOM_ID } from "../world/maps/levelFour/gamePreserveRules";
 import { hydroponicsItems } from "../world/maps/levelSix/Hydroponics";
 import {
   AQUARIUM_ELECTRIC_PROD_ITEM_ID,
@@ -1060,39 +1062,60 @@ describe("Doors and level mechanics", () => {
   });
 
   it("respawns the player near the preserve and resets the bull encounter on death", async () => {
-    const baseState = createTestState({
-      roomId: "PresE",
-      visitedRooms: ["PresE", "VeterinaryCenter"],
-    });
+    const baseState = startGamePreserveRun(
+      createTestState({
+        roomId: "RockyRidge",
+        visitedRooms: ["RockyRidge", "GamePreservePortal"],
+      }),
+    );
     const start = {
       ...baseState,
       itemState: {
         ...baseState.itemState,
         itemRoomId: {
           ...baseState.itemState.itemRoomId,
-          bull: "PresB",
+          bull: "OpenSavanna",
         },
       },
       worldState: {
         ...baseState.worldState,
-        bullEncounter: {
-          chargeCooldown: 0,
-          stunnedTurns: 0,
-          pendingCharge: {
-            dir: "south",
-            targetRoomId: "PresE",
-          },
+        gamePreserve: {
+          ...baseState.worldState.gamePreserve,
+          run: baseState.worldState.gamePreserve.run
+            ? {
+                ...baseState.worldState.gamePreserve.run,
+                actors: {
+                  ...baseState.worldState.gamePreserve.run.actors,
+                  bull: {
+                    ...baseState.worldState.gamePreserve.run.actors.bull,
+                    countdowns: {
+                      ...baseState.worldState.gamePreserve.run.actors.bull
+                        .countdowns,
+                      chargeCooldown: 0,
+                    },
+                    intent: {
+                      kind: "charge" as const,
+                      direction: "east" as const,
+                      targetRoomId: "RockyRidge",
+                    },
+                  },
+                },
+              }
+            : null,
         },
       },
     };
 
     const next = await runCommand(start, "wait");
 
-    expect(next.player.roomId).toBe("VeterinaryCenter");
+    expect(expectInventoryToContain(start, "GameWhistle")).toBe(true);
+    expect(next.player.roomId).toBe("GamePreservePortal");
+    expect(expectInventoryToContain(next, "GameWhistle")).toBe(false);
+    expect(next.itemState.itemRoomId.GameWhistle).toBe("GamePreserveEntrance");
     expect(next.worldState.bullEncounter.chargeCooldown).toBe(3);
     expect(next.worldState.bullEncounter.stunnedTurns).toBe(0);
     expect(next.worldState.bullEncounter.pendingCharge).toBeUndefined();
-    expect(next.itemState.itemRoomId.bull).toBe("PresF");
+    expect(next.itemState.itemRoomId.bull).toBe(GAME_PRESERVE_SPAWN_ROOM_ID);
   });
 
   it("respawns the player outside the aviary and resets the encounter on death", async () => {

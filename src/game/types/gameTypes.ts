@@ -1,5 +1,9 @@
 import type { CometPersonalityMode as SharedCometPersonalityMode } from "@game/constants/cometPersonalities";
 import { playerMemoryMap, playerScoreMap } from "@game/constants";
+import type {
+  GamePreserveDifficulty as ImportedGamePreserveDifficulty,
+  PreserveRunState,
+} from "@game/preserve/preserveTypes";
 import type { DNAResult } from "@game/rules/dnaReader";
 import type { ItemId, RoomId } from "@game/types/ids";
 import type { NpcConversationState, RadioState } from "@game/types/npcTypes";
@@ -215,6 +219,14 @@ export type HydroponicsCocoonPuzzleState = {
   resolved: boolean;
 };
 
+export type GamePreserveDifficulty = ImportedGamePreserveDifficulty;
+
+export type GamePreserveState = {
+  completedDifficulties: Partial<Record<GamePreserveDifficulty, boolean>>;
+  run: PreserveRunState | null;
+  selectedDifficulty: GamePreserveDifficulty;
+};
+
 export type BullEncounterState = {
   chargeCooldown: number;
   pendingCharge?: {
@@ -364,6 +376,7 @@ export interface WorldState {
   damagedFlashlight?: DamagedFlashlightState;
   darkRooms: Record<string, boolean>;
   doors: Record<string, DoorState>;
+  gamePreserve: GamePreserveState;
   hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;
   hydroponicsSpider: HydroponicsSpiderState;
   mensLockerContents: LockerContents<MensLockerId>;

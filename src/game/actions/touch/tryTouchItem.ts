@@ -1,3 +1,7 @@
+import {
+  GAME_PRESERVE_TROPHY_DAIS_ID,
+  handleGamePreserveEmptyHandReturn,
+} from "@game/preserve/preserveTrophies";
 import { takeDNASample } from "@game/rules/dnaReader";
 import { resolveItemByNoun } from "@game/rules/scope";
 import { inventoryHas } from "@game/rules/state";
@@ -19,6 +23,11 @@ export function tryTouchItem(
   if (preposition && !indirect) {
     return { state: next, message: `I don't understand that.` };
   }
+
+  if (!preposition && item.id === GAME_PRESERVE_TROPHY_DAIS_ID) {
+    return handleGamePreserveEmptyHandReturn(next, state.player.roomId);
+  }
+
   if (preposition) {
     if (!indirect) {
       return { state: next, message: `I don't understand that.` };

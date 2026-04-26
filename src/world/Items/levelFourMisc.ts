@@ -451,4 +451,35 @@ export const levelFourItems: Item[] = [
       kind: "key",
     },
   },
+  {
+    id: "GamePreserveControlPanel",
+    name: "preserve control panel",
+    description:
+      "A compact CRT control panel is mounted into the wall beside the staging pad. A heavy rotary dial dominates the left side of the faceplate, while a square button labeled HUNT sits to the right beneath a short status readout.",
+    sceneryDescription:
+      "Mounted beside the staging area is a preserve control panel with a difficulty selector, a tiny CRT readout, and a square button labeled BEGIN.",
+    location: "GamePreservePortal",
+    vocab: [
+      "preserve",
+      "control",
+      "panel",
+      "console",
+      "crt",
+      "screen",
+      "dial",
+      "difficulty",
+      "button",
+      "hunt",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 25,
+    itemSize: 4,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    meta: {
+      kind: "game-preserve-terminal",
+    },
+  },
 ];

@@ -1,4 +1,8 @@
 import { tryPutItem } from "@game/actions/put/tryPutItem";
+import {
+  GAME_PRESERVE_TROPHY_DAIS_ID,
+  handleGamePreserveEmptyHandReturn,
+} from "@game/preserve/preserveTrophies";
 import { inventoryHas } from "@game/rules/state";
 import { resolveItemByNoun } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
@@ -36,6 +40,13 @@ export function doPut(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "Put it where?" };
   }
 
+  if (prep === "on" && isEmptyHandNoun(direct)) {
+    const host = resolveItemByNoun(state, indirect);
+    if (host?.id === GAME_PRESERVE_TROPHY_DAIS_ID) {
+      return handleGamePreserveEmptyHandReturn(state, state.player.roomId);
+    }
+  }
+
   const item = resolveItemByNoun(state, direct);
   if (!item) {
     return { state, message: "You don't see that here." };
@@ -55,4 +66,16 @@ export function doPut(state: GameState, cmd: ParsedCommand): ActionResult {
     hostId: host.id,
     preposition: prep,
   });
+}
+
+function isEmptyHandNoun(value: string): boolean {
+  const normalized = value.toLowerCase().trim();
+  return [
+    "hand",
+    "hands",
+    "empty hand",
+    "empty hands",
+    "bare hand",
+    "bare hands",
+  ].includes(normalized);
 }

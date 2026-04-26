@@ -1,7 +1,7 @@
 import { initializeEncounterStateOnEnter } from "@game/encounters/retryableEncounters";
 import { createInitialAviarySpotlightState } from "@game/engine/ticks/aviaryTick";
-import { getFlashlightDefaults } from "@game/helpers/flashlightHelpers";
 import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
+import { getFlashlightDefaults } from "@game/helpers/flashlightHelpers";
 import { bucketForItem, inventoryHas } from "@game/rules/state";
 import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
 import {
@@ -32,8 +32,7 @@ export const FINAL_PLAYER_START_ROOM_ID = "StairWellSeven";
 
 // Set this to a room id while testing another area. Leave undefined for the
 // normal game start at FINAL_PLAYER_START_ROOM_ID.
-export const DEV_PLAYER_START_ROOM_ID: string | undefined = undefined;
-//  "LevelThreeCorridorThree"; // "ParkEast";
+export const DEV_PLAYER_START_ROOM_ID: string | undefined = "ZooOne"; //undefined;
 
 export const INITIAL_PLAYER_ROOM_ID =
   DEV_PLAYER_START_ROOM_ID ?? FINAL_PLAYER_START_ROOM_ID;
@@ -253,13 +252,13 @@ export const createInitialState = (world: World): GameState => {
         "gravity-level-seven": true,
         "library-power": true,
         "park-security": true,
-        "teleport-pads-green": true,
-        "teleport-pads-blue": true,
-        "teleport-pads-yellow": true,
-        "teleport-pads-violet": true,
-        "teleport-pads-orange": true,
-        "teleport-pads-white": true,
-        "teleport-pads-maroon": true,
+        "teleport-pads-green": false,
+        "teleport-pads-blue": false,
+        "teleport-pads-yellow": false,
+        "teleport-pads-violet": false,
+        "teleport-pads-orange": false,
+        "teleport-pads-white": false,
+        "teleport-pads-maroon": false,
         "engine-room-power-lock": false,
         "weapons-system": false,
         "loading-dock-door": true,
@@ -443,6 +442,11 @@ export const createInitialState = (world: World): GameState => {
       playerDeaths: {},
       aviarySpotlight: createInitialAviarySpotlightState(),
       bullEncounter: createInitialBullEncounterState(),
+      gamePreserve: {
+        completedDifficulties: {},
+        run: null,
+        selectedDifficulty: "moderate",
+      },
       trashBot: {
         cooldownTurns: 0,
         mode: "wandering",
@@ -501,6 +505,7 @@ export const createInitialState = (world: World): GameState => {
         Cooler: { kind: "cooler", mode: "off" },
         NVGoggles: { kind: "goggles", isOn: false },
         Comet: { kind: "comet-viewer", isOn: false, hasLink: false },
+        GameWhistle: { kind: "game-whistle", mode: "bull" },
         flashlight: getFlashlightDefaults("flashlight"),
         damagedFlashlight: getFlashlightDefaults("damagedFlashlight"),
       },
@@ -518,6 +523,41 @@ export const createInitialState = (world: World): GameState => {
         cat: {
           angerLevel: 0,
           hungerLevel: 5,
+          fearLevel: 1,
+          trustLevel: 0,
+          statusEffects: [],
+        },
+        badger: {
+          angerLevel: 1,
+          hungerLevel: 2,
+          fearLevel: 2,
+          trustLevel: 0,
+          statusEffects: [],
+        },
+        bear: {
+          angerLevel: 4,
+          hungerLevel: 3,
+          fearLevel: 0,
+          trustLevel: 0,
+          statusEffects: [],
+        },
+        boar: {
+          angerLevel: 2,
+          hungerLevel: 3,
+          fearLevel: 1,
+          trustLevel: 0,
+          statusEffects: [],
+        },
+        bull: {
+          angerLevel: 3,
+          hungerLevel: 2,
+          fearLevel: 0,
+          trustLevel: 0,
+          statusEffects: [],
+        },
+        barry: {
+          angerLevel: 3,
+          hungerLevel: 2,
           fearLevel: 1,
           trustLevel: 0,
           statusEffects: [],

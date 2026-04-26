@@ -1,4 +1,5 @@
 import { resolveItemByNoun } from "../../rules/scope";
+import { isPreserveActorId } from "../../preserve/preserveTypes";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
@@ -28,6 +29,35 @@ export function doSet(state: GameState, cmd: ParsedCommand): ActionResult {
     return {
       state,
       overlay: { kind: "cooler", mode },
+    };
+  }
+
+  if (item.id === "GameWhistle") {
+    const mode = cmd.indirect?.trim().toLowerCase();
+    if (!mode) {
+      return { state, message: "Set the game whistle to what?" };
+    }
+
+    if (!isPreserveActorId(mode)) {
+      return {
+        state,
+        message:
+          "The selector has markings for badger, boar, bull, bear, and Barry.",
+      };
+    }
+
+    return {
+      state: {
+        ...state,
+        itemState: {
+          ...state.itemState,
+          itemSettings: {
+            ...state.itemState.itemSettings,
+            GameWhistle: { kind: "game-whistle", mode },
+          },
+        },
+      },
+      message: `You set the game whistle to ${mode}.`,
     };
   }
 

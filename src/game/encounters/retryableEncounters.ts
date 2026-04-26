@@ -1,3 +1,5 @@
+import { ensureGamePreserveRunForRoom } from "@game/preserve/preserveState";
+import { getGamePreserveMoveGuard } from "@game/preserve/preserveTraversal";
 import type { GameState } from "@game/types/gameTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
 import {
@@ -143,6 +145,12 @@ const RETRYABLE_ENCOUNTERS: RetryableEncounterDefinition[] = [
       respawnRoomId: AQUARIUM_RETRY_RESPAWN_ROOM_ID,
       reset: resetAquariumEncounter,
     }),
+  },
+  {
+    id: "game-preserve",
+    initializeOnEnter: (state, roomId) =>
+      ensureGamePreserveRunForRoom(state, roomId),
+    beforeMove: (state, ctx) => getGamePreserveMoveGuard(state, ctx),
   },
   {
     id: "bull",

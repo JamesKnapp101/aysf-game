@@ -11,6 +11,7 @@ import { secretOrganismMessage } from "@game/text/secretOrganismMessage";
 import { ScriptContext, ScriptedEvent } from "@game/types/eventTypes";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
+import { isGamePreserveRoomId } from "src/world/maps/levelFour/gamePreserveRules";
 
 // Maximum number of player death husks to keep in the world
 // Older husks are removed to prevent world.items array from growing unbounded
@@ -266,38 +267,40 @@ export function triggerPlayerDeath(
       ? finalRegenRoom
       : "PowerGrid");
 
-  // Identify existing player death husks to potentially prune old ones
-  const existingHusks = state.world.items.filter((item) =>
-    item.id.startsWith("playerRegenHusk"),
-  );
+  const shouldCreateDeathHusk = !isGamePreserveRoomId(roomId);
 
-  // Create the new husk
-  const newHuskId = `playerRegenHusk${Object.keys(next.worldState.playerDeaths).length}`;
-  const newHusk: Item = {
-    id: newHuskId,
-    location: safeRegenRoom,
-    name: "a lifeless husk",
-    description: "It's identical to the one you found when you first woke up.",
-    initialDescription:
-      "Curled up on the floor nearby you see what looks like a dead bug, or spider.",
-    vocab: ["husk", "lifeless husk", "bug husk"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 0,
-    itemSize: 0,
-  };
-
-  // If we have too many husks, remove the oldest ones
   let itemsToKeep = state.world.items;
-  if (existingHusks.length >= MAX_PLAYER_DEATH_HUSKS) {
-    const husksToRemove = existingHusks.slice(
-      0,
-      existingHusks.length - MAX_PLAYER_DEATH_HUSKS + 1,
+  let nextHusk: Item | undefined;
+
+  if (shouldCreateDeathHusk) {
+    const existingHusks = state.world.items.filter((item) =>
+      item.id.startsWith("playerRegenHusk"),
     );
-    const huskIdsToRemove = new Set(husksToRemove.map((h) => h.id));
-    itemsToKeep = state.world.items.filter(
-      (item) => !huskIdsToRemove.has(item.id),
-    );
+
+    nextHusk = {
+      id: `playerRegenHusk${Object.keys(next.worldState.playerDeaths).length}`,
+      location: safeRegenRoom,
+      name: "a lifeless husk",
+      description: "It's identical to the one you found when you first woke up.",
+      initialDescription:
+        "Curled up on the floor nearby you see what looks like a dead bug, or spider.",
+      vocab: ["husk", "lifeless husk", "bug husk"],
+      itemClass: "solid",
+      itemCategory: "collectable",
+      itemWeight: 0,
+      itemSize: 0,
+    };
+
+    if (existingHusks.length >= MAX_PLAYER_DEATH_HUSKS) {
+      const husksToRemove = existingHusks.slice(
+        0,
+        existingHusks.length - MAX_PLAYER_DEATH_HUSKS + 1,
+      );
+      const huskIdsToRemove = new Set(husksToRemove.map((h) => h.id));
+      itemsToKeep = state.world.items.filter(
+        (item) => !huskIdsToRemove.has(item.id),
+      );
+    }
   }
 
   let nextState: GameState = {
@@ -308,7 +311,7 @@ export function triggerPlayerDeath(
     },
     world: {
       ...state.world,
-      items: [...itemsToKeep, newHusk],
+      items: nextHusk ? [...itemsToKeep, nextHusk] : itemsToKeep,
     },
     worldState: {
       ...state.worldState,

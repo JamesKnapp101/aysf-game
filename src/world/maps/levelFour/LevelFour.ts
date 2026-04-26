@@ -1,9 +1,15 @@
 import { aviaryOrganismItems } from "src/world/Items/creatures/aviaryOrganisms";
+import { badgerItems } from "src/world/Items/creatures/badger";
+import { barryItems } from "src/world/Items/creatures/barry";
+import { bearItems } from "src/world/Items/creatures/bear";
+import { boarItems } from "src/world/Items/creatures/boar";
 import { bullItems } from "src/world/Items/creatures/bull";
 import { octopusItems } from "src/world/Items/creatures/octopus";
+import { gamePreserveStructureItems } from "src/world/Items/gamePreserveStructures";
 import { aquariumRooms } from "src/world/maps/levelFour/Aquarium";
 import { aviaryRooms } from "src/world/maps/levelFour/Aviary";
 import { fungalCaveRooms } from "src/world/maps/levelFour/FungalCave";
+import { gamePreserveRooms } from "src/world/maps/levelFour/GamePreserve";
 import { greenhouseRooms } from "src/world/maps/levelFour/Greenhouse";
 import { pondRooms } from "src/world/maps/levelFour/Pond";
 import { preserveRooms } from "src/world/maps/levelFour/Preserve";
@@ -16,7 +22,12 @@ import { levelFourItems } from "../../Items/levelFourMisc";
 export const LEVEL_FOUR: WorldChunk = {
   items: [
     ...levelFourItems,
+    ...gamePreserveStructureItems,
     ...aviaryOrganismItems,
+    ...badgerItems,
+    ...barryItems,
+    ...bearItems,
+    ...boarItems,
     ...bullItems,
     ...octopusItems,
   ],
@@ -26,6 +37,7 @@ export const LEVEL_FOUR: WorldChunk = {
     ...aquariumRooms,
     ...aviaryRooms,
     ...preserveRooms,
+    ...gamePreserveRooms,
     ...veterinaryCenterRooms,
     ...pondRooms,
     ...greenhouseRooms,
@@ -70,12 +82,20 @@ export const LEVEL_FOUR: WorldChunk = {
       id: "ZooOne",
       name: "Zoological One",
       description:
-        "This is the zoo zone entryway, from here you can see the Aviary to the northeast, and the Veterenary Center to the northwest. To the south is the main corridor leading back to the power grid and hydroponics sections.",
+        "This is the zoo zone entryway, from here you can see the Aviary to the northeast, the Veterinary Center to the northwest, and a sealed preserve transfer room to the east. To the south is the main corridor leading back to the power grid and hydroponics sections.",
       exits: [
         { direction: "south", doorId: "ZoologicalDoors" },
         { direction: "northeast", toRoomId: "OuterRingSouth" },
         { direction: "northwest", toRoomId: "VeterinaryCenter" },
+        { direction: "north", toRoomId: "GamePreservePortal" },
       ],
+    },
+    {
+      id: "GamePreservePortal",
+      name: "Game Preserve Portal",
+      description:
+        "This compact staging room sits between the public zoological corridor and a more theatrical hunting simulation beyond. A dead transfer pad is set into the floor, and mounted beside it is a preserve control panel built around a CRT readout, a chunky rotary dial, and a square button labeled HUNT. The only ordinary way out is back west.",
+      exits: [{ direction: "south", toRoomId: "ZooOne" }],
     },
     {
       id: "RemotePowerStation",

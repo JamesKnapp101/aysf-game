@@ -13,6 +13,7 @@ import {
   triggerPlayerDeath,
 } from "@game/helpers/gameHelpers";
 import { getRoomById } from "@game/helpers/itemHelpers";
+import { applyPreserveRoomEntryEffects } from "@game/preserve/preserveEffects";
 import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
 import { createFreshGameState } from "@game/gameInit";
 import { updateItemLocation } from "@game/rules/items";
@@ -286,6 +287,10 @@ export async function handleCommand(
       };
 
       next = initializeEncounterStateOnEnter(next, destinationRoomId);
+      next = applyPreserveRoomEntryEffects(next, destinationRoomId, {
+        direction: cmd.direction,
+        fromRoomId: state.player.roomId,
+      });
 
       nextState = next;
       message = moveMessage.trim();
@@ -393,6 +398,14 @@ export async function handleCommand(
     cmd.type === "action" &&
     nextState.player.roomId !== state.player.roomId
   ) {
+    nextState = initializeEncounterStateOnEnter(nextState, nextState.player.roomId);
+    nextState = applyPreserveRoomEntryEffects(
+      nextState,
+      nextState.player.roomId,
+      {
+        fromRoomId: state.player.roomId,
+      },
+    );
     nextState = runScriptedEvents(
       nextState,
       {

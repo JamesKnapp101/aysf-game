@@ -109,7 +109,7 @@ export const specialItems: Item[] = [
     description:
       "A red-and-white plastic cooler with a folding handle on top and a dial on the front to control the internal temperature.",
     initialDescription: "A red-and-white plastic cooler rests in the corner.",
-    location: "LivingQuartersThreeEast", // "Kitchen",
+    location: "Kitchen",
     vocab: ["cooler", "icebox"],
     itemClass: "solid",
     itemCategory: "collectable",

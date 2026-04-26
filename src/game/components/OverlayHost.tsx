@@ -47,6 +47,11 @@ const LazyTeleportationTerminalModal = lazy(() =>
     default: mod.TeleportationTerminalModal,
   })),
 );
+const LazyGamePreserveTerminalModal = lazy(() =>
+  import("@game/components/GamePreserveTerminalModal").then((mod) => ({
+    default: mod.GamePreserveTerminalModal,
+  })),
+);
 
 function OverlayLoadingModal({
   onClose,
@@ -257,6 +262,22 @@ export function OverlayHost({
           }
         >
           <LazyTeleportationTerminalModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
+        </Suspense>
+      );
+    }
+
+    case "game-preserve-terminal": {
+      return (
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Preserve Terminal" />
+          }
+        >
+          <LazyGamePreserveTerminalModal
             onClose={onClose}
             state={state}
             setGameState={setGameState}

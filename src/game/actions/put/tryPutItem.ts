@@ -1,5 +1,7 @@
 import { getItemById } from "@game/helpers/itemHelpers";
+import { handleGamePreserveTrophySubmission } from "@game/preserve/preserveTrophies";
 import { tryPutItemInContainer } from "@game/rules/containers";
+import { updateItemLocation } from "@game/rules/items";
 import { RuleResult } from "@game/rules/result";
 import { removeFromAllBuckets } from "@game/rules/state";
 import { GameState } from "@game/types/gameTypes";
@@ -42,12 +44,13 @@ export function tryPutItem(
       return { state, message: "You can't put things on that." };
     }
 
+    const hostRoomId = state.itemState.itemRoomId[hostId] ?? host.location;
     const nextInventory = removeFromAllBuckets(state.player.inventory, itemId);
 
     const current = state.itemState.surfaceContents?.[hostId] ?? [];
     const updated = current.includes(itemId) ? current : [...current, itemId];
 
-    const next: GameState = {
+    let next: GameState = {
       ...state,
       player: {
         ...state.player,
@@ -60,13 +63,15 @@ export function tryPutItem(
           [hostId]: updated,
         },
       },
-      world: {
-        ...state.world,
-        items: state.world.items.map((it) =>
-          it.id === itemId ? { ...it, location: host.location } : it,
-        ),
-      },
     };
+
+    next = updateItemLocation(next, itemId, hostRoomId);
+
+    const trophyResult = handleGamePreserveTrophySubmission(next, {
+      hostId,
+      itemId,
+    });
+    if (trophyResult) return trophyResult;
 
     return { state: next, message: "Done." };
   }

@@ -1,4 +1,8 @@
 import { inventoryHas } from "@game/rules/state";
+import {
+  canTraversePreserveExit,
+  getPreserveTraversalActorId,
+} from "@game/preserve/preserveTraversal";
 import type { DoorState } from "../types/doorTypes";
 import type { GameState } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
@@ -229,10 +233,25 @@ export function canMove(
 
   // must have a valid exit and it must be passable
   const exits = getRoomExits(state, fromRoomId);
-  const exit = exits.find((e) => e.toRoomId === targetRoomId);
+  const exit = exits.find(
+    (candidate) =>
+      getExitDestinationRoomId(state, fromRoomId, candidate) === targetRoomId,
+  );
   if (!exit) return false;
 
   if (!isExitPassable(state, exit)) return false;
+
+  const preserveActorId = getPreserveTraversalActorId(itemId);
+  if (preserveActorId) {
+    const traversal = canTraversePreserveExit(
+      state,
+      preserveActorId,
+      fromRoomId,
+      exit,
+      targetRoomId,
+    );
+    if (!traversal.allowed) return false;
+  }
 
   return true;
 }

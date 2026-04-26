@@ -1,10 +1,3 @@
-import {
-  LivingQuartersFiveWestItems,
-  LivingQuartersFiveWestRooms,
-} from "src/world/maps/levelThree/LivingQuarters/FiveWest";
-import { oneEastRooms } from "src/world/maps/levelThree/LivingQuarters/OneEast";
-import { oneWestRooms } from "src/world/maps/levelThree/LivingQuarters/OneWest";
-
 import { Item } from "@game/types/itemTypes";
 import { doomedChefItems } from "src/world/Items/creatures/doomedChef";
 import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
@@ -16,12 +9,18 @@ import { spotBotItems } from "src/world/Items/robots/spotBot";
 import { trashBotItems } from "src/world/Items/robots/trashBot";
 import { usherBotItems } from "src/world/Items/robots/usherBot";
 import {
+  fiveWestItems,
+  FiveWestRooms,
+} from "src/world/maps/levelThree/LivingQuarters/FiveWest";
+import { oneEastRooms } from "src/world/maps/levelThree/LivingQuarters/OneEast";
+import { oneWestRooms } from "src/world/maps/levelThree/LivingQuarters/OneWest";
+import {
   sixEastItems,
   sixEastRooms,
 } from "src/world/maps/levelThree/LivingQuarters/SixEast";
 import {
-  LivingQuartersThreeEastItems,
-  LivingQuartersThreeEastRooms,
+  threeEastItems,
+  threeEastRooms,
 } from "src/world/maps/levelThree/LivingQuarters/ThreeEast";
 import {
   threeWestItems,
@@ -72,10 +71,10 @@ export const LEVEL_THREE: WorldChunk = {
     ...generalItems,
     ...drugItems,
     ...levelThreeItems,
-    ...LivingQuartersThreeEastItems,
-    ...LivingQuartersFiveWestItems,
+    ...fiveWestItems,
     ...livingQuartersThreeWestOrganismItems,
     ...threeWestItems,
+    ...threeEastItems,
     ...sixEastItems,
     ...stairwellItems,
     ...corridorItems,
@@ -109,8 +108,8 @@ export const LEVEL_THREE: WorldChunk = {
     ...oneWestRooms,
     ...threeWestRooms,
     ...sixEastRooms,
-    ...LivingQuartersThreeEastRooms,
-    ...LivingQuartersFiveWestRooms,
+    ...threeEastRooms,
+    ...FiveWestRooms,
     {
       id: "LevelThreeCorridorOne",
       name: "Level Three Corridor One",

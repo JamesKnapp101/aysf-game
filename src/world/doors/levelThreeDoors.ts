@@ -291,15 +291,15 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
   {
     id: "FiveWestBDoor",
     name: "bathroom door",
-    descriptionFromA: "To the south is a wooden door.",
-    descriptionFromB: "The bathroom door is to the north.",
+    descriptionFromA: "To the north is a wooden door.",
+    descriptionFromB: "The bathroom door is to the south.",
     kind: "standard",
     vocab: ["bathroom door"],
     connects: {
       roomAId: "LivingQuartersFiveWest",
       roomBId: "FiveWestBath",
     },
-    directions: { fromA: "south", fromB: "north" },
+    directions: { fromA: "north", fromB: "south" },
     initiallyOpen: false,
     initiallyLocked: false,
   },

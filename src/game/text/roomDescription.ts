@@ -20,6 +20,7 @@ import {
   getVisibleHydroponicsSpider,
   HYDROPONICS_SPIDER_ITEM_ID,
 } from "src/world/Items/creatures/giantSpider";
+import { getVisiblePreserveAnimalDescription } from "@game/preserve/preserveAwareness";
 import { isHydroponicsCocoonRoom } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 type RoomDescriptionMode = "log" | "panel";
@@ -260,6 +261,14 @@ export function buildRoomDescription(
 
   if (surfaceLines.length > 0) {
     parts.push(surfaceLines.join(" "));
+  }
+
+  const visiblePreserveAnimal = getVisiblePreserveAnimalDescription(
+    state,
+    roomId,
+  );
+  if (visiblePreserveAnimal) {
+    parts.push(visiblePreserveAnimal);
   }
 
   return parts.join("\n\n");

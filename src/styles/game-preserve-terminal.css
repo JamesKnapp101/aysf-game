@@ -1,0 +1,799 @@
+.gpres-shell,
+.gpres-shell * {
+  box-sizing: border-box;
+}
+
+.gpres-shell {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--crt-color);
+  font-family: var(--crt-font, "Courier New", monospace);
+}
+
+.gpres-frameOuter {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  padding: 6px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.48);
+  border-radius: 24px;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.05),
+      rgb(0 0 0 / 0.1) 22%,
+      transparent 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.02),
+    inset 0 0 0 1px rgb(0 0 0 / 0.18),
+    0 18px 40px rgb(0 0 0 / 0.46),
+    0 0 18px rgb(var(--crt-color-rgb) / 0.08);
+}
+
+.gpres-frameOuter::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 18px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.14);
+  pointer-events: none;
+}
+
+.gpres-frameInner {
+  position: relative;
+  isolation: isolate;
+  height: 100%;
+  min-height: 0;
+  padding: 10px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.42);
+  border-radius: 20px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 10px;
+  background:
+    radial-gradient(
+      140% 120% at 50% 0%,
+      rgb(var(--crt-color-rgb) / 0.08),
+      rgb(0 0 0 / 0.95) 64%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.03),
+      rgb(0 0 0 / 0.28) 16%,
+      rgb(0 0 0 / 0.76) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.015),
+    inset 0 0 0 1px rgb(0 0 0 / 0.2);
+}
+
+.gpres-frameInner > *:not(.gpres-scanlines) {
+  position: relative;
+  z-index: 1;
+}
+
+.gpres-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.34;
+  mix-blend-mode: screen;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.055),
+      rgb(var(--crt-color-rgb) / 0.015)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0) 0,
+      rgb(0 0 0 / 0) 2px,
+      rgb(0 0 0 / 0.18) 3px
+    );
+}
+
+.gpres-topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.28);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.055),
+      rgb(0 0 0 / 0.2) 38%,
+      rgb(0 0 0 / 0.62) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.03),
+    inset 0 0 0 1px rgb(0 0 0 / 0.24),
+    0 0 18px rgb(var(--crt-color-rgb) / 0.05);
+}
+
+.gpres-brandBlock {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.gpres-brandLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+  text-transform: uppercase;
+}
+
+/* .gpres-brandPrefix {
+  font-size: 0.9rem;
+
+  opacity: 0.72;
+} */
+
+.gpres-brandMain {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: clamp(2rem, 3.2vw, 2.9rem);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: 0.09em;
+  text-shadow: 0 0 20px rgb(var(--crt-color-rgb) / 0.15);
+}
+
+.gpres-brandSuffix {
+  font-size: 1.2rem;
+  letter-spacing: 0.2em;
+  opacity: 0.9;
+}
+
+.gpres-systemName {
+  margin-top: 0.28rem;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+      "Lucida Sans", Arial, sans-serif;
+  letter-spacing: 0.28em;
+  font-size: 24px;
+  font-style: italic;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--crt-color) 84%, white 16%);
+
+}
+
+.gpres-subtitle {
+  margin-top: 0.32rem;
+  max-width: 42rem;
+  color: color-mix(in srgb, var(--crt-color) 72%, white 28%);
+  font-size: 0.88rem;
+  line-height: 1.3;
+}
+
+.gpres-closeButton {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.34);
+  border-radius: 4px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.07),
+      rgb(0 0 0 / 0.3) 36%,
+      rgb(0 0 0 / 0.8) 100%
+    );
+  color: color-mix(in srgb, var(--crt-color) 92%, white 8%);
+  font: inherit;
+  font-size: 1rem;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.03),
+    inset 0 0 0 1px rgb(0 0 0 / 0.24);
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    filter 120ms ease;
+}
+
+.gpres-closeButton:hover,
+.gpres-closeButton:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  border-color: rgb(var(--crt-color-rgb) / 0.58);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.04),
+    0 0 0 1px rgb(var(--crt-color-rgb) / 0.12),
+    0 0 18px rgb(var(--crt-color-rgb) / 0.1);
+  filter: brightness(1.05);
+}
+
+.gpres-toolbar {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.55rem;
+  padding: 8px 12px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.2);
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.04),
+      rgb(0 0 0 / 0.16) 32%,
+      rgb(0 0 0 / 0.56) 100%
+    );
+}
+
+.gpres-toolbarChip {
+  padding: 0.35rem 0.72rem;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.22);
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.14),
+      rgb(var(--crt-color-rgb) / 0.04) 52%,
+      rgb(0 0 0 / 0.2) 100%
+    );
+  color: color-mix(in srgb, var(--crt-color) 90%, white 10%);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.025),
+    0 0 8px rgb(var(--crt-color-rgb) / 0.04);
+}
+
+.gpres-toolbarText {
+  min-width: 0;
+  justify-self: end;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--crt-color) 72%, white 28%);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gpres-main {
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(290px, 0.95fr);
+  gap: 10px;
+}
+
+.gpres-dialPanel,
+.gpres-launchPanel {
+  position: relative;
+  min-height: 0;
+  padding: 16px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.3);
+  border-radius: 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      130% 120% at 50% 0%,
+      rgb(var(--crt-color-rgb) / 0.045),
+      rgb(0 0 0 / 0.9) 68%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.035),
+      rgb(0 0 0 / 0.26) 16%,
+      rgb(0 0 0 / 0.76) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.025),
+    inset 0 0 0 1px rgb(0 0 0 / 0.24),
+    0 0 18px rgb(var(--crt-color-rgb) / 0.04);
+}
+
+.gpres-dialPanel::before,
+.gpres-launchPanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgb(var(--crt-color-rgb) / 0.08) 0,
+    rgb(var(--crt-color-rgb) / 0.08) 1px,
+    rgb(0 0 0 / 0) 3px,
+    rgb(0 0 0 / 0) 5px
+  );
+}
+
+.gpres-dialPanel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: 14px;
+}
+
+.gpres-launchPanel {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 14px;
+}
+
+.gpres-panelHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gpres-panelLabel {
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--crt-color) 86%, white 14%);
+}
+
+.gpres-panelMeta {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--crt-color) 64%, white 36%);
+  opacity: 0.92;
+}
+
+.gpres-dialReadout,
+.gpres-transferCard,
+.gpres-launchCopy {
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.22);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.04),
+      rgb(0 0 0 / 0.26) 24%,
+      rgb(0 0 0 / 0.72) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.022),
+    inset 0 0 24px rgb(0 0 0 / 0.26);
+}
+
+.gpres-dialReadout {
+  padding: 16px;
+  min-height: 0;
+  overflow: auto;
+}
+
+.gpres-dialReadout.isCompleted {
+  display: grid;
+  align-content: start;
+  gap: 1.35rem;
+}
+
+.gpres-dialReadout.isCompleted .gpres-readoutMain {
+  opacity: 0.32;
+  filter: saturate(0.2);
+}
+
+.gpres-completedStamp {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--crt-color) 88%, white 12%);
+  text-shadow:
+    0 0 18px rgb(var(--crt-color-rgb) / 0.12),
+    0 0 2px rgb(var(--crt-color-rgb) / 0.22);
+}
+
+.gpres-readoutLabel {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--crt-color) 70%, white 30%);
+}
+
+.gpres-dialValue {
+  display: block;
+  margin-top: 0.38rem;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: clamp(2rem, 3.8vw, 2.85rem);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-shadow:
+    0 0 18px rgb(var(--crt-color-rgb) / 0.14),
+    0 0 2px rgb(var(--crt-color-rgb) / 0.18);
+}
+
+.gpres-dialHint {
+  display: block;
+  margin-top: 0.55rem;
+  color: color-mix(in srgb, var(--crt-color) 76%, white 24%);
+  font-size: 0.94rem;
+  line-height: 1.42;
+}
+
+.gpres-sliderBlock {
+  padding: 10px 12px 0;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.16);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.025),
+      rgb(0 0 0 / 0.14) 36%,
+      rgb(0 0 0 / 0.56) 100%
+    );
+}
+
+.gpres-sliderMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--crt-color) 60%, white 40%);
+}
+
+.gpres-slider {
+  width: 100%;
+  margin-top: 10px;
+  appearance: none;
+  background: transparent;
+}
+
+.gpres-slider:focus-visible {
+  outline: none;
+}
+
+.gpres-slider::-webkit-slider-runnable-track {
+  height: 10px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.28);
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.18),
+      rgb(0 0 0 / 0.78)
+    );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03);
+}
+
+.gpres-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -7px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.6);
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at 35% 35%,
+      color-mix(in srgb, var(--crt-color) 72%, white 28%),
+      var(--crt-color) 52%,
+      color-mix(in srgb, var(--crt-color) 58%, black 42%) 100%
+    );
+  box-shadow:
+    0 0 0 3px rgb(0 0 0 / 0.72),
+    0 0 16px rgb(var(--crt-color-rgb) / 0.18);
+  cursor: pointer;
+}
+
+.gpres-slider::-moz-range-track {
+  height: 10px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.28);
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.18),
+      rgb(0 0 0 / 0.78)
+    );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03);
+}
+
+.gpres-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.6);
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at 35% 35%,
+      color-mix(in srgb, var(--crt-color) 72%, white 28%),
+      var(--crt-color) 52%,
+      color-mix(in srgb, var(--crt-color) 58%, black 42%) 100%
+    );
+  box-shadow:
+    0 0 0 3px rgb(0 0 0 / 0.72),
+    0 0 16px rgb(var(--crt-color-rgb) / 0.18);
+  cursor: pointer;
+}
+
+.gpres-ticks {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.gpres-tick {
+  min-height: 58px;
+  padding: 10px 8px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.18);
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.06),
+      rgb(0 0 0 / 0.28) 34%,
+      rgb(0 0 0 / 0.76) 100%
+    );
+  color: color-mix(in srgb, var(--crt-color) 78%, white 22%);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.12;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: normal;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.02),
+    inset 0 0 0 1px rgb(0 0 0 / 0.2);
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease,
+    color 120ms ease;
+}
+
+.gpres-tick:hover,
+.gpres-tick:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  border-color: rgb(var(--crt-color-rgb) / 0.42);
+  color: color-mix(in srgb, var(--crt-color) 90%, white 10%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.03),
+    0 0 0 1px rgb(var(--crt-color-rgb) / 0.1),
+    0 0 16px rgb(var(--crt-color-rgb) / 0.07);
+}
+
+.gpres-tick.isSelected {
+  border-color: rgb(var(--crt-color-rgb) / 0.62);
+  color: color-mix(in srgb, var(--crt-color) 94%, white 6%);
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.18),
+      rgb(var(--crt-color-rgb) / 0.06) 36%,
+      rgb(0 0 0 / 0.74) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.03),
+    0 0 0 1px rgb(var(--crt-color-rgb) / 0.16),
+    0 0 20px rgb(var(--crt-color-rgb) / 0.1),
+    inset 0 0 22px rgb(var(--crt-color-rgb) / 0.06);
+}
+
+.gpres-tick.isCompleted,
+.gpres-tick:disabled {
+  opacity: 0.36;
+  cursor: not-allowed;
+  transform: none;
+  filter: saturate(0.25);
+}
+
+.gpres-tick.isCompleted:hover,
+.gpres-tick.isCompleted:focus-visible,
+.gpres-tick:disabled:hover,
+.gpres-tick:disabled:focus-visible {
+  transform: none;
+  border-color: rgb(var(--crt-color-rgb) / 0.18);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.02),
+    inset 0 0 0 1px rgb(0 0 0 / 0.2);
+}
+
+.gpres-transferCard {
+  padding: 6px 14px;
+  min-height: 0;
+  max-height: 120px;
+  overflow: auto;
+}
+
+.gpres-transferRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.gpres-transferRow + .gpres-transferRow {
+  border-top: 1px solid rgb(var(--crt-color-rgb) / 0.12);
+}
+
+.gpres-transferLabel {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--crt-color) 64%, white 36%);
+}
+
+.gpres-transferValue {
+  text-align: right;
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--crt-color) 88%, white 12%);
+}
+
+.gpres-launchCopy {
+  margin: 0;
+  padding: 14px;
+  min-height: 0;
+  overflow: auto;
+  color: color-mix(in srgb, var(--crt-color) 74%, white 26%);
+  line-height: 1.5;
+  font-size: 0.94rem;
+}
+
+.gpres-huntButton {
+  position: relative;
+  width: 100%;
+  min-height: 70px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.54);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(var(--crt-color-rgb) / 0.24),
+      rgb(var(--crt-color-rgb) / 0.08) 28%,
+      rgb(0 0 0 / 0.78) 100%
+    ),
+    radial-gradient(
+      circle at 50% 0%,
+      rgb(var(--crt-color-rgb) / 0.18),
+      transparent 62%
+    );
+  color: color-mix(in srgb, var(--crt-color) 95%, white 5%);
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: clamp(1.58rem, 2.9vw, 2.15rem);
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.05),
+    inset 0 -24px 36px rgb(0 0 0 / 0.28),
+    0 0 20px rgb(var(--crt-color-rgb) / 0.08);
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    filter 120ms ease;
+}
+
+.gpres-huntButton::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 12px;
+  border: 1px solid rgb(var(--crt-color-rgb) / 0.14);
+  pointer-events: none;
+}
+
+.gpres-huntButton:hover,
+.gpres-huntButton:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  border-color: rgb(var(--crt-color-rgb) / 0.76);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 0 0 2px rgb(var(--crt-color-rgb) / 0.16),
+    0 0 28px rgb(var(--crt-color-rgb) / 0.14),
+    inset 0 0 24px rgb(var(--crt-color-rgb) / 0.08);
+  filter: brightness(1.05);
+}
+
+.gpres-huntButton:active {
+  transform: translateY(1px);
+}
+
+.gpres-huntButton:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none;
+  filter: saturate(0.2);
+}
+
+.gpres-huntButton:disabled:hover,
+.gpres-huntButton:disabled:focus-visible {
+  transform: none;
+  border-color: rgb(var(--crt-color-rgb) / 0.54);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.05),
+    inset 0 -24px 36px rgb(0 0 0 / 0.28),
+    0 0 20px rgb(var(--crt-color-rgb) / 0.08);
+}
+
+@media (max-width: 960px) {
+  .gpres-closeButton {
+    margin-left: auto;
+  }
+
+  .gpres-toolbarText {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .gpres-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .gpres-frameInner {
+    padding: 10px;
+  }
+
+  .gpres-topbar,
+  .gpres-dialPanel,
+  .gpres-launchPanel {
+    padding: 12px;
+  }
+
+  .gpres-ticks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .gpres-brandMain {
+    font-size: 1.8rem;
+  }
+
+  .gpres-brandSuffix {
+    font-size: 1rem;
+  }
+
+  .gpres-transferRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gpres-transferValue {
+    text-align: left;
+  }
+
+  .gpres-ticks {
+    grid-template-columns: 1fr;
+  }
+
+  .gpres-huntButton {
+    letter-spacing: 0.22em;
+  }
+}

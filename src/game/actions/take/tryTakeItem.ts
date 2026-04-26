@@ -10,8 +10,13 @@ import { RuleResult } from "@game/rules/result";
 import { triggerScoreOnce } from "@game/rules/score";
 import { addToInventory, inventoryHas } from "@game/rules/state";
 import {
+  GAME_PRESERVE_PRIZE_ID,
+  handleGamePreservePrizeTaken,
+} from "@game/preserve/preserveTrophies";
+import {
   getContainerContentsIds,
   getContainerContentsItems,
+  getSurfaceItems,
 } from "@game/selectors/containerSelectors";
 import { getWaterSourcesInRoom } from "@game/selectors/itemSelectors";
 import {
@@ -53,6 +58,7 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     };
   }
 
+  const room = getCurrentRoom(state);
   const itemsHere = getItemsInCurrentRoom(state);
   const itemOnFloor = itemsHere.find((item) => nounMatchesItem(item));
 
@@ -118,10 +124,56 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
       );
     }
 
+    if (itemOnFloor.id === GAME_PRESERVE_PRIZE_ID) {
+      return handleGamePreservePrizeTaken(next, state.player.roomId);
+    }
+
     return { state: next, message: `Taken.${aquariumGoalTail}` };
   }
 
-  const room = getCurrentRoom(state);
+  const surfacesHere = state.world.items.filter(
+    (i) =>
+      i.isSurface &&
+      ((state.itemState.itemRoomId[i.id] ?? i.location) === room.id ||
+        inventoryHas(state.player.inventory, i.id)),
+  );
+
+  for (const surface of surfacesHere) {
+    const surfaceItems = getSurfaceItems(state, surface);
+    const found = surfaceItems.find((item) => nounMatchesItem(item));
+    if (!found) continue;
+
+    if (found.itemCategory === "scenery" || found.itemCategory === "static") {
+      const msg = found.overrides?.take ?? "You can't take that.";
+      return { state, message: msg };
+    }
+
+    const updatedSurfaceIds = (
+      state.itemState.surfaceContents[surface.id] ?? []
+    ).filter((id) => id !== found.id);
+
+    let next: GameState = {
+      ...state,
+      itemState: {
+        ...state.itemState,
+        surfaceContents: {
+          ...state.itemState.surfaceContents,
+          [surface.id]: updatedSurfaceIds,
+        },
+      },
+    };
+
+    next = updateItemLocation(next, found.id, "INVENTORY");
+    next = addToInventory(next, found.id);
+    next = triggerScoreOnce(next, getItemById(next, found.id)?.scoreId);
+
+    if (found.id === GAME_PRESERVE_PRIZE_ID) {
+      return handleGamePreservePrizeTaken(next, state.player.roomId);
+    }
+
+    return { state: next, message: "Taken." };
+  }
+
   const containersHere = state.world.items.filter(
     (i) =>
       i.isContainer &&

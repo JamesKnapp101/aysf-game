@@ -6,6 +6,11 @@ import type {
   StatusId,
   SyringeState,
 } from "./gameTypes";
+import type {
+  AnimalStatusEffect,
+  PreserveActorId,
+  PreserveSense,
+} from "@game/preserve/preserveTypes";
 import type { ItemId } from "./ids";
 
 export type ItemClass = "solid" | "liquid" | "gas";
@@ -101,6 +106,7 @@ export type LivingMeta = {
   homeRegion?: string[];
   hostility?: "neutral" | "avoidant" | "aggressive";
   isAlive: true;
+  trackingModes?: PreserveSense[];
   vision?: "normal" | "dark" | "infrared";
   willConsumeConsumables?: boolean;
 };
@@ -165,6 +171,7 @@ export type ItemSettings =
       rechargeRate: number;
     }
   | { isOn: boolean; kind: "goggles" }
+  | { kind: "game-whistle"; mode: PreserveActorId }
   | { currentViewIndex: number; kind: "camera-gun-viewer" }
   | { hasLink: boolean; isOn: boolean; kind: "comet-viewer" };
 
@@ -184,14 +191,16 @@ export type AnimalDisposition = {
   angerLevel?: number;
   fearLevel?: number;
   hungerLevel?: number;
-  statusEffects?: StatusEffect[];
+  statusEffects?: AnimalStatusEffect[];
   trustLevel?: number;
 };
+
+export type AttachedHostId = ItemId | "PLAYER" | "INVENTORY" | undefined;
 
 export interface ItemState {
   activeGelCameras: Record<string, boolean>;
   animalDisposition: Record<ItemId, AnimalDisposition>;
-  attachedTo: Record<ItemId, ItemId | undefined>;
+  attachedTo: Record<ItemId, AttachedHostId>;
   containerContents: Record<ItemId, ItemId[]>;
   containerFilled: Record<ItemId, ItemId[]>;
   frozenItems: Record<ItemId, boolean>;
