@@ -1,4 +1,4 @@
-import type { PhoneMessage } from "../../world/maps/livingQuartersTemplate";
+import { PhoneMessage } from "@game/components/MessageMachineModal";
 import type { GameNotificationDraft } from "./gameTypes";
 import type { CoolerMode } from "./itemTypes";
 
