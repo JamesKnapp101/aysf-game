@@ -1,11 +1,10 @@
 /* ---------- DRUNK ---------- */
 
-.game-root[data-status~="drunk"] .game-left,
-.game-root[data-status~="drunk"] .game-room-panel {
+.game-root[data-status~="drunk"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     filter: blur(calc(0.4px + (var(--drunk) * 1.6px)));
 }
 
-.game-root[data-status~="drunk"] .game-left {
+.game-root[data-status~="drunk"] :is(.game-header, .game-left, .game-sidebar) {
     animation: drunk-wobble calc(3.2s - (var(--drunk) * 1.6s)) ease-in-out infinite;
 }
 
@@ -14,8 +13,7 @@
 }
 /* ---------- TRIXOPHINE ---------- */
 
-.game-root[data-status~="trixophine"] .game-room-panel,
-.game-root[data-status~="trixophine"] .game-left {
+.game-root[data-status~="trixophine"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     position: relative;
     will-change: transform, filter;
     animation: trixo-drift 6s ease-in-out infinite, trixo-hue 10s linear infinite;
@@ -24,8 +22,7 @@
         -0.6px 0 rgba(0, 200, 255, 0.45);
 }
 
-.game-root[data-status~="trixophine"] .game-room-panel::before,
-.game-root[data-status~="trixophine"] .game-left::before {
+.game-root[data-status~="trixophine"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -43,26 +40,22 @@
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
 
-    .game-root[data-status~="trixophine"] .game-room-panel,
-    .game-root[data-status~="trixophine"] .game-left,
-    .game-root[data-status~="trixophine"] .game-room-panel::before,
-    .game-root[data-status~="trixophine"] .game-left::before {
+    .game-root[data-status~="trixophine"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar),
+    .game-root[data-status~="trixophine"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
         animation: none !important;
     }
 }
 
 /* ---------- RADIATION (intensity-scaled via --rad in [0..1]) ---------- */
 
-.game-root[data-status~="radiation"] .game-room-panel,
-.game-root[data-status~="radiation"] .game-left {
+.game-root[data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     position: relative;
     will-change: transform;
 
     animation: rad-shimmer 4.2s ease-in-out infinite;
 }
 
-.game-root[data-status~="radiation"] .game-room-panel::before,
-.game-root[data-status~="radiation"] .game-left::before {
+.game-root[data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -80,8 +73,7 @@
     opacity: calc(0.2 + var(--rad, 0) * 0.55);
 }
 
-.game-root[data-status~="radiation"] .game-room-panel::after,
-.game-root[data-status~="radiation"] .game-left::after {
+.game-root[data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -99,18 +91,15 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .game-root[data-status~="radiation"] .game-room-panel,
-    .game-root[data-status~="radiation"] .game-left,
-    .game-root[data-status~="radiation"] .game-room-panel::after,
-    .game-root[data-status~="radiation"] .game-left::after {
+    .game-root[data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar),
+    .game-root[data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::after {
         animation: none !important;
     }
 }
 
 /* ---------- POSSESSED (more washed-out): bleak, ghostly, faded ---------- */
 
-.game-root[data-status~="possessed"] .game-room-panel,
-.game-root[data-status~="possessed"] .game-left {
+.game-root[data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     position: relative;
     will-change: filter, opacity;
 
@@ -119,8 +108,7 @@
     animation: poss-exposure 10s steps(1, end) infinite;
 }
 
-.game-root[data-status~="possessed"] .game-room-panel::before,
-.game-root[data-status~="possessed"] .game-left::before {
+.game-root[data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -139,18 +127,15 @@
     will-change: transform, opacity, filter;
 }
 
-.game-root[data-status~="possessed"] .game-room-panel,
-.game-root[data-status~="possessed"] .game-left {
+.game-root[data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     text-shadow: 0 0 14px rgba(190, 230, 255, 0.18),
         2px 0 rgba(0, 0, 0, 0.45), -2px 0 rgba(0, 0, 0, 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {
 
-    .game-root[data-status~="possessed"] .game-room-panel,
-    .game-root[data-status~="possessed"] .game-left,
-    .game-root[data-status~="possessed"] .game-room-panel::before,
-    .game-root[data-status~="possessed"] .game-left::before {
+    .game-root[data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar),
+    .game-root[data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
         animation: none !important;
     }
 }
@@ -455,17 +440,15 @@
 
 /* ---------- REDUCED ---------- */
 
-.game-root[data-visual-effects="reduced"][data-status~="drunk"] .game-left {
+.game-root[data-visual-effects="reduced"][data-status~="drunk"] :is(.game-header, .game-left, .game-sidebar) {
     animation: none !important;
 }
 
-.game-root[data-visual-effects="reduced"][data-status~="drunk"] .game-left,
-.game-root[data-visual-effects="reduced"][data-status~="drunk"] .game-room-panel {
+.game-root[data-visual-effects="reduced"][data-status~="drunk"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     filter: blur(calc(0.12px + (var(--drunk) * 0.45px))) !important;
 }
 
-.game-root[data-visual-effects="reduced"][data-status~="trixophine"] .game-room-panel,
-.game-root[data-visual-effects="reduced"][data-status~="trixophine"] .game-left {
+.game-root[data-visual-effects="reduced"][data-status~="trixophine"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     animation: none !important;
     filter: saturate(1.18) contrast(1.04) brightness(1.02) hue-rotate(32deg) !important;
     text-shadow:
@@ -473,31 +456,26 @@
         -0.35px 0 rgba(0, 200, 255, 0.24);
 }
 
-.game-root[data-visual-effects="reduced"][data-status~="trixophine"] .game-room-panel::before,
-.game-root[data-visual-effects="reduced"][data-status~="trixophine"] .game-left::before {
+.game-root[data-visual-effects="reduced"][data-status~="trixophine"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
     animation: none !important;
     opacity: 0.08;
 }
 
-.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-room-panel,
-.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-left {
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     animation: none !important;
 }
 
-.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-room-panel::before,
-.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-left::before {
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
     opacity: calc(0.1 + var(--rad, 0) * 0.24);
 }
 
-.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-room-panel::after,
-.game-root[data-visual-effects="reduced"][data-status~="radiation"] .game-left::after {
+.game-root[data-visual-effects="reduced"][data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::after {
     animation: none !important;
     opacity: calc(0.03 + var(--rad, 0) * 0.12);
     filter: none;
 }
 
-.game-root[data-visual-effects="reduced"][data-status~="possessed"] .game-room-panel,
-.game-root[data-visual-effects="reduced"][data-status~="possessed"] .game-left {
+.game-root[data-visual-effects="reduced"][data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     animation: none !important;
     filter: saturate(0.45) contrast(0.96) brightness(0.99) hue-rotate(-12deg) blur(0.12px) !important;
     text-shadow:
@@ -506,8 +484,7 @@
         -1px 0 rgba(0, 0, 0, 0.24);
 }
 
-.game-root[data-visual-effects="reduced"][data-status~="possessed"] .game-room-panel::before,
-.game-root[data-visual-effects="reduced"][data-status~="possessed"] .game-left::before {
+.game-root[data-visual-effects="reduced"][data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
     animation: none !important;
     opacity: 0.28;
     filter: blur(10px);
@@ -525,12 +502,11 @@
 
 /* ---------- OFF ---------- */
 
-.game-root[data-visual-effects="off"][data-status~="drunk"] .game-left {
+.game-root[data-visual-effects="off"][data-status~="drunk"] :is(.game-header, .game-left, .game-sidebar) {
     animation: none !important;
 }
 
-.game-root[data-visual-effects="off"][data-status~="drunk"] .game-left,
-.game-root[data-visual-effects="off"][data-status~="drunk"] .game-room-panel {
+.game-root[data-visual-effects="off"][data-status~="drunk"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     filter: none !important;
 }
 
@@ -538,44 +514,37 @@
     filter: none !important;
 }
 
-.game-root[data-visual-effects="off"][data-status~="trixophine"] .game-room-panel,
-.game-root[data-visual-effects="off"][data-status~="trixophine"] .game-left {
+.game-root[data-visual-effects="off"][data-status~="trixophine"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     animation: none !important;
     filter: none !important;
     text-shadow: none !important;
 }
 
-.game-root[data-visual-effects="off"][data-status~="trixophine"] .game-room-panel::before,
-.game-root[data-visual-effects="off"][data-status~="trixophine"] .game-left::before {
+.game-root[data-visual-effects="off"][data-status~="trixophine"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
     content: none;
     animation: none !important;
     opacity: 0;
 }
 
-.game-root[data-visual-effects="off"][data-status~="radiation"] .game-room-panel,
-.game-root[data-visual-effects="off"][data-status~="radiation"] .game-left {
+.game-root[data-visual-effects="off"][data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     animation: none !important;
 }
 
-.game-root[data-visual-effects="off"][data-status~="radiation"] .game-room-panel::before,
-.game-root[data-visual-effects="off"][data-status~="radiation"] .game-left::before,
-.game-root[data-visual-effects="off"][data-status~="radiation"] .game-room-panel::after,
-.game-root[data-visual-effects="off"][data-status~="radiation"] .game-left::after {
+.game-root[data-visual-effects="off"][data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before,
+.game-root[data-visual-effects="off"][data-status~="radiation"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::after {
     content: none;
     animation: none !important;
     opacity: 0;
     filter: none !important;
 }
 
-.game-root[data-visual-effects="off"][data-status~="possessed"] .game-room-panel,
-.game-root[data-visual-effects="off"][data-status~="possessed"] .game-left {
+.game-root[data-visual-effects="off"][data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar) {
     animation: none !important;
     filter: saturate(0.82) contrast(0.98) brightness(0.99) !important;
     text-shadow: none !important;
 }
 
-.game-root[data-visual-effects="off"][data-status~="possessed"] .game-room-panel::before,
-.game-root[data-visual-effects="off"][data-status~="possessed"] .game-left::before {
+.game-root[data-visual-effects="off"][data-status~="possessed"] :is(.game-header, .game-room-panel, .game-left, .game-sidebar)::before {
     content: none;
     animation: none !important;
     opacity: 0;

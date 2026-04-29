@@ -21,6 +21,7 @@ import {
   HYDROPONICS_SPIDER_ITEM_ID,
 } from "src/world/Items/creatures/giantSpider";
 import { getVisiblePreserveAnimalDescription } from "@game/preserve/preserveAwareness";
+import { GAME_PRESERVE_ANIMAL_PROFILES } from "src/world/maps/levelFour/gamePreserveRules";
 import { isHydroponicsCocoonRoom } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 type RoomDescriptionMode = "log" | "panel";
@@ -42,6 +43,16 @@ export function buildRoomDescription(
 ): string {
   const room = state.world.rooms.find((room) => room.id === roomId);
   if (!room) return "You are nowhere. (Bug: room not found.)";
+
+  if (
+    roomId === state.player.roomId &&
+    state.itemState.attachedTo.badger === "PLAYER"
+  ) {
+    return (
+      GAME_PRESERVE_ANIMAL_PROFILES.badger.attachmentAttack
+        ?.attachedRoomDescription ?? "All you can see is angry, snapping badger!"
+    );
+  }
 
   const canSee = canPlayerSeeInRoom(state, roomId);
 

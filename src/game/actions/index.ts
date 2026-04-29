@@ -1,4 +1,5 @@
 import { doAsk } from "@game/actions/ask/ask";
+import { doAttack } from "@game/actions/attack/attack";
 import { doBlow } from "@game/actions/blow/blow";
 import { doEat } from "@game/actions/eat/eat";
 import { doListen } from "@game/actions/listen/listen";
@@ -10,6 +11,7 @@ import { doTouch } from "@game/actions/touch/touch";
 import { doTurn } from "@game/actions/turn/turn";
 import { doUse } from "@game/actions/use/use";
 import { doStand } from "../actions/stand/stand";
+import { doSubmerge } from "@game/actions/submerge/submerge";
 import type { ActionHandler } from "../types/actionsTypes";
 import { doClose } from "./close/close";
 import { doDrink } from "./drink/drink";
@@ -65,4 +67,9 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   ride: doRide,
   touch: doTouch,
   blow: doBlow,
+  hit: doAttack,
+  punch: doAttack,
+  dive: doSubmerge,
+  submerge: doSubmerge,
+  drown: doSubmerge,
 };

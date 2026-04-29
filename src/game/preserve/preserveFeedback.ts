@@ -8,6 +8,7 @@ import {
   getPreserveActorRuntime,
   setPreserveActorRuntime,
 } from "@game/preserve/preserveState";
+import { getAnimalStatusRemainingTurns } from "./animalStatus";
 import type { GameState } from "@game/types/gameTypes";
 import type { Direction } from "@game/types/roomTypes";
 import type { PreserveActorId } from "./preserveTypes";
@@ -108,6 +109,14 @@ export function tickGamePreserveFeedback(state: GameState): GameState {
 
   const activeAnimalId = getPreserveActiveAnimalId(state);
   if (!activeAnimalId) return state;
+
+  if (state.itemState.attachedTo[activeAnimalId] === "PLAYER") {
+    return state;
+  }
+
+  if (getAnimalStatusRemainingTurns(state, activeAnimalId, "stunned") > 0) {
+    return state;
+  }
 
   const activeAnimalRoomId = state.itemState.itemRoomId[activeAnimalId];
   if (

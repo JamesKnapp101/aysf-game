@@ -6,6 +6,7 @@ import type { RuleResult } from "@game/rules/result";
 import { inventoryHas } from "@game/rules/state";
 import type { GameState } from "@game/types/gameTypes";
 import { GAME_PRESERVE_STAGING_ROOM_ID } from "src/world/maps/levelFour/gamePreserveRules";
+import { clearAnimalStatus } from "./animalStatus";
 import { removePreserveWhistle } from "./preserveState";
 
 export const GAME_PRESERVE_TROPHY_DAIS_ID = "GamePreserveTrophyDais";
@@ -89,6 +90,24 @@ function markCurrentPreserveDifficultyCompleted(state: GameState): GameState {
   };
 }
 
+function releaseAttachedBadgerForReturn(state: GameState): GameState {
+  if (state.itemState.attachedTo.badger !== "PLAYER") return state;
+
+  let next: GameState = {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      attachedTo: {
+        ...state.itemState.attachedTo,
+        badger: undefined,
+      },
+    },
+  };
+
+  next = clearAnimalStatus(next, "badger", "attached");
+  return updateItemLocation(next, "badger", GAME_PRESERVE_STAGING_ROOM_ID);
+}
+
 export function handleGamePreservePrizeTaken(
   state: GameState,
   fromRoomId: string,
@@ -111,7 +130,8 @@ export function handleGamePreserveEmptyHandReturn(
   state: GameState,
   fromRoomId: string,
 ): RuleResult {
-  const next = movePlayerToRoom(state, "GamePreservePortal", {
+  const released = releaseAttachedBadgerForReturn(state);
+  const next = movePlayerToRoom(released, "GamePreservePortal", {
     fromRoomId,
     via: "out",
   });

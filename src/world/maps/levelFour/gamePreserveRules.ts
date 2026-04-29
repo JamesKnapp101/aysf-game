@@ -29,6 +29,21 @@ export type PreserveExitRule = {
 
 export type PreserveAnimalProfile = {
   actorId: PreserveActorId;
+  attachmentAttack?: {
+    attachedRoomDescription: string;
+    attachedTurnMessage: string;
+    damagePerTurn: number;
+    deathMessage: string;
+    dislodgeMessage: string;
+    dislodgeStunnedTurns: number;
+    pounceMessage: string;
+    recoveryRoomId: string;
+    recoveryStunnedTurns: number;
+    safeRoomIds: readonly string[];
+    shoreMessage?: string;
+    trophyItemId: string;
+    waterResolutionMessage: string;
+  };
   bullCharge?: {
     chargeMoveRooms: number;
     closeContactDeathChance: number;
@@ -40,10 +55,13 @@ export type PreserveAnimalProfile = {
   displayName: string;
   followingStartedMessage: string;
   followingStoppedMessage: string;
+  idleBehavior?: "patrol" | "wait";
   initialPatrolTargetRoomId?: string;
   initialRoomId: string;
   loseTrackAfterTurns: number;
   moveEveryTurns: number;
+  movesPerTurn?: number;
+  persistentPursuit?: boolean;
   patrolRoomIds: readonly string[];
   proximityRadius: number;
   senses: PreserveSense[];
@@ -54,6 +72,11 @@ export type PreserveAnimalProfile = {
     idle: string;
   };
   visibleDescription: string;
+  whistleEnrage?: {
+    countdownId: string;
+    movesPerTurn: number;
+    turns: number;
+  };
 };
 
 export const GAME_PRESERVE_ROOM_IDS = [
@@ -89,15 +112,7 @@ export const GAME_PRESERVE_DIFFICULTY_ANIMAL_MAP: Record<
   "very-hard": "barry",
 };
 
-const BADGER_PATROL_ROOM_IDS = [
-  "OpenSavanna",
-  "TallGrass",
-  "UnusedPen",
-  "Mudflats",
-  "RuinedWall",
-  "DrainagePipe",
-  "DeadOak",
-] as const;
+const BADGER_PATROL_ROOM_IDS = [] as const;
 
 const BOAR_PATROL_ROOM_IDS = [
   "OpenSavanna",
@@ -157,18 +172,48 @@ export const GAME_PRESERVE_ANIMAL_PROFILES: Record<
 > = {
   badger: {
     actorId: "badger",
+    attachmentAttack: {
+      attachedRoomDescription: "All you can see is angry, snapping badger!",
+      attachedTurnMessage:
+        "The badger continues to hold onto your face, scratching and snapping!",
+      damagePerTurn: 3,
+      deathMessage:
+        "The badger worries at your face and scalp with horrible, tireless focus until the world narrows to teeth, claws, and then nothing.",
+      dislodgeMessage:
+        "You hammer at the badger until it tears loose from your face and hits the ground stunned, still snarling.",
+      dislodgeStunnedTurns: 2,
+      pounceMessage:
+        "The low, black-and-white shape launches at you in a blur and clamps onto your face, claws digging in as it snaps and thrashes!",
+      recoveryRoomId: "Mudflats",
+      recoveryStunnedTurns: 3,
+      safeRoomIds: [
+        "GamePreserveEntrance",
+        "ObservationTower",
+        "ObservationTowerTop",
+        "Waterhole",
+        "TrophyRoom",
+      ],
+      shoreMessage:
+        "The badger stops at the edge of the water, screeching and snapping in frustrated fury.",
+      trophyItemId: "BadgerClaw",
+      waterResolutionMessage:
+        "You plunge under the murky water with the badger still attached. The struggle becomes a boiling knot of bubbles, claws, and muffled screeching before it finally rips free and kicks away. Something tears loose and stays lodged in your scalp as the badger thrashes to shore, collapses in the mud, and lies there panting.",
+    },
     displayName: "badger",
     followingStartedMessage:
       "Something low to the ground has caught your trail and starts tearing after you.",
     followingStoppedMessage:
       "The furious scrabbling loses focus and fades back into the preserve.",
-    initialRoomId: GAME_PRESERVE_SPAWN_ROOM_ID,
-    initialPatrolTargetRoomId: "TallGrass",
+    idleBehavior: "wait",
+    initialRoomId: "Mudflats",
     loseTrackAfterTurns: 3,
     moveEveryTurns: 1,
+    movesPerTurn: 1,
+    persistentPursuit: true,
     patrolRoomIds: BADGER_PATROL_ROOM_IDS,
     proximityRadius: 2,
-    senses: ["scent"],
+    senses: ["sight"],
+    sightRadius: 5,
     soundCues: {
       approaching:
         "Low, vicious rustling carries {locale}, moving your way through the cover.",
@@ -179,6 +224,11 @@ export const GAME_PRESERVE_ANIMAL_PROFILES: Record<
     },
     visibleDescription:
       "a compact black-and-white shape ripping through the low cover",
+    whistleEnrage: {
+      countdownId: "whistleRageTurns",
+      movesPerTurn: 2,
+      turns: 3,
+    },
   },
   boar: {
     actorId: "boar",
@@ -290,6 +340,7 @@ export const GAME_PRESERVE_ROOM_RULES: Partial<Record<string, PreserveRoomRule>>
   {
     GamePreserveEntrance: {
       allowedActors: ["player"],
+      concealsPlayerFromSenses: ["sight"],
     },
     TallGrass: {
       concealsPlayerFromSenses: ["sight"],
@@ -310,7 +361,6 @@ export const GAME_PRESERVE_ROOM_RULES: Partial<Record<string, PreserveRoomRule>>
     },
     Waterhole: {
       allowedActors: ["player", "bear", "barry"],
-      dislodgeAttachedActors: ["badger"],
       masksPlayerScentTurns: 3,
     },
     Mudflats: {
@@ -320,9 +370,14 @@ export const GAME_PRESERVE_ROOM_RULES: Partial<Record<string, PreserveRoomRule>>
     },
     DrainagePipe: {
       allowedActors: ["player", "boar", "badger", "barry"],
+      concealsPlayerFromSenses: ["sight"],
     },
     DeadOakPerch: {
       allowedActors: ["player", "bear", "barry"],
+    },
+    TrophyRoom: {
+      allowedActors: ["player"],
+      concealsPlayerFromSenses: ["sight"],
     },
   };
 

@@ -4,7 +4,10 @@ import { updateItemLocation } from "@game/rules/items";
 import { addToInventory, removeFromInventory } from "@game/rules/state";
 import type { GameState } from "@game/types/gameTypes";
 import type { ItemId } from "@game/types/ids";
-import { getAnimalStatusRemainingTurns } from "./animalStatus";
+import {
+  clearAnimalStatus,
+  getAnimalStatusRemainingTurns,
+} from "./animalStatus";
 import {
   PRESERVE_ACTOR_IDS,
   type GamePreserveDifficulty,
@@ -193,12 +196,23 @@ export function removePreserveRunItems(state: GameState): GameState {
     ...state,
     itemState: {
       ...state.itemState,
+      attachedTo: PRESERVE_ACTOR_IDS.reduce(
+        (attachedTo, actorId) => ({
+          ...attachedTo,
+          [actorId]: undefined,
+        }),
+        { ...state.itemState.attachedTo },
+      ),
       containerContents: state.itemState.containerContents,
       surfaceContents: state.itemState.surfaceContents,
       underContents: state.itemState.underContents,
       searchableContents: state.itemState.searchableContents,
     },
   };
+
+  for (const actorId of PRESERVE_ACTOR_IDS) {
+    next = clearAnimalStatus(next, actorId, "attached");
+  }
 
   for (const itemId of PRESERVE_RUN_ITEM_IDS) {
     if (!next.world.items.some((item) => item.id === itemId)) continue;

@@ -6,6 +6,7 @@ import {
   moveItemToRoom,
 } from "@game/helpers/itemHelpers";
 import { updateItemLocation } from "@game/rules/items";
+import { addToInventory } from "@game/rules/state";
 import type { GameState } from "@game/types/gameTypes";
 import type { ItemId } from "@game/types/ids";
 import type { Direction, Exit } from "@game/types/roomTypes";
@@ -35,6 +36,8 @@ import type {
   PreserveSense,
   PreserveTrackingReason,
 } from "./preserveTypes";
+
+export const BADGER_DEATH_CAUSE = "badger";
 
 const LINE_DIRECTIONS: Direction[] = [
   "north",
@@ -147,6 +150,217 @@ function commitActorRuntime(
 ): GameState {
   const next = setPreserveActorRuntime(state, actorId, runtime);
   return actorId === "bull" ? syncLegacyBullEncounter(next) : next;
+}
+
+export function isBadgerAttachedToPlayer(state: GameState): boolean {
+  return state.itemState.attachedTo.badger === "PLAYER";
+}
+
+function detachActorFromPlayer(
+  state: GameState,
+  actorId: PreserveActorId,
+  roomId: string,
+): GameState {
+  let next: GameState = {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      attachedTo: {
+        ...state.itemState.attachedTo,
+        [actorId]: undefined,
+      },
+    },
+  };
+
+  next = clearAnimalStatus(next, actorId, "attached");
+  return moveActorToRoom(next, actorId, roomId);
+}
+
+function canAttachedAttackReachPlayer(
+  actorId: PreserveActorId,
+  playerRoomId: string,
+): boolean {
+  const attachment = GAME_PRESERVE_ANIMAL_PROFILES[actorId].attachmentAttack;
+  if (!attachment) return false;
+  return !attachment.safeRoomIds.includes(playerRoomId);
+}
+
+function attachActorToPlayer(
+  state: GameState,
+  actorId: PreserveActorId,
+  runtime: PreserveActorRuntime,
+): { runtime: PreserveActorRuntime; state: GameState } {
+  const attachment = GAME_PRESERVE_ANIMAL_PROFILES[actorId].attachmentAttack;
+  if (!attachment) return { state, runtime };
+
+  let next = moveActorToRoom(state, actorId, state.player.roomId);
+  next = setAnimalStatus(next, actorId, {
+    id: "attached",
+    source: "preserve-attachment",
+  });
+  next = {
+    ...next,
+    itemState: {
+      ...next.itemState,
+      attachedTo: {
+        ...next.itemState.attachedTo,
+        [actorId]: "PLAYER",
+      },
+    },
+  };
+  next = appendLog(next, attachment.pounceMessage);
+
+  return {
+    state: next,
+    runtime: rememberPlayer(runtime, "sound", next.player.roomId, next.moves),
+  };
+}
+
+function handleAttachedAnimal(
+  state: GameState,
+  actorId: PreserveActorId,
+  runtime: PreserveActorRuntime,
+): { handled: boolean; runtime: PreserveActorRuntime; state: GameState } {
+  if (state.itemState.attachedTo[actorId] !== "PLAYER") {
+    return { handled: false, state, runtime };
+  }
+
+  const attachment = GAME_PRESERVE_ANIMAL_PROFILES[actorId].attachmentAttack;
+  if (!attachment) return { handled: false, state, runtime };
+
+  let next = moveActorToRoom(state, actorId, state.player.roomId);
+  const nextHealth = Math.max(
+    0,
+    next.player.vitals.health - attachment.damagePerTurn,
+  );
+  next = {
+    ...next,
+    player: {
+      ...next.player,
+      vitals: {
+        ...next.player.vitals,
+        health: nextHealth,
+      },
+    },
+  };
+  next = appendLog(next, attachment.attachedTurnMessage);
+
+  const nextRuntime = rememberPlayer(
+    {
+      ...runtime,
+      intent: { kind: "closeAttack" },
+    },
+    "sound",
+    next.player.roomId,
+    next.moves,
+  );
+
+  if (nextHealth <= 0) {
+    return {
+      handled: true,
+      runtime: nextRuntime,
+      state: triggerPlayerDeath(
+        next,
+        attachment.deathMessage,
+        BADGER_DEATH_CAUSE,
+      ),
+    };
+  }
+
+  return { handled: true, state: next, runtime: nextRuntime };
+}
+
+export function dislodgeAttachedBadger(
+  state: GameState,
+): { message: string; state: GameState } {
+  const attachment = GAME_PRESERVE_ANIMAL_PROFILES.badger.attachmentAttack;
+  if (!attachment || !isBadgerAttachedToPlayer(state)) {
+    return {
+      state,
+      message: "There is no badger attached to your face.",
+    };
+  }
+
+  let next = detachActorFromPlayer(state, "badger", state.player.roomId);
+  next = setAnimalStatus(next, "badger", {
+    id: "stunned",
+    remainingTurns: attachment.dislodgeStunnedTurns + 1,
+    source: "dislodged",
+  });
+  const runtime = getPreserveActorRuntime(next, "badger");
+  next = setPreserveActorRuntime(next, "badger", {
+    ...runtime,
+    flags: {
+      ...runtime.flags,
+      following: false,
+      waitingAtWaterhole: false,
+    },
+    intent: { kind: "idle" },
+  });
+
+  return {
+    state: next,
+    message: attachment.dislodgeMessage,
+  };
+}
+
+export function submergeAttachedBadger(
+  state: GameState,
+): { message: string; state: GameState } {
+  const attachment = GAME_PRESERVE_ANIMAL_PROFILES.badger.attachmentAttack;
+
+  if (state.player.roomId !== "Waterhole") {
+    return {
+      state,
+      message:
+        "You need deeper water before submerging yourself would help with that.",
+    };
+  }
+
+  if (!attachment || !isBadgerAttachedToPlayer(state)) {
+    return {
+      state,
+      message:
+        "You duck under the murky water for a moment, then come back up dripping.",
+    };
+  }
+
+  let next = detachActorFromPlayer(state, "badger", attachment.recoveryRoomId);
+  next = setAnimalStatus(next, "badger", {
+    id: "stunned",
+    remainingTurns: attachment.recoveryStunnedTurns + 1,
+    source: "submerged",
+  });
+  next = updateItemLocation(next, attachment.trophyItemId, "INVENTORY");
+  next = addToInventory(next, attachment.trophyItemId);
+  const runtime = getPreserveActorRuntime(next, "badger");
+  const whistleEnrageCountdownId =
+    GAME_PRESERVE_ANIMAL_PROFILES.badger.whistleEnrage?.countdownId ??
+    "whistleRageTurns";
+  next = setPreserveActorRuntime(next, "badger", {
+    ...runtime,
+    countdowns: {
+      ...runtime.countdowns,
+      [whistleEnrageCountdownId]: 0,
+    },
+    flags: {
+      ...runtime.flags,
+      following: false,
+      waitingAtWaterhole: false,
+    },
+    intent: { kind: "idle" },
+    memory: {
+      ...runtime.memory,
+      lastKnownPlayerRoomId: undefined,
+      lastKnownPlayerSense: undefined,
+      lastKnownPlayerTurn: undefined,
+    },
+  });
+
+  return {
+    state: next,
+    message: attachment.waterResolutionMessage,
+  };
 }
 
 function getAllowedExitDestination(
@@ -288,7 +502,11 @@ function choosePatrolStep(
   profile: PreserveAnimalProfile,
   runtime: PreserveActorRuntime,
 ): string | undefined {
+  if (profile.idleBehavior === "wait") return undefined;
+
   const patrolRooms = new Set<string>(profile.patrolRoomIds);
+  if (patrolRooms.size === 0) return undefined;
+
   const targetRoomId =
     runtime.memory.patrolTargetRoomId ?? profile.initialPatrolTargetRoomId;
 
@@ -326,22 +544,84 @@ function moveAlongRoute(
   actorId: PreserveActorId,
   actorRoomId: string,
   targetRoomId: string,
-): { movedToRoomId?: string; state: GameState } {
-  const route = getShortestPreserveRoute(
-    state,
-    actorId,
-    actorRoomId,
-    targetRoomId,
-  );
+  maxRooms = 1,
+): { moved: boolean; movedToRoomId?: string; state: GameState } {
+  let next = state;
+  let currentRoomId = actorRoomId;
+  let moved = false;
 
-  if (!route?.firstRoomId || route.firstRoomId === actorRoomId) {
-    return { state };
+  for (let i = 0; i < maxRooms; i += 1) {
+    const route = getShortestPreserveRoute(
+      next,
+      actorId,
+      currentRoomId,
+      targetRoomId,
+    );
+
+    if (!route?.firstRoomId || route.firstRoomId === currentRoomId) {
+      break;
+    }
+
+    next = moveActorToRoom(next, actorId, route.firstRoomId);
+    currentRoomId = route.firstRoomId;
+    moved = true;
+
+    if (currentRoomId === next.player.roomId) break;
   }
 
   return {
-    movedToRoomId: route.firstRoomId,
-    state: moveActorToRoom(state, actorId, route.firstRoomId),
+    moved,
+    movedToRoomId: moved ? currentRoomId : undefined,
+    state: next,
   };
+}
+
+function getMovementRoomsThisTurn(
+  profile: PreserveAnimalProfile,
+  runtime: PreserveActorRuntime,
+): number {
+  const enrage = profile.whistleEnrage;
+  if (enrage && (runtime.countdowns[enrage.countdownId] ?? 0) > 0) {
+    return enrage.movesPerTurn;
+  }
+
+  return profile.movesPerTurn ?? 1;
+}
+
+function tickProfileCountdowns(
+  runtime: PreserveActorRuntime,
+  profile: PreserveAnimalProfile,
+): PreserveActorRuntime {
+  const enrage = profile.whistleEnrage;
+  if (!enrage) return runtime;
+
+  const remainingTurns = runtime.countdowns[enrage.countdownId] ?? 0;
+  if (remainingTurns <= 0) return runtime;
+
+  return setActorCountdown(runtime, enrage.countdownId, remainingTurns - 1);
+}
+
+function isBlockedFromTargetRoom(
+  state: GameState,
+  actorId: PreserveActorId,
+  actorRoomId: string,
+  targetRoomId: string,
+): boolean {
+  for (const exit of getRoomExits(state, actorRoomId)) {
+    const destinationRoomId = getExitDestinationRoomId(state, actorRoomId, exit);
+    if (destinationRoomId !== targetRoomId) continue;
+
+    const traversal = canTraversePreserveExit(
+      state,
+      actorId,
+      actorRoomId,
+      exit,
+      destinationRoomId,
+    );
+    return !traversal.allowed;
+  }
+
+  return false;
 }
 
 function decrementBullChargeCooldown(
@@ -536,6 +816,10 @@ function updatePursuitMemory(
 
   if (!wasFollowing) return { state, runtime };
 
+  if (profile.persistentPursuit) {
+    return { state, runtime };
+  }
+
   const lostPlayerTurns = (runtime.countdowns.lostPlayerTurns ?? 0) + 1;
   if (lostPlayerTurns >= profile.loseTrackAfterTurns) {
     return {
@@ -579,6 +863,7 @@ export function provokePreserveAnimalWithWhistle(
   }
 
   const actorId = run.activeAnimalId;
+  const profile = GAME_PRESERVE_ANIMAL_PROFILES[actorId];
   if (actorId !== whistleMode) {
     return {
       state,
@@ -606,12 +891,20 @@ export function provokePreserveAnimalWithWhistle(
     };
   }
 
-  const runtime = rememberPlayer(
+  let runtime = rememberPlayer(
     getPreserveActorRuntime(state, actorId),
     "sound",
     state.player.roomId,
     state.moves,
   );
+  if (profile.whistleEnrage) {
+    runtime = setActorCountdown(
+      runtime,
+      profile.whistleEnrage.countdownId,
+      profile.whistleEnrage.turns,
+    );
+  }
+
   const next = commitActorRuntime(state, actorId, {
     ...runtime,
     countdowns: {
@@ -650,6 +943,12 @@ export function tickGamePreserveAnimals(state: GameState): GameState {
   let next = state;
   let runtime = getPreserveActorRuntime(next, actorId);
 
+  const attached = handleAttachedAnimal(next, actorId, runtime);
+  if (attached.handled) {
+    next = commitActorRuntime(attached.state, actorId, attached.runtime);
+    return next;
+  }
+
   const stunned = handleStunnedAnimal(next, actorId, runtime);
   if (stunned.handled) {
     next = commitActorRuntime(stunned.state, actorId, stunned.runtime);
@@ -681,6 +980,19 @@ export function tickGamePreserveAnimals(state: GameState): GameState {
   const newSameRoomContact =
     actorRoomId === next.player.roomId &&
     didPlayerMoveThisTurn(next, next.player.roomId);
+
+  if (
+    actorRoomId === next.player.roomId &&
+    canAttachedAttackReachPlayer(actorId, next.player.roomId)
+  ) {
+    const attachedToPlayer = attachActorToPlayer(next, actorId, runtime);
+    next = commitActorRuntime(
+      attachedToPlayer.state,
+      actorId,
+      attachedToPlayer.runtime,
+    );
+    return next;
+  }
 
   if (
     actorId === "bull" &&
@@ -764,11 +1076,13 @@ export function tickGamePreserveAnimals(state: GameState): GameState {
     runtime = movement.runtime;
 
     if (movement.canMove) {
+      const moveRooms = getMovementRoomsThisTurn(profile, runtime);
       const moved = moveAlongRoute(
         next,
         actorId,
         actorRoomId,
         pursuitTargetRoomId,
+        moveRooms,
       );
       next = moved.state;
       actorRoomId = moved.movedToRoomId ?? actorRoomId;
@@ -776,6 +1090,45 @@ export function tickGamePreserveAnimals(state: GameState): GameState {
       if (moved.movedToRoomId) {
         runtime = resetMovementCooldown(runtime, profile);
       }
+
+      if (
+        !moved.moved &&
+        pursuitTargetRoomId === "Waterhole" &&
+        isBlockedFromTargetRoom(next, actorId, actorRoomId, pursuitTargetRoomId)
+      ) {
+        const shoreMessage = profile.attachmentAttack?.shoreMessage;
+        if (shoreMessage && runtime.flags.waitingAtWaterhole !== true) {
+          next = appendLog(next, shoreMessage);
+          runtime = {
+            ...runtime,
+            flags: {
+              ...runtime.flags,
+              waitingAtWaterhole: true,
+            },
+          };
+        }
+      } else if (runtime.flags.waitingAtWaterhole) {
+        runtime = {
+          ...runtime,
+          flags: {
+            ...runtime.flags,
+            waitingAtWaterhole: false,
+          },
+        };
+      }
+    }
+
+    if (
+      actorRoomId === next.player.roomId &&
+      canAttachedAttackReachPlayer(actorId, next.player.roomId)
+    ) {
+      const attachedToPlayer = attachActorToPlayer(next, actorId, runtime);
+      next = commitActorRuntime(
+        attachedToPlayer.state,
+        actorId,
+        tickProfileCountdowns(attachedToPlayer.runtime, profile),
+      );
+      return next;
     }
 
     if (
@@ -789,6 +1142,7 @@ export function tickGamePreserveAnimals(state: GameState): GameState {
       };
     }
 
+    runtime = tickProfileCountdowns(runtime, profile);
     next = commitActorRuntime(next, actorId, runtime);
     return next;
   }
@@ -811,6 +1165,7 @@ export function tickGamePreserveAnimals(state: GameState): GameState {
     }
   }
 
+  runtime = tickProfileCountdowns(runtime, profile);
   runtime = {
     ...runtime,
     memory: {

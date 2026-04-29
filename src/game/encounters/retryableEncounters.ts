@@ -13,6 +13,10 @@ import {
   resetBullEncounter,
 } from "src/world/Items/creatures/bull";
 import {
+  BADGER_RETRY_RESPAWN_ROOM_ID,
+  resetBadgerEncounter,
+} from "src/world/Items/creatures/badger";
+import {
   AVIARY_RETRY_RESPAWN_ROOM_ID,
   resetAviaryEncounter,
 } from "src/world/Items/creatures/aviaryOrganisms";
@@ -158,6 +162,14 @@ const RETRYABLE_ENCOUNTERS: RetryableEncounterDefinition[] = [
     getRetryableDeathOverride: () => ({
       respawnRoomId: BULL_RETRY_RESPAWN_ROOM_ID,
       reset: resetBullEncounter,
+    }),
+  },
+  {
+    id: "badger",
+    matchesRetryableDeath: (_state, cause) => cause === "badger",
+    getRetryableDeathOverride: () => ({
+      respawnRoomId: BADGER_RETRY_RESPAWN_ROOM_ID,
+      reset: resetBadgerEncounter,
     }),
   },
   {
