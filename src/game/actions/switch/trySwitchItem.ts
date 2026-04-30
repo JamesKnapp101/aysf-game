@@ -60,7 +60,7 @@ export function trySwitchItem(
         isOn: newIsOn,
       };
 
-  let next: GameState = {
+  const next: GameState = {
     ...state,
     itemState: {
       ...state.itemState,

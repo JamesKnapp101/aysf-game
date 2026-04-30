@@ -47,10 +47,10 @@ describe("Flashlight command handling", () => {
     expect(switchedOn.itemState.itemSettings.damagedFlashlight).toMatchObject({
       kind: "flashlight",
       isOn: true,
-      maxCharge: 6,
-      currentCharge: 5,
-      drainRate: 1,
-      rechargeRate: 1,
+      maxCharge: 30,
+      currentCharge: 25,
+      drainRate: 5,
+      rechargeRate: 5,
     });
     expect(switchedOn.log.at(-1)).toContain("> switch on broken flashlight");
     expect(switchedOn.log.at(-1)).toContain(
@@ -65,7 +65,7 @@ describe("Flashlight command handling", () => {
     expect(switchedOff.itemState.itemSettings.damagedFlashlight).toMatchObject({
       kind: "flashlight",
       isOn: false,
-      currentCharge: 6,
+      currentCharge: 30,
     });
     expect(switchedOff.log.at(-1)).toContain("> switch off broken flashlight");
     expect(switchedOff.log.at(-1)).toContain(

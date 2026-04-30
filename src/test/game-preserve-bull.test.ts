@@ -1,6 +1,7 @@
 import { startGamePreserveRun } from "@game/preserve/preserveState";
 import { useUIEffectsStore } from "@game/store/store";
 import type { GameState } from "@game/types/gameTypes";
+import { GAME_PRESERVE_SPAWN_ROOM_ID } from "src/world/maps/levelFour/gamePreserveRules";
 import { describe, expect, it } from "vitest";
 import {
   addInventoryItems,
@@ -9,7 +10,6 @@ import {
   runCommand,
   runCommands,
 } from "./helpers/gameTestHelpers";
-import { GAME_PRESERVE_SPAWN_ROOM_ID } from "src/world/maps/levelFour/gamePreserveRules";
 
 function createBullPreserveState(roomId = "GamePreserveEntrance"): GameState {
   return startGamePreserveRun(
@@ -34,7 +34,9 @@ describe("game preserve bull", () => {
     ]);
 
     expect(next.player.roomId).toBe("GamePreserveEntrance");
-    expect(next.itemState.itemRoomId.bull).not.toBe(GAME_PRESERVE_SPAWN_ROOM_ID);
+    expect(next.itemState.itemRoomId.bull).not.toBe(
+      GAME_PRESERVE_SPAWN_ROOM_ID,
+    );
     expect(next.worldState.bullEncounter.pendingCharge).toBeUndefined();
     expect(next.log.join("\n")).toContain("heavy hooves");
     expect(next.log.join("\n")).not.toContain("The bull jerks its head up");
@@ -256,8 +258,8 @@ describe("game preserve bull", () => {
       "toppled",
     );
     expect(next.itemState.itemRoomId.BrokenHorn).toBe("RuinedWall");
-    expect(next.log.join("\n")).toContain("horn snaps");
-    expect(next.log.join("\n")).toContain("cracked wall span");
+    expect(next.log.join("\n")).toContain("one of the bull's horns");
+    expect(next.log.join("\n")).toContain("masonry tumbling");
 
     const bull = next.world.items.find((item) => item.id === "bull");
     expect(
@@ -269,15 +271,16 @@ describe("game preserve bull", () => {
   });
 
   it("accepts the broken horn on the trophy dais and returns the player after the prize is taken", async () => {
-    const start = addInventoryItems(
-      createBullPreserveState("TrophyRoom"),
-      ["BrokenHorn"],
-    );
+    const start = addInventoryItems(createBullPreserveState("TrophyRoom"), [
+      "BrokenHorn",
+    ]);
 
     const submitted = await runCommand(start, "put horn on dais");
     const submitLog = submitted.log.slice(start.log.length).join("\n");
 
-    expect(submitLog).toContain("Congratulations on your successful hunt");
+    expect(submitLog).toContain(
+      "to celebrate your TECHNICALLY ACCEPTABLE hunt",
+    );
     expect(submitLog).toContain("clean white flash");
     expect(submitted.itemState.itemRoomId.BrokenHorn).toBe(
       "GamePreserveStaging",
@@ -291,25 +294,26 @@ describe("game preserve bull", () => {
     expect(returned.player.roomId).toBe("GamePreservePortal");
     expect(expectInventoryToContain(returned, "GamePrize")).toBe(true);
     expect(expectInventoryToContain(returned, "GameWhistle")).toBe(false);
-    expect(returned.worldState.gamePreserve.completedDifficulties.moderate).toBe(
-      true,
-    );
+    expect(
+      returned.worldState.gamePreserve.completedDifficulties.moderate,
+    ).toBe(true);
     expect(useUIEffectsStore.getState().teleportFlashNonce).toBe(
       flashBefore + 1,
     );
   });
 
   it("lets non-trophy items sit on the trophy dais without awarding a prize", async () => {
-    const start = addInventoryItems(
-      createBullPreserveState("TrophyRoom"),
-      ["ProcessedAnimalTreatOne"],
-    );
+    const start = addInventoryItems(createBullPreserveState("TrophyRoom"), [
+      "ProcessedAnimalTreatOne",
+    ]);
 
     const placed = await runCommand(start, "put treat on dais");
     const placeLog = placed.log.slice(start.log.length).join("\n");
 
     expect(placeLog).toContain("Done.");
-    expect(placeLog).not.toContain("Congratulations on your successful hunt");
+    expect(placeLog).not.toContain(
+      "to celebrate your TECHNICALLY ACCEPTABLE hunt",
+    );
     expect(placed.itemState.surfaceContents.GamePreserveTrophyDais).toContain(
       "ProcessedAnimalTreatOne",
     );
@@ -326,10 +330,9 @@ describe("game preserve bull", () => {
   });
 
   it("removes carried trophies and restores the bull's horns after death", async () => {
-    const base = addInventoryItems(
-      createBullPreserveState("RockyRidge"),
-      ["BrokenHorn"],
-    );
+    const base = addInventoryItems(createBullPreserveState("RockyRidge"), [
+      "BrokenHorn",
+    ]);
     const start: GameState = {
       ...base,
       itemState: {

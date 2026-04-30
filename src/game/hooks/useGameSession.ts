@@ -97,14 +97,15 @@ export function useGameSession({
         console.error("Failed to initialize saved session.", error);
         clearResumeSnapshot();
       } finally {
-        if (cancelled) return;
-        setShowOpeningSplash(!restored);
-        setShouldSeedFirstRunHelpHint(!restored);
-        useUIOverlayStore.getState().closeOverlay();
-        const uiEffects = useUIEffectsStore.getState();
-        uiEffects.clearMindFlash();
-        uiEffects.clearOrganismDeath();
-        setIsSessionReady(true);
+        if (!cancelled) {
+          setShowOpeningSplash(!restored);
+          setShouldSeedFirstRunHelpHint(!restored);
+          useUIOverlayStore.getState().closeOverlay();
+          const uiEffects = useUIEffectsStore.getState();
+          uiEffects.clearMindFlash();
+          uiEffects.clearOrganismDeath();
+          setIsSessionReady(true);
+        }
       }
     };
 

@@ -209,7 +209,9 @@ const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
     handle: handleReflectiveExamine,
   },
   {
-    matches: (item) => item.id === "TelepadTerminal",
+    matches: (item) =>
+      item.id === "TelepadTerminal" ||
+      item.meta?.kind === "teleportation-terminal",
     handle: buildTeleportationTerminalOverlay,
   },
   {

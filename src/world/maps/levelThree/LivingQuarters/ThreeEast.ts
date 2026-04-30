@@ -27,4 +27,27 @@ export const threeEastRooms: Room[] = [
   },
 ];
 
-export const threeEastItems: Item[] = [];
+export const threeEastItems: Item[] = [
+  {
+    id: "ThreeEastBathroomSink",
+    name: "sink",
+    description:
+      "A stained bathroom sink with a squat faucet and a slow, reliable trickle of water.",
+    sceneryDescription:
+      "A stained sink sits below the mirror, its faucet still capable of producing a thin stream of water.",
+    location: "ThreeEastBath",
+    vocab: ["sink", "faucet", "tap", "water"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 20,
+    itemSize: 4,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    meta: {
+      watersource: {
+        onTake: "You run the tap and collect some water",
+      },
+    },
+  },
+];

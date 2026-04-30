@@ -113,7 +113,9 @@ export function parseCommand(rawInput: string): ParsedCommand {
   }
 
   const verb =
-    PHRASAL_VERB_ALIASES[rawVerb] ?? VERB_ALIASES[rawVerb] ?? rawVerb;
+    rawVerb === "load" && rest0.length > 0
+      ? "load"
+      : PHRASAL_VERB_ALIASES[rawVerb] ?? VERB_ALIASES[rawVerb] ?? rawVerb;
 
   if (verb === "inventory") return { type: "inventory" };
   if (verb === "diagnose") return { type: "diagnose" };

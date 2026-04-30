@@ -106,6 +106,7 @@ export function resolveItemByNoun(
   noun: string,
 ): Item | undefined {
   const room = getCurrentRoom(state);
+  const normalizedNoun = normalize(noun);
   const tokens = tokenize(noun);
 
   const itemsById = new Map(state.world.items.map((it) => [it.id, it]));
@@ -170,9 +171,19 @@ export function resolveItemByNoun(
     .filter((x): x is Item => Boolean(x));
 
   const exactId = itemsInScope.find(
-    (it) => normalize(it.id) === normalize(noun),
+    (it) => normalize(it.id) === normalizedNoun,
   );
   if (exactId) return exactId;
+
+  const exactName = itemsInScope.find(
+    (it) => normalize(it.name) === normalizedNoun,
+  );
+  if (exactName) return exactName;
+
+  const exactVocab = itemsInScope.find((it) =>
+    it.vocab?.some((v: string) => normalize(v) === normalizedNoun),
+  );
+  if (exactVocab) return exactVocab;
 
   const byName = itemsInScope.find((it) => {
     const nameTokens = new Set(tokenize(it.name));

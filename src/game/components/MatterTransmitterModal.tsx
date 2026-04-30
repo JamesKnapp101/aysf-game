@@ -1,7 +1,7 @@
 import { CrtModal } from "@game/components/CrtModal";
 import { useUIEffectsStore } from "@game/store/store";
 import type { GameState } from "@game/types/gameTypes";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import "../../styles/components/matter-transmitter.css";
 import {
   MatterTransmitterCoordinatePanel,
@@ -62,17 +62,6 @@ export function MatterTransmitterModal({
   const [z, setZ] = useState<number>(initialCoord.z);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
-  useEffect(() => {
-    const playerCoord = coordByRoomId[state.player.roomId];
-    if (!playerCoord) return;
-
-    if (x === 0 && y === 0 && z === 0) {
-      setX(playerCoord.x);
-      setY(playerCoord.y);
-      setZ(playerCoord.z);
-    }
-  }, [coordByRoomId, state.player.roomId, x, y, z]);
-
   const currentCoordKey = useMemo(() => coordKey(x, y, z), [x, y, z]);
   const targetRoomId = roomIdByCoord[currentCoordKey];
   const targetRoomName = useMemo(
@@ -80,7 +69,7 @@ export function MatterTransmitterModal({
     [state.world, targetRoomId],
   );
 
-  const plateItemIds = getPlateItemIds(state);
+  const plateItemIds = useMemo(() => getPlateItemIds(state), [state]);
   const plateItemId = plateItemIds[0];
   const plateItemName = plateItemId
     ? getItemDisplayName(state.world, state, plateItemId)
@@ -95,12 +84,9 @@ export function MatterTransmitterModal({
     [state, targetRoomCollectables],
   );
 
-  useEffect(() => {
-    if (!selectedItemId) return;
-    if (!targetRoomCollectables.includes(selectedItemId)) {
-      setSelectedItemId("");
-    }
-  }, [selectedItemId, targetRoomCollectables]);
+  const activeSelectedItemId = targetRoomCollectables.includes(selectedItemId)
+    ? selectedItemId
+    : "";
 
   const bump = (axis: Axis, dir: 1 | -1) => {
     const bounds = axisBounds[axis];
@@ -112,10 +98,10 @@ export function MatterTransmitterModal({
   const canTransmit = canTransmitToTarget(
     targetRoomId,
     plateItemId,
-    selectedItemId,
+    activeSelectedItemId,
     targetRoomCollectables,
   );
-  const modeLabel = getModeLabel(plateItemId, selectedItemId);
+  const modeLabel = getModeLabel(plateItemId, activeSelectedItemId);
   const hintText = getTransferHint(
     targetRoomId,
     targetRoomCollectables.length,
@@ -128,7 +114,11 @@ export function MatterTransmitterModal({
     let didMove = false;
 
     setGameState((prev) => {
-      const result = applyMatterTransmission(prev, targetRoomId, selectedItemId);
+      const result = applyMatterTransmission(
+        prev,
+        targetRoomId,
+        activeSelectedItemId,
+      );
       didMove = result.didMove;
       return result.nextState;
     });
@@ -174,7 +164,7 @@ export function MatterTransmitterModal({
             onTransmit={handleTransmit}
             plateItemId={plateItemId}
             plateItemName={plateItemName}
-            selectedItemId={selectedItemId}
+            selectedItemId={activeSelectedItemId}
             targetItems={targetItems}
             targetRoomId={targetRoomId}
           />

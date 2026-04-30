@@ -138,6 +138,6 @@ export function handleGamePreserveEmptyHandReturn(
 
   return {
     state: next,
-    message: `The engraving warms beneath your empty hand. A polite chime sounds, followed by a disappointed voice: "Leaving empty handed I see? Well, there's ONLY SOME shame in that. Feel free to try again at any time!"\n\nA clean white flash swallows the trophy room.`,
+    message: `The engraving warms beneath your empty hand. A polite chime sounds, followed by a disappointed voice: "Leaving empty-handed I see? Well, there's ONLY SOME shame in that. Feel free to try again at any time!"\n\nA clean white flash swallows the trophy room.`,
   };
 }

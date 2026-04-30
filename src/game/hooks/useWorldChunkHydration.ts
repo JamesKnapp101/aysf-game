@@ -47,12 +47,13 @@ export function useWorldChunkHydration({
   );
 
   useEffect(() => {
+    const loadingWorldChunks = loadingWorldChunksRef.current;
     isMountedRef.current = true;
 
     return () => {
       isMountedRef.current = false;
       // Clear any pending chunk loads on unmount
-      loadingWorldChunksRef.current.clear();
+      loadingWorldChunks.clear();
     };
   }, []);
 

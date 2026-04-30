@@ -6,7 +6,6 @@ import {
 import { normalizeTopic } from "@game/rules/scope";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { ConversationTarget } from "@game/types/npcTypes";
-import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 
 export async function tryAsk(

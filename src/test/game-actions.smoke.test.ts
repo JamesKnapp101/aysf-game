@@ -31,6 +31,8 @@ const COVERED_ACTIONS = [
   "switch",
   "wait",
   "shoot",
+  "hit",
+  "punch",
   "load",
   "search",
   "stand",
@@ -42,6 +44,9 @@ const COVERED_ACTIONS = [
   "look",
   "use",
   "ride",
+  "dive",
+  "submerge",
+  "drown",
   "touch",
   "blow",
 ] as const satisfies ReadonlyArray<keyof typeof ACTION_HANDLERS>;
@@ -293,7 +298,7 @@ describe("Action smoke coverage", () => {
 
   it("covers shoot", async () => {
     const next = await runCommands(
-      setInventory(createTestState({ roomId: "LivingQuartersThreeEast" }), [
+      setInventory(createTestState({ roomId: "Kitchen" }), [
         "CameraGun",
         "GelRound1",
       ]),
@@ -330,8 +335,20 @@ describe("Action smoke coverage", () => {
   });
 
   it("covers stand", async () => {
+    const start = setInventory(createTestState({ roomId: "TPADTerminal" }), [
+      "greenbadge",
+    ]);
     const next = await runCommand(
-      setInventory(createTestState({ roomId: "TPADTerminal" }), ["greenbadge"]),
+      {
+        ...start,
+        worldState: {
+          ...start.worldState,
+          powerRestoredSections: {
+            ...start.worldState.powerRestoredSections,
+            "teleport-pads-green": true,
+          },
+        },
+      },
       "stand on green disk",
     );
 

@@ -1,4 +1,3 @@
-import "../../../styles/layout.css";
 import { anyIn, movePlayerToRoom } from "../../helpers/gameHelpers";
 import { useUIEffectsStore } from "../../store/store";
 import { GameState } from "../../types/gameTypes";

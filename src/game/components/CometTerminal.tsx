@@ -7,6 +7,7 @@ import { getClaudeResponse } from "@game/services/claudeClient";
 import {
   type MouseEvent,
   type RefObject,
+  useCallback,
   useEffect,
   useId,
   useMemo,
@@ -15,6 +16,7 @@ import {
 } from "react";
 import "../../styles/components/comet-modal.css";
 import type { GameState } from "../types/gameTypes";
+import { getCometViewerSettings } from "../helpers/itemSettingsHelpers";
 import type { CometEntry } from "./comet-index";
 import {
   buildCometPendingMessages,
@@ -37,7 +39,8 @@ import {
   type CometIntent,
   countCometWords,
 } from "./cometHelpers";
-import { CometKeyboard, isCometKeyboardKey } from "./CometKeyboard";
+import { CometKeyboard } from "./CometKeyboard";
+import { isCometKeyboardKey } from "./cometKeyboardHelpers";
 import { buildCometPromptContext } from "./cometPromptHelpers";
 
 type CometStateSetter = (updater: (prev: GameState) => GameState) => void;
@@ -157,11 +160,11 @@ export function CometTerminal({
     COMET_CONVERSATION_ID,
   );
 
-  function focusInput() {
+  const focusInput = useCallback(() => {
     const input = inputRef.current;
     if (!input || input.disabled) return;
     input.focus();
-  }
+  }, [inputRef]);
 
   useEffect(() => {
     if (entries) {
@@ -212,7 +215,7 @@ export function CometTerminal({
 
   const isOn =
     forceOnline ||
-    Boolean((state.itemState.itemSettings["Comet"] as any)?.isOn);
+    Boolean(getCometViewerSettings(state, "Comet")?.isOn);
   const hasLink =
     forceLink ||
     Boolean(state.worldState.powerRestoredSections["library-power"]);
@@ -226,7 +229,7 @@ export function CometTerminal({
     });
 
     return () => window.cancelAnimationFrame(frameId);
-  }, [canChat, isFocusOwner]);
+  }, [canChat, focusInput, isFocusOwner]);
 
   const readerMessages = useMemo(() => {
     if (!isOn) {
@@ -263,7 +266,7 @@ export function CometTerminal({
     if (isFocusOwner) {
       focusInput();
     }
-  }, [isFocusOwner, readerMessages]);
+  }, [focusInput, isFocusOwner, readerMessages]);
 
   function persistTurn(
     input: { type: "ask" | "tell"; topic: string },

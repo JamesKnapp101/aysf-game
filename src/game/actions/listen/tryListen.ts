@@ -1,6 +1,5 @@
 import { Moan } from "@game/engine/ticks/hydroponicsTick";
 import { normalize } from "@game/rules/scope";
-import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 
 const LISTENEE_ALIASES: Record<string, string[]> = {

@@ -1,5 +1,6 @@
 import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+import { describeScotchBottle } from "@game/rules/items";
 
 export const FiveWestRooms: Room[] = [
   // LIVING QUARTERS THREE EAST
@@ -27,4 +28,36 @@ export const FiveWestRooms: Room[] = [
   },
 ];
 
-export const fiveWestItems: Item[] = [];
+export const fiveWestItems: Item[] = [
+  {
+    id: "FiveWestScotch",
+    name: "bottle of scotch",
+    description:
+      "A tall bottle of dark scotch with a clean label and a heavy glass bottom.",
+    describe: (_state, item) => describeScotchBottle(item),
+    initialDescription: "A bottle of scotch sits on the end table.",
+    location: "FiveWestBed",
+    vocab: ["scotch", "bottle", "whisky", "whiskey", "liquor"],
+    itemClass: "liquid",
+    itemCategory: "collectable",
+    itemWeight: 3,
+    itemSize: 2,
+    isConsumable: true,
+    isContainer: true,
+    isOpenable: false,
+    doses: 17,
+    meta: {
+      consumable: {
+        kind: "drink",
+        perDose: [
+          { type: "status", id: "drunk", intensity: 20, duration: 20 },
+          {
+            type: "message",
+            text: "You take a bracing drink of scotch. It burns all the way down.",
+          },
+        ],
+        onEmpty: [{ type: "message", text: "The bottle is empty." }],
+      },
+    },
+  },
+];

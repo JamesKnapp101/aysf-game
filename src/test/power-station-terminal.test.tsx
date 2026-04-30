@@ -33,10 +33,11 @@ describe("Power station terminal", () => {
     await userEvent.click(screen.getByRole("option", { name: /teleportation/i }));
 
     expect(screen.getByText(/Main Power Distribution \/ TELEPORTATION/i)).toBeInTheDocument();
+    expect(screen.getByTestId("yellow-network")).toHaveTextContent("false");
 
     await userEvent.click(screen.getByRole("option", { name: /yellow network/i }));
 
-    expect(screen.getByTestId("yellow-network")).toHaveTextContent("false");
+    expect(screen.getByTestId("yellow-network")).toHaveTextContent("true");
   });
 
   it("can turn a normal power section on and off through the menu", async () => {

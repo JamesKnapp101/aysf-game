@@ -1,6 +1,5 @@
 import { startRadioCall } from "@game/helpers/conversationHelpers";
 import { YOU_FIRST_CONTACT_ID } from "@game/npcRegistry";
-import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 import { Item } from "../../types/itemTypes";
 

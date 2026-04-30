@@ -7,19 +7,20 @@ const ALLOWED_EXT = new Set([".ts", ".tsx"]);
 
 const PLACEHOLDER_LOCATION_RE = /location:\s*"(?<value>UNKNOWN|NOWHERE)"/g;
 const TODO_ROOM_RE = /TODO:\s*(set correct room id|moved into ARMORY)/i;
-const KNOWN_PLACEHOLDER_LINES = new Set([
-  "src/world/Items/bodies.ts:119",
-  "src/world/Items/bodies.ts:756",
-  "src/world/Items/bodies.ts:775",
-  "src/world/Items/drugs.ts:77",
-  "src/world/Items/drugs.ts:112",
-  "src/world/Items/levelThreeMisc.ts:512",
-  "src/world/Items/levelThreeMisc.ts:650",
-  "src/world/Items/levelThreeMisc.ts:979",
-  "src/world/Items/levelThreeMisc.ts:1053",
-  "src/world/Items/levelThreeMisc.ts:1684",
-  "src/world/Items/levelThreeMisc.ts:2476",
-  "src/world/Items/levelThreeMisc.ts:2497",
+const ITEM_ID_RE = /id:\s*"(?<id>[^"]+)"/g;
+const KNOWN_PLACEHOLDER_ITEMS = new Set([
+  "src/world/Items/bodies.ts:brains",
+  "src/world/Items/bodies.ts:DeadOtherSelf",
+  "src/world/Items/bodies.ts:DeadGorilla",
+  "src/world/Items/drugs.ts:DeathCart",
+  "src/world/Items/drugs.ts:InocCart",
+  "src/world/Items/levelThreeMisc.ts:KibbleBOX",
+  "src/world/Items/levelThreeMisc.ts:POEM",
+  "src/world/Items/levelThreeMisc.ts:note",
+  "src/world/Items/levelThreeMisc.ts:STUMP",
+  "src/world/Items/levelThreeMisc.ts:TIRLET",
+  "src/world/Items/levelThreeMisc.ts:RemoteBlueIND",
+  "src/world/Items/levelThreeMisc.ts:LabBlueIND",
 ]);
 
 function walk(dir) {
@@ -43,6 +44,17 @@ function getLineNumber(source, index) {
   return source.slice(0, index).split(/\r?\n/).length;
 }
 
+function getNearestItemId(source, index) {
+  const prefix = source.slice(0, index);
+  let itemId = null;
+
+  for (const match of prefix.matchAll(ITEM_ID_RE)) {
+    itemId = match.groups?.id ?? itemId;
+  }
+
+  return itemId;
+}
+
 const files = walk(SRC_DIR);
 const findings = [];
 
@@ -54,16 +66,17 @@ for (const file of files) {
     const line = getLineNumber(text, idx);
     const after = text.slice(idx, Math.min(text.length, idx + 160));
     const hasTodo = TODO_ROOM_RE.test(after);
+    const itemId = getNearestItemId(text, idx);
+    const itemRef = itemId ? `${rel(file)}:${itemId}` : null;
 
-    const fileRef = `${rel(file)}:${line}`;
-    if (KNOWN_PLACEHOLDER_LINES.has(fileRef)) continue;
+    if (itemRef && KNOWN_PLACEHOLDER_ITEMS.has(itemRef)) continue;
 
     findings.push({
       file: rel(file),
       line,
       message: hasTodo
-        ? `new placeholder location (${match.groups?.value}) present`
-        : `new placeholder location (${match.groups?.value}) present without TODO context`,
+        ? `new placeholder location (${match.groups?.value}) present${itemId ? ` on ${itemId}` : ""}`
+        : `new placeholder location (${match.groups?.value}) present${itemId ? ` on ${itemId}` : ""} without TODO context`,
     });
   }
 }

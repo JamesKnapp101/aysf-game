@@ -54,12 +54,6 @@ export function isExitPassable(state: GameState, exit: Exit): boolean {
 
   const ds = state.worldState.doors[exit.doorId];
   if (!ds) return true;
-  console.log(
-    "Cat is checking isExitPassable for ",
-    exit.doorId,
-    ": ",
-    ds.isOpen && !ds.isLocked,
-  );
   return ds.isOpen && !ds.isLocked;
 }
 

@@ -1,4 +1,3 @@
-import "../../../styles/layout.css";
 import { GameState } from "../../types/gameTypes";
 import { Item } from "../../types/itemTypes";
 

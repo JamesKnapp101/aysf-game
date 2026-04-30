@@ -1,7 +1,7 @@
 import {
-  getPlayerLiquidContainers,
   getWaterSourcesInRoom,
 } from "@game/selectors/itemSelectors";
+import { addLiquidToFillableContainer } from "@game/rules/liquids";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { ParsedCommand } from "@game/types/parserTypes";
@@ -44,29 +44,17 @@ export function tryFillItem(
     if (waterSourcesInRoom.length === 0) {
       return { state, message: "There isn't any good source of water here." };
     }
-    const playerLiquidContainers = getPlayerLiquidContainers(state);
-    const desiredVessel = playerLiquidContainers.filter(
-      (lc) => lc.name === item.name,
-    )[0];
-    if (!desiredVessel) {
+    const filled = addLiquidToFillableContainer(state, item, "water");
+    if (filled === state) {
       return { state, message: "You don't have that container on you." };
-    } else {
-      const next = state;
-      return {
-        state: {
-          ...next,
-          itemState: {
-            ...next.itemState,
-            containerFilled: {
-              [desiredVessel.id]: ["water"],
-            },
-          },
-        },
-        message: waterSourcesInRoom[0]?.meta?.watersource?.onTake
-          ? `${waterSourcesInRoom[0]?.meta?.watersource?.onTake} using the ${desiredVessel.name}`
-          : "You scoop up some of the water",
-      };
     }
+
+    return {
+      state: filled,
+      message: waterSourcesInRoom[0]?.meta?.watersource?.onTake
+        ? `${waterSourcesInRoom[0]?.meta?.watersource?.onTake} using the ${item.name}`
+        : "You scoop up some of the water",
+    };
   }
 
   return {

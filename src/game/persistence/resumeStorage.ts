@@ -113,11 +113,11 @@ function applySerializedWorldItems(
 
 function buildSnapshot(state: GameState): GameSnapshotV1 {
   const loadedChunkIds = normalizeLoadedChunkIds(state.world.meta?.loadedChunkIds);
-  const {
-    conditionalExits: _conditionalExits,
-    pendingNarration: _pendingNarration,
-    ...persistedWorldState
-  } = state.worldState;
+  const persistedWorldState = { ...state.worldState } as Partial<
+    GameState["worldState"]
+  >;
+  delete persistedWorldState.conditionalExits;
+  delete persistedWorldState.pendingNarration;
 
   return {
     version: RESUME_SNAPSHOT_VERSION,
@@ -129,7 +129,7 @@ function buildSnapshot(state: GameState): GameSnapshotV1 {
     rating: state.rating,
     log: state.log,
     player: state.player,
-    worldState: persistedWorldState,
+    worldState: persistedWorldState as GameSnapshotV1["worldState"],
     itemState: state.itemState,
     conversation: state.conversation,
     radio: state.radio,

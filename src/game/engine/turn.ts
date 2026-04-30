@@ -217,7 +217,7 @@ export function applyStatusEffectTick(
     case "drunk": {
       nextVitals = {
         ...vitals,
-        drunkenness: Math.max(0, vitals?.drunkenness ?? 1 - 1),
+        drunkenness: Math.max(0, (vitals.drunkenness ?? 1) - 1),
       };
       break;
     }
