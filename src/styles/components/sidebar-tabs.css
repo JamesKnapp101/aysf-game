@@ -172,25 +172,27 @@
 .settings-panel {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     padding: 1px 0;
 }
 
 .settings-section {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    border: 1px solid rgb(var(--crt-color-rgb) / 0.22);
-    border-radius: 16px;
-    padding: 10px;
+    gap: 10px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.32);
+    border-left: 3px solid rgb(var(--crt-color-rgb) / 0.64);
+    border-radius: 8px;
+    padding: 11px;
     background:
         linear-gradient(180deg,
-            rgb(var(--crt-color-rgb) / 0.032),
-            rgb(0 0 0 / 0.14) 20%,
-            rgb(0 0 0 / 0.06) 100%);
+            rgb(var(--crt-color-rgb) / 0.055),
+            rgb(0 0 0 / 0.22) 22%,
+            rgb(0 0 0 / 0.12) 100%);
     box-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 0.015),
-        inset 0 0 0 1px rgb(0 0 0 / 0.14);
+        inset 0 1px 0 rgb(255 255 255 / 0.02),
+        inset 0 0 18px rgb(var(--crt-color-rgb) / 0.035),
+        0 0 12px rgb(var(--crt-color-rgb) / 0.045);
 }
 
 .settings-color-row {
@@ -198,21 +200,23 @@
     flex-wrap: wrap;
     gap: 6px;
     margin-top: 0;
-    padding: 8px;
-    border: 1px solid rgb(var(--crt-color-rgb) / 0.18);
-    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.28);
+    border-radius: 7px;
     background:
         linear-gradient(180deg,
-            rgb(var(--crt-color-rgb) / 0.022),
-            rgb(0 0 0 / 0.14));
+            rgb(0 0 0 / 0.22),
+            rgb(var(--crt-color-rgb) / 0.025));
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.2);
 }
 
 /* base swatch */
 .crt-swatch {
+    position: relative;
     width: 26px;
     height: 18px;
     border: 1px solid rgb(var(--crt-color-rgb) / 0.18);
-    border-radius: 5px;
+    border-radius: 4px;
     padding: 0;
     cursor: pointer;
     outline: none;
@@ -237,10 +241,12 @@
 
 /* selected swatch gets the neon frame / glow */
 .crt-swatch-selected {
-    border-color: rgb(var(--crt-color-rgb) / 0.42);
+    border-color: rgb(var(--crt-color-rgb) / 0.86);
+    outline: 1px solid rgb(var(--crt-color-rgb) / 0.58);
+    outline-offset: 2px;
     box-shadow:
-        0 0 10px rgb(var(--crt-color-rgb) / 0.12),
-        inset 0 0 0 1px rgb(255 255 255 / 0.1);
+        0 0 12px rgb(var(--crt-color-rgb) / 0.28),
+        inset 0 0 0 1px rgb(255 255 255 / 0.22);
 }
 
 .crt-color-header {
@@ -250,7 +256,7 @@
     margin: 0;
     padding: 0.32rem 0.6rem;
     border: 1px solid rgb(var(--crt-color-rgb) / 0.24);
-    border-radius: 9px;
+    border-radius: 6px;
     background:
         linear-gradient(180deg,
             rgb(var(--crt-color-rgb) / 0.14),
@@ -263,17 +269,18 @@
 }
 
 .settings-section-header {
-    border-color: rgb(var(--crt-color-rgb) / 0.34);
+    border-color: rgb(var(--crt-color-rgb) / 0.52);
     background:
         linear-gradient(180deg,
-            rgb(var(--crt-color-rgb) / 0.2),
-            rgb(var(--crt-color-rgb) / 0.1) 48%,
-            rgb(0 0 0 / 0.18) 100%);
-    color: color-mix(in srgb, var(--crt-color) 92%, white 8%);
-    text-shadow: 0 0 8px rgb(var(--crt-color-rgb) / 0.12);
+            rgb(var(--crt-color-rgb) / 0.26),
+            rgb(var(--crt-color-rgb) / 0.11) 48%,
+            rgb(0 0 0 / 0.24) 100%);
+    color: color-mix(in srgb, var(--crt-color) 88%, white 12%);
+    text-shadow: 0 0 9px rgb(var(--crt-color-rgb) / 0.2);
     box-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 0.03),
-        0 0 10px rgb(var(--crt-color-rgb) / 0.07);
+        inset 0 1px 0 rgb(255 255 255 / 0.04),
+        inset 4px 0 0 rgb(var(--crt-color-rgb) / 0.42),
+        0 0 10px rgb(var(--crt-color-rgb) / 0.09);
 }
 
 .settings-select-stack {
@@ -285,42 +292,54 @@
 .settings-option {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 7px;
+    padding: 10px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.24);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg,
+            rgb(0 0 0 / 0.18),
+            rgb(var(--crt-color-rgb) / 0.025));
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.012),
+        inset 0 0 0 1px rgb(0 0 0 / 0.16);
 }
 
 .settings-option + .settings-option {
-    padding-top: 6px;
-    border-top: 1px solid rgb(var(--crt-color-rgb) / 0.12);
+    margin-top: 2px;
 }
 
 .settings-optionLabel {
+    width: fit-content;
+    padding: 0 4px;
     font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: color-mix(in srgb, var(--crt-color) 82%, white 18%);
-    opacity: 0.95;
+    color: color-mix(in srgb, var(--crt-color) 74%, white 26%);
+    text-shadow: 0 0 8px rgb(var(--crt-color-rgb) / 0.18);
+    opacity: 1;
 }
 
 .settings-select-wrap {
     position: relative;
-    padding: 2px;
-    border: 1px solid rgb(var(--crt-color-rgb) / 0.24);
-    border-radius: 12px;
+    padding: 3px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.44);
+    border-radius: 8px;
     background:
         linear-gradient(180deg,
-            rgb(var(--crt-color-rgb) / 0.045),
-            rgb(0 0 0 / 0.22) 28%,
-            rgb(0 0 0 / 0.08) 100%);
+            rgb(var(--crt-color-rgb) / 0.09),
+            rgb(0 0 0 / 0.28) 30%,
+            rgb(0 0 0 / 0.14) 100%);
     box-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 0.018),
-        0 0 8px rgb(var(--crt-color-rgb) / 0.04);
+        inset 0 1px 0 rgb(255 255 255 / 0.022),
+        0 0 12px rgb(var(--crt-color-rgb) / 0.08);
 }
 
 .settings-select-wrap::before {
     content: "";
     position: absolute;
     inset: 1px;
-    border-radius: 10px;
+    border-radius: 6px;
     pointer-events: none;
     background:
         linear-gradient(180deg,
@@ -333,14 +352,14 @@
     appearance: none;
     width: 100%;
     padding: 8px 44px 8px 11px;
-    border: 1px solid rgb(var(--crt-color-rgb) / 0.16);
-    border-radius: 10px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.34);
+    border-radius: 6px;
     background:
         linear-gradient(180deg,
-            rgb(var(--crt-color-rgb) / 0.02),
-            rgb(0 0 0 / 0.18) 26%,
-            rgb(0 0 0 / 0.82) 100%);
-    color: var(--crt-color);
+            rgb(var(--crt-color-rgb) / 0.1),
+            rgb(0 0 0 / 0.28) 34%,
+            rgb(0 0 0 / 0.9) 100%);
+    color: color-mix(in srgb, var(--crt-color) 84%, white 16%);
     cursor: pointer;
     font-family: var(--crt-font, monospace);
     font-size: 12px;
@@ -348,12 +367,13 @@
     font-weight: 700;
     text-transform: uppercase;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.03),
-        inset 0 -8px 18px rgb(0 0 0 / 0.18);
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        inset 0 -8px 18px rgb(0 0 0 / 0.2),
+        0 0 10px rgb(var(--crt-color-rgb) / 0.06);
 }
 
 .settings-select:hover {
-    border-color: rgb(var(--crt-color-rgb) / 0.28);
+    border-color: rgb(var(--crt-color-rgb) / 0.54);
     background:
         linear-gradient(180deg,
             color-mix(in srgb, var(--crt-color) 8%, rgba(0, 0, 0, 0.8)),
@@ -363,6 +383,13 @@
 .settings-select:focus-visible {
     outline: 2px solid var(--crt-color);
     outline-offset: 2px;
+}
+
+.settings-select-wrap:focus-within {
+    border-color: rgb(var(--crt-color-rgb) / 0.72);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.03),
+        0 0 16px rgb(var(--crt-color-rgb) / 0.14);
 }
 
 .settings-select option {
@@ -380,12 +407,12 @@
     place-items: center;
     transform: translateY(-50%);
     color: color-mix(in srgb, var(--crt-color) 86%, white 14%);
-    border: 1px solid rgb(var(--crt-color-rgb) / 0.22);
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.38);
     border-radius: 999px;
     background:
         linear-gradient(180deg,
             rgb(var(--crt-color-rgb) / 0.09),
-            rgb(0 0 0 / 0.2) 100%);
+            rgb(0 0 0 / 0.34) 100%);
     box-shadow:
         inset 0 1px 0 rgb(255 255 255 / 0.03),
         0 0 6px rgb(var(--crt-color-rgb) / 0.035);
@@ -395,7 +422,7 @@
 }
 
 .settings-select-wrap:hover .settings-select-chevron {
-    border-color: rgb(var(--crt-color-rgb) / 0.28);
+    border-color: rgb(var(--crt-color-rgb) / 0.52);
     box-shadow:
         inset 0 1px 0 rgb(255 255 255 / 0.04),
         0 0 8px rgb(var(--crt-color-rgb) / 0.05);
@@ -403,16 +430,17 @@
 
 .settings-select-description {
     margin: 0;
-    padding: 8px 10px;
-    border: 1px solid rgb(var(--crt-color-rgb) / 0.16);
-    border-radius: 10px;
+    padding: 6px 9px 6px 11px;
+    border: 0;
+    border-left: 2px solid rgb(var(--crt-color-rgb) / 0.34);
+    border-radius: 0 6px 6px 0;
     font-size: 13px;
     line-height: 1.28;
-    color: color-mix(in srgb, var(--crt-color) 78%, white 22%);
+    color: color-mix(in srgb, var(--crt-color) 66%, white 18%);
     background:
-        linear-gradient(180deg,
-            rgb(var(--crt-color-rgb) / 0.02),
-            rgb(0 0 0 / 0.14));
+        linear-gradient(90deg,
+            rgb(var(--crt-color-rgb) / 0.055),
+            rgb(0 0 0 / 0.06));
 }
 
 .settings-select-description em {

@@ -1,7 +1,7 @@
 import { getFlashlightSettings } from "@game/helpers/flashlightHelpers";
 import type { Item } from "../../game/types/itemTypes";
 
-export const levelSevenItems: Item[] = [
+const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
   {
     id: "MysteriousNote",
     name: "mysterious note",
@@ -453,3 +453,11 @@ export const levelSevenItems: Item[] = [
     },
   },
 ];
+
+export const stairwellBottomItems: Item[] = LEVEL_SEVEN_MISC_ITEMS.filter(
+  (item) => item.location === "StairWellSeven",
+);
+
+export const levelSevenItems: Item[] = LEVEL_SEVEN_MISC_ITEMS.filter(
+  (item) => item.location !== "StairWellSeven",
+);

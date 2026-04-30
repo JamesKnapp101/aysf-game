@@ -8,6 +8,7 @@ import { clothingItems } from "../Items/clothing";
 import { creatureItems } from "../Items/creatures";
 import { drugItems } from "../Items/drugs";
 import { specialItems } from "../Items/gadgets";
+import { stairwellBottomItems } from "../Items/levelSevenMisc";
 import { teleportationPadItems } from "../Items/teleportationPads";
 import { weaponItems } from "../Items/weapons";
 
@@ -21,6 +22,7 @@ export const STAIRWELL: WorldChunk = {
     ...clothingItems,
     ...weaponItems,
     ...teleportationPadItems,
+    ...stairwellBottomItems,
   ],
   doors: [...stairwellDoors, ...badgeScannerDoors],
   teleportPads: [],

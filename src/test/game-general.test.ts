@@ -1,5 +1,6 @@
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
 import { advanceTurn } from "@game/engine/turn";
+import { createInitialState } from "@game/gameInit";
 import {
   AQUARIUM_DROWNING_DAMAGE_PER_TURN,
   AQUARIUM_OXYGEN_LOSS_PER_TURN,
@@ -11,6 +12,7 @@ import { getRadiationIntensity } from "@game/selectors/statusSelectors";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { AQUARIUM_BREATHER_ITEM_ID } from "src/world/Items/creatures/octopus";
+import { INITIAL_WORLD } from "src/world/World";
 import { buildScoreNotification } from "../game/rules/notifications";
 import { getItemsInRoom } from "../game/selectors/roomSelectors";
 import {
@@ -24,6 +26,23 @@ import {
 } from "./helpers/gameTestHelpers";
 
 describe("General gameplay", () => {
+  it("seeds starting-room objects in the initial world chunk", async () => {
+    const state = createInitialState(INITIAL_WORLD);
+    const itemIds = getItemsInRoom(state, "StairWellSeven").map((item) => item.id);
+
+    expect(itemIds).toEqual(
+      expect.arrayContaining([
+        "MysteriousNote",
+        "damagedFlashlight",
+        "seed",
+      ]),
+    );
+
+    const next = await runCommand(state, "take flashlight");
+
+    expect(expectInventoryToContain(next, "damagedFlashlight")).toBe(true);
+  });
+
   it("lets the player move from room to room", async () => {
     const initial = createTestState({ roomId: "LevelSixCorridorBend" });
 

@@ -70,6 +70,10 @@ const VISUAL_EFFECTS_OPTIONS: {
   },
 ];
 
+const COMET_PERSONALITY_SELECT_ID = "settings-comet-personality";
+const COMET_TEXT_SIZE_SELECT_ID = "settings-comet-text-size";
+const VISUAL_EFFECTS_SELECT_ID = "settings-visual-effects";
+
 function renderSettingsDescription(description: CometSettingsDescription) {
   if (typeof description === "string") {
     return description;
@@ -119,6 +123,8 @@ export function SettingsTab({
               style={{ backgroundColor: opt.value }}
               onClick={() => setCrtColor(opt.value)}
               aria-label={opt.label}
+              aria-pressed={crtColor === opt.value}
+              title={opt.label}
             />
           ))}
         </div>
@@ -130,10 +136,16 @@ export function SettingsTab({
         </p>
 
         <div className="settings-option">
-          <div className="settings-optionLabel">Personality</div>
+          <label
+            className="settings-optionLabel"
+            htmlFor={COMET_PERSONALITY_SELECT_ID}
+          >
+            Personality
+          </label>
           <div className="settings-select-stack">
             <div className="settings-select-wrap">
               <select
+                id={COMET_PERSONALITY_SELECT_ID}
                 className="settings-select"
                 value={cometPersonality}
                 onChange={(event) =>
@@ -160,10 +172,16 @@ export function SettingsTab({
         </div>
 
         <div className="settings-option">
-          <div className="settings-optionLabel">Comet Text Size</div>
+          <label
+            className="settings-optionLabel"
+            htmlFor={COMET_TEXT_SIZE_SELECT_ID}
+          >
+            Comet Text Size
+          </label>
           <div className="settings-select-stack">
             <div className="settings-select-wrap">
               <select
+                id={COMET_TEXT_SIZE_SELECT_ID}
                 className="settings-select"
                 value={cometTextSize}
                 onChange={(event) =>
@@ -196,10 +214,16 @@ export function SettingsTab({
         </p>
 
         <div className="settings-option">
-          <div className="settings-optionLabel">Status Effect Motion</div>
+          <label
+            className="settings-optionLabel"
+            htmlFor={VISUAL_EFFECTS_SELECT_ID}
+          >
+            Status Effect Motion
+          </label>
           <div className="settings-select-stack">
             <div className="settings-select-wrap">
               <select
+                id={VISUAL_EFFECTS_SELECT_ID}
                 className="settings-select"
                 value={visualEffectsMode}
                 onChange={(event) =>
