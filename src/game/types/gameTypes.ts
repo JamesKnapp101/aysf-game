@@ -256,7 +256,10 @@ export type BrainSlugState = {
 };
 
 export type CatState = {
+  heldTurns?: number;
   isWearingCollar: boolean;
+  settleTurns?: number;
+  suppressRoomListOnce?: boolean;
 };
 
 export type NpcSecretState = {

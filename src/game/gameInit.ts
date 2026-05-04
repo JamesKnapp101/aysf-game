@@ -568,6 +568,7 @@ export const createInitialState = (world: World): GameState => {
 
   initialGameState.itemState.attachedTo = {
     ...initialGameState.itemState.attachedTo,
+    IggyCollar: "cat",
     TrashBotBin: "TrashBot",
   };
 

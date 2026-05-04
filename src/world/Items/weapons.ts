@@ -27,10 +27,10 @@ export const weaponItems: Item[] = [
   {
     id: "GelRound1",
     name: "soft projectile round",
-    vocab: ["projectile", "soft", "blue"],
+    vocab: ["projectile", "soft", "blue", "round", "gelround", "gel", "camera"],
     description:
       "It's some sort of small, soft projectile. It contains a blob of sticky blue gel that has a tiny electronic device of some kind suspended in it.",
-    location: "seeded",
+    location: "INVENTORY",
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -40,7 +40,15 @@ export const weaponItems: Item[] = [
   {
     id: "GelRound2",
     name: "soft projectile round",
-    vocab: ["projectile", "soft", "yellow"],
+    vocab: [
+      "projectile",
+      "soft",
+      "yellow",
+      "round",
+      "gelround",
+      "gel",
+      "camera",
+    ],
     description:
       "It's some sort of small, soft projectile. It contains a blob of sticky yellow gel that has a tiny electronic device of some kind suspended in it.",
     location: "seeded",
@@ -53,7 +61,7 @@ export const weaponItems: Item[] = [
   {
     id: "GelRound3",
     name: "soft projectile round",
-    vocab: ["projectile", "soft", "red"],
+    vocab: ["projectile", "soft", "red", "round", "gelround", "gel", "camera"],
     description:
       "It's some sort of small, soft projectile. It contains a blob of sticky red gel that has a tiny electronic device of some kind suspended in it.",
     location: "seeded",

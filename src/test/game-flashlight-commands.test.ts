@@ -48,8 +48,8 @@ describe("Flashlight command handling", () => {
       kind: "flashlight",
       isOn: true,
       maxCharge: 30,
-      currentCharge: 25,
-      drainRate: 5,
+      currentCharge: 29,
+      drainRate: 1,
       rechargeRate: 5,
     });
     expect(switchedOn.log.at(-1)).toContain("> switch on broken flashlight");

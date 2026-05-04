@@ -510,6 +510,19 @@ export async function handleCommand(
     message = [message.trim(), roomEntryBlock, ...scripted]
       .filter(Boolean)
       .join("\n\n");
+
+    if (nextState.worldState.catState.suppressRoomListOnce) {
+      nextState = {
+        ...nextState,
+        worldState: {
+          ...nextState.worldState,
+          catState: {
+            ...nextState.worldState.catState,
+            suppressRoomListOnce: false,
+          },
+        },
+      };
+    }
   }
 
   // Surface scripted narration queued by onCommand events even if no room change.

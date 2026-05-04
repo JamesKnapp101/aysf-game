@@ -1,9 +1,29 @@
 import { appendLog } from "@game/engine/handleCommand";
+import { isCatHeld } from "@game/helpers/catHelpers";
 import { getExitDestinationRoomId } from "@game/helpers/itemHelpers";
 import { TickContext } from "@game/types/context";
+import type { GameState } from "@game/types/gameTypes";
 import { ItemId } from "@game/types/ids";
 import { Item } from "@game/types/itemTypes";
 import { Exit } from "@game/types/roomTypes";
+
+const GEL_ROUND_COLORS: Record<string, string> = {
+  GelRound1: "blue",
+  GelRound2: "yellow",
+  GelRound3: "red",
+};
+
+function describeGelCameraOnCollar(state: GameState): string {
+  const gelRoundId = Object.entries(state.itemState.attachedTo ?? {}).find(
+    ([childId, hostId]) =>
+      hostId === "cat" && typeof childId === "string" && childId.startsWith("GelRound"),
+  )?.[0];
+
+  if (!gelRoundId) return "";
+
+  const color = GEL_ROUND_COLORS[gelRoundId] ?? "colored";
+  return ` A small blob of sticky ${color} gel clings to the collar near the pendant.`;
+}
 
 export const catItems: Item[] = [
   {
@@ -11,7 +31,7 @@ export const catItems: Item[] = [
     name: "a fancy leather cat collar",
     description: `It's a fancy cat collar, made from black leather, with a dangling oval pendant in the front. The pendant is onyx, and inscribed with the name 'Iggy Onche.' It's got a tiny clasp in the back that can swivel it open and closed.`,
     location: "seeded",
-    vocab: ["collar", "leather", "onyx", "pendant"],
+    vocab: ["collar", "leather", "onyx", "pendant", "iggy"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 0,
@@ -66,13 +86,13 @@ export const catItems: Item[] = [
     description: `It's a smallish male black and white short-haired cat, with a nick on his right ear.`,
     describe: (state) => {
       if (state.worldState.catState.isWearingCollar) {
-        return `It's a smallish male black and white short-haired cat, with a nick on his right ear. Around his neck is a fancy leather collar, with a dangling, silver-rimmed onyx pendant inscribed with the name 'Iggy Onche'`;
+        return `It's a smallish male black and white short-haired cat, with a nick on his right ear. Around his neck is a fancy leather collar, with a dangling, silver-rimmed onyx pendant inscribed with the name 'Iggy Onche'.${describeGelCameraOnCollar(state)}`;
       } else {
         return `It's a smallish male black and white short-haired cat, with a nick on his right ear.`;
       }
     },
     location: "seeded",
-    vocab: ["cat", "kitten", "kitty"],
+    vocab: ["cat", "kitten", "kitty", "iggy"],
     itemClass: "solid",
     itemWeight: 8,
     itemSize: 2,
@@ -90,8 +110,24 @@ export const catItems: Item[] = [
         const acts = rng() >= 0.6;
 
         const itemId = item.id as ItemId;
+        if (isCatHeld(state)) return;
+
         const currentRoomId = state.itemState.itemRoomId[itemId];
         if (!currentRoomId) return;
+
+        const settleTurns = state.worldState.catState.settleTurns ?? 0;
+        if (settleTurns > 0) {
+          return {
+            ...state,
+            worldState: {
+              ...state.worldState,
+              catState: {
+                ...state.worldState.catState,
+                settleTurns: settleTurns - 1,
+              },
+            },
+          };
+        }
 
         const playerRoomId = state.player.roomId;
         const playerPrevRoomId = state.player.prevRoomId;

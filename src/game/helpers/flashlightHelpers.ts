@@ -48,7 +48,7 @@ const FLASHLIGHT_DEFAULTS: Record<FlashlightItemId, FlashlightDefaults> = {
   damagedFlashlight: {
     maxCharge: 30,
     initialCharge: 30,
-    drainRate: 5,
+    drainRate: 1,
     rechargeRate: 5,
   },
 };

@@ -32,6 +32,13 @@ export function getItemsInRoom(state: GameState, roomId: string): Item[] {
     for (const id of s) contained.add(id);
   }
 
+  const attached = new Set<string>();
+  for (const [childId, hostId] of Object.entries(
+    state.itemState.attachedTo ?? {},
+  )) {
+    if (hostId) attached.add(childId);
+  }
+
   const seen = new Set<string>();
 
   return state.world.items.filter((item) => {
@@ -41,8 +48,16 @@ export function getItemsInRoom(state: GameState, roomId: string): Item[] {
     // Don't show carried items as "in room"
     if (invSet.has(item.id)) return false;
 
+    if (item.id === "cat" && state.worldState.catState.suppressRoomListOnce) {
+      return false;
+    }
+
     // Don't show items that are inside/under/on/etc another item
     if (contained.has(item.id)) return false;
+
+    // Don't show portable/animate attached items as loose objects. Scenery
+    // attachments can still contribute room description and visible contents.
+    if (attached.has(item.id) && item.itemCategory !== "scenery") return false;
 
     const dynRoomId = state.itemState.itemRoomId?.[item.id];
     const loc = dynRoomId ?? item.location;

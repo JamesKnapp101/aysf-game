@@ -1,5 +1,6 @@
 import { moveItemToRoom } from "@game/helpers/itemHelpers";
-import { removeFromAllBuckets } from "@game/rules/state";
+import { isWornCatCollarTarget } from "@game/helpers/catHelpers";
+import { attachGelCameraToHost } from "@game/helpers/gelCameraHelpers";
 import { useUIEffectsStore } from "@game/store/store";
 import { GameState } from "@game/types/gameTypes";
 import { ItemId } from "@game/types/ids";
@@ -95,35 +96,14 @@ export function tryShootItem(
   next = moveItemToRoom(next, firedRoundId as ItemId, targetRoomId);
 
   if (shotWithItem.id === "CameraGun") {
-    const hostId = shotAtItem.id as ItemId;
+    const targetIsWornCatCollar = isWornCatCollarTarget(next, shotAtItem.id);
+    const hostId = targetIsWornCatCollar ? "cat" : (shotAtItem.id as ItemId);
 
-    // Bind the fired round to the host
-    // IMPORTANT: inventory is now bucketed; remove the fired round from ALL buckets.
-    const nextInventory = removeFromAllBuckets(
-      next.player.inventory,
-      firedRoundId,
-    );
+    next = attachGelCameraToHost(next, firedRoundId as ItemId, hostId);
 
-    next = {
-      ...next,
-      player: {
-        ...next.player,
-        inventory: nextInventory,
-      },
-      itemState: {
-        ...next.itemState,
-        attachedTo: {
-          ...next.itemState.attachedTo,
-          [firedRoundId as ItemId]: hostId,
-        },
-        itemRoomId: {
-          ...next.itemState.itemRoomId,
-          [firedRoundId]: hostId,
-        },
-      },
-    };
-
-    if (hostId.toLowerCase() === "cat") {
+    if (targetIsWornCatCollar) {
+      msg += ` The sticky little projectile adheres to the cat's collar.`;
+    } else if (hostId.toLowerCase() === "cat") {
       msg += ` The cat looks momentarily startled as the sticky little projectile adheres to its fur.`;
     } else {
       msg += ` The sticky little projectile adheres to the ${shotAtItem.name}.`;

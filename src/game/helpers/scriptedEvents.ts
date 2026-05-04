@@ -62,7 +62,17 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       );
 
       next = moveItemToRoom(next, "cat", roomId);
-      return next;
+      return {
+        ...next,
+        worldState: {
+          ...next.worldState,
+          catState: {
+            ...next.worldState.catState,
+            settleTurns: 1,
+            suppressRoomListOnce: true,
+          },
+        },
+      };
     },
   },
   {

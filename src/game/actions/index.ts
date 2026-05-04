@@ -1,9 +1,11 @@
 import { doAsk } from "@game/actions/ask/ask";
 import { doAttack } from "@game/actions/attack/attack";
 import { doBlow } from "@game/actions/blow/blow";
+import { doCall } from "@game/actions/call/call";
 import { doEat } from "@game/actions/eat/eat";
 import { doListen } from "@game/actions/listen/listen";
 import { doLook } from "@game/actions/look/look";
+import { doPet } from "@game/actions/pet/pet";
 import { doPush } from "@game/actions/push/push";
 import { doRide } from "@game/actions/ride/ride";
 import { doTell } from "@game/actions/tell/tell";
@@ -29,6 +31,7 @@ import { doRemove } from "./remove/remove";
 import { doSearch } from "./search/search";
 import { doSet } from "./set/set";
 import { doShoot } from "./shoot/shoot";
+import { doStick } from "./stick/stick";
 import { doSwitch } from "./switch/switch";
 import { doTake } from "./take/take";
 import { doWait } from "./wait/wait";
@@ -38,6 +41,7 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   open: doOpen,
   close: doClose,
   take: doTake,
+  get: doTake,
   drop: doDrop,
   put: doPut,
   read: doRead,
@@ -59,6 +63,9 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   stand: doStand,
   turn: doTurn,
   push: doPush,
+  pet: doPet,
+  call: doCall,
+  stick: doStick,
   ask: doAsk,
   tell: doTell,
   listen: doListen,

@@ -1,13 +1,19 @@
 import { tryTakeItem } from "@game/actions/take/tryTakeItem";
-import { getItemById } from "@game/helpers/itemHelpers";
-import { addToInventory } from "@game/rules/state";
+import {
+  CAT_ID,
+  isCatCollarNoun,
+  isCatHeld,
+  isCatInRoom,
+  isCatNoun,
+} from "@game/helpers/catHelpers";
+import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import { getItemsInCurrentRoom } from "../../selectors/roomSelectors";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
 
 export function doTake(state: GameState, cmd: ParsedCommand): ActionResult {
-  if (cmd.type !== "action" || cmd.verb !== "take") {
+  if (cmd.type !== "action" || (cmd.verb !== "take" && cmd.verb !== "get")) {
     return { state, message: "You can't do that." };
   }
 
@@ -16,26 +22,50 @@ export function doTake(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "Take what?" };
   }
 
-  if (["collar", "pendant"].includes(direct)) {
+  if (isCatNoun(direct)) {
+    if (isCatHeld(state)) {
+      return { state, message: "You are already holding the cat." };
+    }
+
+    if (!isCatInRoom(state)) {
+      return { state, message: `You don't see that here.` };
+    }
+
+    const moved = moveItemToRoom(state, CAT_ID, state.player.roomId);
+    const next = {
+      ...moved,
+      itemState: {
+        ...moved.itemState,
+        attachedTo: {
+          ...moved.itemState.attachedTo,
+          [CAT_ID]: "PLAYER",
+        },
+      },
+      worldState: {
+        ...moved.worldState,
+        catState: {
+          ...moved.worldState.catState,
+          heldTurns: 0,
+        },
+      },
+    };
+
+    return {
+      state: next,
+      message:
+        "The cat watches you for a moment, then allows you to lift him into your arms.",
+    };
+  }
+
+  if (isCatCollarNoun(direct)) {
     if (state.worldState.catState.isWearingCollar === true) {
-      const cat = getItemById(state, "cat");
-      if (cat?.location !== state.player.roomId) {
+      if (!isCatInRoom(state)) {
         return { state, message: `You don't see that here.` };
       } else {
-        let next = state;
-        next = addToInventory(state, "IggyCollar");
-        next = {
-          ...next,
-          worldState: {
-            ...next.worldState,
-            catState: {
-              isWearingCollar: false,
-            },
-          },
-        };
         return {
-          state: next,
-          message: `You carefully remove the collar from the cat.`,
+          state,
+          message:
+            "As you reach for the collar, the cat squirms away from your hand.",
         };
       }
     }

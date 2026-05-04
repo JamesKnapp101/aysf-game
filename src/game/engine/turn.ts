@@ -5,6 +5,13 @@ import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
 import { tickRadioConversation } from "@game/helpers/conversationHelpers";
 import {
+  CAT_ID,
+  clearCatHeldTurns,
+  getCatSafeRoomId,
+  isCatHeld,
+  isRoomInCatHome,
+} from "@game/helpers/catHelpers";
+import {
   isPlayerUnderwater,
   playerHasBreather,
   tickUnderwaterVitals,
@@ -413,6 +420,70 @@ function tickAttachedItems(state: GameState): GameState {
   return next;
 }
 
+function tickHeldCat(state: GameState): GameState {
+  if (!isCatHeld(state)) {
+    return clearCatHeldTurns(state);
+  }
+
+  const heldTurns = (state.worldState.catState.heldTurns ?? 0) + 1;
+  let next: GameState = {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      catState: {
+        ...state.worldState.catState,
+        heldTurns,
+      },
+    },
+  };
+
+  if (heldTurns === 2) {
+    return appendLog(
+      next,
+      "The cat begins to fidget in your arms, shifting his paws against you.",
+    );
+  }
+
+  if (heldTurns === 4) {
+    return appendLog(
+      next,
+      "The cat squirms more urgently, clearly deciding he has tolerated this long enough.",
+    );
+  }
+
+  if (heldTurns < 5) {
+    return next;
+  }
+
+  const landingRoomId = isRoomInCatHome(next, next.player.roomId)
+    ? next.player.roomId
+    : (getCatSafeRoomId(next) ?? next.player.roomId);
+  const jumpsAway = landingRoomId !== next.player.roomId;
+
+  next = moveItemToRoom(next, CAT_ID, landingRoomId);
+  next = clearCatHeldTurns({
+    ...next,
+    itemState: {
+      ...next.itemState,
+      attachedTo: {
+        ...next.itemState.attachedTo,
+        [CAT_ID]: undefined,
+      },
+      itemRoomId: {
+        ...next.itemState.itemRoomId,
+        [CAT_ID]: landingRoomId,
+      },
+    },
+  });
+
+  return appendLog(
+    next,
+    jumpsAway
+      ? "The cat twists out of your arms, lands neatly, and darts away toward more familiar territory."
+      : "The cat twists out of your arms and jumps lightly down to the floor.",
+  );
+}
+
 function updateCurrentScore(state: GameState): GameState {
   let calculatedScore = 0;
 
@@ -486,6 +557,7 @@ export function advanceTurn(state: GameState): GameState {
   next = tickStatusEffects(next);
   next = tickSickness(next);
   next = tickAnimateActivities(next);
+  next = tickHeldCat(next);
   next = tickGamePreserveAnimals(next);
   next = tickGamePreserveFeedback(next);
   next = tickGamePreserveRun(next);

@@ -40,6 +40,7 @@ const COVERED_ACTIONS = [
   "push",
   "ask",
   "tell",
+  "call",
   "listen",
   "look",
   "use",
@@ -49,6 +50,9 @@ const COVERED_ACTIONS = [
   "drown",
   "touch",
   "blow",
+  "get",
+  "pet",
+  "stick",
 ] as const satisfies ReadonlyArray<keyof typeof ACTION_HANDLERS>;
 
 function getCommandEntry(state: { log: string[] }, command: string): string {
@@ -114,6 +118,15 @@ describe("Action smoke coverage", () => {
     );
 
     expect(expectInventoryToContain(next, "ResearchNotes")).toBe(true);
+  });
+
+  it("covers get", async () => {
+    const next = await runCommands(
+      createTestState({ roomId: "LevelThreeCorridorSeven" }),
+      ["call cat", "get cat"],
+    );
+
+    expect(next.itemState.attachedTo.cat).toBe("PLAYER");
   });
 
   it("covers drop", async () => {
@@ -375,6 +388,15 @@ describe("Action smoke coverage", () => {
     expect(next.radio?.activeNpcId).toBe("you_1st_contact");
   });
 
+  it("covers call", async () => {
+    const next = await runCommand(
+      createTestState({ roomId: "LevelThreeCorridorSeven" }),
+      "call cat",
+    );
+
+    expect(next.itemState.itemRoomId.cat).toBe("LevelThreeCorridorSeven");
+  });
+
   it("covers ask", async () => {
     const next = await runCommands(
       setInventory(createTestState({ roomId: "StairSix" }), ["Radio"]),
@@ -433,6 +455,15 @@ describe("Action smoke coverage", () => {
     expectCommandEntry(next, "listen to moan", /haunting, eerie quality/i);
   });
 
+  it("covers pet", async () => {
+    const next = await runCommands(
+      createTestState({ roomId: "LevelThreeCorridorSeven" }),
+      ["call cat", "pet cat"],
+    );
+
+    expectCommandEntry(next, "pet cat", /starts to purr/i);
+  });
+
   it("covers look", async () => {
     const next = await runCommand(
       createTestState({ roomId: "LevelSixCorridorEnd" }),
@@ -481,6 +512,18 @@ describe("Action smoke coverage", () => {
     );
 
     expect(next.worldState.conditionalTriggers.RobotRefugeAccess).toBe(true);
+  });
+
+  it("covers stick", async () => {
+    let state = await runCommand(
+      createTestState({ roomId: "LevelThreeCorridorSeven" }),
+      "call cat",
+    );
+    state = setInventory(state, ["GelRound2"]);
+
+    const next = await runCommand(state, "stick camera to collar");
+
+    expect(next.itemState.attachedTo.GelRound2).toBe("cat");
   });
 });
 

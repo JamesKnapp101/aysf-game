@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import "../../styles/components/camera-gun-viewer.css";
+import { buildRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
 import type { Room } from "../types/roomTypes";
@@ -21,11 +22,62 @@ function getRoomById(state: any, roomId: string): any | undefined {
   return state?.world?.rooms?.filter((r: Room) => r.id === roomId)?.[0];
 }
 
-function getRoomDescription(room: any | undefined): string {
-  if (!room) return "NO SIGNAL.\n\nThe viewer shows only static.";
-  const d = (room.description ?? room.longDescription ?? "").trim();
-  if (d) return d;
-  return (room.name ?? "NO SIGNAL.").toString();
+function isRoomId(state: GameState, id: string | undefined): id is string {
+  return Boolean(id && state.world.rooms.some((room) => room.id === id));
+}
+
+function resolveCameraRoomId(
+  state: GameState,
+  itemId: string | undefined,
+  seen = new Set<string>(),
+): string | undefined {
+  if (!itemId || seen.has(itemId)) return undefined;
+  seen.add(itemId);
+
+  if (itemId === "PLAYER" || itemId === "INVENTORY") {
+    return state.player.roomId;
+  }
+
+  const attachedHostId = state.itemState.attachedTo[itemId];
+  if (attachedHostId) {
+    return resolveCameraRoomId(state, attachedHostId, seen);
+  }
+
+  const liveLocation = state.itemState.itemRoomId[itemId];
+  if (isRoomId(state, liveLocation)) return liveLocation;
+  if (liveLocation) return resolveCameraRoomId(state, liveLocation, seen);
+
+  const seedLocation = getItemById(state, itemId)?.location;
+  if (isRoomId(state, seedLocation)) return seedLocation;
+  if (seedLocation) return resolveCameraRoomId(state, seedLocation, seen);
+
+  return undefined;
+}
+
+export function getCameraFeedDescription(
+  state: GameState,
+  roomId: string | undefined,
+): string {
+  const room = roomId ? getRoomById(state, roomId) : undefined;
+  if (!room || !roomId) return "NO SIGNAL.\n\nThe viewer shows only static.";
+
+  const cameraState = {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      darkRooms: {
+        ...state.worldState.darkRooms,
+        [roomId]: false,
+      },
+    },
+  };
+
+  return (
+    buildRoomDescription(cameraState, roomId, {
+      mode: "panel",
+      forceFull: true,
+    }).trim() || (room.name ?? "NO SIGNAL.").toString()
+  );
 }
 
 export function CameraGunViewerModal({
@@ -67,13 +119,10 @@ export function CameraGunViewerModal({
   const item = selectedCameraId
     ? getItemById(state, selectedCameraId)
     : undefined;
-  const roomId =
-    state.itemState.itemRoomId[item.id] ??
-    (item?.location as string | undefined) ??
-    undefined;
+  const roomId = resolveCameraRoomId(state, item?.id);
   const room = roomId ? getRoomById(state, roomId) : undefined;
 
-  const description = getRoomDescription(room);
+  const description = getCameraFeedDescription(state, roomId);
 
   const statusLine = (() => {
     if (!selectedCameraId) return "NO SIGNAL";
