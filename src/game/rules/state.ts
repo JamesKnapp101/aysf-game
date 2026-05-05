@@ -58,7 +58,7 @@ export function addToInventory(state: GameState, itemId: string): GameState {
 
   const itemToAdd = next.world.items.find((it) => it.id === itemId);
   if (itemToAdd?.isContagious && !next.itemState.pickedUpByPlayer[itemId]) {
-    next = applyStatusEffectToPlayer(next, "virus", 1, 2000);
+    next = applyStatusEffectToPlayer(next, "syndrome x", 1, 2000);
   }
 
   const bucket = bucketForItem(itemToAdd);

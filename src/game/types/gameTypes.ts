@@ -53,7 +53,7 @@ export type StatusId =
   | "smokeInhalation"
   | "radiation"
   | "blind"
-  | "virus"
+  | "syndrome x"
   | "trixophine"
   | "vanitrax"
   | "seritroxin"
@@ -65,7 +65,7 @@ export type StatusId =
   | "nightvision-active"
   | "dreaming"
   | "death"
-  | "superhorny"
+  | "hyperaroused"
   | "explosive follicle growth"
   | "pheromoned";
 

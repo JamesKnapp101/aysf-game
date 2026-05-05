@@ -57,7 +57,7 @@ export function applyStatusEffectToPlayer(
       vitals: {
         ...state.player.vitals,
         theSickness:
-          effectId === "virus"
+          effectId === "syndrome x"
             ? (state.player.vitals.theSickness ?? 0) + turns
             : state.player.vitals.theSickness,
         brainActivity: getBrainActivityEffect(effectId),

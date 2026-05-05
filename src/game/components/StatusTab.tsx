@@ -1,10 +1,10 @@
 import React from "react";
 import {
   describeBodyTemperatureLevel,
-  describeCurrentEffects,
-  describeRadiationLevel,
   describeSicknessLevel,
   getStatusEffectById,
+  getStatusEffectDiagnostics,
+  type StatusEffectIconId,
 } from "../selectors/statusSelectors";
 import { useUIEffectsStore } from "../store/store";
 import type { GameState } from "../types/gameTypes";
@@ -15,8 +15,10 @@ interface StatusTabProps {
 
 export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
   const mindFlash = useUIEffectsStore((s) => s.mindFlash);
+  const statusEffectDiagnostics = getStatusEffectDiagnostics(gameState);
+
   return (
-    <div>
+    <div className="status-tab">
       <div className="crt-vitals-monitor-stack">
         <MeterRow
           label="Health"
@@ -52,7 +54,7 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
         />
         {(() => {
           const brainLevel = (
-            mindFlash ? 6 : gameState.player.vitals.brainActivity ?? 1
+            mindFlash ? 6 : (gameState.player.vitals.brainActivity ?? 1)
           ) as 1 | 2 | 3 | 4 | 5 | 6;
 
           return <BrainWaveRow level={brainLevel} />;
@@ -78,20 +80,246 @@ export const StatusTab: React.FC<StatusTabProps> = ({ gameState }) => {
 
         <div className="diagnosis-category">
           <div className="diagnosis-title">Effects:</div>
-          <div className="diagnosis-text">
-            {describeCurrentEffects(gameState)}
-          </div>
-        </div>
-
-        <div className="diagnosis-category">
-          <div className="diagnosis-title">Radiation:</div>
-          <div className="diagnosis-text">
-            {describeRadiationLevel(gameState)}
+          <div className="status-effect-viewer" role="list">
+            {statusEffectDiagnostics.length === 0 ? (
+              <div className="status-effect-empty">None.</div>
+            ) : (
+              statusEffectDiagnostics.map((effect) => (
+                <div
+                  className="status-effect-row"
+                  key={effect.id}
+                  role="listitem"
+                >
+                  <div className="status-effect-badge" aria-hidden="true">
+                    <StatusEffectBadgeIcon icon={effect.icon} />
+                  </div>
+                  <div className="status-effect-name">{effect.name}</div>
+                  <div className="status-effect-message">{effect.message}</div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
     </div>
   );
+};
+
+type IconSvgProps = {
+  children: React.ReactNode;
+  viewBox?: string;
+};
+
+const IconSvg: React.FC<IconSvgProps> = ({
+  children,
+  viewBox = "0 0 24 24",
+}) => (
+  <svg
+    className="status-effect-icon"
+    viewBox={viewBox}
+    aria-hidden="true"
+    focusable="false"
+  >
+    {children}
+  </svg>
+);
+
+const StatusEffectBadgeIcon: React.FC<{ icon: StatusEffectIconId }> = ({
+  icon,
+}) => {
+  switch (icon) {
+    case "biohazard":
+      return (
+        <IconSvg>
+          <circle cx="12" cy="12" r="2.2" />
+          <circle cx="12" cy="6.8" r="3.6" />
+          <circle cx="7.5" cy="15" r="3.6" />
+          <circle cx="16.5" cy="15" r="3.6" />
+          <circle cx="12" cy="12" r="7.6" fill="none" />
+        </IconSvg>
+      );
+    case "bottle":
+      return (
+        <IconSvg>
+          <path d="M10 3h4v4l3 4v8.5A1.5 1.5 0 0 1 15.5 21h-7A1.5 1.5 0 0 1 7 19.5V11l3-4V3Z" />
+          <path d="M9.5 3h5" />
+          <path d="M8.5 14.5h7" />
+        </IconSvg>
+      );
+    case "comb":
+      return (
+        <IconSvg>
+          <path d="M5 6h14v4H5z" />
+          <path d="M6 10v9" />
+          <path d="M9 10v9" />
+          <path d="M12 10v9" />
+          <path d="M15 10v9" />
+          <path d="M18 10v9" />
+        </IconSvg>
+      );
+    case "cross":
+      return (
+        <IconSvg>
+          <path
+            className="status-effect-icon-fill"
+            d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"
+          />
+        </IconSvg>
+      );
+    case "death-face":
+      return (
+        <IconSvg>
+          <circle cx="12" cy="12" r="8.5" fill="none" />
+          <path d="m7.8 8.2 2.8 2.8" />
+          <path d="m10.6 8.2-2.8 2.8" />
+          <path d="m13.4 8.2 2.8 2.8" />
+          <path d="m16.2 8.2-2.8 2.8" />
+          <path d="M8.5 17c2-2 5-2 7 0" fill="none" />
+        </IconSvg>
+      );
+    case "dna":
+      return (
+        <IconSvg>
+          <path d="M7 3c6 4 10 6 10 18" fill="none" />
+          <path d="M17 3C11 7 7 9 7 21" fill="none" />
+          <path d="M9 6h6" />
+          <path d="M8 10h8" />
+          <path d="M8 14h8" />
+          <path d="M9 18h6" />
+        </IconSvg>
+      );
+    case "droplet":
+      return (
+        <IconSvg>
+          <path
+            className="status-effect-icon-fill"
+            d="M12 3C8.5 8 6.5 11.2 6.5 15a5.5 5.5 0 0 0 11 0C17.5 11.2 15.5 8 12 3Z"
+          />
+        </IconSvg>
+      );
+    case "eye":
+      return (
+        <IconSvg>
+          <path
+            d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6Z"
+            fill="none"
+          />
+          <circle className="status-effect-icon-fill" cx="12" cy="12" r="2.8" />
+        </IconSvg>
+      );
+    case "heart":
+      return (
+        <IconSvg>
+          <path
+            className="status-effect-icon-fill"
+            d="M12 20s-8-4.8-8-10.4C4 6.6 6 5 8.4 5c1.4 0 2.7.8 3.6 2 1-1.2 2.2-2 3.6-2C18 5 20 6.6 20 9.6 20 15.2 12 20 12 20Z"
+          />
+        </IconSvg>
+      );
+    case "no-eyes-smile":
+      return (
+        <IconSvg>
+          <circle cx="12" cy="12" r="8.5" fill="none" />
+          <path d="M8.2 13.8c1.8 2 5.8 2 7.6 0" fill="none" />
+        </IconSvg>
+      );
+    case "question-marks":
+      return (
+        <IconSvg>
+          <text x="12" y="15.5" textAnchor="middle">
+            ???
+          </text>
+        </IconSvg>
+      );
+    case "radiation":
+      return (
+        <IconSvg>
+          <circle className="status-effect-icon-fill" cx="12" cy="12" r="2.2" />
+          <path
+            className="status-effect-icon-fill"
+            d="M12 3a9 9 0 0 1 4.2 1l-3 5.2A3.8 3.8 0 0 0 12 9V3Z"
+          />
+          <path
+            className="status-effect-icon-fill"
+            d="M20 16.5a9 9 0 0 1-3.7 3.1l-3-5.2a3.8 3.8 0 0 0 1-1L20 16.5Z"
+          />
+          <path
+            className="status-effect-icon-fill"
+            d="M4 16.5a9 9 0 0 0 3.7 3.1l3-5.2a3.8 3.8 0 0 1-1-1L4 16.5Z"
+          />
+          <circle cx="12" cy="12" r="8.5" fill="none" />
+        </IconSvg>
+      );
+    case "space-bug":
+      return (
+        <IconSvg>
+          <path
+            className="status-effect-icon-fill"
+            d="M7 8h2V6h2v2h2V6h2v2h2v7h-2v2h-2v-2h-2v2H9v-2H7V8Z"
+          />
+          <path d="M5 10h2" />
+          <path d="M17 10h2" />
+          <path d="M4 17h3" />
+          <path d="M17 17h3" />
+        </IconSvg>
+      );
+    case "spiral":
+      return (
+        <IconSvg>
+          <path
+            d="M18.5 12a6.5 6.5 0 1 0-3.8 5.9 4.6 4.6 0 1 0 .5-8.5 2.8 2.8 0 1 0-2.7 4.7"
+            fill="none"
+          />
+        </IconSvg>
+      );
+    case "syndrome x":
+      return (
+        <IconSvg>
+          <circle cx="12" cy="12" r="5.2" fill="none" />
+          <path d="M12 2.8v3.6" />
+          <path d="M12 17.6v3.6" />
+          <path d="M2.8 12h3.6" />
+          <path d="M17.6 12h3.6" />
+          <path d="m5.5 5.5 2.5 2.5" />
+          <path d="m16 16 2.5 2.5" />
+          <path d="m18.5 5.5-2.5 2.5" />
+          <path d="m8 16-2.5 2.5" />
+          <circle className="status-effect-icon-fill" cx="10" cy="10" r="0.8" />
+          <circle
+            className="status-effect-icon-fill"
+            cx="14.5"
+            cy="12.5"
+            r="0.8"
+          />
+        </IconSvg>
+      );
+    case "zzz":
+      return (
+        <IconSvg>
+          <text
+            x="7"
+            y="19"
+            className="status-effect-icon-z status-effect-icon-z--large"
+          >
+            Z
+          </text>
+          <text
+            x="12.5"
+            y="13.5"
+            className="status-effect-icon-z status-effect-icon-z--mid"
+          >
+            Z
+          </text>
+          <text
+            x="17"
+            y="8.5"
+            className="status-effect-icon-z status-effect-icon-z--small"
+          >
+            Z
+          </text>
+        </IconSvg>
+      );
+  }
 };
 
 const NUM_BLOCKS = 10;

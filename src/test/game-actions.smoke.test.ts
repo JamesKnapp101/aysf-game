@@ -136,9 +136,9 @@ describe("Action smoke coverage", () => {
     );
 
     expect(expectInventoryToContain(next, "ResearchNotes")).toBe(false);
-    expect(getItemsInRoom(next, "ThreeWestBed").map((item) => item.id)).toContain(
-      "ResearchNotes",
-    );
+    expect(
+      getItemsInRoom(next, "ThreeWestBed").map((item) => item.id),
+    ).toContain("ResearchNotes");
   });
 
   it("covers put", async () => {
@@ -197,9 +197,9 @@ describe("Action smoke coverage", () => {
     expect(next.player.statusEffects.map((effect) => effect.id)).toContain(
       "drunk",
     );
-    expect(next.world.items.find((item) => item.id === "FiveWestScotch")?.doses).toBe(
-      16,
-    );
+    expect(
+      next.world.items.find((item) => item.id === "FiveWestScotch")?.doses,
+    ).toBe(16);
   });
 
   it("covers eat", async () => {
@@ -209,9 +209,11 @@ describe("Action smoke coverage", () => {
     );
 
     expect(next.player.statusEffects.map((effect) => effect.id)).toContain(
-      "superhorny",
+      "hyperaroused",
     );
-    expect(next.world.items.find((item) => item.id === "hornychew")?.doses).toBe(0);
+    expect(
+      next.world.items.find((item) => item.id === "hornychew")?.doses,
+    ).toBe(0);
   });
 
   it("covers set", async () => {
@@ -342,9 +344,9 @@ describe("Action smoke coverage", () => {
     );
 
     expect(expectInventoryToContain(next, "MysteriousNote")).toBe(false);
-    expect(getItemsInRoom(next, "StairWellSeven").map((item) => item.id)).toContain(
-      "MysteriousNote",
-    );
+    expect(
+      getItemsInRoom(next, "StairWellSeven").map((item) => item.id),
+    ).toContain("MysteriousNote");
   });
 
   it("covers stand", async () => {
@@ -376,7 +378,9 @@ describe("Action smoke coverage", () => {
       ["put key in keyhole", "turn key"],
     );
 
-    expect(next.worldState.powerRestoredSections["power-key-turned"]).toBe(true);
+    expect(next.worldState.powerRestoredSections["power-key-turned"]).toBe(
+      true,
+    );
   });
 
   it("covers push", async () => {
@@ -407,9 +411,7 @@ describe("Action smoke coverage", () => {
     expect(
       conversation?.topicsUsed?.power === true ||
         conversation?.conversationHistory?.at(-1)?.topic === "power",
-    ).toBe(
-      true,
-    );
+    ).toBe(true);
     expectCommandEntry(
       next,
       "ask voice about power",
@@ -482,7 +484,9 @@ describe("Action smoke coverage", () => {
     expect(next.player.statusEffects.map((effect) => effect.id)).toContain(
       "trixophine",
     );
-    expect(next.world.items.find((item) => item.id === "TrixPen")?.doses).toBe(99);
+    expect(next.world.items.find((item) => item.id === "TrixPen")?.doses).toBe(
+      99,
+    );
   });
 
   it("covers ride", async () => {
@@ -526,4 +530,3 @@ describe("Action smoke coverage", () => {
     expect(next.itemState.attachedTo.GelRound2).toBe("cat");
   });
 });
-

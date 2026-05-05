@@ -101,9 +101,9 @@ export function applyStatusEffectTick(
 
       break;
     }
-    case "superhorny": {
+    case "hyperaroused": {
       const effect = state.player.statusEffects.find(
-        (se) => se.id === "superhorny",
+        (se) => se.id === "hyperaroused",
       );
       if (!effect) return state;
       if (effect.remainingTurns == null) break;
@@ -160,7 +160,7 @@ export function applyStatusEffectTick(
       }
       break;
     }
-    case "virus": {
+    case "syndrome x": {
       const prevSickness = vitals.theSickness ?? 0;
       const prevStage = sicknessStage(prevSickness);
       const nextSickness =

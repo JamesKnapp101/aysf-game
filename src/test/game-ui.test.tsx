@@ -174,7 +174,41 @@ describe("UI panels", () => {
     expect(screen.getByText(/101\.4/)).toBeInTheDocument();
     expect(screen.getByText(/25.*mSv/i)).toBeInTheDocument();
     expect(screen.getByText("???")).toBeInTheDocument();
+    expect(screen.getByText("Radiation")).toBeInTheDocument();
+    expect(screen.getByText(/face and neck feel burned/i)).toBeInTheDocument();
+    expect(screen.getByText("Drunk")).toBeInTheDocument();
     expect(screen.getByText(/tipsy/i)).toBeInTheDocument();
+    expect(screen.queryByText(/^Radiation:$/)).not.toBeInTheDocument();
+  });
+
+  it("shows active status effects even when custom diagnostic copy is missing", async () => {
+    const baseState = createTestState();
+    const state: GameState = {
+      ...baseState,
+      player: {
+        ...baseState.player,
+        statusEffects: [
+          {
+            id: "nanites",
+            intensity: 1,
+            remainingTurns: 10,
+          },
+          {
+            id: "possessed",
+            intensity: 1,
+            remainingTurns: 10,
+          },
+        ],
+      },
+    };
+
+    render(<StatusTab gameState={state} />);
+
+    expect(screen.getByText("Nanites")).toBeInTheDocument();
+    expect(screen.getByText("Possessed")).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/No detailed diagnostic is available/i),
+    ).toHaveLength(2);
   });
 
   it("dims completed game preserve difficulties in the terminal", async () => {

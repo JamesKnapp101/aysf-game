@@ -6,6 +6,65 @@ import {
 import type { GameState, StatusEffect } from "../types/gameTypes";
 import { getCurrentRoom } from "./roomSelectors";
 
+export type StatusEffectDiagnostic = {
+  id: string;
+  name: string;
+  message: string;
+  icon: StatusEffectIconId;
+};
+
+export type StatusEffectIconId =
+  | "biohazard"
+  | "bottle"
+  | "comb"
+  | "cross"
+  | "death-face"
+  | "dna"
+  | "droplet"
+  | "eye"
+  | "heart"
+  | "no-eyes-smile"
+  | "question-marks"
+  | "radiation"
+  | "space-bug"
+  | "spiral"
+  | "syndrome x"
+  | "zzz";
+
+const STATUS_EFFECT_LABELS: Record<
+  string,
+  { icon: StatusEffectIconId; name: string }
+> = {
+  bleeding: { icon: "cross", name: "Bleeding" },
+  blind: { icon: "no-eyes-smile", name: "Blind" },
+  death: { icon: "death-face", name: "Death" },
+  dreaming: { icon: "zzz", name: "Dreaming" },
+  drunk: { icon: "bottle", name: "Drunk" },
+  "explosive follicle growth": {
+    icon: "comb",
+    name: "Explosive Follicle Growth",
+  },
+  innoculant: { icon: "dna", name: "Innoculant" },
+  nanites: { icon: "space-bug", name: "Nanites" },
+  "nightvision-active": { icon: "eye", name: "Night Vision" },
+  none: { icon: "question-marks", name: "None" },
+  pentatrosin: { icon: "biohazard", name: "Pentatrosin" },
+  pheromoned: { icon: "heart", name: "Pheromoned" },
+  possessed: { icon: "question-marks", name: "Possessed" },
+  radiation: { icon: "radiation", name: "Radiation" },
+  regenerationWoozies: { icon: "spiral", name: "Regeneration Woozies" },
+  seritroxin: { icon: "biohazard", name: "Seritroxin" },
+  smokeInhalation: { icon: "droplet", name: "Smoke Inhalation" },
+  hyperaroused: { icon: "droplet", name: "Hyperaroused" },
+  trixophine: { icon: "spiral", name: "Trixophine" },
+  vanitrax: { icon: "cross", name: "Vanitrax" },
+  "syndrome x": { icon: "syndrome x", name: "Syndrome X" },
+  xantophol: { icon: "zzz", name: "Xantophol" },
+};
+
+const FALLBACK_STATUS_EFFECT_MESSAGE =
+  "No detailed diagnostic is available for this effect yet.";
+
 export function getActiveStatusEffectIds(state: GameState): string[] {
   return state.player.statusEffects.map(
     (statusEffect: StatusEffect) => statusEffect.id,
@@ -178,84 +237,97 @@ export function describeBodyTemperatureLevel(state: GameState): string {
 }
 
 export function describeCurrentEffects(state: GameState): string {
-  const statusEffects = state.player.statusEffects ?? [];
+  const diagnostics = getStatusEffectDiagnostics(state);
 
-  let effectsMsg = "";
-  for (const statusEffect of statusEffects) {
-    const effectId = statusEffect.id;
-    switch (effectId) {
-      case "death":
-        effectsMsg +=
-          "You are dead. Without intervention, you will remain so.\n";
-        break;
-      case "drunk":
-        effectsMsg += "You are feeling a little tipsy from the alcohol.\n\n";
-        break;
-      case "superhorny":
-        {
-          const remainingTurns = statusEffect.remainingTurns ?? 0;
-          if (remainingTurns > 49) {
-            effectsMsg += "You're feeling a bit horny.\n";
-          } else if (remainingTurns > 29) {
-            effectsMsg += "You are really, REALLY horny.\n";
-          } else if (remainingTurns > 19) {
-            effectsMsg += "You're back to feeling just a bit horny.";
-          } else if (remainingTurns > 2) {
-            effectsMsg += "The horniness is leaving you...";
-          }
-        }
-        break;
-      case "explosive follicle growth":
-        {
-          const remainingTurns = statusEffect.remainingTurns ?? 0;
-          if (remainingTurns === 3) {
-            effectsMsg += "Your scalp is tingling.\n";
-          } else if (remainingTurns === 2) {
-            effectsMsg +=
-              "Your scalp has begun to itch, and has spread to the rest of your body.\n";
-          } else if (remainingTurns === 1) {
-            effectsMsg +=
-              "Every follicle you have deeply itches, and hair is visibly sprouting.";
-          } else if (remainingTurns === 0) {
-            effectsMsg += "The itching subsides...";
-          }
-        }
-        break;
-      case "trixophine":
-        effectsMsg +=
-          "Whatever was in that green serum has you fibbity FYING and rig-rig-riggety WRECKED! Colors are talking to you, sounds smell like tastes, the whole nine yards.\n";
-        break;
-      case "vanitrax":
-        effectsMsg += "You are on vanitrax.\n";
-        break;
-      case "seritroxin":
-        effectsMsg += "You are on seritroxin.\n";
-        break;
-      case "pentatrosin":
-        effectsMsg += "You are on pentatrosin.\n";
-        break;
-      case "xantophol":
-        effectsMsg += "You are on xantophol.\n";
-        break;
-      case "regenerationWoozies":
-        effectsMsg +=
-          "You feel a little discombobulated, with minor little aches and pains. Muscle ache? Gas? It doesn't seem serious.\n";
-        break;
-      case "nightvision-active":
-        {
-          const currentRoom = getCurrentRoom(state);
-          if (state.worldState.darkRooms[currentRoom.id]) {
-            effectsMsg +=
-              "You're wearing night vision goggles, which allow you to see in the darkness.";
-          } else {
-            effectsMsg +=
-              "You're wearing night vision goggles, but since there's plenty of light you're effectively blind.";
-          }
-        }
-        break;
-      default:
-        break;
+  return diagnostics.length === 0
+    ? "None."
+    : diagnostics.map((diagnostic) => diagnostic.message).join("\n\n");
+}
+
+function getStatusEffectLabel(effect: StatusEffect) {
+  return (
+    STATUS_EFFECT_LABELS[effect.id] ?? {
+      icon: "question-marks",
+      name: effect.id,
     }
+  );
+}
+
+function describeStatusEffect(
+  state: GameState,
+  statusEffect: StatusEffect,
+): string | null {
+  switch (statusEffect.id) {
+    case "none":
+      return null;
+    case "death":
+      return "You are dead. Without intervention, you will remain so.";
+    case "drunk":
+      return "You are feeling a little tipsy from the alcohol.";
+    case "radiation":
+      return describeRadiationLevel(state);
+    case "hyperaroused": {
+      const remainingTurns = statusEffect.remainingTurns ?? 0;
+      if (remainingTurns > 49) return "You're feeling a bit horny.";
+      if (remainingTurns > 29) return "You are really, REALLY horny.";
+      if (remainingTurns > 19)
+        return "You're back to feeling just a bit horny.";
+      if (remainingTurns > 2) return "The horniness is leaving you...";
+      return null;
+    }
+    case "explosive follicle growth": {
+      const remainingTurns = statusEffect.remainingTurns ?? 0;
+      if (remainingTurns === 3) return "Your scalp is tingling.";
+      if (remainingTurns === 2) {
+        return "Your scalp has begun to itch, and has spread to the rest of your body.";
+      }
+      if (remainingTurns === 1) {
+        return "Every follicle you have deeply itches, and hair is visibly sprouting.";
+      }
+      if (remainingTurns === 0) return "The itching subsides...";
+      return null;
+    }
+    case "trixophine":
+      return "Whatever was in that green serum has you fibbity FYING and rig-rig-riggety WRECKED! Colors are talking to you, sounds smell like tastes, the whole nine yards.";
+    case "vanitrax":
+      return "You are on vanitrax.";
+    case "seritroxin":
+      return "You are on seritroxin.";
+    case "pentatrosin":
+      return "You are on pentatrosin.";
+    case "xantophol":
+      return "You are on xantophol.";
+    case "regenerationWoozies":
+      return "You feel a little discombobulated, with minor little aches and pains. Muscle ache? Gas? It doesn't seem serious.";
+    case "nightvision-active": {
+      const currentRoom = getCurrentRoom(state);
+      return state.worldState.darkRooms[currentRoom.id]
+        ? "You're wearing night vision goggles, which allow you to see in the darkness."
+        : "You're wearing night vision goggles, but since there's plenty of light you're effectively blind.";
+    }
+    default:
+      return null;
   }
-  return effectsMsg === "" ? "None." : effectsMsg;
+}
+
+export function getStatusEffectDiagnostics(
+  state: GameState,
+): StatusEffectDiagnostic[] {
+  return (state.player.statusEffects ?? []).flatMap((statusEffect) => {
+    if (statusEffect.id === "none") return [];
+
+    const message =
+      describeStatusEffect(state, statusEffect) ??
+      FALLBACK_STATUS_EFFECT_MESSAGE;
+
+    const label = getStatusEffectLabel(statusEffect);
+    return [
+      {
+        id: statusEffect.id,
+        name: label.name,
+        message,
+        icon: label.icon,
+      },
+    ];
+  });
 }
