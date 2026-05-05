@@ -37,6 +37,15 @@ export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
     "black_belt",
     "alice_sneakers",
   ],
+  UmboltzFootlocker: [
+    "CameraGun",
+    "MindGun",
+    "MindCap",
+    "DNAReader",
+    "BottleOfScotch",
+    "MensLockerKey4",
+  ],
+  FiveWestMedicineChest: ["hornychewToo", "hairychew"],
   SixWestCloset: ["ed_white_shirt", "ed_pressed_pants", "wool_vest"],
   AdminOfficeWastebin: ["AdminOfficeWastebinNote"],
 };

@@ -257,10 +257,10 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     initiallyLocked: false,
   },
   {
-    id: "BoulosResidenceDoor",
+    id: "UmboltzResidenceDoor",
     name: "living quarters door 3EW",
     descriptionFromA:
-      "To the west is a door affixed with a wooden placard that reads 'Boulos Residence.'",
+      "To the west is a door affixed with a wooden placard that reads 'Umboltz Residence.'",
     descriptionFromB: `To the east is the unit's front door.`,
     kind: "standard",
     vocab: ["west door", "door 3ew"],

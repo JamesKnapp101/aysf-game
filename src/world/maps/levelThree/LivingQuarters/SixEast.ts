@@ -367,7 +367,7 @@ export const sixEastItems: Item[] = [
           { type: "status", id: "superhorny", intensity: 69, duration: 69 },
           {
             type: "message",
-            text: `You pop the chewable in your mouth and squish it between your back teeth. It yields like gum for a moment, then disolves all at once into a slightly spicy, honey-flavored syrup. Tasty!`,
+            text: `You pop the chewable in your mouth and squish it between your back teeth. It yields like gum for a moment, then dissolves all at once into a slightly spicy, honey-flavored syrup. Tasty!`,
           },
         ],
         onEmpty: [{ type: "message", text: "It's empty." }],

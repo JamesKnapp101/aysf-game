@@ -142,6 +142,10 @@ export const createInitialState = (world: World): GameState => {
         brainActivity: 1,
         theSickness: undefined,
       },
+      mirror: {
+        hasHair: false,
+        injuredByBadger: false,
+      },
       statusEffects: [],
     },
     worldState: {

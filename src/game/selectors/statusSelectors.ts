@@ -1,4 +1,5 @@
 import {
+  HAIRY_STATUS_MESSAGES,
   HORNY_STATUS_MESSAGES,
   PAIN_STATUS_MESSAGES,
 } from "../text/messageMaps";
@@ -39,6 +40,10 @@ export function getPainStatusMessage(remainingTurns: number): string | null {
 
 export function getHornyStatusMessage(remainingTurns: number): string | null {
   return HORNY_STATUS_MESSAGES[remainingTurns] ?? null;
+}
+
+export function getHairyStatusMessage(remainingTurns: number): string | null {
+  return HAIRY_STATUS_MESSAGES[remainingTurns] ?? null;
 }
 
 export function describeSicknessLevel(state: GameState): string {
@@ -197,6 +202,22 @@ export function describeCurrentEffects(state: GameState): string {
             effectsMsg += "You're back to feeling just a bit horny.";
           } else if (remainingTurns > 2) {
             effectsMsg += "The horniness is leaving you...";
+          }
+        }
+        break;
+      case "explosive follicle growth":
+        {
+          const remainingTurns = statusEffect.remainingTurns ?? 0;
+          if (remainingTurns === 3) {
+            effectsMsg += "Your scalp is tingling.\n";
+          } else if (remainingTurns === 2) {
+            effectsMsg +=
+              "Your scalp has begun to itch, and has spread to the rest of your body.\n";
+          } else if (remainingTurns === 1) {
+            effectsMsg +=
+              "Every follicle you have deeply itches, and hair is visibly sprouting.";
+          } else if (remainingTurns === 0) {
+            effectsMsg += "The itching subsides...";
           }
         }
         break;

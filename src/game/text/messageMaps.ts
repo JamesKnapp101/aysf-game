@@ -17,6 +17,13 @@ export const HORNY_STATUS_MESSAGES: Record<number, string> = {
   0: "Okay, whew! Your motor has stopped revving, at least to that weird degree...",
 };
 
+export const HAIRY_STATUS_MESSAGES: Record<number, string> = {
+  4: "You are overcome by a strange sensation, as your scalp begins to tingle, then your eyebrows.",
+  3: "The tingling turns to an itch as it spreads from your scalp, then down your chest, arms, and legs, even your crotch!",
+  2: "The itch peaks, becoming almost unbearable as hair begins to visibly push from every follicle you have.",
+  1: "Finally, all at once, the itching stops. You can feel hair on your scalp now, and stubble on your face. Even your body hair is back, and more lush than ever!",
+};
+
 export const TRIXOPHINE_MESSAGES: string[] = [
   `Your cat walks into the room and marches up to you. "If you see the dog," it hisses, "tell that bitch I'm looking for her!" It storms out of the room.`,
   `You notice movement out of the corner of your eye, and turn in time to see a small spider monkey scamper over to you. "You have to help me!" it whispers, "The captain is secretly spiking the mess hall's chili con carne with refined dopamine milked from his secret army of monkey slaves! If the plan succeeds, then—" It glances over its shoulder. "...they found me, I have to go!" The monkey scampers away.`,

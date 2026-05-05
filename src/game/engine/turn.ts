@@ -3,7 +3,6 @@ import { tickAviarySpotlight } from "@game/engine/ticks/aviaryTick";
 import { tickFlashlights } from "@game/engine/ticks/flashlightTick";
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
-import { tickRadioConversation } from "@game/helpers/conversationHelpers";
 import {
   CAT_ID,
   clearCatHeldTurns,
@@ -11,6 +10,7 @@ import {
   isCatHeld,
   isRoomInCatHome,
 } from "@game/helpers/catHelpers";
+import { tickRadioConversation } from "@game/helpers/conversationHelpers";
 import {
   isPlayerUnderwater,
   playerHasBreather,
@@ -41,6 +41,7 @@ import {
 import { getAnimateItems } from "../selectors/itemSelectors";
 import {
   describeSicknessLevel,
+  getHairyStatusMessage,
   getHornyStatusMessage,
   getPainStatusMessage,
 } from "../selectors/statusSelectors";
@@ -129,6 +130,34 @@ export function applyStatusEffectTick(
         return appendLog(nextState, msg);
       }
 
+      break;
+    }
+    case "explosive follicle growth": {
+      const effect = state.player.statusEffects.find(
+        (se) => se.id === "explosive follicle growth",
+      );
+      if (!effect) return state;
+      if (effect.remainingTurns == null) break;
+
+      const msg = getHairyStatusMessage(effect.remainingTurns);
+
+      if (msg?.includes("itch stops")) {
+        const nextState: GameState = {
+          ...state,
+          player: {
+            ...state.player,
+            mirror: {
+              ...state.player.mirror,
+              hasHair: true,
+            },
+          },
+        };
+        return appendLog(nextState, msg);
+      } else {
+        if (msg) {
+          return appendLog(state, msg);
+        }
+      }
       break;
     }
     case "virus": {

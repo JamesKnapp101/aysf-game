@@ -4,11 +4,11 @@ export const weaponItems: Item[] = [
   // The camera gun and its ammo
   {
     id: "CameraGun",
-    name: "gas gun",
+    name: "lightweight pistol",
     vocab: ["gel", "gun", "viewer"],
     description:
-      "A small, silvery dart gun of some sort that fires sticky gel projectiles.",
-    location: "LivingQuartersThreeEast",
+      "A small, silvery gas-powered gun of some sort that has a little oval view-screen mounted on it.",
+    location: "seeded",
     meta: {
       kind: "camera-gun-viewer",
       onLoad: "You load the soft little projectile into the gas-powered gun.",
@@ -26,7 +26,7 @@ export const weaponItems: Item[] = [
   },
   {
     id: "GelRound1",
-    name: "soft projectile round",
+    name: "blue projectile round",
     vocab: ["projectile", "soft", "blue", "round", "gelround", "gel", "camera"],
     description:
       "It's some sort of small, soft projectile. It contains a blob of sticky blue gel that has a tiny electronic device of some kind suspended in it.",
@@ -39,7 +39,7 @@ export const weaponItems: Item[] = [
   },
   {
     id: "GelRound2",
-    name: "soft projectile round",
+    name: "yellow projectile round",
     vocab: [
       "projectile",
       "soft",
@@ -60,7 +60,7 @@ export const weaponItems: Item[] = [
   },
   {
     id: "GelRound3",
-    name: "soft projectile round",
+    name: "red projectile round",
     vocab: ["projectile", "soft", "red", "round", "gelround", "gel", "camera"],
     description:
       "It's some sort of small, soft projectile. It contains a blob of sticky red gel that has a tiny electronic device of some kind suspended in it.",
@@ -74,19 +74,11 @@ export const weaponItems: Item[] = [
   // The Mind Gun, not really a weapon but gun-like
   {
     id: "MindGun",
-    name: " gun",
-    vocab: [
-      "high-tech gun",
-      "electronic gun",
-      "mindgun",
-      "high-tech",
-      "electronic",
-    ],
+    name: "electronic scanner",
+    vocab: ["cylinder", "antenna", "sensor", "reader", "scanner", "electronic"],
     description:
-      "It looks kind of like a pistol, in that it clearly has a grip, a trigger, and what looks like a barrel, but it doesn't look like a projectile weapon; the barrel is rectangular and it isn't hollow.  The end is fitted with some kind of small panel or cell, and the body of it is non-symetrical and a little cumbersome.  Printed on one side is the logo 'NexiCorp'.  It appears to contain a lot of wires and circuitry.",
-    initialDescription:
-      "Lying in the middle of the floor is what looks like some kind of strange, high-tech pistol.",
-    location: "LivingQuartersThreeEast",
+      "It's not immediately clear what the device does. It has a grip at one end, and at the other end is a cylinder wrapped in a fine wire mesh that seems like it's meant to be pointed at things, so perhaps a scanner of some sort. Printed on one side is a logo for 'NexiCorp'. It appears to contain a lot of wires and circuitry.",
+    location: "seeded",
     meta: {
       onLoad: "It doesn't seem to take any ammo, nor does it have a barrel.",
       onLink:
@@ -104,10 +96,10 @@ export const weaponItems: Item[] = [
   },
   {
     id: "MindCap",
-    name: "stretchy, wired cap",
+    name: "wired cap",
     vocab: ["cap", "headdress", "squid"],
     description:
-      "The cap consists of a series of silvery components meshed together in a web with some kind of metallic filaments. It can be draped over the head almost like a wig. The logo 'NexiCorp' is printed on one of the components.",
+      "The cap consists of a series of silvery components meshed together in a web with some kind of metallic filaments all run through a stretchy fabric which can be fitted over the head. The logo 'NexiCorp' is printed on one side of it.",
     location: "LivingQuartersThreeEast",
     itemClass: "solid",
     itemCategory: "collectable",

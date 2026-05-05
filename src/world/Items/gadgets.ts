@@ -68,12 +68,12 @@ export const specialItems: Item[] = [
   // 4. DNA Reader ------------------------------------------------------------
   {
     id: "DNAReader",
-    name: "DNA sampler",
+    name: "slim electronic wand",
     description:
       "A slim electronic wand about a foot long, ending in a small porous bulb for collecting and analyzing trace samples.",
     initialDescription:
       "A slender electronic wand of some kind lies on one of the shelves, out of its packaging.",
-    location: "L3Warehouse",
+    location: "seeded",
     vocab: ["dna", "sampler", "analyzer", "reader", "wand"],
     itemClass: "solid",
     itemCategory: "collectable",

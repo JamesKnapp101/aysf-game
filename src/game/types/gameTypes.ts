@@ -1,5 +1,5 @@
-import type { CometPersonalityMode as SharedCometPersonalityMode } from "@game/constants/cometPersonalities";
 import { playerMemoryMap, playerScoreMap } from "@game/constants";
+import type { CometPersonalityMode as SharedCometPersonalityMode } from "@game/constants/cometPersonalities";
 import type {
   GamePreserveDifficulty as ImportedGamePreserveDifficulty,
   PreserveRunState,
@@ -40,6 +40,11 @@ export interface PlayerVitals {
   theSickness?: number;
 }
 
+export interface PlayerMirrorState {
+  hasHair: boolean;
+  injuredByBadger: boolean;
+}
+
 export type StatusId =
   | "none"
   | "bleeding"
@@ -61,6 +66,7 @@ export type StatusId =
   | "dreaming"
   | "death"
   | "superhorny"
+  | "explosive follicle growth"
   | "pheromoned";
 
 export interface StatusEffect {
@@ -163,6 +169,7 @@ export interface PlayerState {
   spiltTea: JuicyTopic[];
   statusEffects: StatusEffect[];
   vitals: PlayerVitals;
+  mirror: PlayerMirrorState;
 }
 
 export interface Countdown {
