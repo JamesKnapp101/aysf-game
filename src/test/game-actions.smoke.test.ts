@@ -12,6 +12,7 @@ import {
 } from "./helpers/gameTestHelpers";
 
 const COVERED_ACTIONS = [
+  "abort",
   "open",
   "close",
   "take",
@@ -98,6 +99,12 @@ describe("Action smoke coverage", () => {
     );
 
     expect(next.worldState.doors.ShedCellarDoor?.isOpen).toBe(true);
+  });
+
+  it("covers abort", async () => {
+    const next = await runCommand(createTestState(), "abort");
+
+    expectCommandEntry(next, "abort", "Abort what, Major Tom?");
   });
 
   it("covers close", async () => {

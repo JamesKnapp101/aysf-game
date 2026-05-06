@@ -1,6 +1,7 @@
 import { Item } from "@game/types/itemTypes";
 import { doomedChefItems } from "src/world/Items/creatures/doomedChef";
 import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
+import { moxStairBottomItems } from "src/world/Items/creatures/virtual/moxStairBottom";
 import { barBotItems } from "src/world/Items/robots/barBot";
 import { lonelyBotItems } from "src/world/Items/robots/lonelyBot";
 import { nailBotItems } from "src/world/Items/robots/nailBot";
@@ -86,6 +87,7 @@ export const LEVEL_THREE: WorldChunk = {
     ...usherBotItems,
     ...nailBotItems,
     ...doomedChefItems,
+    ...moxStairBottomItems,
     ...warehouseItems,
     ...spaItems,
     ...parkItems,

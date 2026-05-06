@@ -323,6 +323,88 @@ describe("General gameplay", () => {
     );
   });
 
+  it("runs MindGun corpse memories outside real-world time", async () => {
+    const base = setInventory(createTestState({ roomId: "StairWellSeven" }), [
+      "MindGun",
+      "MindCap",
+    ]);
+    const start = {
+      ...base,
+      player: {
+        ...base.player,
+        statusEffects: [
+          { id: "radiation" as const, intensity: 100, remainingTurns: 3 },
+        ],
+      },
+      itemState: {
+        ...base.itemState,
+        wornByPlayer: {
+          ...base.itemState.wornByPlayer,
+          head: "MindCap",
+        },
+      },
+    };
+
+    const linked = await runCommand(start, "shoot corpse with scanner");
+
+    expect(linked.player.roomId).toBe("FallenCorpseMemory");
+    expect(linked.worldState.activeExperience).toMatchObject({
+      experienceId: "fallen_corpse_memory",
+      returnRoomId: "StairWellSeven",
+    });
+    const initialTurnsRemaining =
+      linked.worldState.activeExperience?.turnsRemaining ?? 0;
+    expect(initialTurnsRemaining).toBeGreaterThan(1);
+    expect(linked.player.vitals.health).toBe(100);
+
+    const waited = await runCommand(linked, "wait");
+
+    expect(waited.player.roomId).toBe("FallenCorpseMemory");
+    expect(waited.worldState.activeExperience?.turnsRemaining).toBe(
+      initialTurnsRemaining - 1,
+    );
+    expect(waited.player.vitals.health).toBe(100);
+
+    let returned = waited;
+    for (let i = 0; i < initialTurnsRemaining && returned.worldState.activeExperience; i += 1) {
+      returned = await runCommand(returned, "wait");
+    }
+    const returnedTranscript = returned.log.join("\n");
+
+    expect(returned.player.roomId).toBe("StairWellSeven");
+    expect(returned.worldState.activeExperience).toBeUndefined();
+    expect(returned.player.vitals.health).toBe(100);
+    expect(returnedTranscript.indexOf("The memory collapses")).toBeLessThan(
+      returnedTranscript.indexOf("Bottom of Stairwell"),
+    );
+  });
+
+  it("aborts active memories back to the return room", async () => {
+    const base = setInventory(createTestState({ roomId: "StairWellSeven" }), [
+      "MindGun",
+      "MindCap",
+    ]);
+    const start = {
+      ...base,
+      itemState: {
+        ...base.itemState,
+        wornByPlayer: {
+          ...base.itemState.wornByPlayer,
+          head: "MindCap",
+        },
+      },
+    };
+
+    const linked = await runCommand(start, "shoot corpse with scanner");
+    const aborted = await runCommand(linked, "abort");
+
+    expect(aborted.player.roomId).toBe("StairWellSeven");
+    expect(aborted.worldState.activeExperience).toBeUndefined();
+    expect(getLastLogEntry(aborted)).toContain(
+      "pull yourself free",
+    );
+  });
+
   it("revives the player in a previously visited lit room and leaves behind a husk", async () => {
     const start = createTestState({
       roomId: "LevelSixCorridorEnd",

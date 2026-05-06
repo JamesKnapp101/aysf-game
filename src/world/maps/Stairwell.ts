@@ -11,6 +11,7 @@ import { specialItems } from "../Items/gadgets";
 import { stairwellBottomItems } from "../Items/levelSevenMisc";
 import { teleportationPadItems } from "../Items/teleportationPads";
 import { weaponItems } from "../Items/weapons";
+import { experienceRooms, experienceRoomsItems } from "./experienceRooms";
 
 export const STAIRWELL: WorldChunk = {
   items: [
@@ -23,10 +24,12 @@ export const STAIRWELL: WorldChunk = {
     ...weaponItems,
     ...teleportationPadItems,
     ...stairwellBottomItems,
+    ...experienceRoomsItems,
   ],
   doors: [...stairwellDoors, ...badgeScannerDoors],
   teleportPads: [],
   rooms: [
+    ...experienceRooms,
     {
       id: "StairOne",
       name: "Stairs Level One",

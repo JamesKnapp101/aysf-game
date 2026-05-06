@@ -87,6 +87,18 @@ export type GameNotification = GameNotificationDraft & {
   id: number;
 };
 
+export type ExperienceKind = "lesson" | "memory";
+
+export type ActiveExperience = {
+  currentStageIndex: number;
+  experienceId: string;
+  kind: ExperienceKind;
+  returnRoomId: RoomId;
+  sourceId?: string;
+  startedAtMove: number;
+  turnsRemaining: number;
+};
+
 export type CometPersonalityMode = SharedCometPersonalityMode;
 export type CometTextSizeMode = "smaller" | "larger";
 export type VisualEffectsMode = "full" | "reduced" | "off";
@@ -377,6 +389,7 @@ type RoomTemperature =
   | "scorching";
 
 export interface WorldState {
+  activeExperience?: ActiveExperience;
   aviarySpotlight: AviarySpotlightState;
   brainSlug: BrainSlugState;
   bullEncounter: BullEncounterState;

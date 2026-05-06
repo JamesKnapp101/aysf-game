@@ -1,10 +1,31 @@
 import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import { isWornCatCollarTarget } from "@game/helpers/catHelpers";
+import { startExperience } from "@game/experiences/experienceRegistry";
 import { attachGelCameraToHost } from "@game/helpers/gelCameraHelpers";
 import { useUIEffectsStore } from "@game/store/store";
 import { GameState } from "@game/types/gameTypes";
 import { ItemId } from "@game/types/ids";
 import { Item } from "@game/types/itemTypes";
+
+function isCorpseLikeItem(item: Item): boolean {
+  if (item.meta?.corpse || item.meta?.isCorpse === true) return true;
+  if (item.meta?.isAlive === true) return false;
+
+  const corpseTerms = new Set([
+    "body",
+    "cadaver",
+    "corpse",
+    "remains",
+    "skeleton",
+  ]);
+
+  if (item.vocab?.some((term) => corpseTerms.has(term.toLowerCase()))) {
+    return true;
+  }
+
+  const name = item.name.toLowerCase();
+  return [...corpseTerms].some((term) => name.includes(term));
+}
 
 export function tryShootItem(
   state: GameState,
@@ -26,6 +47,26 @@ export function tryShootItem(
 
     if (next.itemState.wornByPlayer.head !== "MindCap") {
       return { state: next, message: shotWithItem?.meta?.onShootNoCap };
+    }
+
+    if (isCorpseLikeItem(shotAtItem)) {
+      const corpseMeta = shotAtItem?.meta?.corpse;
+      const hasIntactHead =
+        corpseMeta?.hasIntactHead ?? shotAtItem?.meta?.hasIntactHead ?? true;
+      const memoryExperienceId =
+        corpseMeta?.memoryExperienceId ?? shotAtItem?.meta?.memoryExperienceId;
+
+      if (!hasIntactHead || !memoryExperienceId) {
+        return {
+          state: next,
+          message:
+            "The scanner's hum thins into a flat diagnostic tone. There is not enough viable cerebral material to extract anything.",
+        };
+      }
+
+      return startExperience(next, memoryExperienceId, {
+        sourceId: shotAtItem.id,
+      });
     }
 
     if (!shotAtItem?.meta?.isAlive) {

@@ -1,3 +1,4 @@
+import { doAbort } from "@game/actions/abort/abort";
 import { doAsk } from "@game/actions/ask/ask";
 import { doAttack } from "@game/actions/attack/attack";
 import { doBlow } from "@game/actions/blow/blow";
@@ -38,6 +39,7 @@ import { doWait } from "./wait/wait";
 import { doWear } from "./wear/wear";
 
 export const ACTION_HANDLERS: Record<string, ActionHandler> = {
+  abort: doAbort,
   open: doOpen,
   close: doClose,
   take: doTake,

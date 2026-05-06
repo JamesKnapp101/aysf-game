@@ -445,15 +445,28 @@ export async function handleCommand(
   }
 
   let tickLogEntries: string[] = [];
+  let preRoomTickLogEntries: string[] = [];
   let diedThisTurn = false;
   const logBeforeLen = (nextState as any).log?.length ?? 0;
 
   if (consumesTurn) {
+    const roomIdBeforeTurn = nextState.player.roomId;
+    const activeExperienceBeforeTurn = Boolean(
+      nextState.worldState.activeExperience,
+    );
+
     nextState = advanceTurn(nextState);
 
     const logAfter: string[] = (nextState as any).log ?? [];
     tickLogEntries = logAfter.slice(logBeforeLen);
     diedThisTurn = tickLogEntries.some((entry) => entry.includes(DEATH_MARKER));
+    const experienceTickMovedRoom =
+      activeExperienceBeforeTurn && nextState.player.roomId !== roomIdBeforeTurn;
+
+    if (experienceTickMovedRoom && !diedThisTurn) {
+      preRoomTickLogEntries = tickLogEntries;
+      tickLogEntries = [];
+    }
 
     // Roll back log to the pre-advanceTurn state so we can append echo first.
     nextState = {
@@ -507,7 +520,11 @@ export async function handleCommand(
 
     const scripted = drained.lines.map((s) => s.trim()).filter(Boolean);
 
-    message = [message.trim(), roomEntryBlock, ...scripted]
+    const preRoomTickLines = preRoomTickLogEntries
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+
+    message = [message.trim(), ...preRoomTickLines, roomEntryBlock, ...scripted]
       .filter(Boolean)
       .join("\n\n");
 

@@ -75,6 +75,13 @@ export const NPCS: Record<string, ConversationNpc> = {
     aiEnabled: true,
     characterProfileId: "doomed_chef",
   },
+  MoxStairBottom: {
+    id: "MoxStairBottom",
+    name: "The wistful ghost",
+    vocab: ["man", "guy", "scientist", "mox", "eegler"],
+    aiEnabled: true,
+    characterProfileId: "mox_stair_bottom",
+  },
 };
 
 export function getNpcById(npcId?: string): ConversationNpc | undefined {

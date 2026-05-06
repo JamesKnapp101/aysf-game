@@ -2,6 +2,7 @@ import { audioRegistry } from "@game/audioRegistry";
 import { tickAviarySpotlight } from "@game/engine/ticks/aviaryTick";
 import { tickFlashlights } from "@game/engine/ticks/flashlightTick";
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
+import { tickActiveExperience } from "@game/experiences/experienceRegistry";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
 import {
   CAT_ID,
@@ -554,6 +555,21 @@ function tickScoreAndMemory(state: GameState): GameState {
 
 export function advanceTurn(state: GameState): GameState {
   let next = state;
+
+  if (next.worldState.activeExperience) {
+    const tickedExperience = tickActiveExperience(next);
+    next = tickedExperience.state;
+
+    if (tickedExperience.message) {
+      next = appendLog(next, tickedExperience.message);
+    }
+
+    return {
+      ...next,
+      moves: next.moves + 1,
+    };
+  }
+
   const ticked = tickRadioConversation(next);
   next = ticked.state;
 

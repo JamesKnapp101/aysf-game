@@ -14,6 +14,10 @@ export const corpseItems: Item[] = [
     itemClass: "solid",
     itemCategory: "scenery",
     meta: {
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "fallen_corpse_memory",
+      },
       sceneryDescriptionOrder: 2,
     },
     itemWeight: 80,
