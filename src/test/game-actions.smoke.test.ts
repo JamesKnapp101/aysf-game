@@ -190,7 +190,7 @@ describe("Action smoke coverage", () => {
 
   it("covers drink", async () => {
     const next = await runCommand(
-      setInventory(createTestState(), ["FiveWestScotch"]),
+      setInventory(createTestState(), ["BottleOfScotch"]),
       "drink scotch",
     );
 
@@ -198,7 +198,7 @@ describe("Action smoke coverage", () => {
       "drunk",
     );
     expect(
-      next.world.items.find((item) => item.id === "FiveWestScotch")?.doses,
+      next.world.items.find((item) => item.id === "BottleOfScotch")?.doses,
     ).toBe(16);
   });
 
@@ -317,7 +317,7 @@ describe("Action smoke coverage", () => {
         "CameraGun",
         "GelRound1",
       ]),
-      ["load gas gun with soft projectile round", "shoot cooler with gas gun"],
+      ["load gel gun with soft projectile round", "shoot cooler with gel gun"],
     );
 
     expect(next.itemState.attachedTo.GelRound1).toBe("Cooler");
@@ -330,7 +330,7 @@ describe("Action smoke coverage", () => {
         "CameraGun",
         "GelRound1",
       ]),
-      "load gas gun with soft projectile round",
+      "load gel gun with soft projectile round",
     );
 
     expect(next.itemState.containerContents.CameraGun).toContain("GelRound1");

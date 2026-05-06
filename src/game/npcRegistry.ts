@@ -7,7 +7,7 @@ export const NPCS: Record<string, ConversationNpc> = {
   [YOU_FIRST_CONTACT_ID]: {
     id: YOU_FIRST_CONTACT_ID,
     name: "The voice",
-    vocab: ["man", "mox", "eedler", "voice", "operator"],
+    vocab: ["man", "mox", "eegler", "voice", "operator"],
     aiEnabled: true,
     characterProfileId: YOU_FIRST_CONTACT_ID,
   },

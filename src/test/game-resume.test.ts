@@ -55,7 +55,7 @@ describe("resume storage", () => {
     };
 
     state = updateItemLocation(state, "PowerStationKey", "ParkCenter");
-    state = setItemDoses(state, "FiveWestScotch", 9);
+    state = setItemDoses(state, "BottleOfScotch", 9);
 
     const runtimeHusk: Item = {
       id: "playerRegenHusk99",
@@ -109,7 +109,7 @@ describe("resume storage", () => {
     expect(next.world.items.find((item) => item.id === "PowerStationKey")?.location).toBe(
       "ParkCenter",
     );
-    expect(next.world.items.find((item) => item.id === "FiveWestScotch")?.doses).toBe(
+    expect(next.world.items.find((item) => item.id === "BottleOfScotch")?.doses).toBe(
       9,
     );
     expect(next.world.items.find((item) => item.id === runtimeHusk.id)?.name).toBe(

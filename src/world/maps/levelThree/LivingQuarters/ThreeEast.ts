@@ -23,7 +23,16 @@ export const threeEastRooms: Room[] = [
     id: "ThreeEastBed",
     name: "One East Bedroom",
     description: `This room has an off-smell to it. There is a twin bed situated against the south wall, to your right, with an endtable next to it. The endtable has a ceramic lamp resting on it. The floor is littered with old laundry, and the whole place looks like it hasn't been cleaned in ages. Mounted over the bed is another print of what must be a musician of some kind.^^The bed covers are twisted around what looks like a human figure which is lying in the bed. Resting on the end table is a flat, compact messaging system with an integrated headset. A doorway leads back out to the west into the Living Area.`,
-    exits: [{ direction: "west", toRoomId: "LivingQuartersThreeEast" }],
+    exits: [
+      { direction: "west", toRoomId: "LivingQuartersThreeEast" },
+      { direction: "down", toRoomId: "SecretLab" },
+    ],
+  },
+  {
+    id: "SecretLab",
+    name: "Secret Lab",
+    description: `This room has an off-smell to it. There is a twin bed situated against the south wall, to your right, with an endtable next to it. The endtable has a ceramic lamp resting on it. The floor is littered with old laundry, and the whole place looks like it hasn't been cleaned in ages. Mounted over the bed is another print of what must be a musician of some kind.^^The bed covers are twisted around what looks like a human figure which is lying in the bed. Resting on the end table is a flat, compact messaging system with an integrated headset. A doorway leads back out to the west into the Living Area.`,
+    exits: [{ direction: "up", toRoomId: "ThreeEastBed" }],
   },
 ];
 

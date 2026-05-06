@@ -300,6 +300,29 @@ describe("General gameplay", () => {
     expect(next.rating).toBe(5);
   });
 
+  it("shows restored hair in the mirror after hairychew finishes", async () => {
+    const start = patchRoomDarkness(
+      setInventory(createTestState({ roomId: "ThreeWestBath" }), ["hairychew"]),
+      "ThreeWestBath",
+      false,
+    );
+
+    const grown = await runCommands(start, [
+      "eat chewable",
+      "wait",
+      "wait",
+      "wait",
+    ]);
+
+    expect(grown.player.mirror.hasHair).toBe(true);
+
+    const reflected = await runCommand(grown, "examine mirror");
+
+    expect(reflected.log.join("\n")).toContain(
+      "head covered in a shock of blond hair",
+    );
+  });
+
   it("revives the player in a previously visited lit room and leaves behind a husk", async () => {
     const start = createTestState({
       roomId: "LevelSixCorridorEnd",

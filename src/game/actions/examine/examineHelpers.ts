@@ -47,35 +47,36 @@ function handleReflectiveExamine(ctx: ExamineItemContext): ActionResult {
   let next = ctx.state;
   let reflectMsg = "";
 
-  if (!next.player.memoriesTriggered.own_image) {
-    if (next.player.memoriesTriggered.seen_self) {
-      reflectMsg =
-        "You regard your reflection for a moment and are taken aback as you realize you've seen that face before. It's the same exact face you saw on one of the dead bodies you found, you're him, or he was you? How is this possible?";
-    } else {
-      reflectMsg =
-        "You regard your reflection for a moment, feeling a glimmer of recognition. Your skin is fresh and unblemished, your head smooth, and hairless. You don't even have eyebrows.";
-    }
+  reflectMsg =
+    "You regard your reflection for a moment and are taken aback as you realize you've seen that face before. It's the same exact face you saw on one of the dead bodies you found, you're him, or he was you? How is this possible?";
 
-    next = {
-      ...next,
-      player: {
-        ...next.player,
-        memoriesTriggered: {
-          ...next.player.memoriesTriggered,
-          own_image: true,
-        },
-      },
-    };
-
-    return {
-      state: ctx.withImmediateGossip(next),
-      message: reflectMsg,
-    };
+  if (next.player.mirror.hasHair) {
+    reflectMsg =
+      "You regard your reflection for a moment, feeling a glimmer of recognition. Your skin is fresh and unblemished, your head covered in a shock of blond hair that sprouts from a receding hairline. Your eyebrows are on the bushy side, and stubble has formed on your face and neck.";
+  } else {
+    reflectMsg =
+      "You regard your reflection for a moment, feeling a glimmer of recognition. Your skin is fresh and unblemished, your head smooth, and hairless. You don't even have eyebrows.";
   }
+
+  if (next.player.memoriesTriggered.seen_self) {
+    reflectMsg +=
+      "\n\nYou regard your reflection for a moment and are taken aback as you realize you've seen that face before. It's the same exact face you saw on one of the dead bodies you found, you're him, or he was you? How is this possible?";
+  }
+
+  next = {
+    ...next,
+    player: {
+      ...next.player,
+      memoriesTriggered: {
+        ...next.player.memoriesTriggered,
+        own_image: true,
+      },
+    },
+  };
 
   return {
     state: ctx.withImmediateGossip(next),
-    message: "Still looking good!",
+    message: reflectMsg,
   };
 }
 
@@ -106,7 +107,9 @@ function buildCameraGunOverlay(ctx: ExamineItemContext): ActionResult {
   };
 }
 
-function buildHydroponicsTerminalOverlay(ctx: ExamineItemContext): ActionResult {
+function buildHydroponicsTerminalOverlay(
+  ctx: ExamineItemContext,
+): ActionResult {
   return {
     state: ctx.state,
     overlay: withPostCloseNotifications(
@@ -297,22 +300,23 @@ export function applyExamineSideEffects(
 export function tryHandleSpecialExamine(
   ctx: ExamineItemContext,
 ): ActionResult | null {
-  const handler = SPECIAL_EXAMINE_HANDLERS.find((entry) => entry.matches(ctx.item));
+  const handler = SPECIAL_EXAMINE_HANDLERS.find((entry) =>
+    entry.matches(ctx.item),
+  );
   return handler ? handler.handle(ctx) : null;
 }
 
-export function buildExamineDescription(
-  state: GameState,
-  item: Item,
-): string {
+export function buildExamineDescription(state: GameState, item: Item): string {
   let itemDesc = item.describe
     ? item.describe(state, item, {
         kind: "examine",
         roomId: state.player.roomId,
       })
     : item.meta?.conditionalDescription &&
-        (state.worldState.conditionalTriggers?.[`searched-${item.id}`] === false ||
-          state.worldState.conditionalTriggers?.[`searched-${item.id}`] === undefined)
+        (state.worldState.conditionalTriggers?.[`searched-${item.id}`] ===
+          false ||
+          state.worldState.conditionalTriggers?.[`searched-${item.id}`] ===
+            undefined)
       ? item.meta.conditionalDescription
       : item.description?.trim() || "You see nothing special.";
 

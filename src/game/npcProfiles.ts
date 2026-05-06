@@ -26,7 +26,7 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
       "Bodies are everywhere, many badly mangled",
       "The player should restore power, then deal with the reactor",
     ],
-    name: "Mox Eedler",
+    name: "Mox Eegler",
     scene:
       "A static-filled radio call. He is trapped under heavy crates, internally injured, coughing blood, and running out of time before the connection dies.",
     unknownFacts: [

@@ -141,7 +141,7 @@ export function applyStatusEffectTick(
 
       const msg = getHairyStatusMessage(effect.remainingTurns);
 
-      if (msg?.includes("itch stops")) {
+      if (effect.remainingTurns === 1) {
         const nextState: GameState = {
           ...state,
           player: {
@@ -152,11 +152,11 @@ export function applyStatusEffectTick(
             },
           },
         };
-        return appendLog(nextState, msg);
-      } else {
-        if (msg) {
-          return appendLog(state, msg);
-        }
+        return msg ? appendLog(nextState, msg) : nextState;
+      }
+
+      if (msg) {
+        return appendLog(state, msg);
       }
       break;
     }
