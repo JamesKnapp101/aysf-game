@@ -63,72 +63,24 @@ export const levelThreeItems: Item[] = [
       kind: "key",
     },
   },
+
   {
-    id: "TAPE3AE",
-    name: "warning tape",
+    id: "CorridorThreeOpenDoorway",
+    name: "open doorway",
     description:
-      "A strip of yellow plastic tape stretches across the corridor, about three inches wide, glossy where the light hits the creases. Bold black letters repeat the same message over and over along its length.",
-    sceneryDescription:
-      "The warning tape sags a little between its anchor points, forming a flimsy barrier that feels more psychological than physical. The black lettering—BIOHAZARD - DO NOT ENTER—has bled slightly into the plastic, as if even the ink is leaching something unpleasant.",
-    location: "LevelThreeCorridorOne",
-    vocab: ["warning", "tape", "yellow", "black"],
+      "You peer into the darkness but can't make anything out inside. There is definitely something moving around in there, though.",
+    sceneryDescription: `The western unit is missing its door altogether, leaving only and empty frame that looks into darkness. You can't see anything in there, but you can hear something moving around and can sense some kind of presence.`,
+    location: "LevelThreeCorridorThree",
+    vocab: ["doorway", "open", "west", "western"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 1,
     itemSize: 1,
-    isWearable: false,
-    isContainer: false,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
   },
-  {
-    id: "STICKER",
-    name: "skull sticker",
-    description:
-      "A small sticker of a stylized skull, its edges curling where the adhesive has dried out. The design looks like a band logo—too polished to be random graffiti.",
-    sceneryDescription:
-      "Someone slapped the sticker onto the wall at casual reach height. The skull grins out in stark white and black, framed by cracked laminate and tiny bubbles where air got trapped underneath. It’s the one touch of personality in a corridor otherwise designed by a safety committee.",
-    location: "LevelThreeCorridorOne",
-    vocab: ["skull", "sticker"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "BlackBlood",
-    name: "black fluid",
-    description:
-      "Something dark and viscous has sprayed across the walls and floor. At first glance it looks like dried blood, but it’s too dark—almost ink-black, with a faint oily sheen.",
-    sceneryDescription:
-      "The black fluid clings in streaks and spatters, thick enough in places to form glossy ridges. Under the light it reflects a muddy rainbow, like engine oil left too long in the pan. Whatever it is, it dried in motion, frozen mid-drip in thin, ropey threads.",
-    location: "LevelThreeCorridorTwo",
-    vocab: ["substance", "fluid", "black", "blood", "liquid"],
-    itemClass: "liquid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "TAPE3BE",
-    name: "warning tape",
-    description:
-      "A strip of yellow warning tape hangs crookedly, scarred by several long rakes as if something with claws tore through it without slowing down. The bold black lettering is still just legible.",
-    sceneryDescription:
-      "The tape is shredded in places, dangling in thin tatters where claws or something like them gouged straight through. BIOHAZARD - DO NOT ENTER repeats between small biohazard symbols, but the message is undercut by the obvious fact that someone—or something—ignored it completely.",
-    location: "LevelThreeCorridorTwo",
-    vocab: ["warning", "tape", "yellow", "black"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isContainer: false,
-  },
+
   {
     id: "DOLL",
     name: "tattered doll",
@@ -140,108 +92,6 @@ export const levelThreeItems: Item[] = [
     vocab: ["doll"],
     itemClass: "solid",
     itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PHONE1EBed",
-    name: "phone",
-    description:
-      "A sleek bedside handset integrated into the ship’s messaging system. The small touch-sensitive keypad glows faintly, its icons worn a little from use.",
-    sceneryDescription:
-      "The phone sits in a recessed cradle built into the bedside console, a thin cable vanishing into the wall. Finger-smudges dull the surface around the keypad, hinting at late-night calls and conversations that used to matter.",
-    location: "OneEastBed",
-    vocab: ["phone", "handset", "headset"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PHONE2EBed",
-    name: "phone",
-    description:
-      "A standard-issue cabin phone, all clean lines and matte plastic. The touchpad is set flush with the surface, each contact point lighting under your fingertip.",
-    sceneryDescription:
-      "This handset looks newer than some of the others—less scratched, less abused. It rests perfectly aligned on its base, the kind of detail that suggests an owner who liked things orderly, right up until order stopped mattering.",
-    location: "OneWestBed",
-    vocab: ["phone", "handset", "headset"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PHONE2WBed",
-    name: "phone",
-    description:
-      "A shipboard handset with a few scuffs along the edge and a faint ring of discoloration where something once sat on top of it.",
-    sceneryDescription:
-      "The phone here looks like it’s doubled as a coaster, paperweight, and occasional projectile. Tiny nicks pockmark the casing, and a thin hairline crack runs along one corner of the touchpad, but the status light still pulses steadily.",
-    location: "TwoWestBed",
-    vocab: ["phone", "handset", "headset"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PHONE4EBed",
-    name: "phone",
-    description:
-      "A slim, angular handset with a brushed metal finish around the edges, more stylish than the standard issue but clearly built on the same hardware.",
-    sceneryDescription:
-      "Someone customized this unit—there’s a faint engraving around the bezel and a tiny sticker tucked under the clear shell near the base. The keypad glows with a soft blue tone instead of the usual white, giving it a quietly upgraded feel.",
-    location: "FourEastBed",
-    vocab: ["phone", "handset", "headset"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PHONE6WBed",
-    name: "phone",
-    description:
-      "A cigarette-scarred bedside phone, with a small burn mark along one edge where something hot was set too close.",
-    sceneryDescription:
-      "The handset has a little crescent of melted plastic near the base, as if someone parked a smoldering cigar too close more than once. The keypad still lights, but one corner of the display shows a permanent afterimage, like a ghost of some old notification.",
-    location: "SixWestBed",
-    vocab: ["phone", "handset", "headset"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PHONE7WBed",
-    name: "phone",
-    description:
-      "A compact shipboard phone, decorated with a small sticker half-peeled on the underside where someone thought no one would notice.",
-    sceneryDescription:
-      "The handset’s casing is scratched around the edges from being grabbed in a hurry, but the controls are clean and carefully wiped down. On the underside, a tiny cartoon decal peeks out from where the plastic has started to curl away.",
-    location: "SevenWestBed",
-    vocab: ["phone", "handset", "headset"],
-    itemClass: "solid",
-    itemCategory: "scenery",
     itemWeight: 1,
     itemSize: 1,
     isWearable: false,
@@ -266,231 +116,6 @@ export const levelThreeItems: Item[] = [
     isContainer: false,
   },
   {
-    id: "OneEastAreaRug",
-    name: "area rug",
-    description:
-      "A small area rug cut from shag-style carpeting, its fibers a chaotic blend of brown, olive green, and black. It looks partially stuck to the floor, but the bottom right corner lifts just enough to tempt you.",
-    sceneryDescription:
-      "The rug sits near the entryway like a half-hearted welcome mat. The shag pile has been stomped flat in the center and frayed at the edges, especially at the bottom right corner where the fibers are bent from being tugged up more than once.",
-    location: "LivingQuartersOneEast",
-    vocab: ["area", "rug", "shag"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 3,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-  },
-
-  {
-    id: "OneWestDEBRIS_LQ2E",
-    name: "debris",
-    description:
-      "Shattered plastic, splintered composites, and twisted metal fragments are scattered everywhere. Whatever was here before didn’t survive the outburst.",
-    sceneryDescription:
-      "The living area looks like it lost an argument with a wrecking ball. Desk pieces, panel shards, and anonymous chunks of hardware are piled up in drifts, smashed into splinters too small to easily identify.",
-    location: "LivingQuartersOneWest",
-    vocab: ["debris", "desk", "glass", "plastic", "components"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 5,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "OneWestDEBRIS_Bath",
-    name: "debris",
-    description:
-      "Fragments of fixtures and shattered polyglass litter the bathroom floor, mixed with smaller pieces of electronics that clearly don’t belong in a bathroom.",
-    sceneryDescription:
-      "The debris is clustered around the sink and mirror, as if someone hit them hard enough to explode both into the room. Bits of wiring and casing glitter among the ceramic shards, like someone smashed an appliance in here too for good measure.",
-    location: "OneWestBath",
-    vocab: ["debris", "shards", "glass", "plastic", "components"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 4,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "OneWestDEBRIS_Bed",
-    name: "debris",
-    description:
-      "Splintered furniture and broken casing pieces are strewn across the sleeping area, as if someone ripped through the room with zero interest in subtlety.",
-    sceneryDescription:
-      "Around the bed, the debris forms a chaotic halo of broken slats, cracked paneling, and bent brackets. It feels less like damage from an accident and more like the aftermath of something that very specifically wanted the room destroyed.",
-    location: "OneWestBed",
-    vocab: ["debris", "splinters", "glass", "plastic", "components"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 4,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "OneWestSTEREO",
-    name: "electronics",
-    description:
-      "A jumbled heap of circuitry, cracked display panels, and warped housings. It might once have been a television, a stereo, or an all-in-one entertainment center.",
-    sceneryDescription:
-      "The tangle of electronics is too broken to identify cleanly. Heat has bubbled the plastic in places, while sharp metal fins and half-melted connectors jut out at odd angles. You can almost imagine which piece went where, but whatever it played isn’t playing anymore.",
-    location: "LivingQuartersOneWest",
-    vocab: ["television", "tv", "stereo", "entertainment", "center"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 6,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "CLAWMARKS_LQ2E",
-    name: "claw marks",
-    description:
-      "Long gouges rake across the wall and furniture, deep enough to expose the internal structure beneath the finish.",
-    sceneryDescription:
-      "The marks are ragged but deliberate, parallel lines carved in sets of four and five. Judging from the depth of the grooves and their spacing, whatever made them had claws both very long and very sharp, and absolutely no respect for interior design.",
-    location: "LivingQuartersOneWest",
-    vocab: ["claw", "marks", "tears", "mark"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "CLAWMARKS_Bath",
-    name: "claw marks",
-    description:
-      "Several deep scratches score the bathroom door and tiles, as if something tried very hard to get in—or out.",
-    sceneryDescription:
-      "The gouges on the bathroom surfaces are unpleasantly specific. Claws have ripped through synthetic wood, plaster, even a bit of ceramic, leaving white and gray scars against the smooth finishes. Some marks curve mid-swipe, suggesting whatever it was changed its mind mid-attack.",
-    location: "OneWestBath",
-    vocab: ["claw", "marks", "tears", "scratches"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "CLAWMARKS_Bed",
-    name: "claw marks",
-    description:
-      "The bedframe and wall near the headboard are torn with long, brutal rakes that cut through fabric, padding, and into the structure beneath.",
-    sceneryDescription:
-      "The claw marks here look fresh, edges still sharp and un-softened by time. They radiate outward from where a sleeper’s throat or chest might have been, which is a thought you immediately wish you hadn’t had.",
-    location: "OneWestBed",
-    vocab: ["claw", "marks", "tears", "gouges"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "CLAWMARKS_L3C2",
-    name: "claw marks",
-    description:
-      "Deep gouges run along the corridor wall, angled in the direction of travel. They look like something large used the bulkhead as a scratching post while sprinting past.",
-    sceneryDescription:
-      "The marks in the corridor cut straight through paint and panel, exposing dull metal underneath. Chunks of material have been torn free entirely, leaving small, jagged craters where claws bit in and refused to let go the first time.",
-    location: "LevelThreeCorridorTwo",
-    vocab: ["claw", "marks", "tears", "gouges"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "OneWestMATTRESS",
-    name: "distressed mattress",
-    description:
-      "The mattress has been split open, its stuffing spilled out in uneven heaps. Springs poke through the torn fabric like exposed bone.",
-    sceneryDescription:
-      "The top layer hangs in ragged flaps, revealing clumps of synthetic fill and metal coils bent into awkward angles. Whatever did this wasn’t just trying to find something—it was making a point.",
-    location: "OneWestBed",
-    vocab: ["mattress"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 15,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PLANTS_LQ2W",
-    name: "plants and flowers",
-    description:
-      "The room is crowded with potted plants: tall, spindly ones reaching for the ceiling, squat leafy ones overflowing their containers, and cascades of trailing vines. Blossoms of blue, white, violet, and red punctuate the green.",
-    sceneryDescription:
-      "Every flat surface has been conscripted into supporting plant life. Ivy creeps along one wall, its tendrils wrapping themselves around conduit and vents. The air smells faintly of damp soil and something floral that doesn’t exist anywhere in nature but here.",
-    location: "LivingQuartersTwoWest",
-    vocab: ["plants", "pots", "flowers"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 10,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "PLANTS_2WBed",
-    name: "plants and flowers",
-    description:
-      "A cluster of potted plants crowds the sleeping area—short ferns, a tall narrow tree, and a stubborn vine that has started using the bedframe as a trellis.",
-    sceneryDescription:
-      "Here in the sleeping nook the plants feel more personal: a small forest grown up around the bed, turning it into a kind of improvised greenhouse bunk. Fallen petals and stray leaves speckle the sheets, a quiet, living mess left behind.",
-    location: "TwoWestBed",
-    vocab: ["plants", "pots", "flowers", "vines"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 8,
-    itemSize: 5,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "KibbleBOX",
-    name: "box of cat kibbles",
-    description:
-      "A cardboard box of cat kibble, bright branding plastered across the front with a glossy, overexcited feline promising optimal joy per bite.",
-    sceneryDescription:
-      "The box is a little dented at the corners, with a tear along the top where it’s been opened and re-folded instead of properly closed. A few stray crumbs of kibble rattle inside when you move it, and there’s a faint, unmistakable smell of processed meat and artificial fish.",
-    location: "UNKNOWN",
-    vocab: ["box", "cat", "kibbles", "kibble", "food"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 3,
-    itemSize: 2,
-    isWearable: false,
-    isContainer: true,
-    isOpenable: true,
-    capacity: 10,
-
-    doses: 25,
-  },
-  {
     id: "FISHBOWL",
     name: "fish bowl",
     description:
@@ -513,140 +138,6 @@ export const levelThreeItems: Item[] = [
         holds: ["solid", "liquid"],
       },
     },
-  },
-
-  {
-    id: "URN",
-    name: "urn",
-    description: "A big old test urn.",
-    sceneryDescription: "A ceramic urn sits in one corner.",
-    location: "LivingQuartersOneEast",
-    vocab: ["urn"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 4,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: false,
-    capacity: 5,
-    meta: {
-      container: {
-        holds: ["solid", "liquid"],
-      },
-    },
-  },
-
-  {
-    id: "DRUGTIN",
-    name: "small tin box",
-    description:
-      "A small, silvery tin box, smooth-sided with a hinged lid. Fingerprints have dulled the shine in irregular patches.",
-    sceneryDescription:
-      "The box has that particular rattle that says there’s something small and important inside. The lid is scuffed around the edge where nails and tools have pried it open more times than the manufacturer intended.",
-    location: "", //"SixWestCloset",
-    vocab: ["small", "tin", "box"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: true,
-    capacity: 3,
-  },
-  {
-    id: "nylons",
-    name: "nylons",
-    description:
-      "A pair of nylons with a wide hole torn open along one thigh where some heavy impact landed.",
-    sceneryDescription:
-      "The fabric around the tear has laddered into thin white runs, radiating outward like cracks in glass. The nylons are still clinging to their owner in places, making the damage look both recent and personal.",
-    location: "LivingQuartersSevenWest",
-    vocab: ["nylons", "nylon", "stockings", "stocking"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "EDSBLOOD_LQ7W",
-    name: "blood trail",
-    description:
-      "A pattern of dark blood stains the floor, smeared and spattered as if whoever left it wasn’t walking cleanly anymore.",
-    sceneryDescription:
-      "The blood looks like it was running freely for a while—broad smears broken by heavier droplets where the person stumbled or leaned. It leads away from the worst of the scene, but whoever it belonged to isn’t here to explain how the story ends.",
-    location: "LivingQuartersSevenWest",
-    vocab: ["blood", "trail", "spots", "spatters"],
-    itemClass: "liquid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "EDSBLOOD_7WBed",
-    name: "blood trail",
-    description:
-      "Blood has soaked into the bedding and dripped onto the floor, forming irregular spots and streaks around the bed.",
-    sceneryDescription:
-      "On and around the mattress, the blood is thicker and more chaotic, as if the worst of whatever happened started—or ended—here. Dark stains have dried to a rusty crust in the fabric, with thinner rivulets reaching for the edge and dripping to the floor below.",
-    location: "SevenWestBed",
-    vocab: ["blood", "trail", "spots", "spatters"],
-    itemClass: "liquid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "POEM",
-    name: "poem",
-    description:
-      "A neatly written poem in small, precise, all-caps handwriting, squeezed onto a single piece of paper.",
-    sceneryDescription:
-      "The letters are uniform and meticulous, each line spaced with mechanical care. Whoever wrote this wasn’t just killing time—they were trying to impose some kind of order on a universe that refused to cooperate.",
-    location: "UNKNOWN",
-    vocab: ["piece", "paper", "poem"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    isContainer: false,
-    isLoggable: true,
-    readableTitle: `Random Poem`,
-    readableText:
-      "They went to the Moon and to Venus and Mars,\n" +
-      "And they went to Europa and Io,\n" +
-      "They went out to Pluto and on to the stars\n" +
-      "Till they couldn't arrive out of cryo, so\n" +
-      "They built us an ark just like Noah before them\n" +
-      "And filled it with what was worth bringing,\n" +
-      "Fitting creatures and men everywhere they could store them,\n" +
-      "Then plotted a course ripe for flinging,\n" +
-      "They built us the best of the best they could fashion\n" +
-      "Then wished us Godspeed and good luck,\n" +
-      "The greatest achievement of humankind's passion,\n" +
-      "The Deus Ex Machina sucks.\n\n" +
-      "Our ship has got everything, so you could say,\n" +
-      "It's got restaurants, theatres and games,\n" +
-      "But its whistles and bells at the end of the day,\n" +
-      "Get indelibly worn on your brain,\n" +
-      "When you are drifting, a ship is a ship,\n" +
-      "A prison's a prison - it means that you're stuck,\n" +
-      "Even heaven gets dull on a long enough trip;\n" +
-      "The Deus Ex Machina sucks.\n",
   },
   {
     id: "ParkPlaque",
@@ -819,7 +310,6 @@ export const levelThreeItems: Item[] = [
     isOpenable: true,
     capacity: 4,
   },
-
   {
     id: "parksouthparkbench",
     name: "park bench",
@@ -950,23 +440,7 @@ export const levelThreeItems: Item[] = [
     isReadable: false,
     isContainer: false,
   },
-  {
-    id: "STUMP",
-    name: "tree stump",
-    description:
-      "The freshly cut stump of a tree, angled slightly where the trunk was removed with a single, very clean cut.",
-    sceneryDescription:
-      "The stump’s exposed wood is pale and raw, rings of growth laid bare like a cross-section of time. A faint dusting of sawdust lingers in the cracks where bark meets earth, as if whoever did the cutting hadn’t bothered to sweep up after erasing something that had taken decades to grow.",
-    location: "UNKNOWN",
-    vocab: ["tree", "stump"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 80,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
+
   {
     id: "dias",
     name: "dias",
@@ -1933,74 +1407,6 @@ export const levelThreeItems: Item[] = [
     readableTitle: `Phone Number Found in Gym Locker`,
     readableText: "X7239",
     scoreId: "obtained_secret_phone_number_1",
-  },
-  {
-    id: "LIBSIGN",
-    name: "engraved sign",
-    description: "A stone sign with the word LIBRARY engraved into it.",
-    sceneryDescription:
-      "The sign is carved directly into a slab of pale stone, the letters cut deep and painted a dark, fade-resistant pigment. Tiny chips and weathering marks soften the edges, but the word itself is still clear and unmistakable.",
-    location: "LibraryEntrance",
-    vocab: ["engraved", "stone", "sign", "library"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 50,
-    itemSize: 4,
-    isWearable: false,
-    isReadable: true,
-    isContainer: false,
-    readableText: "LIBRARY",
-  },
-  {
-    id: "TerminalNorth",
-    name: "computer terminal",
-    description:
-      "A strange, diamond-shaped computer terminal that still manages to suggest a human form. Symmetrical plates cover its surface, hiding the underlying electronics. Tiny lights dot its shell, all of them dark.",
-    sceneryDescription:
-      "The terminal stands upright like a sarcophagus designed by someone who hated right angles. Its faceted plates fit together with unnerving precision, leaving no obvious seams. Rows of pinprick LEDs are set into the surface in geometric patterns, currently lifeless, as if the whole thing is holding its breath.",
-    location: "LibraryTerminalNorth",
-    vocab: ["computer", "terminal", "library", "sarcophagus"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "TerminalSouth",
-    name: "computer terminal",
-    description:
-      "Another diamond-shaped computer terminal, its armored plates and dark LEDs arranged to give an almost human silhouette.",
-    sceneryDescription:
-      "This unit’s plating is just as symmetrical, but bears different scuff marks and hairline scratches, like it’s seen a slightly rougher crowd. The suggestion of a chest, shoulders, and head is subtle but deliberate—someone wanted users to feel like they were standing in front of a person, not a box.",
-    location: "LibraryTerminalSouth",
-    vocab: ["computer", "terminal", "library", "sarcophagus"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "Terminal",
-    name: "computer terminal",
-    description:
-      "A diamond-shaped computer terminal whose overall profile evokes a human figure. Symmetrical plates cover the structure and a grid of tiny lights dots the exterior, all shut down for now.",
-    sceneryDescription:
-      "The terminal stands in mute symmetry, its angled plates casting sharp shadows. Up close, you can just make out the faint outlines of access panels and maintenance seams, expertly concealed in the design. The dark LEDs give it the unsettling look of a face with a thousand closed eyes.",
-    location: "LibraryTerminal",
-    vocab: ["computer", "terminal", "library"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
   },
   {
     id: "SCALE",

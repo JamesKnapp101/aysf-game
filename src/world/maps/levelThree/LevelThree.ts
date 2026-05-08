@@ -1,6 +1,7 @@
 import { Item } from "@game/types/itemTypes";
 import { doomedChefItems } from "src/world/Items/creatures/doomedChef";
 import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
+import { lilLillyCorridorThreeItems } from "src/world/Items/creatures/virtual/lilLillyCorridorThree";
 import { moxStairBottomItems } from "src/world/Items/creatures/virtual/moxStairBottom";
 import { barBotItems } from "src/world/Items/robots/barBot";
 import { lonelyBotItems } from "src/world/Items/robots/lonelyBot";
@@ -88,6 +89,7 @@ export const LEVEL_THREE: WorldChunk = {
     ...nailBotItems,
     ...doomedChefItems,
     ...moxStairBottomItems,
+    ...lilLillyCorridorThreeItems,
     ...warehouseItems,
     ...spaItems,
     ...parkItems,
@@ -134,7 +136,7 @@ export const LEVEL_THREE: WorldChunk = {
     {
       id: "LevelThreeCorridorThree",
       name: "Level Three Corridor Three",
-      description: `The corridor stretches into the darkness to the north and south here. To the east and west are doors affixed with neat black plastic labels indicating '3CE' and '3CW' respectively.`,
+      description: `The corridor continues north and south, with an apartment unit entrance to both the east and west. [[SCENERY]]`,
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorFour" },
         { direction: "south", toRoomId: "LevelThreeCorridorTwo" },
@@ -156,7 +158,7 @@ export const LEVEL_THREE: WorldChunk = {
     {
       id: "LevelThreeCorridorFive",
       name: "Level Three Corridor Five",
-      description: `This is a dimly lit corridor stretching off to the north and south.`,
+      description: `This is a dimly lit corridor in a residential complex which stretches off to the north where you can see flickering lights, and also to the south, where the corridor branches further on.`,
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorSix" },
         { direction: "south", toRoomId: "LevelThreeCorridorFour" },

@@ -178,8 +178,15 @@ export const createInitialState = (world: World): GameState => {
           unlockTriggers: [],
           conditionalTriggers: ["EeglerSecretLabOpen"],
           direction: "down",
-          blockMsg: `The floor panel is closed.`,
+          blockMsg: `You can't go that way.`,
           passMsg: `You descend the hidden stairs.`,
+        },
+        LevelThreeCorridorTwo: {
+          roomId: "LevelThreeCorridorTwo",
+          unlockTriggers: ["unobtainium"],
+          direction: "south",
+          blockMsg: `The way south is completely blocked.`,
+          passMsg: `[no pass condition]`,
         },
         ParkMaintenance: {
           roomId: "ParkMaintenance",

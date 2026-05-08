@@ -48,6 +48,30 @@ export const corpseItems: Item[] = [
     isContainer: false,
     isContagious: true,
   },
+  {
+    id: "HalvedCorpse",
+    name: "halved corpse",
+    description: `She has long, wavy blonde hair and is wearing a bloodstained gray t-shirt, her face slack, and ashen. It's difficult to say what exactly happened to her; something has cut her completely in half, or maybe partially dissolved her. From the positioning it looks like she might have come through the open doorway to the west, but the bottom half of her is nowhere to be found.`,
+    sceneryDescription:
+      "[[newline]]On the floor, face down, is the body of a woman, or at least, half of her. Everything below her waist is gone, her long blonde hair draped over the ragged, partially dissolved edge that trails into slimy ropes that trail through the doorway of the dark room. Her head is turned to one side, eyes blank, and her arms are askew.",
+    location: "LevelThreeCorridorThree",
+    vocab: ["woman", "lil", "lil-lilly", "corpse", "body", "half", "halved"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "halved_corpse_memory",
+      },
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 80,
+    itemSize: 10,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    isContagious: true,
+  },
 
   // LEVEL 7 – Splattered corpse in corridor ---------------------------------
   {

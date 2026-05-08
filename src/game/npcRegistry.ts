@@ -77,10 +77,17 @@ export const NPCS: Record<string, ConversationNpc> = {
   },
   MoxStairBottom: {
     id: "MoxStairBottom",
-    name: "The wistful ghost",
-    vocab: ["man", "guy", "scientist", "mox", "eegler"],
+    name: "The falling man",
+    vocab: ["man", "guy", "falling", "mox", "eegler"],
     aiEnabled: true,
     characterProfileId: "mox_stair_bottom",
+  },
+  LilLillyCorridorThree: {
+    id: "LilLillyCorridorThree",
+    name: "The passionate woman",
+    vocab: ["lil-lilly", "woman", "tendwick", "blonde", "blond"],
+    aiEnabled: true,
+    characterProfileId: "lil_corridor_three",
   },
 };
 

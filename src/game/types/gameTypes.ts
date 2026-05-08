@@ -99,6 +99,7 @@ export type ExperienceKind = "lesson" | "memory";
 export type ActiveExperience = {
   currentStageIndex: number;
   experienceId: string;
+  firedEventIds?: Record<string, boolean>;
   kind: ExperienceKind;
   returnRoomId: RoomId;
   sourceId?: string;

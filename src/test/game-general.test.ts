@@ -386,6 +386,58 @@ describe("General gameplay", () => {
     );
   });
 
+  it("runs timed events inside MindGun corpse memories", async () => {
+    const base = setInventory(
+      createTestState({ roomId: "LevelThreeCorridorThree" }),
+      ["MindGun", "MindCap"],
+    );
+    const start = {
+      ...base,
+      itemState: {
+        ...base.itemState,
+        wornByPlayer: {
+          ...base.itemState.wornByPlayer,
+          head: "MindCap",
+        },
+      },
+    };
+
+    const linked = await runCommand(start, "shoot corpse with scanner");
+
+    expect(linked.player.roomId).toBe("HalvedCorpseMemory");
+    expect(linked.worldState.darkRooms.HalvedCorpseMemory).not.toBe(true);
+
+    const afterOneTurn = await runCommand(linked, "wait");
+
+    expect(afterOneTurn.worldState.activeExperience?.turnsRemaining).toBe(2);
+    expect(afterOneTurn.worldState.darkRooms.HalvedCorpseMemory).not.toBe(true);
+
+    const afterBlackout = await runCommand(afterOneTurn, "wait");
+
+    expect(afterBlackout.worldState.activeExperience?.turnsRemaining).toBe(1);
+    expect(afterBlackout.worldState.darkRooms.HalvedCorpseMemory).toBe(true);
+    expect(afterBlackout.itemState.itemRoomId.LilLillyCorridorThree).toBe(
+      "NOWHERE",
+    );
+    expect(getLastLogEntry(afterBlackout)).toContain("The lights go out");
+
+    const returned = await runCommand(afterBlackout, "wait");
+
+    expect(returned.player.roomId).toBe("LevelThreeCorridorThree");
+    expect(returned.worldState.activeExperience).toBeUndefined();
+    expect(returned.log.join("\n")).toContain(
+      "In the dark, Lil-Lilly makes it only a few steps",
+    );
+
+    const replayed = await runCommand(returned, "shoot corpse with scanner");
+
+    expect(replayed.player.roomId).toBe("HalvedCorpseMemory");
+    expect(replayed.worldState.darkRooms.HalvedCorpseMemory).toBe(false);
+    expect(replayed.itemState.itemRoomId.LilLillyCorridorThree).toBe(
+      "HalvedCorpseMemory",
+    );
+  });
+
   it("aborts active memories back to the return room", async () => {
     const base = setInventory(createTestState({ roomId: "StairWellSeven" }), [
       "MindGun",
