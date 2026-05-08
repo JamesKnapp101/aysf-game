@@ -282,23 +282,7 @@ export const levelThreeItems: Item[] = [
     isReadable: false,
     isContainer: true,
   },
-  {
-    id: "Guitar",
-    name: "electric guitar",
-    description:
-      "A '57 Higgenbottom Quantumcaster with Wakashi pickups and a whammy bar. You’re not entirely sure what any of that entails, but it screams top of the line. The body has a sleek black finish, offset by chrome machine heads and a bridge polished to a mirror shine.",
-    sceneryDescription:
-      "The guitar rests in a stand like a shrine piece, cable coiled neatly beside it. Light runs along the curves of the body in a smooth, uninterrupted line, catching on the chrome hardware in sharp, bright sparks. It looks like the kind of instrument that expects to be amplified in front of too many people.",
-    location: "OneEastBed",
-    vocab: ["electric", "guitar", "axe"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 10,
-    itemSize: 10,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
+
   {
     id: "OneWestDEBRIS_LQ2E",
     name: "debris",

@@ -39,13 +39,14 @@ export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
   ],
   UmboltzFootlocker: [
     "CameraGun",
-    "MindGun",
-    "MindCap",
-    "DNAReader",
+    "GelRound1",
+    "GelRound2",
+    "GelRound3",
     "BottleOfScotch",
     "MensLockerKey4",
   ],
   FiveWestMedicineChest: ["hornychewToo", "hairychew"],
+  EeglerMedicineChest: ["Brinychew"],
   SixWestCloset: ["ed_white_shirt", "ed_pressed_pants", "wool_vest"],
   AdminOfficeWastebin: ["AdminOfficeWastebinNote"],
 };

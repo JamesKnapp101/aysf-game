@@ -132,4 +132,5 @@ export const playerMemoryMap = {
   aware_of_innoculant: { value: 5 },
   listened_to_music_box: { value: 5 },
   seen_self: { value: 0 },
+  found_own_quarters: { value: 5 },
 };

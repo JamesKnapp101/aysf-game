@@ -15,7 +15,9 @@ export type StatusEffectDiagnostic = {
 
 export type StatusEffectIconId =
   | "biohazard"
+  | "bicep"
   | "bottle"
+  | "brain"
   | "comb"
   | "cross"
   | "death-face"
@@ -55,6 +57,8 @@ const STATUS_EFFECT_LABELS: Record<
   regenerationWoozies: { icon: "spiral", name: "Regeneration Woozies" },
   seritroxin: { icon: "biohazard", name: "Seritroxin" },
   smokeInhalation: { icon: "droplet", name: "Smoke Inhalation" },
+  smarter: { icon: "brain", name: "Smarter" },
+  stronger: { icon: "bicep", name: "Stronger" },
   hyperaroused: { icon: "droplet", name: "Hyperaroused" },
   trixophine: { icon: "spiral", name: "Trixophine" },
   vanitrax: { icon: "cross", name: "Vanitrax" },
@@ -299,6 +303,10 @@ function describeStatusEffect(
       return "You are on xantophol.";
     case "regenerationWoozies":
       return "You feel a little discombobulated, with minor little aches and pains. Muscle ache? Gas? It doesn't seem serious.";
+    case "smarter":
+      return "You feel sharper, like your thoughts have a little more room to move.";
+    case "stronger":
+      return "You feel stronger than usual.";
     case "nightvision-active": {
       const currentRoom = getCurrentRoom(state);
       return state.worldState.darkRooms[currentRoom.id]

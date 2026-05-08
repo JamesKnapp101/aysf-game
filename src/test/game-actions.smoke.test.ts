@@ -1,4 +1,6 @@
 import { ACTION_HANDLERS } from "@game/actions";
+import { buildMemoryNotification } from "@game/rules/notifications";
+import { getStatusEffectDiagnostics } from "@game/selectors/statusSelectors";
 import { useUIOverlayStore } from "@game/store/store";
 import { describe, expect, it } from "vitest";
 import { getItemsInRoom } from "../game/selectors/roomSelectors";
@@ -39,6 +41,7 @@ const COVERED_ACTIONS = [
   "stand",
   "turn",
   "push",
+  "play",
   "ask",
   "tell",
   "call",
@@ -399,6 +402,15 @@ describe("Action smoke coverage", () => {
     expect(next.radio?.activeNpcId).toBe("you_1st_contact");
   });
 
+  it("covers play", async () => {
+    const next = await runCommand(
+      setInventory(createTestState(), ["EeglerGuitar"]),
+      "play guitar",
+    );
+
+    expectCommandEntry(next, "play guitar", "Your fingers seem to find");
+  });
+
   it("covers call", async () => {
     const next = await runCommand(
       createTestState({ roomId: "LevelThreeCorridorSeven" }),
@@ -523,6 +535,74 @@ describe("Action smoke coverage", () => {
     );
 
     expect(next.worldState.conditionalTriggers.RobotRefugeAccess).toBe(true);
+  });
+
+  it("toggles the hidden lab stairs with the Eegler wall fixture", async () => {
+    let state = createTestState({ roomId: "ThreeEastBed" });
+
+    state = await runCommand(state, "down");
+    expect(state.player.roomId).toBe("ThreeEastBed");
+    expectCommandEntry(state, "down", "The floor panel is closed.");
+
+    state = await runCommand(state, "turn wall fixture");
+    expect(state.worldState.conditionalTriggers.EeglerSecretLabOpen).toBe(true);
+
+    state = await runCommand(state, "down");
+    expect(state.player.roomId).toBe("SecretLab");
+
+    state = await runCommand(state, "up");
+    state = await runCommand(state, "turn wall fixture");
+    expect(state.worldState.conditionalTriggers.EeglerSecretLabOpen).toBe(false);
+
+    state = await runCommand(state, "down");
+    expect(state.player.roomId).toBe("ThreeEastBed");
+  });
+
+  it("plays the Eegler residence memory only on first entry", async () => {
+    let state = createTestState({ roomId: "ThreeEastBed" });
+
+    state = await runCommand(state, "west");
+    expectCommandEntry(state, "west", "You've been here before.");
+    expect(state.player.memoriesTriggered.found_own_quarters).toBe(true);
+    expect(state.uiState.notifications).toContainEqual({
+      id: 1,
+      ...buildMemoryNotification(5),
+    });
+
+    state = await runCommand(state, "east");
+    state = await runCommand(state, "west");
+    expect(getCommandEntry(state, "west")).not.toContain(
+      "You've been here before.",
+    );
+  });
+
+  it("applies and labels the smarter and stronger status effects", async () => {
+    const smarter = await runCommand(
+      setInventory(createTestState(), ["Brinychew"]),
+      "eat chewable",
+    );
+
+    expect(smarter.player.statusEffects.map((effect) => effect.id)).toContain(
+      "smarter",
+    );
+
+    const diagnostics = getStatusEffectDiagnostics({
+      ...smarter,
+      player: {
+        ...smarter.player,
+        statusEffects: [
+          ...smarter.player.statusEffects,
+          { id: "stronger", intensity: 100, remainingTurns: 1000 },
+        ],
+      },
+    });
+
+    expect(diagnostics).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "smarter", icon: "brain" }),
+        expect.objectContaining({ id: "stronger", icon: "bicep" }),
+      ]),
+    );
   });
 
   it("covers stick", async () => {

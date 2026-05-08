@@ -7,6 +7,7 @@ import { doEat } from "@game/actions/eat/eat";
 import { doListen } from "@game/actions/listen/listen";
 import { doLook } from "@game/actions/look/look";
 import { doPet } from "@game/actions/pet/pet";
+import { doPlay } from "@game/actions/play/play";
 import { doPush } from "@game/actions/push/push";
 import { doRide } from "@game/actions/ride/ride";
 import { doTell } from "@game/actions/tell/tell";
@@ -66,6 +67,7 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   turn: doTurn,
   push: doPush,
   pet: doPet,
+  play: doPlay,
   call: doCall,
   stick: doStick,
   ask: doAsk,

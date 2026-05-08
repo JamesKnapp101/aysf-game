@@ -66,20 +66,6 @@ export const specialItems: Item[] = [
   },
 
   // 4. DNA Reader ------------------------------------------------------------
-  {
-    id: "DNAReader",
-    name: "slim electronic wand",
-    description:
-      "A slim electronic wand about a foot long, ending in a small porous bulb for collecting and analyzing trace samples.",
-    initialDescription:
-      "A slender electronic wand of some kind lies on one of the shelves, out of its packaging.",
-    location: "seeded",
-    vocab: ["dna", "sampler", "analyzer", "reader", "wand"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-  },
 
   // 5. Scalpel ---------------------------------------------------------------
   {
@@ -246,8 +232,8 @@ export const specialItems: Item[] = [
     description:
       "A pair of high-tech goggles with a black elastic strap. Beside the right eyepiece sits a selector lens that can switch between several imaging modes.",
     initialDescription:
-      "Hanging around your twinÃ¢â‚¬â„¢s neck is a pair of high-tech goggles.",
-    location: "LivingQuartersThreeEast", //"Warehouse",
+      "Hanging around your twin's neck is a pair of high-tech goggles.",
+    location: "Warehouse",
     vocab: ["goggles", "night", "vision"],
     itemClass: "solid",
     itemCategory: "collectable",

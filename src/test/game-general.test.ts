@@ -13,7 +13,10 @@ import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { AQUARIUM_BREATHER_ITEM_ID } from "src/world/Items/creatures/octopus";
 import { INITIAL_WORLD } from "src/world/World";
-import { buildScoreNotification } from "../game/rules/notifications";
+import {
+  buildMemoryNotification,
+  buildScoreNotification,
+} from "../game/rules/notifications";
 import { getItemsInRoom } from "../game/selectors/roomSelectors";
 import {
   createTestState,
@@ -298,6 +301,10 @@ describe("General gameplay", () => {
 
     expect(next.player.memoriesTriggered.own_image).toBe(true);
     expect(next.rating).toBe(5);
+    expect(next.uiState.notifications).toContainEqual({
+      id: 1,
+      ...buildMemoryNotification(5),
+    });
   });
 
   it("shows restored hair in the mirror after hairychew finishes", async () => {

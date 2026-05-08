@@ -148,8 +148,8 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
     id: "DOOR3CE",
     name: "living quarters door 3CE",
     descriptionFromA:
-      "To the east is a door affixed with a neat black plastic label indicating '3CE'. A strip of yellow and black tape has been stretched across the eastern door.",
-    descriptionFromB: "To the west is the unit's front door.",
+      "To the east is a door affixed with a wooden placard that reads 'Eegler Residence.'",
+    descriptionFromB: "To the west is the unit's front door. ",
     kind: "standard",
     vocab: ["east door", "door 3ce"],
     connects: {
@@ -194,7 +194,7 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
   {
     id: "ThreeEastBDoor",
     name: "bathroom door",
-    descriptionFromA: "To the south is a wooden door.",
+    descriptionFromA: "To the south is a wooden door leading to a bathroom.",
     descriptionFromB: "The bathroom door is to the north.",
     kind: "standard",
     vocab: ["bathroom door"],

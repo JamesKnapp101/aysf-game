@@ -81,6 +81,16 @@
         0 0 28px rgba(255, 219, 77, 0.24);
 }
 
+.game-notification--memory {
+    background:
+        linear-gradient(180deg,
+            rgba(87, 255, 87, 0.98),
+            rgba(31, 222, 31, 0.98));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.22) inset,
+        0 0 28px rgba(77, 219, 255, 0.24);
+}
+
 .game-notification--gossip {
     background:
         linear-gradient(180deg,

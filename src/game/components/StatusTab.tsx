@@ -138,12 +138,37 @@ const StatusEffectBadgeIcon: React.FC<{ icon: StatusEffectIconId }> = ({
           <circle cx="12" cy="12" r="7.6" fill="none" />
         </IconSvg>
       );
+    case "bicep":
+      return (
+        <IconSvg>
+          <path
+            d="M8.5 11.3c1.6-.5 2.7-1.7 3.2-3.4l.6-2.2c.2-.8 1-1.2 1.8-1 .8.2 1.2 1 .9 1.8l-.5 1.7h2.2c1.6 0 2.9 1.3 2.9 2.9v2.8c0 2.8-2.3 5.1-5.1 5.1h-4.2c-2.6 0-4.8-2.1-4.8-4.8v-1.7c0-.8.6-1.4 1.4-1.4h1.6Z"
+            fill="none"
+          />
+          <path d="M9 11.3v7.5" />
+          <path d="M14.5 8.2c-.4 1.5-1.2 2.6-2.4 3.2" />
+        </IconSvg>
+      );
     case "bottle":
       return (
         <IconSvg>
           <path d="M10 3h4v4l3 4v8.5A1.5 1.5 0 0 1 15.5 21h-7A1.5 1.5 0 0 1 7 19.5V11l3-4V3Z" />
           <path d="M9.5 3h5" />
           <path d="M8.5 14.5h7" />
+        </IconSvg>
+      );
+    case "brain":
+      return (
+        <IconSvg>
+          <path
+            d="M9.2 18.8a4 4 0 0 1-3.9-4 3.7 3.7 0 0 1 1-2.5A3.4 3.4 0 0 1 7.2 7a3.7 3.7 0 0 1 3.3-2 3.3 3.3 0 0 1 2.1.7A3.3 3.3 0 0 1 14.8 5a3.7 3.7 0 0 1 3.4 2.2 3.5 3.5 0 0 1 .9 5.1 3.7 3.7 0 0 1 1 2.5 4 4 0 0 1-4 4H9.2Z"
+            fill="none"
+          />
+          <path d="M12 6v12.7" />
+          <path d="M8.3 10.2c1.1-.5 2.3-.4 3.2.4" />
+          <path d="M15.7 10.2c-1.1-.5-2.3-.4-3.2.4" />
+          <path d="M7.5 14.2c1.2-.4 2.4-.1 3.2.8" />
+          <path d="M16.5 14.2c-1.2-.4-2.4-.1-3.2.8" />
         </IconSvg>
       );
     case "comb":

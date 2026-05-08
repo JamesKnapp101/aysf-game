@@ -67,6 +67,8 @@ export type StatusId =
   | "death"
   | "hyperaroused"
   | "explosive follicle growth"
+  | "smarter"
+  | "stronger"
   | "pheromoned";
 
 export interface StatusEffect {
@@ -76,7 +78,12 @@ export interface StatusEffect {
   source?: string;
 }
 
-export type GameNotificationKind = "score" | "gossip" | "log" | "system";
+export type GameNotificationKind =
+  | "score"
+  | "memory"
+  | "gossip"
+  | "log"
+  | "system";
 
 export type GameNotificationDraft = {
   kind: GameNotificationKind;

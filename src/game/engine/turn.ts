@@ -21,6 +21,10 @@ import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { tickGamePreserveAnimals } from "@game/preserve/preserveAnimals";
 import { tickGamePreserveFeedback } from "@game/preserve/preserveFeedback";
 import { tickGamePreserveRun } from "@game/preserve/preserveState";
+import {
+  buildMemoryNotification,
+  enqueueNotification,
+} from "@game/rules/notifications";
 import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
 import {
@@ -541,9 +545,15 @@ function updateCurrentMemory(state: GameState): GameState {
     }
   }
 
-  return calculatedMemory === state.rating
-    ? state
-    : { ...state, rating: calculatedMemory };
+  if (calculatedMemory === state.rating) return state;
+
+  const next = { ...state, rating: calculatedMemory };
+  if (calculatedMemory < state.rating) return next;
+
+  return enqueueNotification(
+    next,
+    buildMemoryNotification(calculatedMemory - state.rating),
+  );
 }
 
 function tickScoreAndMemory(state: GameState): GameState {

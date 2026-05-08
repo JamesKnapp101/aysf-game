@@ -134,6 +134,7 @@ export const createInitialState = (world: World): GameState => {
         aware_of_statue_nature: false,
         aware_of_innoculant: false,
         listened_to_music_box: false,
+        found_own_quarters: false,
       },
       vitals: {
         health: 100,
@@ -171,6 +172,14 @@ export const createInitialState = (world: World): GameState => {
           direction: "east",
           blockMsg: `You can't go that way.`,
           passMsg: `You duck underneath the lowest rack and climb through the opening.`,
+        },
+        ThreeEastBed: {
+          roomId: "ThreeEastBed",
+          unlockTriggers: [],
+          conditionalTriggers: ["EeglerSecretLabOpen"],
+          direction: "down",
+          blockMsg: `The floor panel is closed.`,
+          passMsg: `You descend the hidden stairs.`,
         },
         ParkMaintenance: {
           roomId: "ParkMaintenance",
@@ -468,6 +477,7 @@ export const createInitialState = (world: World): GameState => {
       conditionalTriggers: {
         MysteriousNoteFound: false,
         RobotRefugeAccess: false,
+        EeglerSecretLabOpen: false,
         TrashBotMaintenanceDoorOpen: false,
         HydroponicsDoorUnblocked: false,
         EscapedWithYellowBadge: false,

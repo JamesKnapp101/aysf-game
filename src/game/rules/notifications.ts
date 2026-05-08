@@ -96,6 +96,13 @@ export function buildScoreNotification(
   };
 }
 
+export function buildMemoryNotification(points: number): GameNotificationDraft {
+  return {
+    kind: "memory",
+    text: `Your memory rating just went up by ${points} points!`,
+  };
+}
+
 export function buildGossipNotification(): GameNotificationDraft {
   return {
     kind: "gossip",

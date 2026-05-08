@@ -12,6 +12,27 @@ export function tryTurnItem(
     return { state, message: item.overrides.turn };
   }
 
+  if (item.id === "EeglerWallFixture") {
+    const isOpen = state.worldState.conditionalTriggers.EeglerSecretLabOpen;
+    next = {
+      ...state,
+      worldState: {
+        ...state.worldState,
+        conditionalTriggers: {
+          ...state.worldState.conditionalTriggers,
+          EeglerSecretLabOpen: !isOpen,
+        },
+      },
+    };
+
+    return {
+      state: next,
+      message: isOpen
+        ? "You rotate the wall fixture back. The floor panel slides shut, hiding the stairs again."
+        : "You rotate the wall fixture. Somewhere beneath the bed, machinery clicks and a panel in the floor slides open, revealing stairs leading down.",
+    };
+  }
+
   if (item.id === "PowerStationKey") {
     if (
       !state.itemState.containerContents["PowerStationKeyhole"]?.includes(

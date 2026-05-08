@@ -49,6 +49,29 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
     run: (state) => runParkEastPowerKeySnatch(state),
   },
   {
+    id: "living_quarters_three_east_memory",
+    when: (state, ctx) =>
+      ctx.kind === "onEnterRoom" && ctx.roomId === "LivingQuartersThreeEast",
+    run: (state) => {
+      let next = state;
+      next = queueAfterRoomDescription(
+        next,
+        `As you step through the door you catch a series of familiar smells, including the faint scent of a perfume that your brain latches onto. You've been here before.`,
+      );
+      next = {
+        ...next,
+        player: {
+          ...next.player,
+          memoriesTriggered: {
+            ...next.player.memoriesTriggered,
+            found_own_quarters: true,
+          },
+        },
+      };
+      return next;
+    },
+  },
+  {
     id: "cat_meet",
     when: (state, ctx) =>
       ctx.kind === "onEnterRoom" && ctx.roomId === "LevelThreeCorridorSeven",
