@@ -1,4 +1,9 @@
 import { queueAfterRoomDescription } from "@game/helpers/gameHelpers";
+import {
+  GYM_ROOM_ID,
+  moveGymExerciseBallToRoom,
+  playerHasGymExerciseBall,
+} from "@game/helpers/gymHelpers";
 import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import {
   armParkEastPowerKeySnatch,
@@ -210,6 +215,23 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       next = queueAfterRoomDescription(
         next,
         `Just as you reach the top platform, thick strands of silk give way with a series of loud snaps. A metallic groan echoes in the silo, then more strands give way, setting off a chain reaction until the massive spider drops several meters, crashing down into its own web and causing the entire structure to shake. Safe at the top, you stare down through the grate as the spider cringes, long legs curling inward as if in pain, as its huge, swollen abdomen quivers.\n\nAs you watch, the abdomen bursts apart like an overinflated balloon, flinging away sheets of leathery scraps as a loud boom reverberates through the air. The creature's eight legs spasm in that instant, then relax but don't completely stop moving as the contents of her abdomen spill out. Millions of offspring, each the size of a human hand, erupt in waves, crawling over each other and spreading outward in a mad attempt to escape the heap.`,
+      );
+      return next;
+    },
+  },
+  {
+    id: "gym_exercise_ball_drop_on_exit",
+    once: false,
+    when: (state, ctx) =>
+      ctx.kind === "onTurnEnd" &&
+      ctx.fromRoomId === GYM_ROOM_ID &&
+      ctx.roomId !== GYM_ROOM_ID &&
+      playerHasGymExerciseBall(state),
+    run: (state) => {
+      let next = moveGymExerciseBallToRoom(state, GYM_ROOM_ID);
+      next = queueAfterRoomDescription(
+        next,
+        "The exercise ball is too bulky to carry through the doorway gracefully. You let it drop before leaving, and it rebounds once before rolling back into the gym.",
       );
       return next;
     },

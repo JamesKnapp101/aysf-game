@@ -83,7 +83,7 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
   halved_corpse_memory: {
     abortMessage:
       "You seize the edge of the memory and pull yourself free. The hallway snaps back into place around you.",
-    completeMessage: `In the dark, you hear Lil-Lilly make it only a few steps before something inside the room whips past you and you hear a wet crunch from near the doorway, a strangled cry cut short, then a second later the lights snap back on again. When your eyes adjust you can see the woman's torso laying in the hallway outside the door. It all happened in an instant. The memory collapses in a white flash and the hallway snaps back into place around you.`,
+    completeMessage: `In the dark, Lil-Lilly makes it only a few steps before something inside the room whips past you and you hear a wet crunch from near the doorway, a strangled cry cut short, then a second later the lights snap back on again. When your eyes adjust you can see the woman's torso laying in the hallway outside the door. It all happened in an instant. The memory collapses in a white flash and the hallway snaps back into place around you.`,
     id: "halved_corpse_memory",
     kind: "memory",
     stages: [

@@ -128,6 +128,7 @@ export type ItemOverrideVerb =
   | "take"
   | "drop"
   | "get"
+  | "bounce"
   | "smell"
   | "taste"
   | "wear"
@@ -172,6 +173,7 @@ export type ItemSettings =
     }
   | { isOn: boolean; kind: "goggles" }
   | { kind: "game-whistle"; mode: PreserveActorId }
+  | { angle: number; kind: "gym-treadmill"; speed: number }
   | { currentViewIndex: number; kind: "camera-gun-viewer" }
   | { hasLink: boolean; isOn: boolean; kind: "comet-viewer" };
 

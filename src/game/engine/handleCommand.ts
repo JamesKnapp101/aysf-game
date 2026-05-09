@@ -5,6 +5,7 @@ import {
   initializeEncounterStateOnEnter,
 } from "@game/encounters/retryableEncounters";
 import { drainRadioQueuedLog } from "@game/helpers/conversationHelpers";
+import { resolveGymTreadmillMovement } from "@game/helpers/gymHelpers";
 import { removeItemFromPlacementLists } from "@game/helpers/itemPlacement";
 import {
   drainAfterRoomDescription,
@@ -259,7 +260,32 @@ export async function handleCommand(
         break;
       }
 
-      let next = movePlayerToRoom(state, destinationRoomId, {
+      const gymTreadmillMovement = resolveGymTreadmillMovement(state, {
+        destinationRoomId,
+        direction: cmd.direction,
+        fromRoomId: state.player.roomId,
+      });
+
+      if (gymTreadmillMovement?.kind === "block") {
+        nextState = gymTreadmillMovement.state;
+        message = [moveMessage.trim(), gymTreadmillMovement.message]
+          .filter(Boolean)
+          .join("\n\n");
+        break;
+      }
+
+      if (gymTreadmillMovement?.message) {
+        moveMessage = [moveMessage.trim(), gymTreadmillMovement.message]
+          .filter(Boolean)
+          .join("\n\n");
+      }
+
+      let stateBeforeMove = state;
+      if (gymTreadmillMovement?.state) {
+        stateBeforeMove = gymTreadmillMovement.state;
+      }
+
+      let next = movePlayerToRoom(stateBeforeMove, destinationRoomId, {
         fromRoomId: state.player.roomId,
         via: cmd.direction,
       });

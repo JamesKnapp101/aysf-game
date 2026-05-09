@@ -28,6 +28,40 @@ import {
   AQUARIUM_GOAL_ITEM_ID,
   triggerAquariumReturnChoke,
 } from "src/world/Items/creatures/octopus";
+import type { Item } from "@game/types/itemTypes";
+
+type TakeOverrideResult = RuleResult | string | undefined;
+
+function getTakeOverrideResult(
+  state: GameState,
+  item: Item,
+): TakeOverrideResult {
+  const override = item.overrides?.take;
+
+  if (typeof override === "function") {
+    return override({ state, item });
+  }
+
+  return override;
+}
+
+function isRuleResult(value: TakeOverrideResult): value is RuleResult {
+  return typeof value === "object" && value !== null && "state" in value;
+}
+
+function getBlockingTakeMessage(
+  state: GameState,
+  item: Item,
+  fallback: string,
+): RuleResult {
+  const override = getTakeOverrideResult(state, item);
+
+  if (isRuleResult(override)) {
+    return override;
+  }
+
+  return { state, message: typeof override === "string" ? override : fallback };
+}
 
 export function tryTakeItem(state: GameState, noun: string): RuleResult {
   const lower = noun.toLowerCase();
@@ -90,18 +124,18 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
 
   if (itemOnFloor) {
     if (itemOnFloor.itemCategory === "scenery") {
-      const msg = itemOnFloor.overrides?.take ?? "You can't take that.";
-      return { state, message: msg };
+      return getBlockingTakeMessage(state, itemOnFloor, "You can't take that.");
     }
     if (
       itemOnFloor.itemCategory === "static" ||
       itemOnFloor.itemCategory === "animate"
     ) {
-      const msg = itemOnFloor.overrides?.take ?? "You can't take that.";
-      return {
-        state,
-        message: msg,
-      };
+      return getBlockingTakeMessage(state, itemOnFloor, "You can't take that.");
+    }
+
+    const takeOverride = getTakeOverrideResult(state, itemOnFloor);
+    if (isRuleResult(takeOverride)) {
+      return takeOverride;
     }
 
     let next = updateItemLocation(state, itemOnFloor.id, "INVENTORY");
@@ -128,7 +162,10 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
       return handleGamePreservePrizeTaken(next, state.player.roomId);
     }
 
-    return { state: next, message: `Taken.${aquariumGoalTail}` };
+    const takeMessage =
+      typeof takeOverride === "string" ? takeOverride : "Taken.";
+
+    return { state: next, message: `${takeMessage}${aquariumGoalTail}` };
   }
 
   const surfacesHere = state.world.items.filter(
@@ -144,8 +181,12 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     if (!found) continue;
 
     if (found.itemCategory === "scenery" || found.itemCategory === "static") {
-      const msg = found.overrides?.take ?? "You can't take that.";
-      return { state, message: msg };
+      return getBlockingTakeMessage(state, found, "You can't take that.");
+    }
+
+    const takeOverride = getTakeOverrideResult(state, found);
+    if (isRuleResult(takeOverride)) {
+      return takeOverride;
     }
 
     const updatedSurfaceIds = (
@@ -171,7 +212,10 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
       return handleGamePreservePrizeTaken(next, state.player.roomId);
     }
 
-    return { state: next, message: "Taken." };
+    return {
+      state: next,
+      message: typeof takeOverride === "string" ? takeOverride : "Taken.",
+    };
   }
 
   const containersHere = state.world.items.filter(
@@ -195,8 +239,12 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     if (!found) continue;
 
     if (found.itemCategory === "scenery" || found.itemCategory === "static") {
-      const msg = found.overrides?.take ?? "You can't take that.";
-      return { state, message: msg };
+      return getBlockingTakeMessage(state, found, "You can't take that.");
+    }
+
+    const takeOverride = getTakeOverrideResult(state, found);
+    if (isRuleResult(takeOverride)) {
+      return takeOverride;
     }
 
     const seededIds = getContainerContentsIds(state, container);
@@ -216,7 +264,10 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
       },
     };
 
-    return { state: next, message: "Taken." };
+    return {
+      state: next,
+      message: typeof takeOverride === "string" ? takeOverride : "Taken.",
+    };
   }
 
   for (const container of containersHere) {

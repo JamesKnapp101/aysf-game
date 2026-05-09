@@ -185,7 +185,7 @@ export const createInitialState = (world: World): GameState => {
           roomId: "LevelThreeCorridorTwo",
           unlockTriggers: ["unobtainium"],
           direction: "south",
-          blockMsg: `The way south is completely blocked.`,
+          blockMsg: `You'll never get it open, which might be for the best.`,
           passMsg: `[no pass condition]`,
         },
         ParkMaintenance: {

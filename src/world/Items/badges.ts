@@ -1,3 +1,5 @@
+import { isGymWeightlifterPinningBadge } from "@game/helpers/gymHelpers";
+import type { GameState } from "../../game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
 
 export const badgeItems: Item[] = [
@@ -106,9 +108,11 @@ export const badgeItems: Item[] = [
   {
     id: "orangebadge",
     name: "orange plastic badge",
+    initialDescription:
+      "The corner of an orange plastic badge peeks out from under the back of the pinned weightlifter.",
     description:
       "This is a slim, rectangular plastic badge that is entirely orange except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name '' and beneath that a bar code of some kind.",
-    location: "seeded",
+    location: "GymWeightRoom",
     vocab: ["orange", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -118,6 +122,16 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_orange_badge",
+    overrides: {
+      take: ({ state }: { state: GameState }) =>
+        isGymWeightlifterPinningBadge(state)
+          ? {
+              state,
+              message:
+                "You can get your fingers on the exposed corner of the orange badge, but the pinned weightlifter's body has the rest of it trapped. You'll need to move him first.",
+            }
+          : undefined,
+    },
     meta: {
       kind: "security-badge",
     },

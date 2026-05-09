@@ -29,7 +29,7 @@ import {
   threeWestRooms,
 } from "src/world/maps/levelThree/LivingQuarters/ThreeWest";
 import { barRooms } from "src/world/maps/levelThree/Park/Bar";
-import { gymRooms } from "src/world/maps/levelThree/Park/Gym";
+import { gymItems, gymRooms } from "src/world/maps/levelThree/Park/Gym";
 import { movieTheaterRooms } from "src/world/maps/levelThree/Park/MovieTheater";
 import { parkItems, parkRooms } from "src/world/maps/levelThree/Park/Park";
 import { restaurantRooms } from "src/world/maps/levelThree/Park/Restaurant";
@@ -93,6 +93,7 @@ export const LEVEL_THREE: WorldChunk = {
     ...warehouseItems,
     ...spaItems,
     ...parkItems,
+    ...gymItems,
   ],
   doors: [
     ...levelThreeLivingQuartersDoors,
@@ -127,7 +128,7 @@ export const LEVEL_THREE: WorldChunk = {
     {
       id: "LevelThreeCorridorTwo",
       name: "Level Three Corridor Two",
-      description: `The corridor continues south for a short ways here, and off into the darkness to the north. There seems to be some kind of substance splashed across the floor and part of the western wall here. To the west is a door affixed with neat black plastic label indicating '3BW'. There is a door to the east which is currently hanging open, with the tattered remains of a strip of yellow and black warning tape at either side of the gap. Peering through the doorway you see that there doesn't seem to be any light coming from within.`,
+      description: `The corridor ends abruptly here at [[SCENERY]]`,
       exits: [
         { direction: "north", toRoomId: "LevelThreeCorridorThree" },
         { direction: "south", toRoomId: "LevelThreeCorridorOne" },

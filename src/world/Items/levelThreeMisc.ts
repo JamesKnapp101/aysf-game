@@ -80,7 +80,22 @@ export const levelThreeItems: Item[] = [
       sceneryDescriptionOrder: 1,
     },
   },
-
+  {
+    id: "CorridorTwoBlastDoor",
+    name: "blast door",
+    description:
+      "The door appears to have dropped automatically from above then locked in place. Markings on the door indicate that it is capable of shielding against even powerful radiation. Either there was some kind of leak, or a malfunction in the emergency system.",
+    sceneryDescription: `a heavy blast door that bears a radiation symbol, blocking any further progress south.`,
+    location: "LevelThreeCorridorTwo",
+    vocab: ["blast", "door", "radiation", "shield"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+  },
   {
     id: "DOLL",
     name: "tattered doll",
@@ -1142,142 +1157,6 @@ export const levelThreeItems: Item[] = [
       knock:
         "You rap gently on the stall door. Nothing answers, which somehow manages to be worse than a response.",
     },
-  },
-  {
-    id: "GYMDOORS",
-    name: "double doors",
-    description:
-      "A set of aluminum-framed double doors with large panes of plexiglass. They look like automatic doors, the kind that should slide open at your approach…but right now they just stare back at you.",
-    sceneryDescription:
-      "From this side, the double doors form a dull reflection of the corridor behind you. The aluminum frames are scuffed at hip and shoulder height where people have been shoving them open for years. A thin sensor bar runs across the top, dark and lifeless, leaving the doors feeling oddly stubborn and inert.",
-    location: "GymEntrance",
-    vocab: ["aluminum", "plexiglass", "double", "doors", "door"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 50,
-    itemSize: 5,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "GYMDOORS2",
-    name: "double doors",
-    description:
-      "From inside the gym, the aluminum and plexiglass double doors look like a transparent barrier between sweat and the wider world. They still appear to be automatic, even if nothing’s moving.",
-    sceneryDescription:
-      "The doors show a faint ghost of your reflection against the dim hallway outside. Fingerprints and palm smears cloud the lower sections, the accumulated evidence of people pushing their way through when the sensors didn’t kick in fast enough.",
-    location: "Gym",
-    vocab: ["aluminum", "plexiglass", "double", "doors", "door"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 50,
-    itemSize: 5,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "GymWeightMachines",
-    name: "weight machines",
-    description:
-      "A row of sleek, cable-driven weight machines stands along one wall, all adjustable seats and gleaming stacks of plates.",
-    sceneryDescription:
-      "Each machine is a small monument to controlled suffering: padded benches, chrome grips polished by a thousand anxious hands, and weight stacks marked off in neat increments. The selector pins sit frozen where their last users left them, mid-routine forever.",
-    location: "Gym",
-    vocab: ["weight", "weights", "machine", "machines", "stack", "stacks"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "GymTreadmills",
-    name: "treadmills",
-    description:
-      "Several treadmills are lined up in a neat row, their belts still and their status displays dark.",
-    sceneryDescription:
-      "The treadmills face a blank stretch of wall that probably once showed inspirational media feeds. Rubber belts sit motionless, slightly dusty, and the handrails bear the faint prints of people who thought today would be the day they turned things around.",
-    location: "Gym",
-    vocab: ["treadmill", "treadmills", "track", "tracks", "runner", "belt"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 150,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "GymEllipticals",
-    name: "elliptical machines",
-    description:
-      "A cluster of elliptical machines waits in silence, their oversized footpads and swinging handles frozen mid-stride.",
-    sceneryDescription:
-      "The ellipticals look like skeletal insects caught in the act of running. Foot platforms hang in offset positions, hand grips extended as if reaching for someone who never quite got there. Their consoles display nothing but dust and faint outlines where glowing numbers used to be.",
-    location: "Gym",
-    vocab: ["elliptical", "ellipticals", "trainer", "trainers", "machine"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 160,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "GymStairSteppers",
-    name: "stair steppers",
-    description:
-      "Several stair steppers stand near the back wall, their pedals waiting for someone to climb in place and go nowhere.",
-    sceneryDescription:
-      "The machines resemble truncated towers with heavy pedals mounted on pistons. Scuffed footprints on the steps mark how many people tried to outrun their own biology by walking upstairs without ever changing floors.",
-    location: "Gym",
-    vocab: ["stair", "stepper", "steppers", "climber", "climbers"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 140,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "GymBikes",
-    name: "stationary bicycles",
-    description:
-      "A group of stationary bicycles faces an empty stretch of floor, as if waiting for an instructor who is never going to show.",
-    sceneryDescription:
-      "The bikes are all minimalist frames and molded seats, the pedals strapped and ready. Some resistance knobs are cranked up, others nearly slack, suggesting a wide range of optimism levels. None of them creak or whir now; they just watch the silence.",
-    location: "Gym",
-    vocab: ["stationary", "bike", "bicycle", "bikes", "bicycles"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 120,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "GymFreeWeights",
-    name: "free weights",
-    description:
-      "A rack of free weights lines one corner, dumbbells and plates organized by size with almost military precision.",
-    sceneryDescription:
-      "Rubber-coated dumbbells sit in ascending order, their white weight markings still sharp. A low bench bears the imprint of countless backs and sweat-darkened patches in the vinyl. A few plates lie abandoned on the floor, like someone dropped them mid-set and never came back.",
-    location: "Gym",
-    vocab: ["free", "weights", "dumbbells", "plates", "bench", "benches"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 250,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
   },
   {
     id: "BrokenLamp",

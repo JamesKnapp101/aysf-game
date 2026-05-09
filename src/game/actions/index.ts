@@ -2,6 +2,7 @@ import { doAbort } from "@game/actions/abort/abort";
 import { doAsk } from "@game/actions/ask/ask";
 import { doAttack } from "@game/actions/attack/attack";
 import { doBlow } from "@game/actions/blow/blow";
+import { doBounce } from "@game/actions/bounce/bounce";
 import { doCall } from "@game/actions/call/call";
 import { doEat } from "@game/actions/eat/eat";
 import { doListen } from "@game/actions/listen/listen";
@@ -32,6 +33,7 @@ import { doRead } from "./read/read";
 import { doRemove } from "./remove/remove";
 import { doSearch } from "./search/search";
 import { doSet } from "./set/set";
+import { doSit } from "./sit/sit";
 import { doShoot } from "./shoot/shoot";
 import { doStick } from "./stick/stick";
 import { doSwitch } from "./switch/switch";
@@ -78,8 +80,10 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   ride: doRide,
   touch: doTouch,
   blow: doBlow,
+  bounce: doBounce,
   hit: doAttack,
   punch: doAttack,
+  sit: doSit,
   dive: doSubmerge,
   submerge: doSubmerge,
   drown: doSubmerge,
