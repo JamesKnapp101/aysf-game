@@ -111,6 +111,17 @@
         0 0 28px rgba(52, 226, 52, 0.22);
 }
 
+.game-notification--damage {
+    background:
+        linear-gradient(180deg,
+            rgba(255, 92, 92, 0.98),
+            rgba(218, 28, 28, 0.98));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.26) inset,
+        0 0 32px rgba(255, 48, 48, 0.36);
+    color: #190000;
+}
+
 @keyframes notificationIn {
     from {
         opacity: 0;

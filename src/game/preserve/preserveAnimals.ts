@@ -6,6 +6,7 @@ import {
   moveItemToRoom,
 } from "@game/helpers/itemHelpers";
 import { updateItemLocation } from "@game/rules/items";
+import { applyPlayerDamage } from "@game/rules/damage";
 import { addToInventory } from "@game/rules/state";
 import type { GameState } from "@game/types/gameTypes";
 import type { ItemId } from "@game/types/ids";
@@ -229,20 +230,8 @@ function handleAttachedAnimal(
   if (!attachment) return { handled: false, state, runtime };
 
   let next = moveActorToRoom(state, actorId, state.player.roomId);
-  const nextHealth = Math.max(
-    0,
-    next.player.vitals.health - attachment.damagePerTurn,
-  );
-  next = {
-    ...next,
-    player: {
-      ...next.player,
-      vitals: {
-        ...next.player.vitals,
-        health: nextHealth,
-      },
-    },
-  };
+  next = applyPlayerDamage(next, attachment.damagePerTurn);
+  const nextHealth = next.player.vitals.health;
   next = appendLog(next, attachment.attachedTurnMessage);
 
   const nextRuntime = rememberPlayer(

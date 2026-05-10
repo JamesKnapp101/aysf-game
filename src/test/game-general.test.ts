@@ -14,6 +14,7 @@ import { describe, expect, it } from "vitest";
 import { AQUARIUM_BREATHER_ITEM_ID } from "src/world/Items/creatures/octopus";
 import { INITIAL_WORLD } from "src/world/World";
 import {
+  buildDamageNotification,
   buildMemoryNotification,
   buildScoreNotification,
 } from "../game/rules/notifications";
@@ -569,6 +570,10 @@ describe("General gameplay", () => {
     expect(afterThree.player.vitals.health).toBe(
       50 - AQUARIUM_DROWNING_DAMAGE_PER_TURN,
     );
+    expect(afterThree.uiState.notifications).toContainEqual({
+      id: 1,
+      ...buildDamageNotification(AQUARIUM_DROWNING_DAMAGE_PER_TURN),
+    });
   });
 
   it("refills oxygen immediately when the player reaches dry air", async () => {

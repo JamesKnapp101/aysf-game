@@ -1,3 +1,4 @@
+import { applyPlayerDamage } from "@game/rules/damage";
 import type { GameState } from "@game/types/gameTypes";
 import {
   AQUARIUM_BREATHER_ITEM_ID,
@@ -55,17 +56,5 @@ export function tickUnderwaterVitals(state: GameState): GameState {
     };
   }
 
-  return {
-    ...state,
-    player: {
-      ...state.player,
-      vitals: {
-        ...state.player.vitals,
-        health: Math.max(
-          0,
-          state.player.vitals.health - AQUARIUM_DROWNING_DAMAGE_PER_TURN,
-        ),
-      },
-    },
-  };
+  return applyPlayerDamage(state, AQUARIUM_DROWNING_DAMAGE_PER_TURN);
 }

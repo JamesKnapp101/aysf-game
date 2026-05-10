@@ -278,6 +278,11 @@ describe("UI panels", () => {
             kind: "gossip" as const,
             text: "You obtained some salacious gossip!",
           },
+          {
+            id: 2,
+            kind: "damage" as const,
+            text: "You take 5 points of damage!",
+          },
         ],
       },
     };
@@ -287,6 +292,9 @@ describe("UI panels", () => {
     expect(
       screen.getByText("You obtained some salacious gossip!"),
     ).toBeInTheDocument();
+    expect(screen.getByText("You take 5 points of damage!")).toHaveClass(
+      "game-notification--damage",
+    );
     expect(state.log).toHaveLength(0);
   });
 });

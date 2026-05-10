@@ -95,6 +95,12 @@ describe("game preserve badger", () => {
     const waited = await runCommand(looked, "wait");
 
     expect(waited.player.vitals.health).toBe(97);
+    expect(waited.uiState.notifications).toContainEqual(
+      expect.objectContaining({
+        kind: "damage",
+        text: "You take 3 points of damage!",
+      }),
+    );
     expect(waited.log.slice(looked.log.length).join("\n")).toContain(
       "continues to hold onto your face",
     );

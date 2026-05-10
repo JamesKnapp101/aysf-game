@@ -80,6 +80,7 @@ export interface StatusEffect {
 }
 
 export type GameNotificationKind =
+  | "damage"
   | "score"
   | "memory"
   | "gossip"

@@ -209,7 +209,16 @@ describe("Gym interactions", () => {
 
     expect(wall.player.roomId).toBe("Gym");
     expect(wall.player.vitals.health).toBe(95);
-    expect(getLastLogEntry(wall)).toContain("take 5 damage");
+    expect(wall.uiState.notifications).toContainEqual(
+      expect.objectContaining({
+        kind: "damage",
+        text: "You take 5 points of damage!",
+      }),
+    );
+    expect(getLastLogEntry(wall)).toContain(
+      "straight into the wall over the wire bin",
+    );
+    expect(getLastLogEntry(wall)).not.toMatch(/damage/i);
   });
 
   it("uses the exercise ball in the wire bin to bounce onto the spin stage", async () => {
@@ -220,7 +229,14 @@ describe("Gym interactions", () => {
 
     expect(emptyBinCrash.player.roomId).toBe("Gym");
     expect(emptyBinCrash.player.vitals.health).toBe(95);
+    expect(emptyBinCrash.uiState.notifications).toContainEqual(
+      expect.objectContaining({
+        kind: "damage",
+        text: "You take 5 points of damage!",
+      }),
+    );
     expect(getLastLogEntry(emptyBinCrash)).toContain("empty wire bin");
+    expect(getLastLogEntry(emptyBinCrash)).not.toMatch(/damage/i);
 
     const holdingBall = await runCommand(state, "take ball");
     const ballInBin = await runCommand(holdingBall, "put ball in bin");

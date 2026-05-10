@@ -103,6 +103,13 @@ export function buildMemoryNotification(points: number): GameNotificationDraft {
   };
 }
 
+export function buildDamageNotification(points: number): GameNotificationDraft {
+  return {
+    kind: "damage",
+    text: `You take ${points} points of damage!`,
+  };
+}
+
 export function buildGossipNotification(): GameNotificationDraft {
   return {
     kind: "gossip",

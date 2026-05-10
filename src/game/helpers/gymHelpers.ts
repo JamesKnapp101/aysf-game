@@ -1,4 +1,5 @@
 import { removeItemFromPlacementLists } from "@game/helpers/itemPlacement";
+import { applyPlayerDamage } from "@game/rules/damage";
 import { updateItemLocation } from "@game/rules/items";
 import { triggerScoreOnce } from "@game/rules/score";
 import {
@@ -250,19 +251,6 @@ type GymTreadmillMovementResult =
       state: GameState;
     };
 
-function damagePlayer(state: GameState, amount: number): GameState {
-  return {
-    ...state,
-    player: {
-      ...state.player,
-      vitals: {
-        ...state.player.vitals,
-        health: Math.max(0, state.player.vitals.health - amount),
-      },
-    },
-  };
-}
-
 export function resolveGymTreadmillMovement(
   state: GameState,
   ctx: GymTreadmillMovementContext,
@@ -315,8 +303,8 @@ export function resolveGymTreadmillMovement(
   if (angle >= -20 && angle <= -15) {
     return {
       kind: "block",
-      state: damagePlayer(state, 5),
-      message: `${launchStart} With the treadmill pitched downward like it is, you fall forward and slam down on your chest, only to be launched at an angle through the air! You fly weightless for a moment only to The downward slope sends you into the air across the room, straight into the wall over the wire bin. You hit hard, fall to the floor, and take 5 damage.`,
+      state: applyPlayerDamage(state, 5),
+      message: `${launchStart} With the treadmill pitched downward like it is, you fall forward and slam down on your chest, only to be launched at an angle through the air! You fly weightless for a moment only to The downward slope sends you into the air across the room, straight into the wall over the wire bin. You hit hard and fall to the floor.`,
     };
   }
 
@@ -330,8 +318,8 @@ export function resolveGymTreadmillMovement(
 
     return {
       kind: "block",
-      state: damagePlayer(state, 5),
-      message: `${launchStart} With the treadmill angled downward like it is, you fall forward and slam down on your chest, only to be launched through the air! You fly weightless for a moment only to The downward slope sends you into the air across the room, straight into the empty wire bin, taking 5 damage.`,
+      state: applyPlayerDamage(state, 5),
+      message: `${launchStart} With the treadmill angled downward like it is, you fall forward and slam down on your chest, only to be launched through the air! You fly weightless for a moment only to The downward slope sends you into the air across the room, straight into the empty wire bin.`,
     };
   }
 
