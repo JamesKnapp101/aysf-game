@@ -1,7 +1,12 @@
 import { removeItemFromPlacementLists } from "@game/helpers/itemPlacement";
 import { updateItemLocation } from "@game/rules/items";
-import { removeFromAllBuckets } from "@game/rules/state";
-import type { GameState } from "@game/types/gameTypes";
+import { triggerScoreOnce } from "@game/rules/score";
+import {
+  addToInventory,
+  inventoryHas,
+  removeFromAllBuckets,
+} from "@game/rules/state";
+import type { GameState, StatusId } from "@game/types/gameTypes";
 
 export const GYM_ROOM_ID = "Gym";
 export const GYM_SPIN_STAGE_ROOM_ID = "SpinStage";
@@ -159,7 +164,72 @@ export function isGymExerciseBallInRack(state: GameState): boolean {
 }
 
 export function isGymWeightlifterPinningBadge(state: GameState): boolean {
-  return state.worldState.conditionalTriggers[GYM_WEIGHTLIFTER_MOVED_TRIGGER] !== true;
+  return (
+    state.worldState.conditionalTriggers[GYM_WEIGHTLIFTER_MOVED_TRIGGER] !==
+    true
+  );
+}
+
+function playerHasStatusEffect(state: GameState, statusId: StatusId): boolean {
+  return state.player.statusEffects.some((effect) => effect.id === statusId);
+}
+
+export function liftGymWeightlifterBarbell(state: GameState): {
+  message: string;
+  state: GameState;
+} {
+  if (!playerHasStatusEffect(state, "stronger")) {
+    return {
+      state,
+      message:
+        "You squat down, grip the barbell, and strain until your shoulders shake, but you can't move it an inch.",
+    };
+  }
+
+  let next: GameState = {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      conditionalTriggers: {
+        ...state.worldState.conditionalTriggers,
+        [GYM_WEIGHTLIFTER_MOVED_TRIGGER]: true,
+      },
+    },
+    itemState: {
+      ...state.itemState,
+      containerContents: removeItemFromPlacementLists(
+        state.itemState.containerContents,
+        GYM_ORANGE_BADGE_ID,
+      ),
+      surfaceContents: removeItemFromPlacementLists(
+        state.itemState.surfaceContents,
+        GYM_ORANGE_BADGE_ID,
+      ),
+      underContents: removeItemFromPlacementLists(
+        state.itemState.underContents,
+        GYM_ORANGE_BADGE_ID,
+      ),
+      searchableContents: removeItemFromPlacementLists(
+        state.itemState.searchableContents,
+        GYM_ORANGE_BADGE_ID,
+      ),
+    },
+  };
+
+  if (!inventoryHas(next.player.inventory, GYM_ORANGE_BADGE_ID)) {
+    next = updateItemLocation(next, GYM_ORANGE_BADGE_ID, "INVENTORY");
+    next = addToInventory(next, GYM_ORANGE_BADGE_ID);
+    next = triggerScoreOnce(
+      next,
+      next.world.items.find((item) => item.id === GYM_ORANGE_BADGE_ID)?.scoreId,
+    );
+  }
+
+  return {
+    state: next,
+    message:
+      "You plant your feet, take hold of the barbell, and lift. The bar rises just enough for you to hook the orange badge out from beneath the body. You grab it, then ease the weight back down before your grip gives out.",
+  };
 }
 
 type GymTreadmillMovementContext = {
@@ -238,7 +308,7 @@ export function resolveGymTreadmillMovement(
     return {
       kind: "block",
       state,
-      message: `${launchStart} With the surface level or sloping upward, you just go tumbling across the floor and end up back where you started.`,
+      message: `${launchStart} The force sends you tumbling across the floor and you stagger back to your feet.`,
     };
   }
 
@@ -246,7 +316,7 @@ export function resolveGymTreadmillMovement(
     return {
       kind: "block",
       state: damagePlayer(state, 5),
-      message: `${launchStart} The downward slope sends you into the air across the room, straight into the wall over the wire bin. You hit hard, fall to the floor, and take 5 damage.`,
+      message: `${launchStart} With the treadmill pitched downward like it is, you fall forward and slam down on your chest, only to be launched at an angle through the air! You fly weightless for a moment only to The downward slope sends you into the air across the room, straight into the wall over the wire bin. You hit hard, fall to the floor, and take 5 damage.`,
     };
   }
 
@@ -254,14 +324,14 @@ export function resolveGymTreadmillMovement(
     if (isGymExerciseBallInRack(state)) {
       return {
         kind: "allow",
-        message: `${launchStart} The downward slope sends you arcing straight into the wire bin. You hit the exercise ball, bounce off it with ridiculous force, vault back over the moving treadmill, and land on the spin stage.`,
+        message: `${launchStart} The downward slope sends you arcing straight into the wire bin!\n\nYou slam into the exercise ball which absorbs the impact, then launches you back into the air in the opposite direction! You sail over the moving treadmill, arms and legs pedaling, and crash down onto the spin stage.`,
       };
     }
 
     return {
       kind: "block",
       state: damagePlayer(state, 5),
-      message: `${launchStart} The downward slope sends you arcing straight into the empty wire bin. You crash down hard among the metal wires and take 5 damage.`,
+      message: `${launchStart} With the treadmill angled downward like it is, you fall forward and slam down on your chest, only to be launched through the air! You fly weightless for a moment only to The downward slope sends you into the air across the room, straight into the empty wire bin, taking 5 damage.`,
     };
   }
 
@@ -269,7 +339,7 @@ export function resolveGymTreadmillMovement(
     return {
       kind: "block",
       state,
-      message: `${launchStart} The downward slope pops you into the air, but not far enough to clear the room. You tumble across the floor, bruised in spirit more than body.`,
+      message: `${launchStart} You slip and fall down on your chest! With the downward slope the treadmill pops you into the air, but not far enough to clear the room. You tumble across the floor, bruised in spirit more than body.`,
     };
   }
 

@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { createTestState, expectInventoryToContain, runCommand } from "./helpers/gameTestHelpers";
+import { getItemsInInventory } from "@game/selectors/itemSelectors";
+import { INITIAL_WORLD } from "../world/World";
+import {
+  createTestState,
+  expectInventoryToContain,
+  runCommand,
+} from "./helpers/gameTestHelpers";
 
 const DEVELOPER_MODE_ITEM_IDS = [
+  "ParkPass",
+  "MindGun",
+  "MindCap",
   "inframaroonbadge",
   "ultravioletbadge",
   "maroonbadge",
@@ -12,20 +21,21 @@ const DEVELOPER_MODE_ITEM_IDS = [
   "yellowbadge",
   "whitebadge",
   "flashlight",
-  "ParkPass",
 ] as const;
 
 describe("Hidden developer mode command", () => {
   it("grants the developer loadout without consuming a turn", async () => {
     const start = {
-      ...createTestState({ roomId: "InsideTheShed" }),
+      ...createTestState({ roomId: "StairWellSeven", world: INITIAL_WORLD }),
       moves: 12,
     };
 
     const next = await runCommand(start, "iljio");
+    const visibleInventoryIds = getItemsInInventory(next).map((item) => item.id);
 
     for (const itemId of DEVELOPER_MODE_ITEM_IDS) {
       expect(expectInventoryToContain(next, itemId)).toBe(true);
+      expect(visibleInventoryIds).toContain(itemId);
       expect(next.itemState.itemRoomId[itemId]).toBe("INVENTORY");
       expect(
         next.world.items.find((item) => item.id === itemId)?.location,

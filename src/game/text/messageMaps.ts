@@ -24,6 +24,20 @@ export const HAIRY_STATUS_MESSAGES: Record<number, string> = {
   1: "Finally, all at once, the itching stops. You can feel hair on your scalp now, and stubble on your face. Even your body hair is back, and more lush than ever!",
 };
 
+export const SMARTER_STATUS_MESSAGES = {
+  first:
+    "You feel a strange tingle that travels up your spine and into your head, then all at once you feel your mind expand, opening new levels of thought and understanding...",
+  last:
+    "Your newfound enlightenment warbles at the edges, then collapses, shrinking back to its original size. Man, that did not last long!",
+} as const;
+
+export const STRONGER_STATUS_MESSAGES = {
+  first:
+    "You feel a warmth flooding through you, swelling in your chest, then down your core, arms, and legs. You feel a deep sensation as if every muscle in your body is getting the most satisfying stretch of its life as your body swells, shoulders broadening, and muscles hardening. It stops short of turning you into a hulk, but within seconds you've transformed into a very muscular man. You've never felt so strong in your life!",
+  last:
+    "You feel a twitch in your shoulder, then your thighs, then your biceps, then everywhere until all of your newfound muscle shrinks back to where it started.",
+} as const;
+
 export const TRIXOPHINE_MESSAGES: string[] = [
   `Your cat walks into the room and marches up to you. "If you see the dog," it hisses, "tell that bitch I'm looking for her!" It storms out of the room.`,
   `You notice movement out of the corner of your eye, and turn in time to see a small spider monkey scamper over to you. "You have to help me!" it whispers, "The captain is secretly spiking the mess hall's chili con carne with refined dopamine milked from his secret army of monkey slaves! If the plan succeeds, then—" It glances over its shoulder. "...they found me, I have to go!" The monkey scampers away.`,

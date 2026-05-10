@@ -138,15 +138,13 @@ const StatusEffectBadgeIcon: React.FC<{ icon: StatusEffectIconId }> = ({
           <circle cx="12" cy="12" r="7.6" fill="none" />
         </IconSvg>
       );
-    case "bicep":
+    case "bolt":
       return (
         <IconSvg>
           <path
-            d="M8.5 11.3c1.6-.5 2.7-1.7 3.2-3.4l.6-2.2c.2-.8 1-1.2 1.8-1 .8.2 1.2 1 .9 1.8l-.5 1.7h2.2c1.6 0 2.9 1.3 2.9 2.9v2.8c0 2.8-2.3 5.1-5.1 5.1h-4.2c-2.6 0-4.8-2.1-4.8-4.8v-1.7c0-.8.6-1.4 1.4-1.4h1.6Z"
-            fill="none"
+            className="status-effect-icon-fill"
+            d="M14.7 2.4 5.1 13.4h5.1L7.8 21.8l11.1-12.9h-5.4l1.2-6.5Z"
           />
-          <path d="M9 11.3v7.5" />
-          <path d="M14.5 8.2c-.4 1.5-1.2 2.6-2.4 3.2" />
         </IconSvg>
       );
     case "bottle":

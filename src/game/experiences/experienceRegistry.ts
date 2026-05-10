@@ -52,6 +52,12 @@ type ExperienceDefinition = {
 
 const HALVED_CORPSE_MEMORY_ROOM_ID = "HalvedCorpseMemory";
 const LIL_LILLY_MEMORY_NPC_ID = "LilLillyCorridorThree";
+const SPIN_INSTRUCTOR_MEMORY_ROOM_ID = "SpinInstructorSpinStageMemory";
+const SPIN_INSTRUCTOR_MEMORY_ITEM_ID = "SpinInstructor";
+const CRUSHED_WEIGHTLIFTER_MEMORY_ROOM_ID = "CrushedWeightlifterGymMemory";
+const CRUSHED_WEIGHTLIFTER_MEMORY_ITEM_ID = "CrushedWeightlifter";
+const CRUSHED_WEIGHTLIFTER_MEMORY_SPOTBOT_ITEM_ID =
+  "CrushedWeightlifterMemorySpotBot";
 
 function setRoomDarkness(
   state: GameState,
@@ -78,7 +84,7 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
     id: "fallen_corpse_memory",
     kind: "memory",
     stages: [{ durationTurns: 3, roomId: "FallenCorpseMemory" }],
-    startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe stairwell peels away as the memory takes hold.`,
+    startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe stairwell peels away as the memory takes hold...`,
   },
   halved_corpse_memory: {
     abortMessage:
@@ -126,7 +132,74 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
         roomId: HALVED_CORPSE_MEMORY_ROOM_ID,
       },
     ],
-    startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe hallway peels away as the memory takes hold.`,
+    startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe hallway peels away as the memory takes hold...`,
+  },
+  spin_corpse_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The gymnasium snaps back into place around you, and you're back up on the spin stage.",
+    completeMessage: `As the instructor sits locked onto the electric bike with her eyes bulging, a thin thread of smoke begins to snake upward from the top of her head then the memory collapses in a white flash, and the gymnasium snaps back into place around you.`,
+    id: "spin_corpse_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 3,
+        enter: (state) =>
+          updateItemLocation(
+            state,
+            SPIN_INSTRUCTOR_MEMORY_ITEM_ID,
+            SPIN_INSTRUCTOR_MEMORY_ROOM_ID,
+          ),
+        roomId: SPIN_INSTRUCTOR_MEMORY_ROOM_ID,
+      },
+    ],
+    startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe stage, and the rest of the gymnasium, peel away as the memory takes hold...`,
+  },
+  barbell_corpse_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The gymnasium snaps back into place around you, and you're back among the racks of weights.",
+    completeMessage: `"Sh-shit!" the man grunts, and his eyes turn scared.\n\nHis left leg buckles, just a little, but enough to bring everything down. His body folds, landing hard on his back with the barbell close behind. The bar crushes his ribcage as the huge weights crash down onto the floor, causing his eyes and neck veins to bulge.\n\n"You good, bro?" the robot asks, then the memory collapses in a white flash, and the gymnasium snaps back into place around you.`,
+    id: "barbell_corpse_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 4,
+        enter: (state) => {
+          let next = updateItemLocation(
+            state,
+            CRUSHED_WEIGHTLIFTER_MEMORY_ITEM_ID,
+            CRUSHED_WEIGHTLIFTER_MEMORY_ROOM_ID,
+          );
+          next = updateItemLocation(
+            next,
+            CRUSHED_WEIGHTLIFTER_MEMORY_SPOTBOT_ITEM_ID,
+            CRUSHED_WEIGHTLIFTER_MEMORY_ROOM_ID,
+          );
+          return next;
+        },
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "spotbot-check-one",
+            message:
+              `"You got this, bro?" the robot asks.\n\nThe man can't answer. He keeps the barbell locked overhead, jaw clenched, breath coming in hard bursts.`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "spotbot-check-two",
+            message:
+              `"You all set, bro?" the robot asks.\n\nThe man's arms and legs begin to shake, the bar wavering just enough to make the plates clink.`,
+          },
+          {
+            atElapsedTurns: 3,
+            id: "spotbot-check-three",
+            message:
+              `"Still with me, bro?" the robot asks.\n\nThe man is at the end of his rope now, face purple, veins bulging out as he fights to keep his balance.`,
+          },
+        ],
+        roomId: CRUSHED_WEIGHTLIFTER_MEMORY_ROOM_ID,
+      },
+    ],
+    startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe racks of weights, and the rest of the gymnasium, peel away as the memory takes hold...`,
   },
 };
 

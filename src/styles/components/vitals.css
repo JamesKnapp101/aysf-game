@@ -117,7 +117,6 @@
     overflow-y: auto;
     margin-top: 0.2rem;
     padding: 6px;
-    padding-bottom: 0px;
     border: 1px solid rgb(var(--crt-color-rgb) / 0.62);
     border-radius: 8px;
     background:
@@ -133,6 +132,7 @@
 }
 
 .status-effect-row {
+    box-sizing: border-box;
     display: grid;
     grid-template-columns: 42px minmax(100px, 0.75fr) minmax(0, 1.45fr);
     align-items: center;

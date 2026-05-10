@@ -28,6 +28,27 @@ export function tryTouchItem(
     return handleGamePreserveEmptyHandReturn(next, state.player.roomId);
   }
 
+  if (!preposition) {
+    const touchOverride = item.overrides?.touch;
+
+    if (typeof touchOverride === "string") {
+      return { state: next, message: touchOverride };
+    }
+
+    if (typeof touchOverride === "function") {
+      const out = touchOverride({ item, state: next, cmd });
+
+      if (typeof out === "string") {
+        return { state: next, message: out };
+      }
+
+      return {
+        state: out?.state ?? next,
+        message: out?.message ?? baseMsg,
+      };
+    }
+  }
+
   if (preposition) {
     if (!indirect) {
       return { state: next, message: `I don't understand that.` };

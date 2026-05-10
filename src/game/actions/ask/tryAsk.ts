@@ -29,5 +29,9 @@ export async function tryAsk(
     return { state, message: "That isn't going to respond." };
   }
 
+  if (typeof item.meta?.unresponsiveInteractionMessage === "string") {
+    return { state, message: item.meta.unresponsiveInteractionMessage };
+  }
+
   return { state, message: `${item.name} has nothing to say about that.` };
 }

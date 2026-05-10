@@ -2,6 +2,8 @@ import {
   HAIRY_STATUS_MESSAGES,
   HORNY_STATUS_MESSAGES,
   PAIN_STATUS_MESSAGES,
+  SMARTER_STATUS_MESSAGES,
+  STRONGER_STATUS_MESSAGES,
 } from "../text/messageMaps";
 import type { GameState, StatusEffect } from "../types/gameTypes";
 import { getCurrentRoom } from "./roomSelectors";
@@ -15,7 +17,7 @@ export type StatusEffectDiagnostic = {
 
 export type StatusEffectIconId =
   | "biohazard"
-  | "bicep"
+  | "bolt"
   | "bottle"
   | "brain"
   | "comb"
@@ -58,7 +60,7 @@ const STATUS_EFFECT_LABELS: Record<
   seritroxin: { icon: "biohazard", name: "Seritroxin" },
   smokeInhalation: { icon: "droplet", name: "Smoke Inhalation" },
   smarter: { icon: "brain", name: "Smarter" },
-  stronger: { icon: "bicep", name: "Stronger" },
+  stronger: { icon: "bolt", name: "Stronger" },
   hyperaroused: { icon: "droplet", name: "Hyperaroused" },
   trixophine: { icon: "spiral", name: "Trixophine" },
   vanitrax: { icon: "cross", name: "Vanitrax" },
@@ -107,6 +109,46 @@ export function getHornyStatusMessage(remainingTurns: number): string | null {
 
 export function getHairyStatusMessage(remainingTurns: number): string | null {
   return HAIRY_STATUS_MESSAGES[remainingTurns] ?? null;
+}
+
+function getFirstAndLastTurnStatusMessage(
+  effect: StatusEffect,
+  currentMove: number,
+  messages: { first: string; last: string },
+): string | null {
+  if (effect.remainingTurns == null) return null;
+
+  if (effect.startedAtMove === currentMove) {
+    return messages.first;
+  }
+
+  if (effect.remainingTurns === 1) {
+    return messages.last;
+  }
+
+  return null;
+}
+
+export function getSmarterStatusMessage(
+  effect: StatusEffect,
+  currentMove: number,
+): string | null {
+  return getFirstAndLastTurnStatusMessage(
+    effect,
+    currentMove,
+    SMARTER_STATUS_MESSAGES,
+  );
+}
+
+export function getStrongerStatusMessage(
+  effect: StatusEffect,
+  currentMove: number,
+): string | null {
+  return getFirstAndLastTurnStatusMessage(
+    effect,
+    currentMove,
+    STRONGER_STATUS_MESSAGES,
+  );
 }
 
 export function describeSicknessLevel(state: GameState): string {
@@ -267,7 +309,7 @@ function describeStatusEffect(
     case "death":
       return "You are dead. Without intervention, you will remain so.";
     case "drunk":
-      return "You are feeling a little tipsy from the alcohol.";
+      return "You have been drinking alcohol. Was it too much?";
     case "radiation":
       return describeRadiationLevel(state);
     case "hyperaroused": {
@@ -292,21 +334,21 @@ function describeStatusEffect(
       return null;
     }
     case "trixophine":
-      return "Whatever was in that green serum has you fibbity FYING and rig-rig-riggety WRECKED! Colors are talking to you, sounds smell like tastes, the whole nine yards.";
+      return "Symptoms include euphoria, hallucination, and delirium.";
     case "vanitrax":
       return "You are on vanitrax.";
     case "seritroxin":
       return "You are on seritroxin.";
     case "pentatrosin":
-      return "You are on pentatrosin.";
+      return "I don't think you were meant to take this...";
     case "xantophol":
       return "You are on xantophol.";
     case "regenerationWoozies":
       return "You feel a little discombobulated, with minor little aches and pains. Muscle ache? Gas? It doesn't seem serious.";
     case "smarter":
-      return "You feel sharper, like your thoughts have a little more room to move.";
+      return "Your mind...it's full of stars...";
     case "stronger":
-      return "You feel stronger than usual.";
+      return "You STRONG.";
     case "nightvision-active": {
       const currentRoom = getCurrentRoom(state);
       return state.worldState.darkRooms[currentRoom.id]

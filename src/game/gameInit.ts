@@ -488,6 +488,7 @@ export const createInitialState = (world: World): GameState => {
         TrashBotMaintenanceDoorOpen: false,
         HydroponicsDoorUnblocked: false,
         EscapedWithYellowBadge: false,
+        GymWeightlifterMoved: false,
       },
     },
     itemState: {

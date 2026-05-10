@@ -49,6 +49,8 @@ import {
   getHairyStatusMessage,
   getHornyStatusMessage,
   getPainStatusMessage,
+  getSmarterStatusMessage,
+  getStrongerStatusMessage,
 } from "../selectors/statusSelectors";
 import {
   pickRandomFromMsgArray,
@@ -207,6 +209,16 @@ export function applyStatusEffectTick(
       }
 
       break;
+    }
+
+    case "smarter": {
+      const msg = getSmarterStatusMessage(effect, state.moves);
+      return msg ? appendLog(state, msg) : state;
+    }
+
+    case "stronger": {
+      const msg = getStrongerStatusMessage(effect, state.moves);
+      return msg ? appendLog(state, msg) : state;
     }
 
     case "radiation": {

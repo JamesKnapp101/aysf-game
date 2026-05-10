@@ -177,7 +177,7 @@ describe("UI panels", () => {
     expect(screen.getByText("Radiation")).toBeInTheDocument();
     expect(screen.getByText(/face and neck feel burned/i)).toBeInTheDocument();
     expect(screen.getByText("Drunk")).toBeInTheDocument();
-    expect(screen.getByText(/tipsy/i)).toBeInTheDocument();
+    expect(screen.getByText(/been drinking alcohol/i)).toBeInTheDocument();
     expect(screen.queryByText(/^Radiation:$/)).not.toBeInTheDocument();
   });
 

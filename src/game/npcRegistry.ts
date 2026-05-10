@@ -89,6 +89,20 @@ export const NPCS: Record<string, ConversationNpc> = {
     aiEnabled: true,
     characterProfileId: "lil_corridor_three",
   },
+  SpinInstructorSpinStage: {
+    id: "SpinInstructorSpinStage",
+    name: "The electrocuted woman",
+    vocab: ["electrocuted", "woman", "spin", "instructor"],
+    aiEnabled: false,
+    characterProfileId: "spin_instructor_spin_stage",
+  },
+  CrushedWeightlifterGym: {
+    id: "CrushedWeightlifterGym",
+    name: "The struggling man",
+    vocab: ["henk", "umboltz", "man", "weightlifter", "crushed"],
+    aiEnabled: true,
+    characterProfileId: "crushed_weightlifter_gym",
+  },
 };
 
 export function getNpcById(npcId?: string): ConversationNpc | undefined {

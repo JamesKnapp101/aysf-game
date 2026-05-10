@@ -2,6 +2,7 @@ import {
   getGymTreadmillAngleDescription,
   getGymTreadmillSettings,
   getGymTreadmillSpeedDescription,
+  liftGymWeightlifterBarbell,
   moveGymExerciseBallToRoom,
 } from "@game/helpers/gymHelpers";
 import type { GameState } from "@game/types/gameTypes";
@@ -371,7 +372,7 @@ export const gymItems: Item[] = [
     description:
       "The woman is dressed in black bike shorts, a green sports bra, and white sneakers. She lies still beside the stationary bike, beginning to smell of decay.",
     sceneryDescription:
-      "The body of a woman dressed in black bike shorts, a green sports bra, and white sneakers lies on the floor next to the stationary bike, unmoving and beginning to smell of decay.",
+      "[[newline]]The body of a woman dressed in black bike shorts, a green sports bra, and white sneakers lies on the floor next to the stationary bike, unmoving and beginning to smell of decay.",
     location: "SpinStage",
     vocab: ["body", "corpse", "woman", "cyclist", "shorts", "sports bra"],
     itemClass: "solid",
@@ -379,6 +380,10 @@ export const gymItems: Item[] = [
     itemWeight: 65,
     itemSize: 7,
     meta: {
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "spin_corpse_memory",
+      },
       sceneryDescriptionOrder: 4,
     },
   },
@@ -482,7 +487,17 @@ export const gymItems: Item[] = [
     itemWeight: 120,
     itemSize: 9,
     meta: {
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "barbell_corpse_memory",
+      },
       sceneryDescriptionOrder: 5,
+    },
+    overrides: {
+      lift: ({ state }: { state: GameState }) =>
+        liftGymWeightlifterBarbell(state),
+      move: ({ state }: { state: GameState }) =>
+        liftGymWeightlifterBarbell(state),
     },
   },
 ];

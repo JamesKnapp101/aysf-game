@@ -1,11 +1,31 @@
 import { buildRoomDescription } from "@game/text/roomDescription";
+import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { describe, expect, it } from "vitest";
 import {
   createTestState,
   expectInventoryToContain,
   getLastLogEntry,
+  setInventory,
   runCommand,
 } from "./helpers/gameTestHelpers";
+
+function createMindScannerState(roomId: string) {
+  const base = setInventory(createTestState({ roomId }), [
+    "MindGun",
+    "MindCap",
+  ]);
+
+  return {
+    ...base,
+    itemState: {
+      ...base.itemState,
+      wornByPlayer: {
+        ...base.itemState.wornByPlayer,
+        head: "MindCap",
+      },
+    },
+  };
+}
 
 describe("Gym interactions", () => {
   it("updates the giant treadmill angle from the gym angle dial", async () => {
@@ -105,6 +125,76 @@ describe("Gym interactions", () => {
     expect(getLastLogEntry(taken)).toContain("Taken.");
   });
 
+  it("lets a stronger player lift the barbell and grab the orange badge", async () => {
+    const weak = createTestState({ roomId: "GymWeightRoom" });
+
+    const failed = await runCommand(weak, "lift barbell");
+
+    expect(expectInventoryToContain(failed, "orangebadge")).toBe(false);
+    expect(getLastLogEntry(failed)).toContain("can't move it an inch");
+
+    const strong = applyStatusEffectToPlayer(
+      createTestState({ roomId: "GymWeightRoom" }),
+      "stronger",
+      100,
+      10,
+    );
+    const lifted = await runCommand(strong, "move barbell");
+
+    expect(expectInventoryToContain(lifted, "orangebadge")).toBe(true);
+    expect(lifted.itemState.itemRoomId.orangebadge).toBe("INVENTORY");
+    expect(lifted.worldState.conditionalTriggers.GymWeightlifterMoved).toBe(
+      true,
+    );
+    expect(lifted.log.join("\n")).toContain("hook the orange badge");
+    expect(getLastLogEntry(lifted)).toContain(
+      "You feel a warmth flooding through you",
+    );
+  });
+
+  it("keeps the spin instructor memory unresponsive", async () => {
+    const linked = await runCommand(
+      createMindScannerState("SpinStage"),
+      "shoot body with scanner",
+    );
+
+    expect(linked.player.roomId).toBe("SpinInstructorSpinStageMemory");
+
+    const asked = await runCommand(linked, "ask woman about bike");
+
+    expect(getLastLogEntry(asked)).toContain(
+      "The woman continues to stare forward, eyes bulging, muscles locked.",
+    );
+  });
+
+  it("runs the crushed weightlifter memory with SpotBot check-ins", async () => {
+    const linked = await runCommand(
+      createMindScannerState("GymWeightRoom"),
+      "shoot body with scanner",
+    );
+
+    expect(linked.player.roomId).toBe("CrushedWeightlifterGymMemory");
+    expect(linked.itemState.itemRoomId.CrushedWeightlifterMemorySpotBot).toBe(
+      "CrushedWeightlifterGymMemory",
+    );
+
+    const firstTurn = await runCommand(linked, "wait");
+    expect(getLastLogEntry(firstTurn)).toContain("You got this, bro?");
+
+    const secondTurn = await runCommand(firstTurn, "wait");
+    expect(getLastLogEntry(secondTurn)).toContain(
+      "arms and legs begin to shake",
+    );
+
+    const thirdTurn = await runCommand(secondTurn, "wait");
+    expect(getLastLogEntry(thirdTurn)).toContain("face purple");
+    expect(thirdTurn.worldState.activeExperience).toBeDefined();
+
+    const returned = await runCommand(thirdTurn, "wait");
+    expect(returned.player.roomId).toBe("GymWeightRoom");
+    expect(returned.worldState.activeExperience).toBeUndefined();
+  });
+
   it("turns the fast treadmill into a launch hazard when crossing west", async () => {
     const state = createTestState({ roomId: "Gym" });
 
@@ -142,7 +232,9 @@ describe("Gym interactions", () => {
     expect(bounced.itemState.containerContents.GymExerciseBallRack).toContain(
       "GymExerciseBall",
     );
-    expect(getLastLogEntry(bounced)).toContain("bounce off it");
+    expect(getLastLogEntry(bounced)).toContain(
+      "launches you back into the air",
+    );
   });
 
   it("lets the player scramble across when the instructor slows the treadmill", async () => {

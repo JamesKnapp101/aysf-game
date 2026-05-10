@@ -54,6 +54,10 @@ const COVERED_ACTIONS = [
   "drown",
   "touch",
   "blow",
+  "bounce",
+  "lift",
+  "move",
+  "sit",
   "get",
   "pet",
   "stick",
@@ -266,7 +270,9 @@ describe("Action smoke coverage", () => {
   });
 
   it("covers pour", async () => {
-    const start = setInventory(createTestState(), ["FISHBOWL", "URN"]);
+    const start = setInventory(createTestState({ roomId: "ThreeWestBath" }), [
+      "FISHBOWL",
+    ]);
     const next = await runCommand(
       {
         ...start,
@@ -278,11 +284,15 @@ describe("Action smoke coverage", () => {
           },
         },
       },
-      "pour water into urn",
+      "pour water on mirror",
     );
 
     expect(next.itemState.containerFilled.FISHBOWL).toBeUndefined();
-    expect(next.itemState.containerFilled.URN).toEqual(["water"]);
+    expectCommandEntry(
+      next,
+      "pour water on mirror",
+      "doesn't really accomplish much",
+    );
   });
 
   it("covers wear", async () => {
@@ -537,12 +547,48 @@ describe("Action smoke coverage", () => {
     expect(next.worldState.conditionalTriggers.RobotRefugeAccess).toBe(true);
   });
 
+  it("covers bounce", async () => {
+    const next = await runCommand(
+      createTestState({ roomId: "Gym" }),
+      "bounce ball",
+    );
+
+    expectCommandEntry(next, "bounce ball", "rockets away");
+  });
+
+  it("covers lift", async () => {
+    const next = await runCommand(
+      createTestState({ roomId: "GymWeightRoom" }),
+      "lift barbell",
+    );
+
+    expectCommandEntry(next, "lift barbell", "can't move it an inch");
+  });
+
+  it("covers move", async () => {
+    const next = await runCommand(
+      createTestState({ roomId: "GymWeightRoom" }),
+      "move barbell",
+    );
+
+    expectCommandEntry(next, "move barbell", "can't move it an inch");
+  });
+
+  it("covers sit", async () => {
+    const next = await runCommand(
+      createTestState({ roomId: "Gym" }),
+      "sit on ball",
+    );
+
+    expectCommandEntry(next, "sit on ball", "a lot harder than it looks");
+  });
+
   it("toggles the hidden lab stairs with the Eegler wall fixture", async () => {
     let state = createTestState({ roomId: "ThreeEastBed" });
 
     state = await runCommand(state, "down");
     expect(state.player.roomId).toBe("ThreeEastBed");
-    expectCommandEntry(state, "down", "The floor panel is closed.");
+    expectCommandEntry(state, "down", "You can't go that way.");
 
     state = await runCommand(state, "turn wall fixture");
     expect(state.worldState.conditionalTriggers.EeglerSecretLabOpen).toBe(true);
@@ -600,7 +646,7 @@ describe("Action smoke coverage", () => {
     expect(diagnostics).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "smarter", icon: "brain" }),
-        expect.objectContaining({ id: "stronger", icon: "bicep" }),
+        expect.objectContaining({ id: "stronger", icon: "bolt" }),
       ]),
     );
   });

@@ -13,7 +13,7 @@ export async function tryTell(
   target: ConversationTarget,
   topicRaw: string,
 ): Promise<ActionResult> {
-  const topic = normalizeTopic(topicRaw);
+  const topic = normalizeTopic(topicRaw, target);
 
   if (target.kind === "npc") {
     return tellNpc(state, target.npc, topic, target.via);
@@ -27,6 +27,10 @@ export async function tryTell(
 
   if (item.itemCategory !== "animate") {
     return { state, message: "That isn't going to respond." };
+  }
+
+  if (typeof item.meta?.unresponsiveInteractionMessage === "string") {
+    return { state, message: item.meta.unresponsiveInteractionMessage };
   }
 
   return { state, message: `${item.name} doesn't seem to care.` };

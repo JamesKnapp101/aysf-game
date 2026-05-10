@@ -76,6 +76,7 @@ export interface StatusEffect {
   intensity: number;
   remainingTurns?: number;
   source?: string;
+  startedAtMove?: number;
 }
 
 export type GameNotificationKind =

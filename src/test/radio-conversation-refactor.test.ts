@@ -90,6 +90,30 @@ describe("conversation system refactor", () => {
     ).toBe(true);
   });
 
+  it("resolves implicit tell targets for direct NPCs", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: false,
+      status: 429,
+    } as Response);
+
+    let state = createTestState({ roomId: "GymWeightRoom" });
+    const parsed = parseCommand("tell robot the man is dead");
+
+    expect(getPendingConversationLogMessage(state, parsed)).toBe(
+      "The robot gym bro considers this...",
+    );
+
+    state = await handleCommand(state, parsed);
+    const spotBotConversation = state.conversation?.npcs?.SpotBot ?? null;
+
+    expect(state.log.at(-1) ?? "").not.toMatch(/tell them about what/i);
+    expect(spotBotConversation?.topicsUsed?.["tell:man is dead"]).toBe(true);
+    expect(spotBotConversation?.conversationHistory?.at(-1)).toMatchObject({
+      type: "tell",
+      topic: "man is dead",
+    });
+  });
+
   it("tracks direct fallback conversations and suppresses repeated canned replies", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: false,

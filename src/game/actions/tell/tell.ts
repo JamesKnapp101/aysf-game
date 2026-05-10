@@ -21,7 +21,7 @@ export async function doTell(
   }
 
   const topicText =
-    cmd.preposition === "about" ? cmd.indirect?.trim() : undefined;
+    cmd.preposition === "about" ? cmd.indirect?.trim() : cmd.raw?.trim();
   if (!topicText) {
     return { state, message: "Tell them about what?" };
   }

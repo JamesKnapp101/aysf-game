@@ -1159,6 +1159,33 @@ export const levelThreeItems: Item[] = [
     },
   },
   {
+    id: "Bitterchew",
+    name: "bitter chewable",
+    description: `It's a small, brick-shaped chewable inside a thin papery wrapper. The red wrapper displays a big flexing bicep, and the words 'Milky Fight!' in block letters underneath. It promises to get you pumped quick, and fast. It also promises, in tiny print, that the wrapper is also edible.`,
+    initialDescription: `an individually wrapped chewable sits in one corner of the footlocker.`,
+    location: "seeded",
+    vocab: ["chewable", "gummy", "milky", "fight"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    meta: {
+      consumable: {
+        kind: "food",
+        perDose: [
+          { type: "status", id: "stronger", intensity: 100, duration: 1000 },
+          {
+            type: "message",
+            text: `You pop the chewable in your mouth and squish it between your back teeth. It yields like gum for a moment, then dissolves all at once into a fairly bitter syrup. Even your esophagus can taste it!`,
+          },
+        ],
+        onEmpty: [{ type: "message", text: "It's empty." }],
+      },
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isConsumable: true,
+    doses: 1,
+  },
+  {
     id: "BrokenLamp",
     name: "elephant lamp",
     description:

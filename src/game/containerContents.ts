@@ -43,6 +43,7 @@ export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
     "GelRound2",
     "GelRound3",
     "BottleOfScotch",
+    "Bitterchew",
     "MensLockerKey4",
   ],
   FiveWestMedicineChest: ["hornychewToo", "hairychew"],

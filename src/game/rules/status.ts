@@ -44,6 +44,7 @@ export function applyStatusEffectToPlayer(
       id: effectId,
       intensity,
       remainingTurns: addedTurns,
+      startedAtMove: state.moves,
     };
 
     nextEffects = [...effects, newEffect];

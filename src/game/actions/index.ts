@@ -26,6 +26,7 @@ import { doExamine } from "./examine/examine";
 import { doFill } from "./fill/fill";
 import { doInject } from "./inject/inject";
 import { doLoad } from "./load/load";
+import { doLift, doMoveItem } from "./manipulate/manipulate";
 import { doOpen } from "./open/open";
 import { doPour } from "./pour/pour";
 import { doPut } from "./put/put";
@@ -64,6 +65,8 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   wait: doWait,
   shoot: doShoot,
   load: doLoad,
+  lift: doLift,
+  move: doMoveItem,
   search: doSearch,
   stand: doStand,
   turn: doTurn,

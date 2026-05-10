@@ -195,6 +195,60 @@ describe("General gameplay", () => {
     );
   });
 
+  it("logs smarter status messages only when the effect starts and ends", async () => {
+    const withEffect = applyStatusEffectToPlayer(
+      createTestState(),
+      "smarter",
+      100,
+      3,
+    );
+
+    const afterFirstTurn = advanceTurn(withEffect);
+    const afterMiddleTurn = advanceTurn(afterFirstTurn);
+    const afterLastTurn = advanceTurn(afterMiddleTurn);
+    const transcript = afterLastTurn.log.join("\n");
+
+    expect(afterFirstTurn.log.join("\n")).toContain(
+      "You feel a strange tingle that travels up your spine",
+    );
+    expect(afterMiddleTurn.log.join("\n")).not.toContain(
+      "Your newfound enlightenment warbles",
+    );
+    expect(transcript).toContain("Your newfound enlightenment warbles");
+    expect(transcript.match(/strange tingle/g)).toHaveLength(1);
+    expect(transcript.match(/newfound enlightenment warbles/g)).toHaveLength(1);
+    expect(afterLastTurn.player.statusEffects.map((effect) => effect.id)).not.toContain(
+      "smarter",
+    );
+  });
+
+  it("logs stronger status messages only when the effect starts and ends", async () => {
+    const withEffect = applyStatusEffectToPlayer(
+      createTestState(),
+      "stronger",
+      100,
+      3,
+    );
+
+    const afterFirstTurn = advanceTurn(withEffect);
+    const afterMiddleTurn = advanceTurn(afterFirstTurn);
+    const afterLastTurn = advanceTurn(afterMiddleTurn);
+    const transcript = afterLastTurn.log.join("\n");
+
+    expect(afterFirstTurn.log.join("\n")).toContain(
+      "You feel a warmth flooding through you",
+    );
+    expect(afterMiddleTurn.log.join("\n")).not.toContain(
+      "You feel a twitch in your shoulder",
+    );
+    expect(transcript).toContain("You feel a twitch in your shoulder");
+    expect(transcript.match(/warmth flooding through you/g)).toHaveLength(1);
+    expect(transcript.match(/twitch in your shoulder/g)).toHaveLength(1);
+    expect(afterLastTurn.player.statusEffects.map((effect) => effect.id)).not.toContain(
+      "stronger",
+    );
+  });
+
   it("applies radiation intensity to health loss during turn advancement", async () => {
     const withRadiation = applyStatusEffectToPlayer(
       createTestState(),
