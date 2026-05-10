@@ -30,6 +30,10 @@ export type Overlay =
       messages: PhoneMessage[];
       messagesPlayedById: Record<string, boolean>;
     } & OverlayPostClose)
+  | ({
+      kind: "spin-stage-speed-password";
+      targetSpeed: number;
+    } & OverlayPostClose)
   | ({ currentViewIndex: number; kind: "camera-gun-viewer" } & OverlayPostClose)
   | ({ isOn: boolean; kind: "power-station-terminal" } & OverlayPostClose)
   | ({ kind: "hydroponics-admin-terminal" } & OverlayPostClose)

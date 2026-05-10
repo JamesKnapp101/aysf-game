@@ -12,10 +12,8 @@ const TRASH_BOT_BIN_ID = "TrashBotBin";
 export const PARK_EAST_POWER_KEY_SNATCH_EVENT_ID = "parkeast_first_key_get";
 export const PARK_EAST_POWER_KEY_SNATCH_ARMED_EVENT_ID =
   "parkeast_key_snatch_armed";
-export const PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE =
-  "The trashbot ran in from out of nowhere and took it!.";
-export const PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE =
-  "A trashbot suddenly darts in, whisks the large key into its wire bin, and putters off toward the center of the park.";
+export const PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE = `A little trashbot darts in just as you reach down to pick up the key.\n\n"Trash detected."\n\nBefore you can grab it, the robot whisks the large key up into its wire bin then putters off toward the center of the park`;
+export const PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE = `A trashbot suddenly darts into the area near the park entrance and spots the large key in the grass next to the body.\n\n"Trash detected."\n\nIt whisks the large key into its wire bin, and putters off toward the center of the park.`;
 
 function getPowerStationKeyRoomId(state: GameState): string | undefined {
   return (

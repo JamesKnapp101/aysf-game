@@ -17,6 +17,7 @@ export const GYM_EXERCISE_BALL_RACK_ID = "GymExerciseBallRack";
 export const GYM_ORANGE_BADGE_ID = "orangebadge";
 export const GYM_TREADMILL_ID = "GymGiantTreadmill";
 export const GYM_WEIGHTLIFTER_MOVED_TRIGGER = "GymWeightlifterMoved";
+export const SPIN_STAGE_SPEED_DIAL_PASSWORD = "YX34-D940-6";
 
 export type GymTreadmillSettings = {
   angle: number;

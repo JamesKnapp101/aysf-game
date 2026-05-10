@@ -1,5 +1,7 @@
 import { buildRoomDescription } from "@game/text/roomDescription";
+import { dispatchAction } from "@game/actions/dispatchAction";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
+import { useUIOverlayStore } from "@game/store/store";
 import { describe, expect, it } from "vitest";
 import {
   createTestState,
@@ -51,7 +53,7 @@ describe("Gym interactions", () => {
     ).toContain("The surface slopes down 10 degrees.");
   });
 
-  it("blocks the gym speed dial but lets the spin stage speed dial work", async () => {
+  it("blocks the gym speed dial and password-gates the spin stage speed dial", async () => {
     const state = createTestState({ roomId: "Gym" });
 
     const blocked = await runCommand(state, "set speed dial to 50");
@@ -59,12 +61,30 @@ describe("Gym interactions", () => {
     expect(getLastLogEntry(blocked)).toContain("Instructor Override");
 
     const spinStage = createTestState({ roomId: "SpinStage" });
-    const adjusted = await runCommand(spinStage, "set speed dial to 25");
-    const treadmillSettings = adjusted.itemState.itemSettings.GymGiantTreadmill;
+    const prompted = await runCommand(spinStage, "set speed dial to 25");
 
-    expect(getLastLogEntry(adjusted)).toContain(
-      "You set the instructor speed dial to 25.",
-    );
+    expect(getLastLogEntry(prompted)).toContain("Password Required");
+    expect(useUIOverlayStore.getState().overlay).toMatchObject({
+      kind: "spin-stage-speed-password",
+      targetSpeed: 25,
+    });
+
+    const failed = await dispatchAction(prompted, {
+      verb: "submitSpinStageSpeedPassword",
+      payload: { password: "YX34-D", speed: 25 },
+    });
+
+    expect(failed.message).toBe("The password failed.");
+    expect(failed.state.itemState.itemSettings.GymGiantTreadmill).toBeUndefined();
+
+    const adjusted = await dispatchAction(prompted, {
+      verb: "submitSpinStageSpeedPassword",
+      payload: { password: "YX34-D940-6", speed: 25 },
+    });
+    const treadmillSettings =
+      adjusted.state.itemState.itemSettings.GymGiantTreadmill;
+
+    expect(adjusted.message).toBe("You set the instructor speed dial to 25.");
     expect(treadmillSettings).toMatchObject({
       kind: "gym-treadmill",
       speed: 25,
@@ -159,6 +179,12 @@ describe("Gym interactions", () => {
     );
 
     expect(linked.player.roomId).toBe("SpinInstructorSpinStageMemory");
+    expect(
+      buildRoomDescription(linked, "SpinInstructorSpinStageMemory", {
+        mode: "panel",
+        forceFull: true,
+      }),
+    ).toContain("PW: YX34-D940-6");
 
     const asked = await runCommand(linked, "ask woman about bike");
 
@@ -256,7 +282,12 @@ describe("Gym interactions", () => {
   it("lets the player scramble across when the instructor slows the treadmill", async () => {
     const state = createTestState({ roomId: "SpinStage" });
 
-    const slowed = await runCommand(state, "set speed dial to 80");
+    const prompted = await runCommand(state, "set speed dial to 80");
+    const unlocked = await dispatchAction(prompted, {
+      verb: "submitSpinStageSpeedPassword",
+      payload: { password: "YX34-D940-6", speed: 80 },
+    });
+    const slowed = unlocked.state;
     const crossedEast = await runCommand(slowed, "east");
     const crossedWest = await runCommand(crossedEast, "west");
 

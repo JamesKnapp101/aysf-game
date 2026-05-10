@@ -8,6 +8,7 @@ import { CoolerModal } from "./CoolerModal";
 import { CrtModal } from "./CrtModal";
 import { HelpModal } from "./HelpModal";
 import { MessageMachineModal } from "./MessageMachineModal";
+import { PasswordPromptModal } from "./PasswordPromptModal";
 import { ReaderModal } from "./ReaderModal";
 
 type RunAction = (verb: string, args?: Record<string, unknown>) => void;
@@ -138,6 +139,24 @@ export function OverlayHost({
           onMarkPlayed={(messageId) => {
             runAction("markMessagePlayed", { messageId });
           }}
+          onClose={onClose}
+        />
+      );
+    }
+
+    case "spin-stage-speed-password": {
+      const onSubmitPassword = (password: string) => {
+        onClose();
+        runAction("submitSpinStageSpeedPassword", {
+          password,
+          speed: overlay.targetSpeed,
+        });
+      };
+
+      return (
+        <PasswordPromptModal
+          targetSpeed={overlay.targetSpeed}
+          onSubmit={onSubmitPassword}
           onClose={onClose}
         />
       );

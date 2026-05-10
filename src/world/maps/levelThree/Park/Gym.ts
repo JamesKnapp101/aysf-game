@@ -328,9 +328,9 @@ export const gymItems: Item[] = [
     id: "SpinStageBike",
     name: "instructor bike",
     description:
-      "The stationary bike is sleek and overbuilt, with a reinforced frame, clipped pedals, and a console angled toward the rider.",
+      "The stationary bike is sleek, with a reinforced frame, clipped pedals, and a console angled toward the rider. The console has shorted out, leaving the screen warped and dark. A scorched label under the console reads:\n\nPW: YX34-D\n\nThe rest is burned away.",
     sceneryDescription:
-      "The instructor bike is fixed in place, its console still lit and waiting.",
+      "The instructor bike is fixed in place and looks like it shorted out, with visible scorch marks and its console warped and dark. There's a label stuck on the bottom of the console that reads: PW: YX34-D but the rest is burned away.",
     location: "SpinStage",
     vocab: ["bike", "bicycle", "stationary", "stationary bike", "instructor"],
     itemClass: "solid",

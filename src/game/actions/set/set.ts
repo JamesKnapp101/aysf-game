@@ -2,7 +2,6 @@ import { resolveItemByNoun } from "../../rules/scope";
 import { isPreserveActorId } from "../../preserve/preserveTypes";
 import {
   setGymTreadmillAngle,
-  setGymTreadmillSpeed,
 } from "@game/helpers/gymHelpers";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
@@ -122,8 +121,13 @@ export function doSet(state: GameState, cmd: ParsedCommand): ActionResult {
     }
 
     return {
-      state: setGymTreadmillSpeed(state, value),
-      message: `You set the instructor speed dial to ${value}.`,
+      state,
+      message:
+        "The instructor speed dial flashes 'Password Required' and waits for input.",
+      overlay: {
+        kind: "spin-stage-speed-password",
+        targetSpeed: value,
+      },
     };
   }
 

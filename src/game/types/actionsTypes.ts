@@ -19,11 +19,14 @@ export type ActionRequest = {
     input?: string;
     messageId?: string;
     mode?: "off" | "cool" | "cold" | "freeze";
+    password?: string;
+    speed?: number;
   };
   verb:
     | "setCoolerMode"
     | "openCoolerPanel"
     | "markMessagePlayed"
     | "cycleCameraGunView"
+    | "submitSpinStageSpeedPassword"
     | "command";
 };

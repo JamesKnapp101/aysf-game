@@ -3,6 +3,10 @@ import { parseCommand } from "../../parse/parser";
 import { handleSetCoolerMode } from "../rules/cooler";
 import { setMessageListened } from "../rules/message-machine";
 import { getCoolerMode } from "../selectors/gadgetSelectors";
+import {
+  setGymTreadmillSpeed,
+  SPIN_STAGE_SPEED_DIAL_PASSWORD,
+} from "../helpers/gymHelpers";
 import type { ActionRequest, ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
@@ -41,6 +45,35 @@ export async function dispatchAction(
     case "markMessagePlayed": {
       const next = setMessageListened(state, req.payload.messageId ?? "");
       return { state: next, message: undefined };
+    }
+    case "submitSpinStageSpeedPassword": {
+      const speed = req.payload.speed;
+      const password = (req.payload.password ?? "").trim().toUpperCase();
+
+      if (
+        typeof speed !== "number" ||
+        !Number.isFinite(speed) ||
+        !Number.isInteger(speed) ||
+        speed < 0 ||
+        speed > 100
+      ) {
+        return {
+          state,
+          message: "The speed dial only runs from 0 to 100.",
+        };
+      }
+
+      if (password !== SPIN_STAGE_SPEED_DIAL_PASSWORD) {
+        return {
+          state,
+          message: "The password failed.",
+        };
+      }
+
+      return {
+        state: setGymTreadmillSpeed(state, speed),
+        message: `You set the instructor speed dial to ${speed}.`,
+      };
     }
     case "cycleCameraGunView":
       return {
