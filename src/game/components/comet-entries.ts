@@ -80,7 +80,7 @@ export const DEFAULT_COMET_ENTRIES: CometEntry[] = [
       "broseph",
       "brawn",
     ],
-    body: "A robot known as 'Broseph Brawn' works as a trainer in the heavy weight section of the gymnasium 'The Swole-den Ratio', located in Vivarium Park. It assists visitors meet their training goals, and is a notoriously tough coach",
+    body: "A robot known as 'Broseph Brawn' works as a trainer in the heavy weight section of the gymnasium 'Ultra Fitness', located in Vivarium Park. It assists visitors meet their training goals, and is a notoriously tough coach",
   },
   {
     id: "bartender_robot",

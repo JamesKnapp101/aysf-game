@@ -15,6 +15,7 @@ import { AQUARIUM_BREATHER_ITEM_ID } from "src/world/Items/creatures/octopus";
 import { INITIAL_WORLD } from "src/world/World";
 import {
   buildDamageNotification,
+  GOSSIP_NOTIFICATION_TEXT,
   buildMemoryNotification,
   buildScoreNotification,
 } from "../game/rules/notifications";
@@ -466,6 +467,20 @@ describe("General gameplay", () => {
 
     expect(afterOneTurn.worldState.activeExperience?.turnsRemaining).toBe(2);
     expect(afterOneTurn.worldState.darkRooms.HalvedCorpseMemory).not.toBe(true);
+    expect(getLastLogEntry(afterOneTurn)).toContain("octopus nursery");
+    expect(afterOneTurn.player.spiltTea).toContainEqual({
+      id: "nursery mishap",
+      title: "Lil-Lilly Tendwick made a costly mistake at the Aquarium",
+      summary:
+        "Lil-Lilly Tendwick apparently set the water temperature incorrectly at the aquarium's octopus nursery, with unfortunate results.",
+      tags: [],
+      type: "gossip",
+    });
+    expect(afterOneTurn.uiState.notifications).toContainEqual({
+      id: 1,
+      kind: "gossip",
+      text: GOSSIP_NOTIFICATION_TEXT,
+    });
 
     const afterBlackout = await runCommand(afterOneTurn, "wait");
 
@@ -491,6 +506,18 @@ describe("General gameplay", () => {
     expect(replayed.itemState.itemRoomId.LilLillyCorridorThree).toBe(
       "HalvedCorpseMemory",
     );
+
+    const replayedAfterOneTurn = await runCommand(replayed, "wait");
+    expect(
+      replayedAfterOneTurn.player.spiltTea.filter(
+        (topic) => topic.id === "nursery mishap",
+      ),
+    ).toHaveLength(1);
+    expect(
+      replayedAfterOneTurn.uiState.notifications.filter(
+        (notification) => notification.kind === "gossip",
+      ),
+    ).toHaveLength(1);
   });
 
   it("aborts active memories back to the return room", async () => {

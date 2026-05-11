@@ -2,6 +2,10 @@ import { advanceTurn } from "@game/engine/turn";
 import { startGamePreserveRun } from "@game/preserve/preserveState";
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
+import {
+  PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE,
+  PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
+} from "@game/helpers/parkKeyHijack";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { LEVEL_FIVE } from "../world/maps/levelFive/LevelFive";
@@ -396,7 +400,7 @@ describe("Doors and level mechanics", () => {
     expect(next.itemState.itemRoomId.TrashBot).toBe("ParkCenter");
     expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkCenter");
     expect(getLastLogEntry(next)).toContain(
-      "A trashbot suddenly darts in, whisks the large key into its wire bin, and putters off toward the center of the park.",
+      PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE,
     );
   });
 
@@ -417,7 +421,7 @@ describe("Doors and level mechanics", () => {
     expect(next.itemState.itemRoomId.TrashBot).toBe("ParkCenter");
     expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkCenter");
     expect(getLastLogEntry(next)).toContain(
-      "A trashbot suddenly darts in, whisks the large key into its wire bin, and putters off toward the center of the park.",
+      PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE,
     );
   });
 
@@ -440,7 +444,7 @@ describe("Doors and level mechanics", () => {
     expect(next.worldState.scoresTriggered.obtained_power_key).toBe(false);
     expect(next.score).toBe(0);
     expect(getLastLogEntry(next)).toContain(
-      "The trashbot ran in from out of nowhere and took it!.",
+      PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
     );
     expect(getLastLogEntry(next)).not.toContain("Taken.");
   });
@@ -451,7 +455,7 @@ describe("Doors and level mechanics", () => {
     const next = await runCommand(start, "get large key");
 
     expect(getLastLogEntry(next)).toContain(
-      "The trashbot ran in from out of nowhere and took it!.",
+      PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
     );
     expect(getLastLogEntry(next)).not.toContain("You don't see that here.");
   });

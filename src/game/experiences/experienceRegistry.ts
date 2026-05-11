@@ -1,9 +1,11 @@
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
+import { collectTeaResult, queueGossipNotification } from "@game/rules/gossip";
 import { updateItemLocation } from "@game/rules/items";
 import type {
   ActiveExperience,
   ExperienceKind,
   GameState,
+  JuicyTopic,
 } from "@game/types/gameTypes";
 
 type ExperienceStageContext = {
@@ -28,6 +30,7 @@ type ExperienceStageEventDefinition = {
         state: GameState,
         ctx: ExperienceStageEventContext,
       ) => string | undefined);
+  overheardTea?: JuicyTopic[];
   run?: (state: GameState, ctx: ExperienceStageEventContext) => GameState;
   when?: (state: GameState, ctx: ExperienceStageEventContext) => boolean;
 };
@@ -58,6 +61,15 @@ const CRUSHED_WEIGHTLIFTER_MEMORY_ROOM_ID = "CrushedWeightlifterGymMemory";
 const CRUSHED_WEIGHTLIFTER_MEMORY_ITEM_ID = "CrushedWeightlifter";
 const CRUSHED_WEIGHTLIFTER_MEMORY_SPOTBOT_ITEM_ID =
   "CrushedWeightlifterMemorySpotBot";
+
+const NURSERY_MISHAP_GOSSIP: JuicyTopic = {
+  id: "nursery mishap",
+  title: "Lil-Lilly Tendwick made a costly mistake at the Aquarium",
+  summary:
+    "Lil-Lilly Tendwick apparently set the water temperature incorrectly at the aquarium's octopus nursery, with unfortunate results.",
+  tags: [],
+  type: "gossip",
+};
 
 function setRoomDarkness(
   state: GameState,
@@ -110,10 +122,15 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
         },
         events: [
           {
+            atElapsedTurns: 1,
+            id: "gossip",
+            message: `\n"Just go," the man says, not moving from the doorway. "For your own safety, I'm begging you."\n\n"Is that a threat?" the woman asks, incredulous.\n\n"A warning," he says. "Lil, we're all in grave danger, leave now."\n\nThe woman's eyes narrow.\n\n"What are you hiding in there?" she asks.\n\n"Leave!" the man barks. "Just go, or...I'll tell Zoology you're the one who set the wrong temperature in the octopus nursery."\n\nThe woman's face turns pale, and her eyes begin to glisten.\n\n"That was an accident," she says, before backtracking. "I mean, I don't know what you're talking about."`,
+            overheardTea: [NURSERY_MISHAP_GOSSIP],
+          },
+          {
             atElapsedTurns: 2,
             id: "blackout",
-            message:
-              "\nThe lights go out with a hard electrical snap. For one frozen second the living area is only afterimage and startled breathing. Somewhere close, Lil-Lilly swears, then you hear her stumble for the doorway.",
+            message: `\nThe lights go out with a hard electrical snap. For one frozen second the living area is only afterimage and startled breathing. Somewhere close, you hear Lil-Lilly whisper to herself.\n\n"What is that?"\n\nYou hear her stumble for the doorway.`,
             run: (state) => {
               let next = setRoomDarkness(
                 state,
@@ -150,6 +167,13 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
             SPIN_INSTRUCTOR_MEMORY_ROOM_ID,
           ),
         roomId: SPIN_INSTRUCTOR_MEMORY_ROOM_ID,
+        events: [
+          {
+            atElapsedTurns: 2,
+            id: "incident-flashback",
+            message: `\n\nA loud boom sounds, sending vibrations through the floor! You hear the clang of heavy weights slamming down on the mat, and screams, followed by a voice cutting in over a loudspeaker.\n\n"Warning," it states. "Electrical failure."\n\n"What was that?" someone shouts.`,
+          },
+        ],
       },
     ],
     startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe stage, and the rest of the gymnasium, peel away as the memory takes hold...`,
@@ -180,20 +204,17 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
           {
             atElapsedTurns: 1,
             id: "spotbot-check-one",
-            message:
-              `"You got this, bro?" the robot asks.\n\nThe man can't answer. He keeps the barbell locked overhead, jaw clenched, breath coming in hard bursts.`,
+            message: `A loud boom from somewhere causes the floor to shake, and the many racks of weights to rattle. The lurch is just enough to put the man off his balance, and he quickly adjusts, keeping the massive weight over his head.\n\n"You got this, bro?" the robot asks.\n\nThe man nods, but keeps the barbell locked overhead, jaw clenched, breath coming in hard bursts, and you notice a pinhole in the back of his neck that has leaked a single drop of blood, tracing a red line down his sweaty back. In the background, you hear a commotion of some sort.`,
           },
           {
             atElapsedTurns: 2,
             id: "spotbot-check-two",
-            message:
-              `"You all set, bro?" the robot asks.\n\nThe man's arms and legs begin to shake, the bar wavering just enough to make the plates clink.`,
+            message: `"Can't...move..." the man gasps, his eyes growing concerned as the commotion intensifies.\n\n"That's right, push it bro!" the robot says.\n\nThe man's arms and legs begin to shake, the bar wavering just enough to make the plates clink.\n\n"Something's messed up..." he implores the robot. "Get...Eegler..."`,
           },
           {
             atElapsedTurns: 3,
             id: "spotbot-check-three",
-            message:
-              `"Still with me, bro?" the robot asks.\n\nThe man is at the end of his rope now, face purple, veins bulging out as he fights to keep his balance.`,
+            message: `"Still with me, bro?" the robot asks.\n\nThe man is at the end of his rope now, face purple, veins bulging out as he fights to keep his balance.\n\n"Never...got to kill...Barry..." he laments.`,
           },
         ],
         roomId: CRUSHED_WEIGHTLIFTER_MEMORY_ROOM_ID,
@@ -325,6 +346,10 @@ function runExperienceStageEvents(
     if (!shouldRunExperienceEvent(next, event, ctx)) continue;
 
     if (event.run) next = event.run(next, ctx);
+    if (event.overheardTea?.length) {
+      const teaResult = collectTeaResult(next, event.overheardTea);
+      next = queueGossipNotification(teaResult.state, teaResult.obtainedNewTea);
+    }
 
     const message = getExperienceEventMessage(next, event, ctx);
     if (message?.trim()) messages.push(message.trim());
