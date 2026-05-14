@@ -7,6 +7,7 @@ export type Preposition =
   | "off"
   | "with"
   | "from"
+  | "for"
   | "at"
   | "about"
   | "over"

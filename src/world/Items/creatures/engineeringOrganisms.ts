@@ -86,7 +86,7 @@ export function organismOverrideTick(
   if (orgRoom === playerRoom) {
     if (orgInDark && playerInDark && triggerPlayerDeath) {
       triggerPlayerDeath(
-        `Something in the darkness rushes you—too fast to see, too close to stop.`,
+        `In the dark, something touches you and your body goes rigid. You feel the sensation of something cold and sticky brushing over your bare skin, then a tingle, then everything gets washed away with stark, bright light. You stare into the blinding white void for only a second before being all at once replaced by sudden, final darkness.`,
         "organism",
       );
       return;

@@ -6,6 +6,7 @@ import {
 import { normalizeTopic } from "@game/rules/scope";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { ConversationTarget } from "@game/types/npcTypes";
+import { maybeAwardBarMemoryBox } from "src/world/maps/levelThree/Park/Bar";
 import { GameState } from "../../types/gameTypes";
 
 export async function tryTell(
@@ -16,7 +17,21 @@ export async function tryTell(
   const topic = normalizeTopic(topicRaw, target);
 
   if (target.kind === "npc") {
-    return tellNpc(state, target.npc, topic, target.via);
+    const result = await tellNpc(state, target.npc, topic, target.via);
+    if (target.via !== "direct") return result;
+
+    const reward = maybeAwardBarMemoryBox(result.state, target.npc.id, topic);
+    if (!reward.message) return result;
+
+    const noCareMessage = `${target.npc.name} doesn't seem to care.`;
+    const baseMessage =
+      result.message?.trim() === noCareMessage ? "" : result.message?.trim();
+
+    return {
+      ...result,
+      state: reward.state,
+      message: [baseMessage, reward.message].filter(Boolean).join("\n\n"),
+    };
   }
 
   const item = target.item;

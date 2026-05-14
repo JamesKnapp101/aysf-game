@@ -1,7 +1,25 @@
-import { isItemConsumable, setItemDoses } from "@game/rules/items";
+import {
+  isItemConsumable,
+  setItemDoses,
+  updateItemLocation,
+} from "@game/rules/items";
+import { removeFromInventory } from "@game/rules/state";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
+
+function shouldApplyEmptyCleanup(
+  state: GameState,
+  cleanup: any,
+): boolean {
+  if (!cleanup) return false;
+
+  if (Array.isArray(cleanup.rooms)) {
+    return cleanup.rooms.includes(state.player.roomId);
+  }
+
+  return true;
+}
 
 export function tryDrinkItem(
   state: GameState,
@@ -42,6 +60,23 @@ export function tryDrinkItem(
 
   const newDoses = Math.max(0, doses - 1);
   next = setItemDoses(next, item.id, newDoses);
+
+  if (newDoses === 0) {
+    const cleanup = item.meta?.consumable?.emptyCleanup;
+    if (shouldApplyEmptyCleanup(next, cleanup)) {
+      if (typeof cleanup.location === "string") {
+        next = updateItemLocation(next, item.id, cleanup.location);
+      }
+
+      if (cleanup.removeFromInventory === true) {
+        next = removeFromInventory(next, item.id);
+      }
+
+      if (typeof cleanup.message === "string" && cleanup.message.trim()) {
+        baseMsg = [baseMsg, cleanup.message].filter(Boolean).join(" ");
+      }
+    }
+  }
 
   return {
     state: next,

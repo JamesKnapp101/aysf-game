@@ -21,23 +21,23 @@ export const livingQuartersThreeWestOrganismItems: Item[] = [
         `${getRandomOrganismAudioCue(dirFromPlayer)}`,
     },
     description: "You can't see it...",
-    initialDescription: `From the upper corner of the room hangs a large, ornate wreath carved in one piece of polished crimson.`,
+    initialDescription: `In one corner of the room sits a strange, glassy black sculpture that resembles a figure on its back, writhing in pain.`,
     describe: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
       if (flashlightOn(state) && loc === state.player.roomId) {
-        return `From the upper corner of the room hangs a large, ornate wreath carved in one piece of polished crimson.`;
+        return `The limbs are gangly and the head is shriveled, but it definitely looks like a person writhing on their back. The surface of it is covered in fine ripples and grooves.`;
       }
       return `...you can't see it.`;
     },
     describeInitial: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
       if (flashlightOn(state) && loc === state.player.roomId) {
-        return `From the upper corner of the room hangs a large, ornate wreath carved in one piece of polished crimson.`;
+        return `In one corner of the room sits a strange, glassy black sculpture that resembles a figure on its back, writhing in pain.`;
       }
       return `...you can't see it.`;
     },
     location: "LivingQuartersThreeWest",
-    vocab: ["wreath", "ornate", "crimson"],
+    vocab: ["strange", "prone", "black", "glassy", "sculpture"],
     itemClass: "solid",
     itemWeight: 8,
     itemSize: 2,
@@ -82,23 +82,23 @@ export const livingQuartersThreeWestOrganismItems: Item[] = [
         `${getRandomOrganismAudioCue(dirFromPlayer)}`,
     },
     description: "You can't see it...",
-    initialDescription: `Against the wall stands a squat, rectangular sculpture, polished and colored deep red.`,
+    initialDescription: `Against one wall sits a mannequin made from something black and glassy. It's positioned as if it were seated, leaning back, its right hand curled like it was holding something.`,
     describe: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
       if (flashlightOn(state) && loc === state.player.roomId) {
-        return `Against the wall stands a squat, rectangular sculpture, polished and colored deep red.`;
+        return `It gives the impression of a misshapen figure seated at an invisible table, and the right hand is positioned like it was holding something that's since been removed. The surface of the figure is a network of very fine ridges and valleys.`;
       }
       return `...you can't see it.`;
     },
     describeInitial: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
       if (flashlightOn(state) && loc === state.player.roomId) {
-        return `Against the wall stands a squat, rectangular sculpture, polished and colored deep red.`;
+        return `Against one wall sits a mannequin made from something black and glassy. It's positioned as if it were seated, leaning back, its right hand curled like it was holding something.`;
       }
       return `...you can't see it.`;
     },
     location: "ThreeWestBath",
-    vocab: ["squat", "rectangular", "sculpture", "red"],
+    vocab: ["mannequin", "seated", "black", "glassy"],
     itemClass: "solid",
     itemWeight: 8,
     itemSize: 2,
@@ -143,23 +143,23 @@ export const livingQuartersThreeWestOrganismItems: Item[] = [
         `${getRandomOrganismAudioCue(dirFromPlayer)}`,
     },
     description: "You can't see it, yo...",
-    initialDescription: `In one corner stands a large sculpture or statue of some kind, made of a beautiful ruby red material. It has intricate folds and ripples, forming something vaguely triangular.`,
+    initialDescription: `On the other side of the room stands a glossy black statue that resembles a pair of legs ending at the waist, leaning forward and running.`,
     describe: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
       if (flashlightOn(state) && loc === state.player.roomId) {
-        return `In one corner stands a large sculpture or statue of some kind, made of a beautiful ruby red material. It has intricate folds and ripples, forming something vaguely triangular.`;
+        return `It looks like a statue that got broken, or was cut, in half. The legs are spindly, and covered in tiny, intricate ripples and folds.`;
       }
       return `...you can't see it.`;
     },
     describeInitial: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
       if (flashlightOn(state) && loc === state.player.roomId) {
-        return `In one corner stands a large sculpture or statue of some kind, made of a beautiful ruby red material. It has intricate folds and ripples, forming something vaguely triangular.`;
+        return `On the other side of the room stands a glossy black statue that resembles a pair of legs ending at the waist, leaning forward and running.`;
       }
       return `...you can't see it.`;
     },
     location: "ThreeWestBed",
-    vocab: ["statue", "ruby", "triangular", "triangle"],
+    vocab: ["statue", "black", "glassy", "legs"],
     itemClass: "solid",
     itemWeight: 8,
     itemSize: 2,
@@ -267,7 +267,7 @@ export function organismLQOverrideTick(
 
   if (sameRoom && roomIsDark && !playerFlashlightOn) {
     triggerPlayerDeath?.(
-      "Something stirs in the darkness—too close. You feel it before you understand it.",
+      "In the dark, something touches you and your body goes rigid. You feel the sensation of something cold and sticky brushing over your bare skin, then a tingle, then everything gets washed away with stark, bright light. You stare into the blinding white void for only a second before being all at once replaced by sudden, final darkness.",
       "organism",
     );
     return;
@@ -275,7 +275,3 @@ export function organismLQOverrideTick(
 
   if (nextState !== state) return nextState;
 }
-
-
-
-

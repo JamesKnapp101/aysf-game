@@ -12,6 +12,7 @@ import {
   createInitialOctopusState,
 } from "src/world/Items/creatures/octopus";
 import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
+import { BAR_BULL_ADHESIVE_TRIGGER } from "src/world/maps/levelThree/Park/Bar";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
   INITIAL_WORLD,
@@ -224,6 +225,7 @@ export const createInitialState = (world: World): GameState => {
         LivingQuartersThreeWest: true,
         ThreeWestBath: true,
         ThreeWestBed: true,
+        BarBasement: true,
         // Aviary rooms
         OuterRingNorth: true,
         OuterRingTopEastBend: true,
@@ -461,6 +463,12 @@ export const createInitialState = (world: World): GameState => {
       },
       playerDeaths: {},
       aviarySpotlight: createInitialAviarySpotlightState(),
+      barBot: {
+        cellarDeathAcknowledged: false,
+        sawPlayerDieInCellar: false,
+        sawPlayerEnterCellar: false,
+        sawPlayerRegenerateInBar: false,
+      },
       bullEncounter: createInitialBullEncounterState(),
       gamePreserve: {
         completedDifficulties: {},
@@ -489,6 +497,7 @@ export const createInitialState = (world: World): GameState => {
         HydroponicsDoorUnblocked: false,
         EscapedWithYellowBadge: false,
         GymWeightlifterMoved: false,
+        [BAR_BULL_ADHESIVE_TRIGGER]: false,
       },
     },
     itemState: {

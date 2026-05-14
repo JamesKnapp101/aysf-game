@@ -1,5 +1,11 @@
 import { queueAfterRoomDescription } from "@game/helpers/gameHelpers";
 import {
+  BAR_BOT_CELLAR_DEATH_RETURN_MESSAGE,
+  acknowledgeBarBotReturnedFromCellarDeath,
+  markBarBotSawPlayerEnterCellar,
+  shouldBarBotAcknowledgeReturnedFromCellarDeath,
+} from "@game/helpers/barBotAwareness";
+import {
   GYM_ROOM_ID,
   moveGymExerciseBallToRoom,
   playerHasGymExerciseBall,
@@ -25,6 +31,30 @@ function runParkEastPowerKeySnatch(state: Parameters<ScriptedEvent["run"]>[0]) {
 }
 
 export const SCRIPTED_EVENTS: ScriptedEvent[] = [
+  {
+    id: "barbot_saw_cellar_entry",
+    once: false,
+    when: (_state, ctx) =>
+      ctx.kind === "onEnterRoom" &&
+      ctx.fromRoomId === "Bar" &&
+      ctx.roomId === "BarBasement",
+    run: (state) => markBarBotSawPlayerEnterCellar(state),
+  },
+  {
+    id: "barbot_cellar_death_return_ack",
+    once: false,
+    when: (state, ctx) =>
+      ctx.kind === "onEnterRoom" &&
+      ctx.roomId === "Bar" &&
+      shouldBarBotAcknowledgeReturnedFromCellarDeath(state),
+    run: (state) => {
+      const next = acknowledgeBarBotReturnedFromCellarDeath(state);
+      return queueAfterRoomDescription(
+        next,
+        BAR_BOT_CELLAR_DEATH_RETURN_MESSAGE,
+      );
+    },
+  },
   {
     id: "park_key_snatch_arm",
     once: false,

@@ -21,6 +21,18 @@ export type ResolvedAdjacentAudioCue = {
   text: string;
 };
 
+export function formatAudioDirectionMovement(dir: Direction | string): string {
+  if (dir === "down") return "down below";
+  if (dir === "up") return "up above";
+  return `to the ${dir}`;
+}
+
+export function formatAudioDirectionSource(dir: Direction | string): string {
+  if (dir === "down") return "from down below";
+  if (dir === "up") return "from up above";
+  return `from the ${dir}`;
+}
+
 export function resolveAudioCue(
   ctx: AudioCueContext,
   registry?: AudioCueRegistry,
@@ -39,13 +51,19 @@ export function resolveAudioCue(
 
   const hostility = item?.meta?.hostility;
   if (hostility === "hostile")
-    return `You hear something moving to the ${dirFromPlayer}.`;
+    return `You hear something moving ${formatAudioDirectionMovement(
+      dirFromPlayer,
+    )}.`;
 
   if (item?.id?.toLowerCase()?.includes("bomb")) {
-    return `You hear a ticking sound coming from the ${dirFromPlayer}.`;
+    return `You hear a ticking sound coming ${formatAudioDirectionSource(
+      dirFromPlayer,
+    )}.`;
   }
   if (item?.id?.toLowerCase()?.includes("organism")) {
-    return `You hear a strange shifting sound coming from the ${dirFromPlayer}. There's something in the darkness there.`;
+    return `You hear a strange shifting sound coming ${formatAudioDirectionSource(
+      dirFromPlayer,
+    )}. There's something in the darkness there.`;
   }
   return null;
 }

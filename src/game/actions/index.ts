@@ -5,6 +5,8 @@ import { doBlow } from "@game/actions/blow/blow";
 import { doBounce } from "@game/actions/bounce/bounce";
 import { doCall } from "@game/actions/call/call";
 import { doEat } from "@game/actions/eat/eat";
+import { doApply } from "@game/actions/apply/apply";
+import { doGive } from "@game/actions/give/give";
 import { doListen } from "@game/actions/listen/listen";
 import { doLook } from "@game/actions/look/look";
 import { doPet } from "@game/actions/pet/pet";
@@ -13,6 +15,7 @@ import { doPush } from "@game/actions/push/push";
 import { doRide } from "@game/actions/ride/ride";
 import { doTell } from "@game/actions/tell/tell";
 import { doTouch } from "@game/actions/touch/touch";
+import { doThrow } from "@game/actions/throw/throw";
 import { doTurn } from "@game/actions/turn/turn";
 import { doUse } from "@game/actions/use/use";
 import { doStand } from "../actions/stand/stand";
@@ -28,6 +31,7 @@ import { doInject } from "./inject/inject";
 import { doLoad } from "./load/load";
 import { doLift, doMoveItem } from "./manipulate/manipulate";
 import { doOpen } from "./open/open";
+import { doOrder } from "./order/order";
 import { doPour } from "./pour/pour";
 import { doPut } from "./put/put";
 import { doRead } from "./read/read";
@@ -45,6 +49,7 @@ import { doWear } from "./wear/wear";
 export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   abort: doAbort,
   open: doOpen,
+  order: doOrder,
   close: doClose,
   take: doTake,
   get: doTake,
@@ -55,6 +60,7 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   inject: doInject,
   drink: doDrink,
   eat: doEat,
+  apply: doApply,
   set: doSet,
   empty: doEmpty,
   fill: doFill,
@@ -76,12 +82,14 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   call: doCall,
   stick: doStick,
   ask: doAsk,
+  give: doGive,
   tell: doTell,
   listen: doListen,
   look: doLook,
   use: doUse,
   ride: doRide,
   touch: doTouch,
+  throw: doThrow,
   blow: doBlow,
   bounce: doBounce,
   hit: doAttack,

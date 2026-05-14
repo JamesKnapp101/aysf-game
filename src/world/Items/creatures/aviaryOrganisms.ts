@@ -3,6 +3,10 @@ import {
   createInitialAviarySpotlightState,
   isRoomSpotlitByAviary,
 } from "@game/engine/ticks/aviaryTick";
+import {
+  formatAudioDirectionMovement,
+  formatAudioDirectionSource,
+} from "@game/helpers/audioCues";
 import { TickContext } from "@game/types/context";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
@@ -12,22 +16,25 @@ export const AVIARY_RETRY_RESPAWN_ROOM_ID = "ZooOne";
 
 export function getRandomOrganismAudioCue(dirFromPlayer: string): string {
   const r = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+  const sourceDirection = formatAudioDirectionSource(dirFromPlayer);
   if (r < 10) {
-    return `You hear a faint chittering sound coming from the ${dirFromPlayer}.`;
+    return `You hear a faint chittering sound coming ${sourceDirection}.`;
   }
   if (r < 25) {
-    return `You catch the sound of soft, wet slapping noises from the ${dirFromPlayer}.`;
+    return `You catch the sound of soft, wet slapping noises ${sourceDirection}.`;
   }
   if (r < 45) {
-    return `You hear a low, guttural rustling sound coming from the ${dirFromPlayer}.`;
+    return `You hear a low, guttural rustling sound coming ${sourceDirection}.`;
   }
   if (r < 70) {
-    return `You hear a series of quiet, rapid tapping sounds from the ${dirFromPlayer}.`;
+    return `You hear a series of quiet, rapid tapping sounds ${sourceDirection}.`;
   }
   if (r < 90) {
-    return `You hear a subtle, rhythmic thudding sound coming from the ${dirFromPlayer}.`;
+    return `You hear a subtle, rhythmic thudding sound coming ${sourceDirection}.`;
   }
-  return `You hear something moving in the darkness to the ${dirFromPlayer}.`;
+  return `You hear something moving in the darkness ${formatAudioDirectionMovement(
+    dirFromPlayer,
+  )}.`;
 }
 
 export const aviaryOrganismItems: Item[] = [

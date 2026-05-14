@@ -8,8 +8,22 @@ export function tryTurnItem(
 ): { state: GameState; message: string } {
   let next: GameState = state;
 
-  if (item.overrides?.turn) {
-    return { state, message: item.overrides.turn };
+  const turnOverride = item.overrides?.turn;
+  if (typeof turnOverride === "function") {
+    const out = turnOverride({ state, item, prep });
+
+    if (typeof out === "string") {
+      return { state, message: out };
+    }
+
+    return {
+      state: out?.state ?? state,
+      message: out?.message ?? "Nothing happens.",
+    };
+  }
+
+  if (typeof turnOverride === "string") {
+    return { state, message: turnOverride };
   }
 
   if (item.id === "EeglerWallFixture") {

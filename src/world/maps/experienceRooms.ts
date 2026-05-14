@@ -29,6 +29,13 @@ export const experienceRooms: Room[] = [
       "This is the weight room portion of the gymnasium. Various weight machines fill one side of the room, their adjustable seats and cable stacks set at different heights. Benches and racks of free weights range from tiny all the way up to massive. Several large mirrors are mounted on the walls. The floor is covered in thick rubber matting to absorb the impact of dropped weights.",
     exits: [],
   },
+  {
+    id: "BarBasementHeadMemory",
+    name: "Memory: Bar Basement",
+    description:
+      "You're standing in the bar's cellar. Boxes of liquor line the walls, garnish crates crowd the corners, and a rectangle of warm bar light spills down the wooden steps from the open hatch above.",
+    exits: [],
+  },
 ];
 
 export const experienceRoomsItems: Item[] = [

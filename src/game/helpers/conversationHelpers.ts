@@ -1,4 +1,5 @@
 import { appendLog } from "@game/engine/handleCommand";
+import { buildBarBotAssistantContext } from "@game/helpers/barBotAwareness";
 import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
 import { getCharacterProfile } from "@game/npcProfiles";
 import { getNpcById } from "@game/npcRegistry";
@@ -214,6 +215,120 @@ function recordNpcConversationTurn(
   });
 }
 
+export function postProcessAiConversationResponse(response: string): string {
+  const trimmed = response.trim();
+  const hasOuterQuotes = trimmed.startsWith(`"`) && trimmed.endsWith(`"`);
+  const unquoted = hasOuterQuotes ? trimmed.slice(1, -1).trim() : trimmed;
+
+  let processed = unquoted
+    .replace(/\s*\u2014\s*/g, ", ")
+    .replace(/\*{1,2}[^*\n]{1,180}\*{1,2}/g, " ")
+    .replace(/\[[^\]\n]{1,180}\]/g, " ")
+    .replace(/\(([^)\n]{1,180})\)/g, (match, inner: string) =>
+      isStageDirectionPhrase(inner) ? " " : match,
+    );
+
+  processed = stripLeadingStageDirectionSentences(processed)
+    .replace(/\s+([,.!?])/g, "$1")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return hasOuterQuotes && processed ? `"${processed}"` : processed;
+
+}
+
+const STAGE_DIRECTION_VERBS = [
+  "adjust",
+  "blink",
+  "bow",
+  "chuckle",
+  "clear",
+  "cross",
+  "drum",
+  "fidget",
+  "fold",
+  "frown",
+  "furrow",
+  "gesture",
+  "glance",
+  "grin",
+  "laugh",
+  "lean",
+  "look",
+  "nod",
+  "pause",
+  "raise",
+  "rest",
+  "rub",
+  "scratch",
+  "shake",
+  "shrug",
+  "sigh",
+  "smile",
+  "squint",
+  "stare",
+  "straighten",
+  "tap",
+  "tilt",
+  "turn",
+  "wink",
+];
+
+const STAGE_DIRECTION_NOUNS = [
+  "breath",
+  "brow",
+  "face",
+  "head",
+  "pause",
+  "silence",
+  "throat",
+];
+
+const STAGE_DIRECTION_VERB_PATTERN = new RegExp(
+  `\\b(?:${STAGE_DIRECTION_VERBS.join("|")})(?:s|ed|ing)?\\b`,
+  "i",
+);
+
+const STAGE_DIRECTION_NOUN_PATTERN = new RegExp(
+  `\\b(?:${STAGE_DIRECTION_NOUNS.join("|")})\\b`,
+  "i",
+);
+
+function isStageDirectionPhrase(text: string): boolean {
+  const phrase = text.trim();
+  if (!phrase) return false;
+
+  return (
+    STAGE_DIRECTION_VERB_PATTERN.test(phrase) ||
+    STAGE_DIRECTION_NOUN_PATTERN.test(phrase)
+  );
+}
+
+function stripLeadingStageDirectionSentences(text: string): string {
+  let remaining = text.trim();
+
+  for (let count = 0; count < 3; count += 1) {
+    const match = remaining.match(/^(.+?[.!?])(?:\s+|$)([\s\S]*)$/);
+    if (!match) break;
+
+    const [, firstSentence, rest = ""] = match;
+    if (!isLeadingStageDirectionSentence(firstSentence)) break;
+
+    remaining = rest.trim();
+  }
+
+  return remaining;
+}
+
+function isLeadingStageDirectionSentence(sentence: string): boolean {
+  const normalized = sentence.trim();
+
+  return (
+    /^(?:I|we)\s+/i.test(normalized) &&
+    STAGE_DIRECTION_VERB_PATTERN.test(normalized)
+  );
+}
+
 export function startRadioCall(
   state: GameState,
   npcId: string,
@@ -334,6 +449,7 @@ async function getNpcAiResponse(
 
   const conversationHistory = getNpcConversationHistory(nextState, npc.id);
   const gossipContext = buildGossipContext(nextState, npc.id);
+  const assistantContext = buildBarBotAssistantContext(nextState, npc.id);
 
   try {
     const claudeResponse = await getClaudeResponse(
@@ -342,22 +458,25 @@ async function getNpcAiResponse(
       conversationHistory,
       playerInput,
       gossipContext,
+      assistantContext,
     );
 
     if (!claudeResponse) {
       return { state, response: null };
     }
 
+    const processedResponse = postProcessAiConversationResponse(claudeResponse);
+
     const respondedState = recordNpcConversationTurn(
       nextState,
       npc.id,
       playerInput,
-      claudeResponse,
+      processedResponse,
     );
 
     return {
       state: revealNpcSecretIfEligible(respondedState, npc.id),
-      response: claudeResponse,
+      response: processedResponse,
     };
   } catch (error) {
     console.warn("Claude integration error, using fallback:", error);

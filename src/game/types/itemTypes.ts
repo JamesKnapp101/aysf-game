@@ -152,6 +152,7 @@ export type ItemOverrideVerb =
   | "switch"
   | "search"
   | "climb"
+  | "ride"
   | "eat"
   | "move"
   | "examine";

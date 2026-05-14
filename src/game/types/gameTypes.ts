@@ -113,6 +113,16 @@ export type CometPersonalityMode = SharedCometPersonalityMode;
 export type CometTextSizeMode = "smaller" | "larger";
 export type VisualEffectsMode = "full" | "reduced" | "off";
 
+export type BarBotCellarDeathAcknowledgement = "returned";
+
+export interface BarBotState {
+  cellarDeathAcknowledged: boolean;
+  pendingCellarDeathAcknowledgement?: BarBotCellarDeathAcknowledgement;
+  sawPlayerDieInCellar: boolean;
+  sawPlayerEnterCellar: boolean;
+  sawPlayerRegenerateInBar: boolean;
+}
+
 export interface GameUiState {
   cometPersonality: CometPersonalityMode;
   cometTextSize: CometTextSizeMode;
@@ -401,6 +411,7 @@ type RoomTemperature =
 export interface WorldState {
   activeExperience?: ActiveExperience;
   aviarySpotlight: AviarySpotlightState;
+  barBot: BarBotState;
   brainSlug: BrainSlugState;
   bullEncounter: BullEncounterState;
   catState: CatState;

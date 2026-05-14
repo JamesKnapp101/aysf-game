@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { handleCommand } from "../game/engine/handleCommand";
-import { getPendingConversationLogMessage } from "../game/helpers/conversationHelpers";
+import {
+  getPendingConversationLogMessage,
+  postProcessAiConversationResponse,
+} from "../game/helpers/conversationHelpers";
 import { parseCommand } from "../parse/parser";
 import {
   createTestState,
@@ -68,6 +71,88 @@ describe("conversation system refactor", () => {
           "reactor") ||
         /roger that, sir!/i.test(state.log.at(-1) ?? ""),
     ).toBe(true);
+  });
+
+  it("replaces em dashes in AI conversation responses", async () => {
+    expect(postProcessAiConversationResponse("Wait\u2014what now?")).toBe(
+      "Wait, what now?",
+    );
+
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        response: "The park is open\u2014assuming you have a pass.",
+      }),
+    } as Response);
+
+    const state = await handleCommand(
+      createTestState({ roomId: "ParkEntrance" }),
+      parseCommand("ask ranger about hours"),
+    );
+
+    const response =
+      state.conversation?.npcs?.RangerBot?.conversationHistory?.at(-1)
+        ?.response ?? "";
+
+    expect(response).toBe("The park is open, assuming you have a pass.");
+    expect(state.log.at(-1) ?? "").toContain(
+      `"The park is open, assuming you have a pass."`,
+    );
+    expect(state.log.at(-1) ?? "").not.toContain("\u2014");
+  });
+
+  it("strips stage directions from AI conversation responses", async () => {
+    expect(
+      postProcessAiConversationResponse(
+        "I lean against the bar with a slight furrow in my brow. I'm afraid I don't know that one.",
+      ),
+    ).toBe("I'm afraid I don't know that one.");
+    expect(postProcessAiConversationResponse("*chuckles* Not likely.")).toBe(
+      "Not likely.",
+    );
+    expect(postProcessAiConversationResponse("[sighs] Not likely.")).toBe(
+      "Not likely.",
+    );
+    expect(postProcessAiConversationResponse("(clears throat) Not likely.")).toBe(
+      "Not likely.",
+    );
+    expect(postProcessAiConversationResponse("I don't know that one.")).toBe(
+      "I don't know that one.",
+    );
+
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        response:
+          "I lean against the bar with a slight furrow in my brow. I'm afraid I'm not sure what you're referring to, Mox.",
+      }),
+    } as Response);
+
+    const state = await handleCommand(
+      createTestState({ roomId: "Bar" }),
+      parseCommand("ask bartender about mechanical bull"),
+    );
+
+    const response =
+      state.conversation?.npcs?.BarBot?.conversationHistory?.at(-1)
+        ?.response ?? "";
+
+    expect(response).toBe(
+      "I'm afraid I'm not sure what you're referring to, Mox.",
+    );
+    const commandEntry =
+      [...state.log]
+        .reverse()
+        .find((entry) =>
+          entry.includes("> ask bartender about mechanical bull"),
+        ) ?? "";
+
+    expect(commandEntry).toContain(
+      `"I'm afraid I'm not sure what you're referring to, Mox."`,
+    );
+    expect(commandEntry).not.toMatch(/lean|furrow/i);
   });
 
   it("resolves implicit ask targets for direct NPCs", async () => {

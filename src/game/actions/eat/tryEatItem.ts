@@ -12,6 +12,24 @@ export function tryEatItem(
     return { state, message: "You can't eat that." };
   }
 
+  const eatOverride = item.overrides?.eat;
+  if (typeof eatOverride === "function") {
+    const out = eatOverride({ state, item });
+
+    if (typeof out === "string") {
+      return { state, message: out };
+    }
+
+    return {
+      state: out?.state ?? state,
+      message: out?.message ?? "You take a bite.",
+    };
+  }
+
+  if (typeof eatOverride === "string") {
+    return { state, message: eatOverride };
+  }
+
   const doses = item.doses ?? 0;
   if (doses <= 0) {
     const msg =

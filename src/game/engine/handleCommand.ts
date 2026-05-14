@@ -31,6 +31,10 @@ import {
   isWorldChunkLoaded,
   loadWorldChunk,
 } from "src/world/World";
+import {
+  BAR_DRINK_EXIT_BLOCK_MESSAGE,
+  shouldBlockLeavingBarWithDrink,
+} from "src/world/maps/levelThree/Park/Bar";
 import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";
@@ -243,6 +247,11 @@ export async function handleCommand(
 
       if (!destinationRoomId) {
         message = "You can't go that way.";
+        break;
+      }
+
+      if (shouldBlockLeavingBarWithDrink(state, destinationRoomId)) {
+        message = BAR_DRINK_EXIT_BLOCK_MESSAGE;
         break;
       }
 

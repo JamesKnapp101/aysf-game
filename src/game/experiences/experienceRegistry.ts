@@ -61,6 +61,7 @@ const CRUSHED_WEIGHTLIFTER_MEMORY_ROOM_ID = "CrushedWeightlifterGymMemory";
 const CRUSHED_WEIGHTLIFTER_MEMORY_ITEM_ID = "CrushedWeightlifter";
 const CRUSHED_WEIGHTLIFTER_MEMORY_SPOTBOT_ITEM_ID =
   "CrushedWeightlifterMemorySpotBot";
+const BAR_BASEMENT_HEAD_MEMORY_ROOM_ID = "BarBasementHeadMemory";
 
 const NURSERY_MISHAP_GOSSIP: JuicyTopic = {
   id: "nursery mishap",
@@ -221,6 +222,32 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
       },
     ],
     startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe racks of weights, and the rest of the gymnasium, peel away as the memory takes hold...`,
+  },
+  bar_basement_head_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The cellar snaps back into place around you.",
+    completeMessage: `Something moves in the darkness at the base of the stairs. The man turns too late, a question still forming on his face. Heat and pain flare white, then the memory collapses in a flash, and the bar cellar snaps back into place around you.`,
+    id: "bar_basement_head_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 3,
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "bar-call",
+            message: `"Just grabbing another case," the man calls up toward the open hatch. The bar's music is muffled overhead, all bass thump and laughter through the floorboards.`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "cellar-darkness",
+            message: `A light near the stairs flickers, then dies. In the sudden dark, glass clinks softly somewhere deeper in the cellar.`,
+          },
+        ],
+        roomId: BAR_BASEMENT_HEAD_MEMORY_ROOM_ID,
+      },
+    ],
+    startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe cellar peels away as the memory takes hold...`,
   },
 };
 

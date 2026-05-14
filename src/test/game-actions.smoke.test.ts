@@ -24,7 +24,9 @@ const COVERED_ACTIONS = [
   "examine",
   "inject",
   "drink",
+  "order",
   "eat",
+  "apply",
   "set",
   "empty",
   "fill",
@@ -43,6 +45,7 @@ const COVERED_ACTIONS = [
   "push",
   "play",
   "ask",
+  "give",
   "tell",
   "call",
   "listen",
@@ -53,6 +56,7 @@ const COVERED_ACTIONS = [
   "submerge",
   "drown",
   "touch",
+  "throw",
   "blow",
   "bounce",
   "lift",
@@ -214,6 +218,15 @@ describe("Action smoke coverage", () => {
     expect(
       next.world.items.find((item) => item.id === "BottleOfScotch")?.doses,
     ).toBe(16);
+  });
+
+  it("covers order", async () => {
+    const next = await runCommand(
+      createTestState({ roomId: "Bar" }),
+      "order #1",
+    );
+
+    expect(expectInventoryToContain(next, "BarWhiskeySweet")).toBe(true);
   });
 
   it("covers eat", async () => {

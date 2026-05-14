@@ -1,5 +1,6 @@
 import { getRetryableEncounterDeathOverride } from "@game/encounters/retryableEncounters";
 import { appendLog } from "@game/engine/handleCommand";
+import { recordBarBotCellarDeathWitness } from "@game/helpers/barBotAwareness";
 import { refreshPlayerOxygenForEnvironment } from "@game/helpers/environmentHelpers";
 import { isAnyFlashlightOn } from "@game/helpers/flashlightHelpers";
 import {
@@ -324,6 +325,15 @@ export function triggerPlayerDeath(
 
   if (retryableEncounterOverride) {
     nextState = retryableEncounterOverride.reset(nextState);
+  }
+
+  const barBotWitness = recordBarBotCellarDeathWitness(nextState, {
+    deathRoomId: roomId,
+    respawnRoomId: safeRegenRoom,
+  });
+  nextState = barBotWitness.state;
+  if (barBotWitness.immediateMessage) {
+    nextState = appendLog(nextState, barBotWitness.immediateMessage);
   }
 
   if (cause === "organism") {
