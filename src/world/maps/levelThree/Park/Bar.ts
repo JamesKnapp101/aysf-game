@@ -1,6 +1,7 @@
 import { flashlightOn } from "@game/helpers/gameHelpers";
 import { applyPlayerDamage } from "@game/rules/damage";
 import { setItemDoses, updateItemLocation } from "@game/rules/items";
+import { triggerScoreOnce } from "@game/rules/score";
 import {
   addToInventory,
   inventoryHas,
@@ -620,7 +621,7 @@ export function giveDartToBarBartender(state: GameState): {
 
   next = removeItemFromSurface(next, "BarDartboard", "Dart");
   next = updateItemLocation(next, "Dart", "Bar");
-
+  next = triggerScoreOnce(next, "returned_red_dart");
   return {
     state: next,
     message: `"Hey, you found one of the darts! That's great!"`,
@@ -697,6 +698,18 @@ export const barDoors: DoorDefinition[] = [
 ];
 
 export const barItems: Item[] = [
+  {
+    id: "BarContraband",
+    name: "small wrapped package",
+    description:
+      "It's a small package of some sort, no bigger than a deck of cards, wrapped tightly in paper. Written on the paper in ink is the name 'Yolonope'.",
+    location: "seeded",
+    vocab: ["package", "packet", "paper"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1000,
+    itemSize: 20,
+  },
   {
     id: "BarEntranceExterior",
     name: "bar exterior",
@@ -1214,7 +1227,7 @@ export const barItems: Item[] = [
     itemSize: 1,
     doses: 1,
     overrides: {
-      smell: `It smells off citrus.`,
+      smell: `It smells of citrus.`,
     },
     meta: {
       barDrink: true,
@@ -1281,9 +1294,9 @@ export const barItems: Item[] = [
     id: "BarBasementStainedClothing",
     name: "stained clothing",
     description:
-      "The clothing is strewn at the base of the steps, all stained brown and red. None of it looks salvageable.",
+      "The clothing is strewn on the basement floor, stained brown and red.",
     sceneryDescription:
-      "At the base of the steps are strewn articles of clothing, all stained brown and red.",
+      "Near one edge of the hatch above, the floor is strewn articles of clothing, all stained brown and red.",
     location: "BarBasement",
     vocab: ["clothing", "clothes", "stained clothing", "stains"],
     itemClass: "solid",
@@ -1298,9 +1311,9 @@ export const barItems: Item[] = [
     id: "BarBasementTornPants",
     name: "torn pants",
     description:
-      "The pants are torn and stained, lying on the steps waist-downward. Two feet sprout from the otherwise empty legs, heels pointing toward the top of the stairs.",
+      "The pants are torn and stained, lying on the floor. Two feet sprout from the otherwise empty legs, heels pointing toward the hatch above.",
     sceneryDescription:
-      "A pair of torn, stained pants lie on the steps, waist pointing downward and with two feet sprouting from the otherwise empty legs, heels pointing toward the top of the stairs.",
+      "A pair of torn, stained pants lie on the floor, with two feet sprouting from the otherwise empty legs, toes pointing up toward the hatch.",
     location: "BarBasement",
     vocab: ["pants", "torn pants", "feet", "legs", "heels"],
     itemClass: "solid",
@@ -1317,7 +1330,7 @@ export const barItems: Item[] = [
     description:
       "The t-shirt is torn and bloodstained. The apron beside it still has its ties knotted, which is somehow worse.",
     sceneryDescription:
-      "At the base is a torn t-shirt, stained with blood, along with an apron with the ties still knotted.",
+      "Next to thant is a torn t-shirt, stained with blood, along with an apron with the ties still knotted.",
     location: "BarBasement",
     vocab: ["shirt", "t-shirt", "torn shirt", "apron", "ties", "blood"],
     itemClass: "solid",
@@ -1521,7 +1534,7 @@ export const barItems: Item[] = [
   },
   {
     id: "BarBathroomSink",
-    name: "porcelain sink",
+    name: "porcelain bar sink",
     description:
       "The porcelain sink has seen heavy use but still looks functional enough.",
     sceneryDescription: "There's a porcelain sink in front of a wide mirror,",
@@ -1534,6 +1547,7 @@ export const barItems: Item[] = [
     meta: {
       sceneryDescriptionOrder: 2,
     },
+    isContainer: true,
   },
   {
     id: "BarBathroomMirror",

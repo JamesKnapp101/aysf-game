@@ -36,6 +36,7 @@ const COVERED_ACTIONS = [
   "switch",
   "wait",
   "shoot",
+  "smell",
   "hit",
   "punch",
   "load",
@@ -497,6 +498,15 @@ describe("Action smoke coverage", () => {
     );
 
     expectCommandEntry(next, "listen to moan", /haunting, eerie quality/i);
+  });
+
+  it("covers smell", async () => {
+    const next = await runCommand(
+      createTestState({ roomId: "Projection" }),
+      "smell blood",
+    );
+
+    expectCommandEntry(next, "smell blood", /metallic tang/i);
   });
 
   it("covers pet", async () => {

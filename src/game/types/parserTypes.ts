@@ -11,6 +11,7 @@ export type Preposition =
   | "at"
   | "about"
   | "over"
+  | "under"
   | "to"
   | "through";
 

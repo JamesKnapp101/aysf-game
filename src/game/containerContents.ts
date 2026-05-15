@@ -55,6 +55,5 @@ export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
 export const INITIAL_SURFACE_CONTENTS: Record<string, string[]> = {};
 
 export const INITIAL_UNDER_CONTENTS: Record<string, string[]> = {
-  SixWestBedding: ["SixWestDiary"],
-  OneEastAreaRug: ["ParkPass"],
+  BarBathroomSink: ["BarContraband"],
 };

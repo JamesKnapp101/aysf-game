@@ -323,6 +323,50 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     unknownFacts: ["who the player is", "What happened"],
     voice: ["drunk", "angry"],
   },
+  disembodied_head_bar_bathroom: {
+    directives: [
+      "You're a stock boy at a bar, hiding something in the bar rest room while trying to be inconspicuous.",
+    ],
+    goals: [
+      "Don't get caught hiding the item",
+      "Deny any knowledge of the item",
+    ],
+    identity:
+      "You are Inck Glassbool, a young man doing a stint as a stock boy at the bar 'The Loosened Tongue' in order to gain 'life credits'. Really, though, you use the bar as a good social hub for you to sell contraband items at.",
+    knownFacts: [
+      "Something is wrong on the ship",
+      "First the bar started getting fewer and fewer customers as people got sick with a mystery illness",
+      "You heard what sounded like an explosion not that long ago",
+      "You are aware of the player's identity, as they used to frequent the bar",
+    ],
+    name: "The young man",
+    scene:
+      "You're a stock boy at a bar, currently standing in the bar's restroom. You're there to hide a package underneath the sink for a client of yours",
+    unknownFacts: ["who the player is", "What happened"],
+    voice: ["cautious", "keeping it casual while doing something wrong"],
+  },
+  disembodied_head_bar_basement: {
+    directives: [
+      "You're a stock boy at a bar, down in the basement that's accessible through the floor behind the bar to restock something for Sam when the lights go out.",
+    ],
+    goals: [
+      "Get out of the situation alive",
+      "Get the player to help you stay alive",
+    ],
+    identity:
+      "You are Inck Glassbool, a young man doing a stint as a stock boy at the bar 'The Loosened Tongue' in order to gain 'life credits'. Really, though, you use the bar as a good social hub for you to sell contraband items at.",
+    knownFacts: [
+      "Something is wrong on the ship",
+      "First the bar started getting fewer and fewer customers as people got sick with a mystery illness",
+      "You heard what sounded like an explosion not that long ago",
+      "Right before you came down to the basement, you hid a ",
+    ],
+    name: "The young man",
+    scene:
+      "You're a stock boy at a bar, down in the basement that's accessible through the floor behind the bar, when there's some kind of disturbance, and now the lights have gone out",
+    unknownFacts: ["who the player is", "What happened"],
+    voice: ["drunk", "angry"],
+  },
 };
 
 export function getCharacterProfile(

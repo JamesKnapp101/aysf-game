@@ -69,6 +69,8 @@ const VERB_ALIASES: Record<string, string> = {
   eat: "eat",
   chew: "eat",
   devour: "eat",
+  smell: "smell",
+  sniff: "smell",
 };
 
 const PHRASAL_VERB_ALIASES: Record<string, string> = {
@@ -86,6 +88,7 @@ const PREPOSITIONS: Preposition[] = [
   "about",
   "to",
   "over",
+  "under",
   "through",
 ];
 

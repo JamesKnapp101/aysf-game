@@ -127,6 +127,23 @@ describe("bar area interactions", () => {
       .toBe(false);
   });
 
+  it("reveals the contraband hidden under the bathroom sink", async () => {
+    const start = createTestState({ roomId: "BarBathroom" });
+    const looked = await runCommand(start, "look under sink");
+
+    expect(getCommandEntry(looked, "look under sink")).toContain(
+      "small wrapped package",
+    );
+    expect(looked.itemState.underContents.BarBathroomSink ?? []).not.toContain(
+      "BarContraband",
+    );
+    expect(looked.itemState.itemRoomId.BarContraband).toBe("BarBathroom");
+
+    const taken = await runCommand(looked, "take package");
+
+    expect(expectInventoryToContain(taken, "BarContraband")).toBe(true);
+  });
+
   it("numbers the drink menu entries", () => {
     const state = createTestState({ roomId: "Bar" });
     const menu = state.world.items.find((item) => item.id === "BarDrinkMenu");

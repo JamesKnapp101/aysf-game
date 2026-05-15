@@ -103,6 +103,20 @@ export const NPCS: Record<string, ConversationNpc> = {
     aiEnabled: true,
     characterProfileId: "crushed_weightlifter_gym",
   },
+  DisembodiedHeadBarBathroom: {
+    id: "DisembodiedHeadBarBathroom",
+    name: "The young man",
+    vocab: ["inck", "Glassbool", "young", "man", "stock", "boy"],
+    aiEnabled: true,
+    characterProfileId: "disembodied_head_bar_bathroom",
+  },
+  DisembodiedHeadBarBasement: {
+    id: "DisembodiedHeadBarBasement",
+    name: "The young man",
+    vocab: ["inck", "Glassbool", "young", "man", "stock", "boy"],
+    aiEnabled: true,
+    characterProfileId: "disembodied_head_bar_basement",
+  },
 };
 
 export function getNpcById(npcId?: string): ConversationNpc | undefined {

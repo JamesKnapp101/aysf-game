@@ -2,6 +2,7 @@ import { Item } from "@game/types/itemTypes";
 import { doomedChefItems } from "src/world/Items/creatures/doomedChef";
 import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
 import { crushedWeightlifterGymItems } from "src/world/Items/creatures/virtual/crushedWeightlifterGym";
+import { inckGlassboolItems } from "src/world/Items/creatures/virtual/inckGlassboolBarBasement";
 import { lilLillyCorridorThreeItems } from "src/world/Items/creatures/virtual/lilLillyCorridorThree";
 import { moxStairBottomItems } from "src/world/Items/creatures/virtual/moxStairBottom";
 import { spinInstructorSpinStageItems } from "src/world/Items/creatures/virtual/spinInstructorSpinStage";
@@ -98,6 +99,7 @@ export const LEVEL_THREE: WorldChunk = {
     ...lilLillyCorridorThreeItems,
     ...crushedWeightlifterGymItems,
     ...spinInstructorSpinStageItems,
+    ...inckGlassboolItems,
     ...warehouseItems,
     ...spaItems,
     ...parkItems,

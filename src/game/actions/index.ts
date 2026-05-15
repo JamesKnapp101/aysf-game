@@ -40,6 +40,7 @@ import { doSearch } from "./search/search";
 import { doSet } from "./set/set";
 import { doSit } from "./sit/sit";
 import { doShoot } from "./shoot/shoot";
+import { doSmell } from "./smell/smell";
 import { doStick } from "./stick/stick";
 import { doSwitch } from "./switch/switch";
 import { doTake } from "./take/take";
@@ -70,6 +71,7 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   switch: doSwitch,
   wait: doWait,
   shoot: doShoot,
+  smell: doSmell,
   load: doLoad,
   lift: doLift,
   move: doMoveItem,

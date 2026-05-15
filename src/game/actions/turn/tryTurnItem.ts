@@ -1,3 +1,4 @@
+import { triggerScoreOnce } from "@game/rules/score";
 import { GameState } from "../../types/gameTypes";
 import { Item } from "../../types/itemTypes";
 
@@ -38,6 +39,7 @@ export function tryTurnItem(
         },
       },
     };
+    next = triggerScoreOnce(next, "found_secret_lab");
 
     return {
       state: next,

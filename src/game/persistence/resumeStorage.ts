@@ -13,6 +13,10 @@ import {
 const RESUME_STORAGE_KEY = "aysf:resume";
 const MANUAL_SAVE_STORAGE_KEY = "aysf:save";
 const RESUME_SNAPSHOT_VERSION = 1;
+const OBSOLETE_WORLD_ITEM_IDS = new Set([
+  "InckGlassboolMemoryBathroom",
+  "InckGlassboolMemoryBasement",
+]);
 
 type SerializedWorldItem = Record<string, unknown> & { id: string };
 
@@ -82,14 +86,21 @@ function normalizeLoadedChunkIds(
 }
 
 function serializeWorldItems(items: Item[]): SerializedWorldItem[] {
-  return JSON.parse(JSON.stringify(items)) as SerializedWorldItem[];
+  return JSON.parse(
+    JSON.stringify(
+      items.filter((item) => !OBSOLETE_WORLD_ITEM_IDS.has(item.id)),
+    ),
+  ) as SerializedWorldItem[];
 }
 
 function applySerializedWorldItems(
   world: World,
   savedItems: SerializedWorldItem[],
 ): World {
-  const savedById = new Map(savedItems.map((item) => [item.id, item]));
+  const activeSavedItems = savedItems.filter(
+    (item) => !OBSOLETE_WORLD_ITEM_IDS.has(item.id),
+  );
+  const savedById = new Map(activeSavedItems.map((item) => [item.id, item]));
   const baseIds = new Set(world.items.map((item) => item.id));
 
   const mergedItems = world.items.map((item) => {
@@ -101,7 +112,7 @@ function applySerializedWorldItems(
     };
   });
 
-  const extraItems = savedItems
+  const extraItems = activeSavedItems
     .filter((item) => !baseIds.has(item.id))
     .map((item) => item as unknown as Item);
 

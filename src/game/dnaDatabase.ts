@@ -78,4 +78,15 @@ export const DNA_DATABASE: Record<string, DNAResult> = {
     occupation: "Head of Aeneas Security",
     info: "Henk Umboltz is a top-tier citizen who is in excellent standing and an exemplary social score, in spite of some minor incidents. He has worked in security for over twenty rotations, and sat as Head of Security for seven rotations, with only a few, inconsequential incidents.\nMinor social infractions include: Bludgeoning of a minor without cause. Extortion. Witness intimidation. Filing a false police report. Falsifying a filed police report. Destruction of evidence. Planting of evidence. Intoxication while on duty. Suspect intimidation. Civil rights violations. Defiance of a Lawful Order. Issuance of an Unlawful Order.",
   },
+  BarBasementHead: {
+    id: "BarBasementHead",
+    title: "Discovered in Stock Room at The Loosened Tongue",
+    loggedAtTurn: 0,
+    causeOfDeath: "Disembodiment",
+    name: "Inck Glassbool",
+    gender: "Male",
+    age: 17,
+    occupation: "Stock boy at The Loosened Tongue",
+    info: "Inck Glassbool is am ambitious citizen who is in acceptable standing but holds a questionable social score. He has held various jobs in various sectors over the course of the past twenty rotations. Records show that in each case his work was held in very high regard with no complaints, however records also show that in each case, suspicions of illicit behavior followed, if never proven outright.\nMinor social infractions include: Mixing up parsley and cilantro. Groan-inducing puns. Operating a side-business during business hours. Engaging in a side hustle during side-business hours.",
+  },
 };

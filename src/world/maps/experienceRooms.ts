@@ -31,7 +31,13 @@ export const experienceRooms: Room[] = [
   },
   {
     id: "BarBasementHeadMemory",
-    name: "Memory: Bar Basement",
+    name: "Memory: Bar: Bathroom",
+    description: `The bathroom is a simple affair, designed to do a lot of business without much fanfare. The space is small, painted black, and covered in scribbles and overlapping old fliers. There's a porcelain sink in front of a wide mirror, which could use a good cleaning. Across from that is a toilet with no stall, right next to a wall mounted urinal, in the bottom of which a plastic net cradles a partially dissolved urinal cake.\n\nMounted on the wall next to the sink is a little dispensing machine with a silver turn crank and a metal flap beneath it. The dispenser is painted with a breezy logo that reads 'Snap out of It!'.`,
+    exits: [],
+  },
+  {
+    id: "BarBasementHeadMemory2",
+    name: "Memory: Bar: Basement",
     description:
       "You're standing in the bar's cellar. Boxes of liquor line the walls, garnish crates crowd the corners, and a rectangle of warm bar light spills down the wooden steps from the open hatch above.",
     exits: [],

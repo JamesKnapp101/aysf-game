@@ -92,21 +92,21 @@ export function buildScoreNotification(
     kind: "score",
     text: `Your score has just went up by ${
       playerScoreMap[scoreId]?.value ?? 0
-    } points!`,
+    } ${playerScoreMap[scoreId]?.value > 1 ? "points!" : "point!"}`,
   };
 }
 
 export function buildMemoryNotification(points: number): GameNotificationDraft {
   return {
     kind: "memory",
-    text: `Your memory rating just went up by ${points} points!`,
+    text: `Your memory rating just went up by ${points} ${points > 1 ? "points!" : "point!"}`,
   };
 }
 
 export function buildDamageNotification(points: number): GameNotificationDraft {
   return {
     kind: "damage",
-    text: `You take ${points} points of damage!`,
+    text: `You take ${points} ${points > 1 ? "points!" : "point!"} of damage!`,
   };
 }
 

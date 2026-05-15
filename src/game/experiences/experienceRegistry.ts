@@ -62,6 +62,7 @@ const CRUSHED_WEIGHTLIFTER_MEMORY_ITEM_ID = "CrushedWeightlifter";
 const CRUSHED_WEIGHTLIFTER_MEMORY_SPOTBOT_ITEM_ID =
   "CrushedWeightlifterMemorySpotBot";
 const BAR_BASEMENT_HEAD_MEMORY_ROOM_ID = "BarBasementHeadMemory";
+const BAR_BASEMENT_HEAD_MEMORY_ROOM_ID2 = "BarBasementHeadMemory2";
 
 const NURSERY_MISHAP_GOSSIP: JuicyTopic = {
   id: "nursery mishap",
@@ -226,7 +227,7 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
   bar_basement_head_memory: {
     abortMessage:
       "You seize the edge of the memory and pull yourself free. The cellar snaps back into place around you.",
-    completeMessage: `Something moves in the darkness at the base of the stairs. The man turns too late, a question still forming on his face. Heat and pain flare white, then the memory collapses in a flash, and the bar cellar snaps back into place around you.`,
+    completeMessage: `The man moves to the edge of the hatch above and goes up on his toes, gripping the edge for balance as he sticks his head up into the light. At that same moment something moves in the darkness, a fluid motion, a presence that slinks past you in order to reach the man. It touches him, and then his body is gone somehow. Wet, empty clothes slop down onto the floor where he stood, followed by his head, which lands with a thud and rolls to one side. The head's eyes twinkle, briefly, then the bar cellar snaps back into place around you.`,
     id: "bar_basement_head_memory",
     kind: "memory",
     stages: [
@@ -235,8 +236,24 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
         events: [
           {
             atElapsedTurns: 1,
+            id: "bar-bathroom",
+            message: `"No rush," the robot bartender calls through the door from the bar, "but when you've finished tending to your biological needs, can you fetch me something from the basement, please?"\n\nThe young man calls back through the door.\n\n"You got it Sam!"`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "bar-bathroom-hide",
+            message: `The lights go out for just a second, flickering when they come back on, and the young man looks over his shoulder before removing something from his pocket, then leaning over to hide whatever it is way back underneath the sink, presumably for later retrieval by either himself, or someone else.`,
+          },
+        ],
+        roomId: BAR_BASEMENT_HEAD_MEMORY_ROOM_ID,
+      },
+      {
+        durationTurns: 3,
+        events: [
+          {
+            atElapsedTurns: 1,
             id: "bar-call",
-            message: `"Just grabbing another case," the man calls up toward the open hatch. The bar's music is muffled overhead, all bass thump and laughter through the floorboards.`,
+            message: `"Just one okay?" the man calls up toward the open hatch. The bar's music is muffled overhead, all bass thump and laughter through the floorboards.\n\n"One would be perfect, thank you!" the bartender robot calls back down.\n\nThe man then begins scanning the rows of boxes, looking for something.`,
           },
           {
             atElapsedTurns: 2,
@@ -244,10 +261,11 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
             message: `A light near the stairs flickers, then dies. In the sudden dark, glass clinks softly somewhere deeper in the cellar.`,
           },
         ],
-        roomId: BAR_BASEMENT_HEAD_MEMORY_ROOM_ID,
+        roomId: BAR_BASEMENT_HEAD_MEMORY_ROOM_ID2,
       },
     ],
     startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe cellar peels away as the memory takes hold...`,
+    transitionMessage: `The bathroom flickers, then fades away in cascading chunks as a new reality warps into place around you...`,
   },
 };
 

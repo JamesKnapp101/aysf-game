@@ -135,7 +135,7 @@ export const threeEastItems: Item[] = [
     id: "SecretLabPhoto",
     name: "photograph",
     description:
-      "It's some kind of hand built 3D printer which, while not sophisticated, looks capable of printing small, even complex objects and tools, if it were getting any power. If the unit was unauthorized, it might have been used to create something in secret.",
+      "The man in the photo sits behind a desk and is wearing a tailored suit, but he's heavyset, with a heavy brow and thick fingers like he'd be more at home twisting people into pretzels. His nametag reads 'Umboltz' but this guy isn't the head of security. Something about him makes you bristle. You don't like this guy.",
     sceneryDescription:
       "[[newline]]On the wall over the work area is taped a photo of a heavyset man with thick fingers and a prominent nose, wearing a nametag that reads 'Umboltz'.",
     location: "SecretLab",
