@@ -5,6 +5,7 @@ import { HydroponicsAdminTerminalModal } from "@game/components/HydroponicsAdmin
 import { LogPanel } from "@game/components/LogPanel";
 import { LogTab } from "@game/components/LogTab";
 import { NotificationHost } from "@game/components/NotificationHost";
+import { buildDamageNotification } from "@game/rules/notifications";
 import { StatusTab } from "@game/components/StatusTab";
 import type { GameState } from "@game/types/gameTypes";
 import { render, screen } from "@testing-library/react";
@@ -268,6 +269,7 @@ describe("UI panels", () => {
 
   it("renders queued notifications without touching the transcript", async () => {
     const baseState = createTestState();
+    const damageNotification = buildDamageNotification(5);
     const state = {
       ...baseState,
       uiState: {
@@ -280,8 +282,7 @@ describe("UI panels", () => {
           },
           {
             id: 2,
-            kind: "damage" as const,
-            text: "You take 5 points of damage!",
+            ...damageNotification,
           },
         ],
       },
@@ -292,7 +293,7 @@ describe("UI panels", () => {
     expect(
       screen.getByText("You obtained some salacious gossip!"),
     ).toBeInTheDocument();
-    expect(screen.getByText("You take 5 points of damage!")).toHaveClass(
+    expect(screen.getByText(damageNotification.text)).toHaveClass(
       "game-notification--damage",
     );
     expect(state.log).toHaveLength(0);

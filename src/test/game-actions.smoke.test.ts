@@ -635,7 +635,7 @@ describe("Action smoke coverage", () => {
     expect(state.player.memoriesTriggered.found_own_quarters).toBe(true);
     expect(state.uiState.notifications).toContainEqual({
       id: 1,
-      ...buildMemoryNotification(5),
+      ...buildMemoryNotification(1),
     });
 
     state = await runCommand(state, "east");

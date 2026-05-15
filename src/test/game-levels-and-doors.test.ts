@@ -827,7 +827,7 @@ describe("Doors and level mechanics", () => {
     expect(next.player.dnaBank[0]?.name).toBe("Joelson Dend");
   });
 
-  it("shows the Sanyi organisms as statues when the room is lit", async () => {
+  it("shows the Sanyi organisms as a glassy sculpture when the room is lit", async () => {
     const start = setInventory(
       createTestState({ roomId: "LivingQuartersThreeWest" }),
       ["flashlight"],
@@ -855,7 +855,7 @@ describe("Doors and level mechanics", () => {
       forceFull: true,
     });
 
-    expect(description).toContain("large, ornate wreath");
+    expect(description).toContain("strange, glassy black sculpture");
   });
 
   it("lets the dark Sanyi organisms kill the player", async () => {

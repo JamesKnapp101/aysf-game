@@ -3,6 +3,7 @@ import {
   setAnimalStatus,
 } from "@game/preserve/animalStatus";
 import { startGamePreserveRun } from "@game/preserve/preserveState";
+import { buildDamageNotification } from "@game/rules/notifications";
 import type { GameState } from "@game/types/gameTypes";
 import { describe, expect, it } from "vitest";
 import {
@@ -85,7 +86,9 @@ describe("game preserve badger", () => {
   });
 
   it("obscures the room description and deals low damage while attached", async () => {
-    const start = attachBadgerToPlayer(createBadgerPreserveState("OpenSavanna"));
+    const start = attachBadgerToPlayer(
+      createBadgerPreserveState("OpenSavanna"),
+    );
 
     const looked = await runCommand(start, "look");
     expect(looked.log.slice(start.log.length).join("\n")).toContain(
@@ -97,8 +100,8 @@ describe("game preserve badger", () => {
     expect(waited.player.vitals.health).toBe(97);
     expect(waited.uiState.notifications).toContainEqual(
       expect.objectContaining({
-        kind: "damage",
-        text: "You take 3 points of damage!",
+        id: 1,
+        ...buildDamageNotification(3),
       }),
     );
     expect(waited.log.slice(looked.log.length).join("\n")).toContain(
@@ -107,7 +110,9 @@ describe("game preserve badger", () => {
   });
 
   it("lets the player hit or punch the attached badger loose", async () => {
-    const start = attachBadgerToPlayer(createBadgerPreserveState("OpenSavanna"));
+    const start = attachBadgerToPlayer(
+      createBadgerPreserveState("OpenSavanna"),
+    );
 
     const next = await runCommand(start, "punch badger");
 

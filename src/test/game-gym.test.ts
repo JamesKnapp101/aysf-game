@@ -1,5 +1,6 @@
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { dispatchAction } from "@game/actions/dispatchAction";
+import { buildDamageNotification } from "@game/rules/notifications";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { useUIOverlayStore } from "@game/store/store";
 import { describe, expect, it } from "vitest";
@@ -237,8 +238,7 @@ describe("Gym interactions", () => {
     expect(wall.player.vitals.health).toBe(95);
     expect(wall.uiState.notifications).toContainEqual(
       expect.objectContaining({
-        kind: "damage",
-        text: "You take 5 points of damage!",
+        ...buildDamageNotification(5),
       }),
     );
     expect(getLastLogEntry(wall)).toContain(
@@ -257,8 +257,7 @@ describe("Gym interactions", () => {
     expect(emptyBinCrash.player.vitals.health).toBe(95);
     expect(emptyBinCrash.uiState.notifications).toContainEqual(
       expect.objectContaining({
-        kind: "damage",
-        text: "You take 5 points of damage!",
+        ...buildDamageNotification(5),
       }),
     );
     expect(getLastLogEntry(emptyBinCrash)).toContain("empty wire bin");
