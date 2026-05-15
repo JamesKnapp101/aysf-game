@@ -62,7 +62,6 @@ export const specialItems: Item[] = [
     isContainer: false,
     isSwitchable: false,
     isOn: false,
-    scoreId: "obtained_emp",
   },
 
   // 4. DNA Reader ------------------------------------------------------------
