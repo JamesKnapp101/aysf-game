@@ -1,7 +1,7 @@
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
-import { orderBarDrink } from "src/world/maps/levelThree/Park/Bar/barDrinks";
+import { handleRegisteredOrderAction } from "@game/registries/actionInteractionRegistry";
 
 export function doOrder(state: GameState, cmd: ParsedCommand): ActionResult {
   if (cmd.type !== "action" || cmd.verb !== "order") {
@@ -13,5 +13,10 @@ export function doOrder(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "Order what?" };
   }
 
-  return orderBarDrink(state, direct);
+  return (
+    handleRegisteredOrderAction(state, direct) ?? {
+      state,
+      message: "No one here is taking orders.",
+    }
+  );
 }

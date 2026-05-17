@@ -1,9 +1,9 @@
+import { handleRegisteredThrowAction } from "@game/registries/actionInteractionRegistry";
 import { resolveItemByNoun } from "@game/rules/scope";
 import { inventoryHas } from "@game/rules/state";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
-import { throwDartAtBarDartboard } from "src/world/maps/levelThree/Park/Bar/barDarts";
 
 export function doThrow(state: GameState, cmd: ParsedCommand): ActionResult {
   if (cmd.type !== "action" || cmd.verb !== "throw") {
@@ -25,11 +25,12 @@ export function doThrow(state: GameState, cmd: ParsedCommand): ActionResult {
   }
 
   const indirect = cmd.indirect?.trim();
-  if (item.id === "Dart" && cmd.preposition === "at" && indirect) {
+  if (cmd.preposition === "at" && indirect) {
     const target = resolveItemByNoun(state, indirect);
-    if (target?.id === "BarDartboard") {
-      return throwDartAtBarDartboard(state);
-    }
+    const registered = target
+      ? handleRegisteredThrowAction({ state, item, target })
+      : undefined;
+    if (registered) return registered;
   }
 
   if (cmd.preposition === "at" && !indirect) {

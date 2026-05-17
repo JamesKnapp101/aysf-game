@@ -12,7 +12,6 @@ import {
   runScriptedEvents,
   triggerPlayerDeath,
 } from "@game/helpers/gameHelpers";
-import { resolveGymTreadmillMovement } from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { removeItemFromPlacementLists } from "@game/helpers/itemPlacement";
 import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";
@@ -31,11 +30,8 @@ import {
   isWorldChunkLoaded,
   loadWorldChunk,
 } from "src/world/World";
-import {
-  BAR_DRINK_EXIT_BLOCK_MESSAGE,
-  shouldBlockLeavingBarWithDrink,
-} from "src/world/maps/levelThree/Park/Bar/barDrinks";
 import { ACTION_HANDLERS } from "../actions";
+import { resolveRegisteredMovementRule } from "../registries/movementRuleRegistry";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";
 import { getCurrentRoom } from "../selectors/roomSelectors";
@@ -255,11 +251,6 @@ export async function handleCommand(
         break;
       }
 
-      if (shouldBlockLeavingBarWithDrink(state, destinationRoomId)) {
-        message = BAR_DRINK_EXIT_BLOCK_MESSAGE;
-        break;
-      }
-
       const encounterMoveGuard = getEncounterMoveGuard(state, {
         fromRoomId: state.player.roomId,
         direction: cmd.direction,
@@ -322,30 +313,27 @@ export async function handleCommand(
         break;
       }
 
-      const gymTreadmillMovement = resolveGymTreadmillMovement(state, {
+      const movementRule = resolveRegisteredMovementRule(state, {
         destinationRoomId,
         direction: cmd.direction,
         fromRoomId: state.player.roomId,
       });
 
-      if (gymTreadmillMovement?.kind === "block") {
-        nextState = gymTreadmillMovement.state;
-        message = [moveMessage.trim(), gymTreadmillMovement.message]
+      if (movementRule?.kind === "block") {
+        nextState = movementRule.state ?? state;
+        message = [moveMessage.trim(), movementRule.message]
           .filter(Boolean)
           .join("\n\n");
         break;
       }
 
-      if (gymTreadmillMovement?.message) {
-        moveMessage = [moveMessage.trim(), gymTreadmillMovement.message]
+      if (movementRule?.message) {
+        moveMessage = [moveMessage.trim(), movementRule.message]
           .filter(Boolean)
           .join("\n\n");
       }
 
-      let stateBeforeMove = state;
-      if (gymTreadmillMovement?.state) {
-        stateBeforeMove = gymTreadmillMovement.state;
-      }
+      const stateBeforeMove = movementRule?.state ?? state;
 
       let next = movePlayerToRoom(stateBeforeMove, destinationRoomId, {
         fromRoomId: state.player.roomId,

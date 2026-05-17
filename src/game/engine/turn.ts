@@ -12,11 +12,7 @@ import {
   isRoomInCatHome,
 } from "@game/helpers/catHelpers";
 import { tickRadioConversation } from "@game/helpers/conversationHelpers";
-import {
-  isPlayerUnderwater,
-  playerHasBreather,
-  tickUnderwaterVitals,
-} from "@game/helpers/environmentHelpers";
+import { tickUnderwaterVitals } from "@game/helpers/environmentHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { tickGamePreserveAnimals } from "@game/preserve/preserveAnimals";
 import { tickGamePreserveFeedback } from "@game/preserve/preserveFeedback";
@@ -27,11 +23,6 @@ import {
 } from "@game/rules/notifications";
 import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
 import { TickContext } from "@game/types/context";
-import {
-  AQUARIUM_DROWNING_DEATH_CAUSE,
-  AQUARIUM_DROWNING_DEATH_MESSAGE,
-} from "src/world/Items/creatures/octopus";
-import { tickBarJukebox } from "src/world/maps/levelThree/Park/Bar/barJukebox";
 import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
   canMove,
@@ -44,6 +35,8 @@ import {
   applyStatusEffectToPlayer,
   removeStatusEffectFromPlayer,
 } from "../rules/status";
+import { applyRegisteredEnvironmentHazards } from "../registries/environmentHazardRegistry";
+import { runRegisteredTurnTicks } from "../registries/turnTickRegistry";
 import { getAnimateItems } from "../selectors/itemSelectors";
 import {
   describeSicknessLevel,
@@ -608,19 +601,7 @@ export function advanceTurn(state: GameState): GameState {
   next = tickAttachedItems(next);
   next = applyEffects(next);
   next = tickUnderwaterVitals(next);
-
-  if (
-    next.player.vitals.health <= 0 &&
-    next.player.vitals.oxygen <= 0 &&
-    isPlayerUnderwater(next) &&
-    !playerHasBreather(next)
-  ) {
-    next = triggerPlayerDeath(
-      next,
-      AQUARIUM_DROWNING_DEATH_MESSAGE,
-      AQUARIUM_DROWNING_DEATH_CAUSE,
-    );
-  }
+  next = applyRegisteredEnvironmentHazards(next);
 
   next = tickStatusEffects(next);
   next = tickSickness(next);
@@ -630,9 +611,9 @@ export function advanceTurn(state: GameState): GameState {
   next = tickGamePreserveFeedback(next);
   next = tickGamePreserveRun(next);
 
-  const jukeboxTick = tickBarJukebox(next);
-  next = jukeboxTick.state;
-  for (const message of jukeboxTick.messages) {
+  const registeredTicks = runRegisteredTurnTicks(next);
+  next = registeredTicks.state;
+  for (const message of registeredTicks.messages) {
     next = appendLog(next, message);
   }
 

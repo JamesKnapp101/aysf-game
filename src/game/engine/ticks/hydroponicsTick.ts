@@ -1,8 +1,10 @@
 import { appendLog } from "@game/engine/handleCommand";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
+import {
+  tickRegisteredHydroponicsCocoonPuzzle,
+  tickRegisteredHydroponicsSpiderThreat,
+} from "@game/registries/hydroponicsTickRegistry";
 import { GameState } from "@game/types/gameTypes";
-import { tickHydroponicsSpiderThreat } from "src/world/Items/creatures/giantSpider";
-import { tickHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 export function tickHydroponics(state: GameState): GameState {
   const spiderIsAlive = state.worldState.hydroponicsSpider.isAlive;
@@ -43,7 +45,7 @@ export function tickHydroponics(state: GameState): GameState {
       next = appendLog(next, moanMessage);
     }
 
-    const spiderTick = tickHydroponicsSpiderThreat(next);
+    const spiderTick = tickRegisteredHydroponicsSpiderThreat(next);
     if (spiderTick.deathMessage) {
       return triggerPlayerDeath(
         spiderTick.state,
@@ -54,7 +56,7 @@ export function tickHydroponics(state: GameState): GameState {
     next = spiderTick.state;
   }
 
-  const cocoonTick = tickHydroponicsCocoonPuzzle(next);
+  const cocoonTick = tickRegisteredHydroponicsCocoonPuzzle(next);
   if (cocoonTick.deathMessage) {
     return triggerPlayerDeath(
       cocoonTick.state,

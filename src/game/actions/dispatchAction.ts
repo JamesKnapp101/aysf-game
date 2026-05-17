@@ -1,10 +1,6 @@
-import { playBarJukeboxTrack } from "src/world/maps/levelThree/Park/Bar/barJukebox";
 import { parseCommand } from "../../parse/parser";
 import { handleCommand } from "../engine/handleCommand";
-import {
-  setGymTreadmillSpeed,
-  SPIN_STAGE_SPEED_DIAL_PASSWORD,
-} from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
+import { dispatchRegisteredActionRequest } from "../registries/actionRequestRegistry";
 import { handleSetCoolerMode } from "../rules/cooler";
 import { setMessageListened } from "../rules/message-machine";
 import { getCoolerMode } from "../selectors/gadgetSelectors";
@@ -47,38 +43,6 @@ export async function dispatchAction(
       const next = setMessageListened(state, req.payload.messageId ?? "");
       return { state: next, message: undefined };
     }
-    case "playJukeboxTrack": {
-      return playBarJukeboxTrack(state, req.payload.trackId ?? "");
-    }
-    case "submitSpinStageSpeedPassword": {
-      const speed = req.payload.speed;
-      const password = (req.payload.password ?? "").trim().toUpperCase();
-
-      if (
-        typeof speed !== "number" ||
-        !Number.isFinite(speed) ||
-        !Number.isInteger(speed) ||
-        speed < 0 ||
-        speed > 100
-      ) {
-        return {
-          state,
-          message: "The speed dial only runs from 0 to 100.",
-        };
-      }
-
-      if (password !== SPIN_STAGE_SPEED_DIAL_PASSWORD) {
-        return {
-          state,
-          message: "The password failed.",
-        };
-      }
-
-      return {
-        state: setGymTreadmillSpeed(state, speed),
-        message: `You set the instructor speed dial to ${speed}.`,
-      };
-    }
     case "cycleCameraGunView":
       return {
         state,
@@ -87,7 +51,9 @@ export async function dispatchAction(
           currentViewIndex: 0,
         },
       };
-    default:
-      return { state, message: "Nothing happens." };
+    default: {
+      const registered = await dispatchRegisteredActionRequest(state, req);
+      return registered ?? { state, message: "Nothing happens." };
+    }
   }
 }

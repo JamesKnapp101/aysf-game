@@ -1,9 +1,9 @@
+import { handleRegisteredGiveAction } from "@game/registries/actionInteractionRegistry";
 import { resolveItemByNoun } from "@game/rules/scope";
 import { inventoryHas } from "@game/rules/state";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
-import { giveDartToBarBartender } from "src/world/maps/levelThree/Park/Bar/barDarts";
 
 export function doGive(state: GameState, cmd: ParsedCommand): ActionResult {
   if (cmd.type !== "action" || cmd.verb !== "give") {
@@ -38,9 +38,8 @@ export function doGive(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "You don't see them here." };
   }
 
-  if (item.id === "Dart" && target.id === "BarBot") {
-    return giveDartToBarBartender(state);
-  }
+  const registered = handleRegisteredGiveAction({ state, item, target });
+  if (registered) return registered;
 
   return {
     state,

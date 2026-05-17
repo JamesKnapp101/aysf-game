@@ -1,5 +1,8 @@
 import { tryAsk } from "@game/actions/ask/tryAsk";
-import { orderBarDrink } from "src/world/maps/levelThree/Park/Bar/barDrinks";
+import {
+  handleRegisteredAskForAction,
+  hasRegisteredAskForTarget,
+} from "@game/registries/actionInteractionRegistry";
 import {
   getActiveRadioNpc,
   resolveConversationTarget,
@@ -28,17 +31,18 @@ export async function doAsk(
     return { state, message: "No response." };
   }
 
-  if (
-    cmd.preposition === "for" &&
-    target.kind === "npc" &&
-    target.npc.id === "BarBot"
-  ) {
+  if (cmd.preposition === "for" && hasRegisteredAskForTarget(target)) {
     const requestedDrink = cmd.indirect?.trim();
     if (!requestedDrink) {
       return { state, message: "Ask for what?" };
     }
 
-    return orderBarDrink(state, requestedDrink);
+    const registered = handleRegisteredAskForAction(
+      state,
+      target,
+      requestedDrink,
+    );
+    if (registered) return registered;
   }
 
   const topicText =

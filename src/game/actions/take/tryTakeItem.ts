@@ -4,6 +4,7 @@ import {
   triggerParkEastPowerKeySnatch,
 } from "@game/helpers/parkKeyHijack";
 import { getItemById } from "@game/helpers/itemHelpers";
+import { applyRegisteredTakeItemEffects } from "@game/registries/takeItemEffectRegistry";
 import { isItemOpen } from "@game/rules/containers";
 import { updateItemLocation } from "@game/rules/items";
 import { RuleResult } from "@game/rules/result";
@@ -24,10 +25,6 @@ import {
   getItemsInCurrentRoom,
 } from "@game/selectors/roomSelectors";
 import { GameState } from "@game/types/gameTypes";
-import {
-  AQUARIUM_GOAL_ITEM_ID,
-  triggerAquariumReturnChoke,
-} from "src/world/Items/creatures/octopus";
 import type { Item } from "@game/types/itemTypes";
 
 type TakeOverrideResult = RuleResult | string | undefined;
@@ -140,16 +137,10 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
 
     let next = updateItemLocation(state, itemOnFloor.id, "INVENTORY");
     next = addToInventory(next, itemOnFloor.id);
+    const takeEffects = applyRegisteredTakeItemEffects(next, itemOnFloor);
+    next = takeEffects.state;
 
     const scoreId = getItemById(next, itemOnFloor.id)?.scoreId ?? "";
-    const aquariumGoalTaken = itemOnFloor.id === AQUARIUM_GOAL_ITEM_ID;
-    if (aquariumGoalTaken) {
-      next = triggerAquariumReturnChoke(next);
-    }
-
-    const aquariumGoalTail = aquariumGoalTaken
-      ? "\n\nAs you wrench the control node free, the water outside the grotto convulses. A heavy tentacle surges through the lower trench and knots itself across the return run toward the lock."
-      : "";
 
     if (scoreId !== "" && next.worldState.scoresTriggered[scoreId] !== true) {
       next = triggerScoreOnce(
@@ -165,7 +156,10 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     const takeMessage =
       typeof takeOverride === "string" ? takeOverride : "Taken.";
 
-    return { state: next, message: `${takeMessage}${aquariumGoalTail}` };
+    return {
+      state: next,
+      message: `${takeMessage}${takeEffects.messageTail ?? ""}`,
+    };
   }
 
   const surfacesHere = state.world.items.filter(
