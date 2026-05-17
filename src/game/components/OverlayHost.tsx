@@ -53,6 +53,11 @@ const LazyGamePreserveTerminalModal = lazy(() =>
     default: mod.GamePreserveTerminalModal,
   })),
 );
+const LazyBarJukeboxModal = lazy(() =>
+  import("@game/components/BarJukeboxModal").then((mod) => ({
+    default: mod.BarJukeboxModal,
+  })),
+);
 
 function OverlayLoadingModal({
   onClose,
@@ -301,6 +306,23 @@ export function OverlayHost({
             state={state}
             setGameState={setGameState}
           />
+        </Suspense>
+      );
+    }
+
+    case "bar-jukebox": {
+      const onPlayTrack = (trackId: string) => {
+        onClose();
+        runAction("playJukeboxTrack", { trackId });
+      };
+
+      return (
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Jukebox" />
+          }
+        >
+          <LazyBarJukeboxModal onClose={onClose} onPlayTrack={onPlayTrack} />
         </Suspense>
       );
     }

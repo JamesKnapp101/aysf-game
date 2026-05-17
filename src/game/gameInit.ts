@@ -464,6 +464,7 @@ export const createInitialState = (world: World): GameState => {
         sawPlayerEnterCellar: false,
         sawPlayerRegenerateInBar: false,
       },
+      barJukebox: {},
       bullEncounter: createInitialBullEncounterState(),
       gamePreserve: {
         completedDifficulties: {},

@@ -123,6 +123,18 @@ export interface BarBotState {
   sawPlayerRegenerateInBar: boolean;
 }
 
+export type BarJukeboxActiveTrackState = {
+  remainingClips: string[];
+  trackArtist: string;
+  trackId: string;
+  trackName: string;
+  turnsRemaining: number;
+};
+
+export interface BarJukeboxState {
+  activeTrack?: BarJukeboxActiveTrackState;
+}
+
 export interface GameUiState {
   cometPersonality: CometPersonalityMode;
   cometTextSize: CometTextSizeMode;
@@ -413,6 +425,7 @@ export interface WorldState {
   activeExperience?: ActiveExperience;
   aviarySpotlight: AviarySpotlightState;
   barBot: BarBotState;
+  barJukebox: BarJukeboxState;
   brainSlug: BrainSlugState;
   bullEncounter: BullEncounterState;
   catState: CatState;

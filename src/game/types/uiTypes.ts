@@ -42,6 +42,7 @@ export type Overlay =
   | ({ isOn: boolean; kind: "matter-transmitter" } & OverlayPostClose)
   | ({ kind: "teleportation-terminal" } & OverlayPostClose)
   | ({ kind: "game-preserve-terminal" } & OverlayPostClose)
+  | ({ kind: "bar-jukebox" } & OverlayPostClose)
   | ({
       kind: "mindFlash";
       memory: string;

@@ -7,6 +7,7 @@ import {
   setGymTreadmillSpeed,
   SPIN_STAGE_SPEED_DIAL_PASSWORD,
 } from "../helpers/gymHelpers";
+import { playBarJukeboxTrack } from "src/world/maps/levelThree/Park/Bar";
 import type { ActionRequest, ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
@@ -45,6 +46,9 @@ export async function dispatchAction(
     case "markMessagePlayed": {
       const next = setMessageListened(state, req.payload.messageId ?? "");
       return { state: next, message: undefined };
+    }
+    case "playJukeboxTrack": {
+      return playBarJukeboxTrack(state, req.payload.trackId ?? "");
     }
     case "submitSpinStageSpeedPassword": {
       const speed = req.payload.speed;

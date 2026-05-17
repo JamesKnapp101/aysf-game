@@ -17,6 +17,7 @@ import { organismLQOverrideTick } from "src/world/Items/creatures/livingQuarters
 
 export const BAR_BULL_ADHESIVE_TRIGGER = "BarBullAdhesiveApplied";
 export const BAR_FLOOR_HATCH_DOOR_ID = "BarFloorHatchDoor";
+export const BAR_JUKEBOX_ITEM_ID = "BarLoungeJukebox";
 export const BAR_SNAP_OUT_CHEWABLE_ID = "BarSnapOutChewable";
 export const BAR_MEMORY_BOX_ID = "BarMemoryBox";
 export const BAR_CONTRABAND_ID = "BarContraband";
@@ -34,6 +35,7 @@ export const BAR_MODERN_DRINK_MESSAGE = `"Sorry, but the only recipe that surviv
 export const BAR_MEMORY_BOX_MESSAGE = `The bartender reaches beneath the bar, retrieves a small metal box, and hands it to you. You take it, turning it over in your hands, but it doesn't look familiar.\n\n"You gave this to me once and said if you were ever in trouble, I should give it to you."`;
 export const BAR_TRIVIA_PRIZE_MESSAGE = `The bartender's face shield lights up with a delighted smile.\n\n"Correct! Tonight's mystery prize is a free mani-pedi at Keratin Kindness. Try to act surprised if they ask."\n\nThe bartender hands you a nail salon voucher.`;
 export const BAR_BULL_RIDE_PRIZE_MESSAGE = `The bartender gives you a free drink ticket.\n\n"It looks like it's not for this bar, sorry, but keep it for next rotation."`;
+export const BAR_JUKEBOX_TRACK_NOT_FOUND_MESSAGE = "808 Track not Found";
 
 type BarDrinkMenuEntry = {
   aliases: string[];
@@ -41,6 +43,36 @@ type BarDrinkMenuEntry = {
   menuName: string;
   number: number;
 };
+
+export type BarJukeboxTrack = {
+  trackArtist: string;
+  trackClips: string[];
+  trackClose: string;
+  trackId: string;
+  trackLength: number;
+  trackName: string;
+  trackOpen: string;
+};
+
+export const BAR_JUKEBOX_TRACKS: BarJukeboxTrack[] = [
+  {
+    trackId: "R221",
+    trackName: "Dancing on a String",
+    trackArtist: "Supertwink",
+    trackLength: 10,
+    trackOpen: "and the throb of an electronic synth fills the room.",
+    trackClose:
+      "The electronic music builds to a crescendo then ends on an orchestra hit.",
+    trackClips: [
+      `"Pull me close, pull me bright, pull me through the neon night."`,
+      `"I keep dancing on a string, but I still choose the swing."`,
+      `"Chrome-heart darling, count me in, three-two-one and spin."`,
+      `"If the floor drops out, let the bass line hold me."`,
+      `"You cut the lights, I catch the glow."`,
+      `"Every little motion makes the midnight sing."`,
+    ],
+  },
+];
 
 const BAR_INTERIOR_ROOM_IDS = [
   "Bar",
@@ -271,6 +303,20 @@ function resolveBarDrinkMenuEntry(
   );
 }
 
+function normalizeJukeboxTrackId(trackId: string): string {
+  return trackId
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 4);
+}
+
+function getJukeboxTrack(trackId: string): BarJukeboxTrack | undefined {
+  const normalizedTrackId = normalizeJukeboxTrackId(trackId);
+  return BAR_JUKEBOX_TRACKS.find(
+    (track) => normalizeJukeboxTrackId(track.trackId) === normalizedTrackId,
+  );
+}
+
 function isModernDrinkRequest(request: string): boolean {
   const normalizedRequest = normalizeDrinkRequest(request);
   if (!normalizedRequest || resolveBarDrinkMenuEntry(request)) return false;
@@ -421,6 +467,105 @@ function openBarContrabandPackage(state: GameState): {
   return {
     state: next,
     message: "You unwrap the package, and discard the paper",
+  };
+}
+
+export function playBarJukeboxTrack(
+  state: GameState,
+  trackId: string,
+): { state: GameState; message: string } {
+  const normalizedTrackId = normalizeJukeboxTrackId(trackId);
+  const track = getJukeboxTrack(normalizedTrackId);
+
+  if (normalizedTrackId.length !== 4 || !track) {
+    return { state, message: BAR_JUKEBOX_TRACK_NOT_FOUND_MESSAGE };
+  }
+
+  const next: GameState = {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      barJukebox: {
+        activeTrack: {
+          remainingClips: [...track.trackClips],
+          trackArtist: track.trackArtist,
+          trackId: track.trackId,
+          trackName: track.trackName,
+          turnsRemaining: Math.max(0, Math.floor(track.trackLength)),
+        },
+      },
+    },
+  };
+
+  return {
+    state: next,
+    message: `The song ${track.trackName} by ${track.trackArtist} begins to play ${track.trackOpen}`,
+  };
+}
+
+export function tickBarJukebox(state: GameState): {
+  messages: string[];
+  state: GameState;
+} {
+  const activeTrack = state.worldState.barJukebox?.activeTrack;
+  if (!activeTrack) return { state, messages: [] };
+
+  const track = getJukeboxTrack(activeTrack.trackId);
+  if (!track) {
+    return {
+      state: {
+        ...state,
+        worldState: {
+          ...state.worldState,
+          barJukebox: {},
+        },
+      },
+      messages: [],
+    };
+  }
+
+  const messages: string[] = [];
+  const remainingClips = [...(activeTrack.remainingClips ?? [])];
+  const turnsRemaining = Math.max(0, activeTrack.turnsRemaining - 1);
+
+  if (state.rng() < 0.3) {
+    const clip = remainingClips.pop();
+    messages.push(
+      clip
+        ? `${activeTrack.trackName} continues playing...\n\n${clip}`
+        : `${activeTrack.trackName} continues playing...`,
+    );
+  }
+
+  if (turnsRemaining <= 0) {
+    messages.push(track.trackClose);
+    return {
+      state: {
+        ...state,
+        worldState: {
+          ...state.worldState,
+          barJukebox: {},
+        },
+      },
+      messages,
+    };
+  }
+
+  return {
+    state: {
+      ...state,
+      worldState: {
+        ...state.worldState,
+        barJukebox: {
+          activeTrack: {
+            ...activeTrack,
+            remainingClips,
+            turnsRemaining,
+          },
+        },
+      },
+    },
+    messages,
   };
 }
 
@@ -1608,10 +1753,10 @@ export const barItems: Item[] = [
     },
   },
   {
-    id: "BarLoungeJukebox",
+    id: BAR_JUKEBOX_ITEM_ID,
     name: "colorful jukebox",
     description:
-      "The jukebox is a big tombstone-shaped affair, banded in colorful neon with a front-facing song selector covered in square white buttons.",
+      "The jukebox is a big tombstone-shaped affair, banded in colorful neon with a front-facing song selector covered in square white buttons. Its printed track index is warped, scorched, and unreadable.",
     sceneryDescription:
       "A colorful jukebox sits across from the seating area, a big tombstone-shaped affair covered in bands of neon and a front-facing song selector with square white buttons.",
     location: "BarLounge",
@@ -1628,6 +1773,7 @@ export const barItems: Item[] = [
     itemWeight: 150,
     itemSize: 7,
     meta: {
+      kind: "bar-jukebox",
       sceneryDescriptionOrder: 2,
     },
   },

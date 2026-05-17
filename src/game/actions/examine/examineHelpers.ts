@@ -206,6 +206,18 @@ function buildGamePreserveTerminalOverlay(
   };
 }
 
+function buildBarJukeboxOverlay(ctx: ExamineItemContext): ActionResult {
+  return {
+    state: ctx.state,
+    overlay: withPostCloseNotifications(
+      {
+        kind: "bar-jukebox" as const,
+      },
+      ctx.postCloseNotifications,
+    ),
+  };
+}
+
 const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
   {
     matches: (item) => item.isReflective === true,
@@ -220,6 +232,10 @@ const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
   {
     matches: (item) => item.meta?.kind === "game-preserve-terminal",
     handle: buildGamePreserveTerminalOverlay,
+  },
+  {
+    matches: (item) => item.meta?.kind === "bar-jukebox",
+    handle: buildBarJukeboxOverlay,
   },
   {
     matches: (item) => item.meta?.kind === "phone",

@@ -1,4 +1,6 @@
 import { applyStatusEffectToPlayer } from "@game/rules/status";
+import { dispatchAction } from "@game/actions/dispatchAction";
+import { doExamine } from "@game/actions/examine/examine";
 import {
   BAR_VISION_QUEST_DRINK_SEQUENCE,
   BAR_VISION_QUEST_EXPERIENCE_ID,
@@ -13,14 +15,16 @@ import {
   BAR_BULL_ADHESIVE_TRIGGER,
   BAR_BULL_RIDE_PRIZE_MESSAGE,
   BAR_BULL_RIDE_SCORE_ID,
+  BAR_CONTRABAND_ID,
   BAR_FLOOR_HATCH_DOOR_ID,
+  BAR_JUKEBOX_TRACK_NOT_FOUND_MESSAGE,
+  BAR_JUKEBOX_TRACKS,
   BAR_MEMORY_BOX_ID,
   BAR_MEMORY_BOX_MESSAGE,
   BAR_SNAP_OUT_CHEWABLE_ID,
   BAR_TRIVIA_ANSWER,
   BAR_TRIVIA_PRIZE_MESSAGE,
   BAR_TRIVIA_SCORE_ID,
-  BAR_CONTRABAND_ID,
   FAKE_ID_ID,
   FREE_DRINK_TICKET_ID,
   MANI_PEDI_VOUCHER_ID,
@@ -193,6 +197,76 @@ describe("bar area interactions", () => {
 
     expect(menu?.readableText).toContain("#1 Whiskey Sweet");
     expect(menu?.readableText).toContain("#6 Gin Fizz");
+  });
+
+  it("opens the jukebox console and plays a selected track", async () => {
+    const track = BAR_JUKEBOX_TRACKS[0];
+    const state = createTestState({ roomId: "BarLounge", rng: () => 0 });
+
+    const examined = doExamine(state, {
+      type: "action",
+      verb: "examine",
+      direct: "jukebox",
+      raw: "examine jukebox",
+    });
+
+    expect(examined.overlay).toMatchObject({ kind: "bar-jukebox" });
+
+    const played = await dispatchAction(examined.state, {
+      verb: "playJukeboxTrack",
+      payload: { trackId: track.trackId },
+    });
+
+    expect(played.message).toBe(
+      `The song ${track.trackName} by ${track.trackArtist} begins to play ${track.trackOpen}`,
+    );
+    expect(played.state.worldState.barJukebox.activeTrack).toMatchObject({
+      trackId: track.trackId,
+      turnsRemaining: track.trackLength,
+    });
+
+    const ticked = await runCommand(played.state, "wait");
+
+    expect(ticked.log.join("\n")).toContain(
+      `${track.trackName} continues playing`,
+    );
+    expect(
+      ticked.worldState.barJukebox.activeTrack?.remainingClips,
+    ).toHaveLength(track.trackClips.length - 1);
+  });
+
+  it("handles missing jukebox tracks and closes tracks when they expire", async () => {
+    const track = BAR_JUKEBOX_TRACKS[0];
+    const state = createTestState({ roomId: "BarLounge", rng: () => 1 });
+    const played = await dispatchAction(state, {
+      verb: "playJukeboxTrack",
+      payload: { trackId: track.trackId },
+    });
+
+    const incomplete = await dispatchAction(played.state, {
+      verb: "playJukeboxTrack",
+      payload: { trackId: track.trackId.slice(0, 3) },
+    });
+
+    expect(incomplete.message).toBe(BAR_JUKEBOX_TRACK_NOT_FOUND_MESSAGE);
+    expect(incomplete.state.worldState.barJukebox.activeTrack?.trackId).toBe(
+      track.trackId,
+    );
+
+    let ticking = incomplete.state;
+    for (let index = 0; index < track.trackLength; index += 1) {
+      ticking = await runCommand(ticking, "wait");
+    }
+
+    expect(ticking.log.join("\n")).toContain(track.trackClose);
+    expect(ticking.worldState.barJukebox.activeTrack).toBeUndefined();
+
+    const missing = await dispatchAction(ticking, {
+      verb: "playJukeboxTrack",
+      payload: { trackId: "X999" },
+    });
+
+    expect(missing.message).toBe(BAR_JUKEBOX_TRACK_NOT_FOUND_MESSAGE);
   });
 
   it("treats the bar floor hatch as a regular unlocked door", async () => {

@@ -21,12 +21,14 @@ export type ActionRequest = {
     mode?: "off" | "cool" | "cold" | "freeze";
     password?: string;
     speed?: number;
+    trackId?: string;
   };
   verb:
     | "setCoolerMode"
     | "openCoolerPanel"
     | "markMessagePlayed"
     | "cycleCameraGunView"
+    | "playJukeboxTrack"
     | "submitSpinStageSpeedPassword"
     | "command";
 };

@@ -31,6 +31,7 @@ import {
   AQUARIUM_DROWNING_DEATH_CAUSE,
   AQUARIUM_DROWNING_DEATH_MESSAGE,
 } from "src/world/Items/creatures/octopus";
+import { tickBarJukebox } from "src/world/maps/levelThree/Park/Bar";
 import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
   canMove,
@@ -628,6 +629,12 @@ export function advanceTurn(state: GameState): GameState {
   next = tickGamePreserveAnimals(next);
   next = tickGamePreserveFeedback(next);
   next = tickGamePreserveRun(next);
+
+  const jukeboxTick = tickBarJukebox(next);
+  next = jukeboxTick.state;
+  for (const message of jukeboxTick.messages) {
+    next = appendLog(next, message);
+  }
 
   next = emitAdjacentAudioCues(next, {
     registry: audioRegistry,
