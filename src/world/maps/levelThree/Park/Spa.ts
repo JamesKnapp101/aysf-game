@@ -46,5 +46,9 @@ export const spaItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 0,
     itemSize: 1,
+    overrides: {
+      blow:
+        "You blow into the little whistle but it doesn't make any noise, at least not one you can hear.",
+    },
   },
 ];

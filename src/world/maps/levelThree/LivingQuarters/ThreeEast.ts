@@ -1,5 +1,33 @@
+import { triggerScoreOnce } from "@game/rules/score";
+import type { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+
+function turnEeglerWallFixture({ state }: { state: GameState }): {
+  message: string;
+  state: GameState;
+} {
+  const isOpen = state.worldState.conditionalTriggers.EeglerSecretLabOpen;
+  let next: GameState = {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      conditionalTriggers: {
+        ...state.worldState.conditionalTriggers,
+        EeglerSecretLabOpen: !isOpen,
+      },
+    },
+  };
+
+  next = triggerScoreOnce(next, "found_secret_lab");
+
+  return {
+    state: next,
+    message: isOpen
+      ? "You rotate the wall fixture back. The floor panel slides shut, hiding the stairs again."
+      : "You rotate the wall fixture. Somewhere beneath the bed, machinery clicks and a panel in the floor slides open, revealing stairs leading down.",
+  };
+}
 
 export const threeEastRooms: Room[] = [
   // LIVING QUARTERS THREE EAST
@@ -384,6 +412,9 @@ export const threeEastItems: Item[] = [
       sceneryDescriptionOrder: 6,
     },
     isTurnable: true,
+    overrides: {
+      turn: turnEeglerWallFixture,
+    },
   },
   // Bathroom
   {

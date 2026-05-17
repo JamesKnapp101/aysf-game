@@ -1,5 +1,17 @@
+import { movePlayerToRoom } from "@game/helpers/gameHelpers";
+import type { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+
+function rideWarehouseConveyor(toRoomId: string) {
+  return ({ state }: { state: GameState }): {
+    message: string;
+    state: GameState;
+  } => ({
+    state: movePlayerToRoom(state, toRoomId),
+    message: "You ride the belt to the end.",
+  });
+}
 
 export const warehouseRooms: Room[] = [
   {
@@ -67,6 +79,9 @@ export const warehouseItems: Item[] = [
     meta: {
       sceneryDescriptionOrder: 1,
     },
+    overrides: {
+      ride: rideWarehouseConveyor("Storage"),
+    },
     itemWeight: 2,
     itemSize: 3,
   },
@@ -81,6 +96,9 @@ export const warehouseItems: Item[] = [
     itemCategory: "scenery",
     meta: {
       sceneryDescriptionOrder: 1,
+    },
+    overrides: {
+      ride: rideWarehouseConveyor("RobotRefuge"),
     },
     itemWeight: 2,
     itemSize: 3,

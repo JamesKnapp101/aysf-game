@@ -1,6 +1,7 @@
 import { applyPlayerDamage } from "@game/rules/damage";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
+import type { ParsedCommand } from "@game/types/parserTypes";
 import { isGymExerciseBallInRack } from "./gymExerciseBall";
 import {
   GYM_ROOM_ID,
@@ -98,6 +99,75 @@ export function getGymTreadmillSpeedDescription(state: GameState): string {
   }
 
   return `The belt speed is set to ${speed}.`;
+}
+
+function parseSetNumber(cmd?: ParsedCommand): number | undefined {
+  if (cmd?.type !== "action") return undefined;
+
+  const valueText = cmd.indirect?.trim() ?? "";
+  const match = valueText.match(/-?\d+/);
+  if (!match) return undefined;
+
+  const value = Number.parseInt(match[0], 10);
+  return Number.isFinite(value) ? value : undefined;
+}
+
+function setGymTreadmillAngleDial(
+  state: GameState,
+  cmd?: ParsedCommand,
+): { message: string; state: GameState } {
+  const value = parseSetNumber(cmd);
+  if (value == null) {
+    return { state, message: "Set the angle dial to what?" };
+  }
+
+  if (value < -20 || value > 20) {
+    return {
+      state,
+      message: "The angle dial only runs from -20 to 20.",
+    };
+  }
+
+  return {
+    state: setGymTreadmillAngle(state, value),
+    message:
+      value === 0
+        ? "You set the treadmill angle dial to 0. The broad black surface settles completely level."
+        : value > 0
+          ? `You set the treadmill angle dial to ${value}. The broad black surface slopes upward.`
+          : `You set the treadmill angle dial to ${value}. The broad black surface slopes downward.`,
+  };
+}
+
+function setSpinStageSpeedDial(
+  state: GameState,
+  cmd?: ParsedCommand,
+): {
+  message: string;
+  overlay?: { kind: "spin-stage-speed-password"; targetSpeed: number };
+  state: GameState;
+} {
+  const value = parseSetNumber(cmd);
+  if (value == null) {
+    return { state, message: "Set the speed dial to what?" };
+  }
+
+  if (value < 0 || value > 100) {
+    return {
+      state,
+      message: "The speed dial only runs from 0 to 100.",
+    };
+  }
+
+  return {
+    state,
+    message:
+      "The instructor speed dial flashes 'Password Required' and waits for input.",
+    overlay: {
+      kind: "spin-stage-speed-password",
+      targetSpeed: value,
+    },
+  };
 }
 
 type GymTreadmillMovementContext = {
@@ -258,6 +328,10 @@ export const gymTreadmillItems: Item[] = [
     meta: {
       sceneryDescriptionOrder: 3,
     },
+    overrides: {
+      set: ({ state, cmd }: { cmd?: ParsedCommand; state: GameState }) =>
+        setGymTreadmillAngleDial(state, cmd),
+    },
   },
   {
     id: "GymTreadmillSpeedDial",
@@ -275,6 +349,9 @@ export const gymTreadmillItems: Item[] = [
     isSettable: true,
     meta: {
       sceneryDescriptionOrder: 4,
+    },
+    overrides: {
+      set: "The speed dial flashes 'Instructor Override' and refuses to accept input.",
     },
   },
   {
@@ -351,6 +428,10 @@ export const gymTreadmillItems: Item[] = [
     isSettable: true,
     meta: {
       sceneryDescriptionOrder: 3,
+    },
+    overrides: {
+      set: ({ state, cmd }: { cmd?: ParsedCommand; state: GameState }) =>
+        setSpinStageSpeedDial(state, cmd),
     },
   },
   {

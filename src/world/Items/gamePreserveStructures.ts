@@ -1,8 +1,13 @@
 import { moveItemToRoom } from "@game/helpers/itemHelpers";
+import { provokePreserveAnimalWithWhistle } from "@game/preserve/preserveAnimals";
 import { updatePreserveStructures } from "@game/preserve/preserveState";
-import type { PreserveActorId } from "@game/preserve/preserveTypes";
+import {
+  isPreserveActorId,
+  type PreserveActorId,
+} from "@game/preserve/preserveTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
+import type { ParsedCommand } from "../../game/types/parserTypes";
 
 const PRESERVE_TREAT_IDS = [
   "ProcessedAnimalTreatOne",
@@ -26,6 +31,75 @@ function describeGameWhistle(state: GameState): string {
   const mode = settings?.kind === "game-whistle" ? settings.mode : "bull";
 
   return `${GAME_WHISTLE_DESCRIPTION} The selector is currently set to ${GAME_WHISTLE_MODE_LABELS[mode]}.`;
+}
+
+function getGameWhistleCall(
+  item: Item,
+  mode: PreserveActorId,
+): string | undefined {
+  const calls = item.meta?.calls;
+  if (!calls || typeof calls !== "object") return undefined;
+
+  const call = (calls as Partial<Record<PreserveActorId, unknown>>)[mode];
+  return typeof call === "string" && call.trim() ? call : undefined;
+}
+
+function setGameWhistle({
+  state,
+  cmd,
+}: {
+  cmd?: ParsedCommand;
+  state: GameState;
+}): {
+  message: string;
+  state: GameState;
+} {
+  const mode = cmd?.type === "action" ? cmd.indirect?.trim().toLowerCase() : "";
+  if (!mode) {
+    return { state, message: "Set the game whistle to what?" };
+  }
+
+  if (!isPreserveActorId(mode)) {
+    return {
+      state,
+      message:
+        "The selector has markings for badger, boar, bull, bear, and Barry.",
+    };
+  }
+
+  return {
+    state: {
+      ...state,
+      itemState: {
+        ...state.itemState,
+        itemSettings: {
+          ...state.itemState.itemSettings,
+          GameWhistle: { kind: "game-whistle", mode },
+        },
+      },
+    },
+    message: `You set the game whistle to ${mode}.`,
+  };
+}
+
+function blowGameWhistle({
+  state,
+  item,
+}: {
+  item: Item;
+  state: GameState;
+}): {
+  message: string;
+  state: GameState;
+} {
+  const settings = state.itemState.itemSettings.GameWhistle;
+  const mode = settings?.kind === "game-whistle" ? settings.mode : "bull";
+
+  return provokePreserveAnimalWithWhistle(
+    state,
+    mode,
+    getGameWhistleCall(item, mode),
+  );
 }
 
 function dispensePreserveFeed({ state }: { state: GameState }): {
@@ -586,6 +660,10 @@ export const gamePreserveStructureItems: Item[] = [
         bear: "Roooar! Rooooooar!",
         barry: "Yo, Barry! Baaaaarry!",
       } satisfies Record<PreserveActorId, string>,
+    },
+    overrides: {
+      blow: blowGameWhistle,
+      set: setGameWhistle,
     },
   },
   {

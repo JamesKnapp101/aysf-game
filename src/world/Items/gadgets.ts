@@ -1,4 +1,36 @@
+import { startRadioCall } from "@game/helpers/conversationHelpers";
+import { YOU_FIRST_CONTACT_ID } from "@game/npcRegistry";
+import type { GameState } from "../../game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
+
+const FIRST_RADIO_CALL_MESSAGE = `*pop* "Yes, I'm here...holy shit I thought I was the last one...(heavy breathing) Look, I don't have much time here so listen up (cough). If I'm right, you're standing somewhere naked, wondering where you are, and what the hell is going on. I wish I had more time to explain but I don't, you're gonna have to trust me (cough). Shit has gone sideways, and we have to set things right before it's too late. I think we might be the last ones. (cough cough) There's something in here with us, but that's the least of your worries...the power is out...and the reactor...is unstable..." The voice goes quite for a few seconds, then you hear him groan. "Sorry...but if you got anything you wanna ask me...or tell me...you better do it quick, pal..." *pop*`;
+
+function pushRadioCallButton({ state }: { state: GameState }): {
+  message: string;
+  state: GameState;
+} {
+  let next = state;
+  let message = `You press the radio's call button, and it emits a flat beep.`;
+
+  if (!state.worldState.conditionalTriggers.radioFirstCall) {
+    next = {
+      ...next,
+      worldState: {
+        ...next.worldState,
+        conditionalTriggers: {
+          ...next.worldState.conditionalTriggers,
+          radioFirstCall: true,
+        },
+      },
+    };
+    message += ` A moment later, the radio crackles and a voice emits from it.`;
+    next = startRadioCall(next, YOU_FIRST_CONTACT_ID, 9, {
+      incomingMessage: FIRST_RADIO_CALL_MESSAGE,
+    });
+  }
+
+  return { state: next, message };
+}
 
 export const specialItems: Item[] = [
   // 1. Flashlight ------------------------------------------------------------
@@ -204,6 +236,9 @@ export const specialItems: Item[] = [
     itemSize: 2,
     isContagious: true,
     isPushable: true,
+    overrides: {
+      push: pushRadioCallButton,
+    },
   },
   {
     id: "RadioTwo",

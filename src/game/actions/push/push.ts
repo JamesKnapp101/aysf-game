@@ -19,5 +19,5 @@ export function doPush(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "There's nothing to push." };
   }
 
-  return tryPushItem(state, item);
+  return tryPushItem(state, item, cmd);
 }

@@ -1,4 +1,41 @@
+import type { GameState } from "../../game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
+
+function pushPowerStationButton({ state }: { state: GameState }): {
+  message: string;
+  state: GameState;
+} {
+  if (
+    !state.itemState.containerContents["PowerStationKeyhole"]?.includes(
+      "PowerStationKey",
+    ) ||
+    !state.worldState.powerRestoredSections["power-key-turned"]
+  ) {
+    return {
+      state,
+      message: "You push the red button with a firm click, but nothing happens.",
+    };
+  }
+
+  return {
+    state: {
+      ...state,
+      worldState: {
+        ...state.worldState,
+        powerRestoredSections: {
+          ...state.worldState.powerRestoredSections,
+          ["power-initialized"]: true,
+        },
+        roomAudioLevel: {
+          ...state.worldState.roomAudioLevel,
+          PowerGrid: 3,
+        },
+      },
+    },
+    message:
+      "You push the flashing red button with a firm click, and you hear a loud snap from inside the panel. A beat later you hear a heavy clunk, then a fan somewhere inside the station begins to wind up, and the whole thing thrums to life. A series of lights blink on all across the surface of the panel, and from the shadows around the room until the entire chamber is bathed in a flickering electric glow. The viewscreen mounted above the keyboard flashes then blinks on, and the button now remains solidly lit.",
+  };
+}
 
 export const levelFourItems: Item[] = [
   {
@@ -419,7 +456,7 @@ export const levelFourItems: Item[] = [
     itemSize: 1,
     isPushable: true,
     overrides: {
-      push: "You press the button. If the station is properly keyed, the internal fans thump to life and the console wakes up with a low, rising hum. If not, nothing happens at all—which is its own kind of ominous.",
+      push: pushPowerStationButton,
     },
   },
 

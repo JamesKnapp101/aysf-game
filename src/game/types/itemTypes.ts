@@ -128,6 +128,7 @@ export type ItemOverrideVerb =
   | "take"
   | "drop"
   | "get"
+  | "blow"
   | "bounce"
   | "smell"
   | "taste"
@@ -154,6 +155,7 @@ export type ItemOverrideVerb =
   | "climb"
   | "ride"
   | "eat"
+  | "set"
   | "move"
   | "examine";
 

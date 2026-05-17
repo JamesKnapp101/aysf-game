@@ -1,5 +1,41 @@
+import type { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+
+function turnPowerStationKey({ state }: { state: GameState }): {
+  message: string;
+  state: GameState;
+} {
+  const keyIsInserted = state.itemState.containerContents[
+    "PowerStationKeyhole"
+  ]?.includes("PowerStationKey");
+
+  if (!keyIsInserted) {
+    return { state, message: "The key isn't in anything." };
+  }
+
+  if (state.worldState.powerRestoredSections["power-key-turned"]) {
+    return {
+      state,
+      message: "The key seems to be locked in place now, and you can't budge it.",
+    };
+  }
+
+  return {
+    state: {
+      ...state,
+      worldState: {
+        ...state.worldState,
+        powerRestoredSections: {
+          ...state.worldState.powerRestoredSections,
+          ["power-key-turned"]: true,
+        },
+      },
+    },
+    message:
+      "You turn the key with a heavy click and it locks into place. The red button next to the keyhole begins to flash.",
+  };
+}
 
 export const parkRooms: Room[] = [
   {
@@ -174,6 +210,9 @@ export const parkItems: Item[] = [
     isContainer: false,
     meta: {
       kind: "key",
+    },
+    overrides: {
+      turn: turnPowerStationKey,
     },
     scoreId: "obtained_power_key",
   },

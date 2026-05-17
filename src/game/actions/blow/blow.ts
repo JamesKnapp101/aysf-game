@@ -19,5 +19,5 @@ export function doBlow(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "There's nothing to blow." };
   }
 
-  return tryBlowItem(state, item);
+  return tryBlowItem(state, item, cmd);
 }

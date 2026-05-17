@@ -1,4 +1,3 @@
-import { handleRegisteredSetCommand } from "../../registries/setCommandRegistry";
 import { resolveItemByNoun } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
@@ -32,8 +31,25 @@ export function doSet(state: GameState, cmd: ParsedCommand): ActionResult {
     };
   }
 
-  const registered = handleRegisteredSetCommand(state, cmd, item);
-  if (registered) return registered;
+  const setOverride = item.overrides?.set;
+  if (typeof setOverride === "function") {
+    const out = setOverride({ state, item, cmd });
+
+    if (typeof out === "string") {
+      return { state, message: out };
+    }
+
+    return {
+      state: out?.state ?? state,
+      message: out?.message ?? "Nothing happens.",
+      overlay: out?.overlay,
+      consumesTurn: out?.consumesTurn,
+    };
+  }
+
+  if (typeof setOverride === "string") {
+    return { state, message: setOverride };
+  }
 
   return { state };
 }
