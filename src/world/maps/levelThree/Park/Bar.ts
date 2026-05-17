@@ -19,6 +19,8 @@ export const BAR_BULL_ADHESIVE_TRIGGER = "BarBullAdhesiveApplied";
 export const BAR_FLOOR_HATCH_DOOR_ID = "BarFloorHatchDoor";
 export const BAR_SNAP_OUT_CHEWABLE_ID = "BarSnapOutChewable";
 export const BAR_MEMORY_BOX_ID = "BarMemoryBox";
+export const BAR_CONTRABAND_ID = "BarContraband";
+export const FAKE_ID_ID = "FakeID";
 export const MANI_PEDI_VOUCHER_ID = "ManiPediVoucher";
 export const FREE_DRINK_TICKET_ID = "FreeDrinkTicket";
 export const BAR_TRIVIA_QUESTION =
@@ -395,6 +397,31 @@ export function maybeAwardBarTriviaPrize(
   next = addToInventory(next, MANI_PEDI_VOUCHER_ID);
 
   return { state: next, message: BAR_TRIVIA_PRIZE_MESSAGE };
+}
+
+function openBarContrabandPackage(state: GameState): {
+  state: GameState;
+  message: string;
+} {
+  let next: GameState = {
+    ...state,
+    player: {
+      ...state.player,
+      inventory: removeFromAllBuckets(
+        state.player.inventory,
+        BAR_CONTRABAND_ID,
+      ),
+    },
+  };
+
+  next = updateItemLocation(next, BAR_CONTRABAND_ID, "NOWHERE");
+  next = updateItemLocation(next, FAKE_ID_ID, "INVENTORY");
+  next = addToInventory(next, FAKE_ID_ID);
+
+  return {
+    state: next,
+    message: "You unwrap the package, and discard the paper",
+  };
 }
 
 export function shouldBlockLeavingBarWithDrink(
@@ -775,7 +802,7 @@ export const barDoors: DoorDefinition[] = [
 
 export const barItems: Item[] = [
   {
-    id: "BarContraband",
+    id: BAR_CONTRABAND_ID,
     name: "small wrapped package",
     description:
       "It's a small package of some sort, no bigger than a deck of cards, wrapped tightly in paper. Written on the paper in ink is the name 'Yolonope'.",
@@ -785,9 +812,14 @@ export const barItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 1000,
     itemSize: 20,
+    isOpenable: true,
+    overrides: {
+      open: ({ state }: { state: GameState }) =>
+        openBarContrabandPackage(state),
+    },
   },
   {
-    id: "FakeID",
+    id: FAKE_ID_ID,
     name: "fake ID",
     description:
       "It's a fake ID, a good fake, but still a fake. The information on it is for Yolonope Fick. It has her current living quarters on level two, Rotation K",

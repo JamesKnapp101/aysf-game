@@ -20,6 +20,8 @@ import {
   BAR_TRIVIA_ANSWER,
   BAR_TRIVIA_PRIZE_MESSAGE,
   BAR_TRIVIA_SCORE_ID,
+  BAR_CONTRABAND_ID,
+  FAKE_ID_ID,
   FREE_DRINK_TICKET_ID,
   MANI_PEDI_VOUCHER_ID,
 } from "src/world/maps/levelThree/Park/Bar";
@@ -166,13 +168,23 @@ describe("bar area interactions", () => {
       "small wrapped package",
     );
     expect(looked.itemState.underContents.BarBathroomSink ?? []).not.toContain(
-      "BarContraband",
+      BAR_CONTRABAND_ID,
     );
-    expect(looked.itemState.itemRoomId.BarContraband).toBe("BarBathroom");
+    expect(looked.itemState.itemRoomId[BAR_CONTRABAND_ID]).toBe("BarBathroom");
 
     const taken = await runCommand(looked, "take package");
 
-    expect(expectInventoryToContain(taken, "BarContraband")).toBe(true);
+    expect(expectInventoryToContain(taken, BAR_CONTRABAND_ID)).toBe(true);
+
+    const opened = await runCommand(taken, "open package");
+
+    expect(getCommandEntry(opened, "open package")).toContain(
+      "You unwrap the package, and discard the paper",
+    );
+    expect(expectInventoryToContain(opened, BAR_CONTRABAND_ID)).toBe(false);
+    expect(opened.itemState.itemRoomId[BAR_CONTRABAND_ID]).toBe("NOWHERE");
+    expect(expectInventoryToContain(opened, FAKE_ID_ID)).toBe(true);
+    expect(opened.itemState.itemRoomId[FAKE_ID_ID]).toBe("INVENTORY");
   });
 
   it("numbers the drink menu entries", () => {
