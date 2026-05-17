@@ -1,4 +1,8 @@
 import type { CharacterProfile } from "@game/types/npcTypes";
+import {
+  BAR_TRIVIA_ANSWER,
+  BAR_TRIVIA_QUESTION,
+} from "src/world/maps/levelThree/Park/Bar";
 
 export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
   you_1st_contact: {
@@ -149,8 +153,8 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     identity:
       "You are a bartender robot who serves drinks at a bar called 'The Loosened Tongue', and are known for being a good conversationalist",
     knownFacts: [
-      "The current Bar Trivia Question is: 'How long before the Aeneas passes through Bufo Clutch A?'",
-      "The current Bar Trivia Question ANSWER is '391 years'",
+      `The current Bar Trivia Question is: '${BAR_TRIVIA_QUESTION}'`,
+      `The current Bar Trivia Question ANSWER is '${BAR_TRIVIA_ANSWER}'`,
       "Answering the Bar Trivia Question correctly wins you a free Mani-Pedi voucher you can use at Keratin Kindness",
       "The player's name is Mox Eegler",
       "The player has been in the bar many, many times, and is something of a regular there",

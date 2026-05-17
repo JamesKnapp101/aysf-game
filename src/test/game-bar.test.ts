@@ -15,6 +15,10 @@ import {
   BAR_MEMORY_BOX_ID,
   BAR_MEMORY_BOX_MESSAGE,
   BAR_SNAP_OUT_CHEWABLE_ID,
+  BAR_TRIVIA_ANSWER,
+  BAR_TRIVIA_PRIZE_MESSAGE,
+  BAR_TRIVIA_SCORE_ID,
+  MANI_PEDI_VOUCHER_ID,
 } from "src/world/maps/levelThree/Park/Bar";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
@@ -82,7 +86,7 @@ describe("bar area interactions", () => {
 
   it("handles adhesive-assisted mechanical bull riding", async () => {
     const start = setInventory(createTestState({ roomId: "Bar" }), [
-      "BarAdhesive",
+      "AllPurposeAdhesive",
     ]);
     const adhesive = await runCommand(start, "apply adhesive to bull");
 
@@ -99,7 +103,7 @@ describe("bar area interactions", () => {
 
     const clothedStart = setInventory(createTestState({ roomId: "Bar" }), [
       "GimOnePants",
-      "BarAdhesive",
+      "AllPurposeAdhesive",
     ]);
     const wearing = await runCommand(clothedStart, "wear red sweatpants");
     const sticky = await runCommand(wearing, "apply adhesive to bull");
@@ -479,6 +483,44 @@ describe("bar area interactions", () => {
     const opened = await runCommand(rewarded, "open box");
 
     expect(getCommandEntry(opened, "open box")).toContain("but it's empty");
+  });
+
+  it("awards the bar trivia point and voucher for the correct answer once", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        response: "That's a confident answer.",
+      }),
+    } as Response);
+
+    const command = `tell bartender the answer to the trivia question is '${BAR_TRIVIA_ANSWER}'`;
+    const rewarded = await runCommand(
+      createTestState({ roomId: "Bar" }),
+      command,
+    );
+
+    expect(expectInventoryToContain(rewarded, MANI_PEDI_VOUCHER_ID)).toBe(true);
+    expect(rewarded.itemState.itemRoomId[MANI_PEDI_VOUCHER_ID]).toBe(
+      "INVENTORY",
+    );
+    expect(rewarded.worldState.scoresTriggered[BAR_TRIVIA_SCORE_ID]).toBe(true);
+    expect(rewarded.score).toBe(1);
+    expect(getCommandEntry(rewarded, command)).toContain(
+      BAR_TRIVIA_PRIZE_MESSAGE,
+    );
+
+    const duplicate = await runCommand(rewarded, command);
+
+    expect(
+      duplicate.player.inventory.general.filter(
+        (itemId) => itemId === MANI_PEDI_VOUCHER_ID,
+      ),
+    ).toHaveLength(1);
+    expect(duplicate.score).toBe(1);
+    expect(getCommandEntry(duplicate, command)).not.toContain(
+      BAR_TRIVIA_PRIZE_MESSAGE,
+    );
   });
 
   it("blocks leaving the bar while carrying a drink", async () => {

@@ -19,10 +19,16 @@ export const BAR_BULL_ADHESIVE_TRIGGER = "BarBullAdhesiveApplied";
 export const BAR_FLOOR_HATCH_DOOR_ID = "BarFloorHatchDoor";
 export const BAR_SNAP_OUT_CHEWABLE_ID = "BarSnapOutChewable";
 export const BAR_MEMORY_BOX_ID = "BarMemoryBox";
+export const MANI_PEDI_VOUCHER_ID = "ManiPediVoucher";
+export const BAR_TRIVIA_QUESTION =
+  "How long before the Aeneas passes through Bufo Clutch A?";
+export const BAR_TRIVIA_ANSWER = "391 years";
+export const BAR_TRIVIA_SCORE_ID = "answered_bar_trivia";
 export const BAR_DRINK_EXIT_BLOCK_MESSAGE = `"Sorry, but you can't take drinks out of the bar, Mayor's orders!"`;
 export const BAR_DRINK_LIMIT_MESSAGE = `"Sorry, only one drink per customer at a time!"`;
 export const BAR_MODERN_DRINK_MESSAGE = `"Sorry, but the only recipe that survived from that era was the gin fizz"`;
 export const BAR_MEMORY_BOX_MESSAGE = `The bartender reaches beneath the bar, retrieves a small metal box, and hands it to you. You take it, turning it over in your hands, but it doesn't look familiar.\n\n"You gave this to me once and said if you were ever in trouble, I should give it to you."`;
+export const BAR_TRIVIA_PRIZE_MESSAGE = `The bartender's face shield lights up with a delighted smile.\n\n"Correct! Tonight's mystery prize is a free mani-pedi at Keratin Kindness. Try to act surprised if they ask."\n\nThe bartender hands you a nail salon voucher.`;
 
 type BarDrinkMenuEntry = {
   aliases: string[];
@@ -282,6 +288,20 @@ function normalizeBarMemoryTopic(topic: string): string {
     .join(" ");
 }
 
+function containsTokenSequence(haystack: string[], needle: string[]): boolean {
+  if (needle.length === 0) return false;
+  if (needle.length === 1) return haystack.includes(needle[0]);
+
+  for (let index = 0; index <= haystack.length - needle.length; index += 1) {
+    const matches = needle.every(
+      (token, needleIndex) => haystack[index + needleIndex] === token,
+    );
+    if (matches) return true;
+  }
+
+  return false;
+}
+
 export function isBarMemoryBoxTopic(topic: string): boolean {
   const normalizedTopic = normalizeBarMemoryTopic(topic);
   if (!normalizedTopic) return false;
@@ -297,6 +317,24 @@ export function isBarMemoryBoxTopic(topic: string): boolean {
   return normalizedTopic
     .split(/\s+/)
     .some((token) => BAR_MEMORY_BOX_TOPIC_WORDS.has(token));
+}
+
+export function isCorrectBarTriviaAnswer(topic: string): boolean {
+  const normalizedTopic = normalizeBarMemoryTopic(topic);
+  if (!normalizedTopic) return false;
+
+  const normalizedAnswer = normalizeBarMemoryTopic(BAR_TRIVIA_ANSWER);
+  const topicTokens = normalizedTopic.split(/\s+/).filter(Boolean);
+  const answerTokens = normalizedAnswer.split(/\s+/).filter(Boolean);
+  const hasCorrectAnswer = containsTokenSequence(topicTokens, answerTokens);
+  if (!hasCorrectAnswer) return false;
+
+  const isBareAnswer = normalizedTopic === normalizedAnswer;
+  const hasTriviaCue = topicTokens.some((token) =>
+    ["answer", "trivia", "question"].includes(token),
+  );
+
+  return isBareAnswer || hasTriviaCue;
 }
 
 export function isBarInteriorRoom(roomId: string): boolean {
@@ -331,6 +369,29 @@ export function maybeAwardBarMemoryBox(
   next = addToInventory(next, BAR_MEMORY_BOX_ID);
 
   return { state: next, message: BAR_MEMORY_BOX_MESSAGE };
+}
+
+export function maybeAwardBarTriviaPrize(
+  state: GameState,
+  npcId: string,
+  topic: string,
+): { state: GameState; message?: string } {
+  if (npcId !== "BarBot" || !isCorrectBarTriviaAnswer(topic)) {
+    return { state };
+  }
+
+  if (
+    inventoryHas(state.player.inventory, MANI_PEDI_VOUCHER_ID) ||
+    state.itemState.pickedUpByPlayer[MANI_PEDI_VOUCHER_ID] === true
+  ) {
+    return { state };
+  }
+
+  let next = triggerScoreOnce(state, BAR_TRIVIA_SCORE_ID);
+  next = updateItemLocation(next, MANI_PEDI_VOUCHER_ID, "INVENTORY");
+  next = addToInventory(next, MANI_PEDI_VOUCHER_ID);
+
+  return { state: next, message: BAR_TRIVIA_PRIZE_MESSAGE };
 }
 
 export function shouldBlockLeavingBarWithDrink(
@@ -1057,7 +1118,7 @@ export const barItems: Item[] = [
     },
   },
   {
-    id: "ManiPediVoucher",
+    id: MANI_PEDI_VOUCHER_ID,
     name: "nail salon voucher",
     description:
       "It says if you present it at Keratin Kindness you get a free mani-pedi, and the offer doesn't expire.",

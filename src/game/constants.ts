@@ -107,6 +107,7 @@ export const playerScoreMap = {
   solved_stasis_gun_puzzle: { value: 5 },
   viewed_ship_log: { value: 5 },
   found_secret_lab: { value: 1 },
+  answered_bar_trivia: { value: 1 },
   returned_red_dart: { value: 1 },
 } as const;
 

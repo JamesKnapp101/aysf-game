@@ -6,7 +6,10 @@ import {
 import { normalizeTopic } from "@game/rules/scope";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { ConversationTarget } from "@game/types/npcTypes";
-import { maybeAwardBarMemoryBox } from "src/world/maps/levelThree/Park/Bar";
+import {
+  maybeAwardBarMemoryBox,
+  maybeAwardBarTriviaPrize,
+} from "src/world/maps/levelThree/Park/Bar";
 import { GameState } from "../../types/gameTypes";
 
 export async function tryTell(
@@ -20,8 +23,19 @@ export async function tryTell(
     const result = await tellNpc(state, target.npc, topic, target.via);
     if (target.via !== "direct") return result;
 
-    const reward = maybeAwardBarMemoryBox(result.state, target.npc.id, topic);
-    if (!reward.message) return result;
+    let rewardState = result.state;
+    const rewardMessages: string[] = [];
+
+    for (const maybeAward of [
+      maybeAwardBarMemoryBox,
+      maybeAwardBarTriviaPrize,
+    ]) {
+      const reward = maybeAward(rewardState, target.npc.id, topic);
+      rewardState = reward.state;
+      if (reward.message) rewardMessages.push(reward.message);
+    }
+
+    if (rewardMessages.length === 0) return result;
 
     const noCareMessage = `${target.npc.name} doesn't seem to care.`;
     const baseMessage =
@@ -29,8 +43,8 @@ export async function tryTell(
 
     return {
       ...result,
-      state: reward.state,
-      message: [baseMessage, reward.message].filter(Boolean).join("\n\n"),
+      state: rewardState,
+      message: [baseMessage, ...rewardMessages].filter(Boolean).join("\n\n"),
     };
   }
 
