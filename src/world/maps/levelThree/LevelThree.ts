@@ -36,7 +36,7 @@ import {
   barDoors,
   barItems,
   barRooms,
-} from "src/world/maps/levelThree/Park/Bar";
+} from "src/world/maps/levelThree/Park/Bar/Bar";
 import {
   gymItems,
   gymLockerItems,

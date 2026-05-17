@@ -1,11 +1,9 @@
-import {
-  throwDartAtBarDartboard,
-} from "src/world/maps/levelThree/Park/Bar";
 import { resolveItemByNoun } from "@game/rules/scope";
 import { inventoryHas } from "@game/rules/state";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
+import { throwDartAtBarDartboard } from "src/world/maps/levelThree/Park/Bar/barDarts";
 
 export function doThrow(state: GameState, cmd: ParsedCommand): ActionResult {
   if (cmd.type !== "action" || cmd.verb !== "throw") {

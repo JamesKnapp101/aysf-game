@@ -1,448 +1,91 @@
 import { flashlightOn } from "@game/helpers/gameHelpers";
-import { applyPlayerDamage } from "@game/rules/damage";
-import { setItemDoses, updateItemLocation } from "@game/rules/items";
-import { triggerScoreOnce } from "@game/rules/score";
-import {
-  addToInventory,
-  inventoryHas,
-  removeFromAllBuckets,
-} from "@game/rules/state";
+import { updateItemLocation } from "@game/rules/items";
+import { addToInventory, removeFromAllBuckets } from "@game/rules/state";
 import type { TickContext } from "@game/types/context";
 import type { DoorDefinition } from "@game/types/doorTypes";
 import type { GameState } from "@game/types/gameTypes";
-import { Item } from "@game/types/itemTypes";
+import type { Item } from "@game/types/itemTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
-import { Room } from "@game/types/roomTypes";
+import type { Room } from "@game/types/roomTypes";
 import { organismLQOverrideTick } from "src/world/Items/creatures/livingQuartersThreeWestOrganisms";
+import { BAR_MEMORY_BOX_ID, MANI_PEDI_VOUCHER_ID } from "./barBartenderRewards";
+import { barDartboardHasDart } from "./barDarts";
+import { BAR_DRINK_MENU_TEXT, barDrinkItems } from "./barDrinks";
+import { BAR_JUKEBOX_ITEM_ID } from "./barJukebox";
+import {
+  applyAdhesiveToBull,
+  FREE_DRINK_TICKET_ID,
+  getAttachedBullPantsName,
+  isBarBullAdhesiveApplied,
+  rideBarMechanicalBull,
+} from "./barMechanicalBull";
+import {
+  BAR_SNAP_OUT_CHEWABLE_ID,
+  consumeSnapOutChewable,
+  dispenseSnapOutChewable,
+} from "./barSnapOut";
 
-export const BAR_BULL_ADHESIVE_TRIGGER = "BarBullAdhesiveApplied";
+export {
+  BAR_MEMORY_BOX_ID,
+  BAR_MEMORY_BOX_MESSAGE,
+  BAR_TRIVIA_ANSWER,
+  BAR_TRIVIA_PRIZE_MESSAGE,
+  BAR_TRIVIA_QUESTION,
+  BAR_TRIVIA_SCORE_ID,
+  isBarMemoryBoxTopic,
+  isCorrectBarTriviaAnswer,
+  MANI_PEDI_VOUCHER_ID,
+  maybeAwardBarMemoryBox,
+  maybeAwardBarTriviaPrize,
+} from "./barBartenderRewards";
+export {
+  barDartboardHasDart,
+  giveDartToBarBartender,
+  throwDartAtBarDartboard,
+} from "./barDarts";
+export {
+  BAR_DRINK_EXIT_BLOCK_MESSAGE,
+  BAR_DRINK_LIMIT_MESSAGE,
+  BAR_DRINK_MENU_ENTRIES,
+  BAR_DRINK_MENU_TEXT,
+  BAR_MODERN_DRINK_MESSAGE,
+  barDrinkItems,
+  isBarInteriorRoom,
+  orderBarDrink,
+  playerHasBarDrink,
+  shouldBlockLeavingBarWithDrink,
+} from "./barDrinks";
+export type { BarDrinkMenuEntry } from "./barDrinks";
+export {
+  BAR_JUKEBOX_ITEM_ID,
+  BAR_JUKEBOX_TRACK_NOT_FOUND_MESSAGE,
+  BAR_JUKEBOX_TRACKS,
+  playBarJukeboxTrack,
+  tickBarJukebox,
+} from "./barJukebox";
+export type { BarJukeboxTrack } from "./barJukebox";
+export {
+  applyAdhesiveToBull,
+  BAR_BULL_ADHESIVE_TRIGGER,
+  BAR_BULL_RIDE_PRIZE_MESSAGE,
+  BAR_BULL_RIDE_SCORE_ID,
+  FREE_DRINK_TICKET_ID,
+  getAttachedBullPantsName,
+  isBarBullAdhesiveApplied,
+  rideBarMechanicalBull,
+} from "./barMechanicalBull";
+export {
+  BAR_SNAP_OUT_CHEWABLE_ID,
+  consumeSnapOutChewable,
+  dispenseSnapOutChewable,
+} from "./barSnapOut";
+
 export const BAR_FLOOR_HATCH_DOOR_ID = "BarFloorHatchDoor";
-export const BAR_JUKEBOX_ITEM_ID = "BarLoungeJukebox";
-export const BAR_SNAP_OUT_CHEWABLE_ID = "BarSnapOutChewable";
-export const BAR_MEMORY_BOX_ID = "BarMemoryBox";
 export const BAR_CONTRABAND_ID = "BarContraband";
 export const FAKE_ID_ID = "FakeID";
-export const MANI_PEDI_VOUCHER_ID = "ManiPediVoucher";
-export const FREE_DRINK_TICKET_ID = "FreeDrinkTicket";
-export const BAR_TRIVIA_QUESTION =
-  "How long before the Aeneas passes through Bufo Clutch A?";
-export const BAR_TRIVIA_ANSWER = "391 years";
-export const BAR_TRIVIA_SCORE_ID = "answered_bar_trivia";
-export const BAR_BULL_RIDE_SCORE_ID = "completed_bar_bull_ride";
-export const BAR_DRINK_EXIT_BLOCK_MESSAGE = `"Sorry, but you can't take drinks out of the bar, Mayor's orders!"`;
-export const BAR_DRINK_LIMIT_MESSAGE = `"Sorry, only one drink per customer at a time!"`;
-export const BAR_MODERN_DRINK_MESSAGE = `"Sorry, but the only recipe that survived from that era was the gin fizz"`;
-export const BAR_MEMORY_BOX_MESSAGE = `The bartender reaches beneath the bar, retrieves a small metal box, and hands it to you. You take it, turning it over in your hands, but it doesn't look familiar.\n\n"You gave this to me once and said if you were ever in trouble, I should give it to you."`;
-export const BAR_TRIVIA_PRIZE_MESSAGE = `The bartender's face shield lights up with a delighted smile.\n\n"Correct! Tonight's mystery prize is a free mani-pedi at Keratin Kindness. Try to act surprised if they ask."\n\nThe bartender hands you a nail salon voucher.`;
-export const BAR_BULL_RIDE_PRIZE_MESSAGE = `The bartender gives you a free drink ticket.\n\n"It looks like it's not for this bar, sorry, but keep it for next rotation."`;
-export const BAR_JUKEBOX_TRACK_NOT_FOUND_MESSAGE = "808 Track not Found";
-
-type BarDrinkMenuEntry = {
-  aliases: string[];
-  id: string;
-  menuName: string;
-  number: number;
-};
-
-export type BarJukeboxTrack = {
-  trackArtist: string;
-  trackClips: string[];
-  trackClose: string;
-  trackId: string;
-  trackLength: number;
-  trackName: string;
-  trackOpen: string;
-};
-
-export const BAR_JUKEBOX_TRACKS: BarJukeboxTrack[] = [
-  {
-    trackId: "R221",
-    trackName: "Dancing on a String",
-    trackArtist: "Supertwink",
-    trackLength: 10,
-    trackOpen: "and the throb of an electronic synth fills the room.",
-    trackClose:
-      "The electronic music builds to a crescendo then ends on an orchestra hit.",
-    trackClips: [
-      `"Pull me close, pull me bright, pull me through the neon night."`,
-      `"I keep dancing on a string, but I still choose the swing."`,
-      `"Chrome-heart darling, count me in, three-two-one and spin."`,
-      `"If the floor drops out, let the bass line hold me."`,
-      `"You cut the lights, I catch the glow."`,
-      `"Every little motion makes the midnight sing."`,
-    ],
-  },
-];
-
-const BAR_INTERIOR_ROOM_IDS = [
-  "Bar",
-  "BarLounge",
-  "BarBathroom",
-  "BarBasement",
-] as const;
-
-const BAR_DRINK_EMPTY_CLEANUP = {
-  location: "seeded",
-  message: "The bartender whisks the empty glass away.",
-  removeFromInventory: true,
-  rooms: BAR_INTERIOR_ROOM_IDS,
-};
-
-export const BAR_DRINK_MENU_ENTRIES: BarDrinkMenuEntry[] = [
-  {
-    aliases: ["whiskey sweet", "whiskey", "sweet"],
-    id: "BarWhiskeySweet",
-    menuName: "Whiskey Sweet",
-    number: 1,
-  },
-  {
-    aliases: ["durian colada", "durian", "colada"],
-    id: "BarDurianColada",
-    menuName: "Durian Colada",
-    number: 2,
-  },
-  {
-    aliases: ["bangalore sling", "bangalore", "sling"],
-    id: "BarBangaloreSling",
-    menuName: "Bangalore Sling",
-    number: 3,
-  },
-  {
-    aliases: ["fischermeister shot", "fischermeister", "bomb", "shot"],
-    id: "BarFischermeisterShot",
-    menuName: "Fischermeister shot",
-    number: 4,
-  },
-  {
-    aliases: [
-      "hand-stuff on the beach",
-      "hand stuff on the beach",
-      "hand-stuff",
-      "hand stuff",
-      "beach",
-    ],
-    id: "BarHandStuffOnTheBeach",
-    menuName: "Hand-stuff on the Beach",
-    number: 5,
-  },
-  {
-    aliases: ["gin fizz", "gin", "fizz"],
-    id: "BarGinFizz",
-    menuName: "Gin Fizz",
-    number: 6,
-  },
-];
-
-export const BAR_DRINK_MENU_TEXT = BAR_DRINK_MENU_ENTRIES.map(
-  (entry) => `#${entry.number} ${entry.menuName}`,
-).join("\n");
-
-const MODERN_DRINK_NAMES = [
-  "amaretto sour",
-  "aperol spritz",
-  "beer",
-  "black russian",
-  "bloody mary",
-  "champagne",
-  "cosmo",
-  "cosmopolitan",
-  "daiquiri",
-  "dark and stormy",
-  "espresso martini",
-  "fuzzy navel",
-  "gimlet",
-  "gin and tonic",
-  "g&t",
-  "hot toddy",
-  "irish coffee",
-  "long island",
-  "long island iced tea",
-  "mai tai",
-  "manhattan",
-  "margarita",
-  "martini",
-  "mint julep",
-  "mojito",
-  "moscow mule",
-  "negroni",
-  "old fashioned",
-  "paloma",
-  "pina colada",
-  "rum and coke",
-  "sazerac",
-  "screwdriver",
-  "sex on the beach",
-  "sidecar",
-  "tequila sunrise",
-  "tom collins",
-  "vodka",
-  "vodka tonic",
-  "whiskey sour",
-  "white russian",
-  "wine",
-];
-
-const BAR_MEMORY_BOX_TOPIC_WORDS = new Set([
-  "amnesia",
-  "amnesiac",
-  "blank",
-  "blackout",
-  "cataclysm",
-  "catastrophe",
-  "crash",
-  "crashed",
-  "crashing",
-  "dead",
-  "death",
-  "died",
-  "disaster",
-  "emergency",
-  "exploded",
-  "explosion",
-  "forget",
-  "forgetting",
-  "forgot",
-  "forgotten",
-  "incident",
-  "meltdown",
-  "memories",
-  "memory",
-  "outbreak",
-  "remember",
-  "remembered",
-  "remembering",
-  "help",
-]);
-
-const BAR_MEMORY_BOX_TOPIC_PHRASES = [
-  "before everything",
-  "everyone died",
-  "everything happened",
-  "lost memories",
-  "memory loss",
-  "missing memories",
-  "no memories",
-  "people died",
-  "ship crash",
-  "ship crashed",
-  "what happened",
-  "help me",
-];
-
-const BAR_DART_HIT_MESSAGES = [
-  "Bullseye!",
-  "The dart lands in the outer ring with a neat little thunk.",
-  "The dart wobbles into the twenty, which feels pretty official.",
-  "The dart clips the wire and sticks at an awkward angle.",
-  "The dart buries itself just outside the bullseye.",
-  "The dart hits low, but it sticks. That counts for something.",
-];
-
-function setBarTrigger(
-  state: GameState,
-  triggerId: string,
-  value: boolean,
-): GameState {
-  return {
-    ...state,
-    worldState: {
-      ...state.worldState,
-      conditionalTriggers: {
-        ...state.worldState.conditionalTriggers,
-        [triggerId]: value,
-      },
-    },
-  };
-}
-
-function isBarTriggerActive(state: GameState, triggerId: string): boolean {
-  return state.worldState.conditionalTriggers?.[triggerId] === true;
-}
 
 function isBarFloorHatchOpen(state: GameState): boolean {
   return state.worldState.doors[BAR_FLOOR_HATCH_DOOR_ID]?.isOpen === true;
-}
-
-function normalizeDrinkRequest(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
-    .split(/\s+/)
-    .filter(Boolean)
-    .filter((token) => {
-      const ignoredWords = [
-        "a",
-        "an",
-        "the",
-        "please",
-        "drink",
-        "cocktail",
-        "number",
-        "no",
-      ];
-      return !ignoredWords.includes(token);
-    })
-    .join(" ");
-}
-
-function resolveBarDrinkMenuEntry(
-  request: string,
-): BarDrinkMenuEntry | undefined {
-  const normalizedRequest = normalizeDrinkRequest(request);
-  if (!normalizedRequest) return undefined;
-
-  const numberMatch = BAR_DRINK_MENU_ENTRIES.find(
-    (entry) => String(entry.number) === normalizedRequest,
-  );
-  if (numberMatch) return numberMatch;
-
-  return BAR_DRINK_MENU_ENTRIES.find((entry) =>
-    [entry.menuName, ...entry.aliases].some(
-      (alias) => normalizeDrinkRequest(alias) === normalizedRequest,
-    ),
-  );
-}
-
-function normalizeJukeboxTrackId(trackId: string): string {
-  return trackId
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, "")
-    .slice(0, 4);
-}
-
-function getJukeboxTrack(trackId: string): BarJukeboxTrack | undefined {
-  const normalizedTrackId = normalizeJukeboxTrackId(trackId);
-  return BAR_JUKEBOX_TRACKS.find(
-    (track) => normalizeJukeboxTrackId(track.trackId) === normalizedTrackId,
-  );
-}
-
-function isModernDrinkRequest(request: string): boolean {
-  const normalizedRequest = normalizeDrinkRequest(request);
-  if (!normalizedRequest || resolveBarDrinkMenuEntry(request)) return false;
-
-  return MODERN_DRINK_NAMES.some((drinkName) => {
-    const normalizedDrink = normalizeDrinkRequest(drinkName);
-    return (
-      normalizedRequest === normalizedDrink ||
-      normalizedRequest.includes(normalizedDrink)
-    );
-  });
-}
-
-function normalizeBarMemoryTopic(topic: string): string {
-  return topic
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
-    .split(/\s+/)
-    .filter(Boolean)
-    .join(" ");
-}
-
-function containsTokenSequence(haystack: string[], needle: string[]): boolean {
-  if (needle.length === 0) return false;
-  if (needle.length === 1) return haystack.includes(needle[0]);
-
-  for (let index = 0; index <= haystack.length - needle.length; index += 1) {
-    const matches = needle.every(
-      (token, needleIndex) => haystack[index + needleIndex] === token,
-    );
-    if (matches) return true;
-  }
-
-  return false;
-}
-
-export function isBarMemoryBoxTopic(topic: string): boolean {
-  const normalizedTopic = normalizeBarMemoryTopic(topic);
-  if (!normalizedTopic) return false;
-
-  if (
-    BAR_MEMORY_BOX_TOPIC_PHRASES.some((phrase) =>
-      normalizedTopic.includes(phrase),
-    )
-  ) {
-    return true;
-  }
-
-  return normalizedTopic
-    .split(/\s+/)
-    .some((token) => BAR_MEMORY_BOX_TOPIC_WORDS.has(token));
-}
-
-export function isCorrectBarTriviaAnswer(topic: string): boolean {
-  const normalizedTopic = normalizeBarMemoryTopic(topic);
-  if (!normalizedTopic) return false;
-
-  const normalizedAnswer = normalizeBarMemoryTopic(BAR_TRIVIA_ANSWER);
-  const topicTokens = normalizedTopic.split(/\s+/).filter(Boolean);
-  const answerTokens = normalizedAnswer.split(/\s+/).filter(Boolean);
-  const hasCorrectAnswer = containsTokenSequence(topicTokens, answerTokens);
-  if (!hasCorrectAnswer) return false;
-
-  const isBareAnswer = normalizedTopic === normalizedAnswer;
-  const hasTriviaCue = topicTokens.some((token) =>
-    ["answer", "trivia", "question"].includes(token),
-  );
-
-  return isBareAnswer || hasTriviaCue;
-}
-
-export function isBarInteriorRoom(roomId: string): boolean {
-  return BAR_INTERIOR_ROOM_IDS.includes(
-    roomId as (typeof BAR_INTERIOR_ROOM_IDS)[number],
-  );
-}
-
-export function playerHasBarDrink(state: GameState): boolean {
-  return BAR_DRINK_MENU_ENTRIES.some((entry) =>
-    inventoryHas(state.player.inventory, entry.id),
-  );
-}
-
-export function maybeAwardBarMemoryBox(
-  state: GameState,
-  npcId: string,
-  topic: string,
-): { state: GameState; message?: string } {
-  if (npcId !== "BarBot" || !isBarMemoryBoxTopic(topic)) {
-    return { state };
-  }
-
-  if (
-    inventoryHas(state.player.inventory, BAR_MEMORY_BOX_ID) ||
-    state.itemState.pickedUpByPlayer[BAR_MEMORY_BOX_ID] === true
-  ) {
-    return { state };
-  }
-
-  let next = updateItemLocation(state, BAR_MEMORY_BOX_ID, "INVENTORY");
-  next = addToInventory(next, BAR_MEMORY_BOX_ID);
-
-  return { state: next, message: BAR_MEMORY_BOX_MESSAGE };
-}
-
-export function maybeAwardBarTriviaPrize(
-  state: GameState,
-  npcId: string,
-  topic: string,
-): { state: GameState; message?: string } {
-  if (npcId !== "BarBot" || !isCorrectBarTriviaAnswer(topic)) {
-    return { state };
-  }
-
-  if (
-    inventoryHas(state.player.inventory, MANI_PEDI_VOUCHER_ID) ||
-    state.itemState.pickedUpByPlayer[MANI_PEDI_VOUCHER_ID] === true
-  ) {
-    return { state };
-  }
-
-  let next = triggerScoreOnce(state, BAR_TRIVIA_SCORE_ID);
-  next = updateItemLocation(next, MANI_PEDI_VOUCHER_ID, "INVENTORY");
-  next = addToInventory(next, MANI_PEDI_VOUCHER_ID);
-
-  return { state: next, message: BAR_TRIVIA_PRIZE_MESSAGE };
 }
 
 function openBarContrabandPackage(state: GameState): {
@@ -467,412 +110,6 @@ function openBarContrabandPackage(state: GameState): {
   return {
     state: next,
     message: "You unwrap the package, and discard the paper",
-  };
-}
-
-export function playBarJukeboxTrack(
-  state: GameState,
-  trackId: string,
-): { state: GameState; message: string } {
-  const normalizedTrackId = normalizeJukeboxTrackId(trackId);
-  const track = getJukeboxTrack(normalizedTrackId);
-
-  if (normalizedTrackId.length !== 4 || !track) {
-    return { state, message: BAR_JUKEBOX_TRACK_NOT_FOUND_MESSAGE };
-  }
-
-  const next: GameState = {
-    ...state,
-    worldState: {
-      ...state.worldState,
-      barJukebox: {
-        activeTrack: {
-          remainingClips: [...track.trackClips],
-          trackArtist: track.trackArtist,
-          trackId: track.trackId,
-          trackName: track.trackName,
-          turnsRemaining: Math.max(0, Math.floor(track.trackLength)),
-        },
-      },
-    },
-  };
-
-  return {
-    state: next,
-    message: `The song ${track.trackName} by ${track.trackArtist} begins to play ${track.trackOpen}`,
-  };
-}
-
-export function tickBarJukebox(state: GameState): {
-  messages: string[];
-  state: GameState;
-} {
-  const activeTrack = state.worldState.barJukebox?.activeTrack;
-  if (!activeTrack) return { state, messages: [] };
-
-  const track = getJukeboxTrack(activeTrack.trackId);
-  if (!track) {
-    return {
-      state: {
-        ...state,
-        worldState: {
-          ...state.worldState,
-          barJukebox: {},
-        },
-      },
-      messages: [],
-    };
-  }
-
-  const messages: string[] = [];
-  const remainingClips = [...(activeTrack.remainingClips ?? [])];
-  const turnsRemaining = Math.max(0, activeTrack.turnsRemaining - 1);
-
-  if (state.rng() < 0.3) {
-    const clip = remainingClips.pop();
-    messages.push(
-      clip
-        ? `${activeTrack.trackName} continues playing...\n\n${clip}`
-        : `${activeTrack.trackName} continues playing...`,
-    );
-  }
-
-  if (turnsRemaining <= 0) {
-    messages.push(track.trackClose);
-    return {
-      state: {
-        ...state,
-        worldState: {
-          ...state.worldState,
-          barJukebox: {},
-        },
-      },
-      messages,
-    };
-  }
-
-  return {
-    state: {
-      ...state,
-      worldState: {
-        ...state.worldState,
-        barJukebox: {
-          activeTrack: {
-            ...activeTrack,
-            remainingClips,
-            turnsRemaining,
-          },
-        },
-      },
-    },
-    messages,
-  };
-}
-
-export function shouldBlockLeavingBarWithDrink(
-  state: GameState,
-  destinationRoomId: string,
-): boolean {
-  return (
-    isBarInteriorRoom(state.player.roomId) &&
-    !isBarInteriorRoom(destinationRoomId) &&
-    playerHasBarDrink(state)
-  );
-}
-
-export function orderBarDrink(
-  state: GameState,
-  request: string,
-): { state: GameState; message: string } {
-  if (state.player.roomId !== "Bar") {
-    return { state, message: "The bartender isn't here." };
-  }
-
-  if (playerHasBarDrink(state)) {
-    return { state, message: BAR_DRINK_LIMIT_MESSAGE };
-  }
-
-  const entry = resolveBarDrinkMenuEntry(request);
-  if (!entry) {
-    return {
-      state,
-      message: isModernDrinkRequest(request)
-        ? BAR_MODERN_DRINK_MESSAGE
-        : `"Sorry, I don't see that one on the menu."`,
-    };
-  }
-
-  let next = updateItemLocation(state, entry.id, "INVENTORY");
-  next = setItemDoses(next, entry.id, 1);
-  next = addToInventory(next, entry.id);
-
-  return {
-    state: next,
-    message: `The bartender makes a ${entry.menuName} with crisp mechanical precision, then serves it to you.`,
-  };
-}
-
-function removeItemFromSurface(
-  state: GameState,
-  surfaceId: string,
-  itemId: string,
-): GameState {
-  const current = state.itemState.surfaceContents?.[surfaceId] ?? [];
-
-  return {
-    ...state,
-    itemState: {
-      ...state.itemState,
-      surfaceContents: {
-        ...state.itemState.surfaceContents,
-        [surfaceId]: current.filter((candidate) => candidate !== itemId),
-      },
-    },
-  };
-}
-
-function applyAdhesiveToBull(
-  state: GameState,
-  item: Item,
-  cmd?: ParsedCommand,
-): { state: GameState; message: string } {
-  const target =
-    cmd?.type === "action" ? (cmd.indirect?.toLowerCase().trim() ?? "") : "";
-  if (!target) {
-    return { state, message: "Apply it to what?" };
-  }
-
-  if (!target.includes("bull")) {
-    return {
-      state,
-      message:
-        "You think better of spreading powerful adhesive around at random.",
-    };
-  }
-
-  if (state.player.roomId !== "Bar") {
-    return { state, message: "You don't see the mechanical bull here." };
-  }
-
-  if (isBarTriggerActive(state, BAR_BULL_ADHESIVE_TRIGGER)) {
-    return {
-      state,
-      message: "The mechanical bull is already tacky with adhesive.",
-    };
-  }
-
-  const next = setBarTrigger(state, BAR_BULL_ADHESIVE_TRIGGER, true);
-
-  return {
-    state: next,
-    message:
-      "You spread a glossy layer of adhesive across the mechanical bull's worn leather saddle. It flashes wetly for a moment, then turns clear and tacky.",
-  };
-}
-
-function getAttachedBullPantsName(state: GameState): string | undefined {
-  const pantsId = Object.entries(state.itemState.attachedTo ?? {}).find(
-    ([, hostId]) => hostId === "BarMechanicalBull",
-  )?.[0];
-
-  if (!pantsId) return undefined;
-
-  return state.world.items.find((item) => item.id === pantsId)?.name;
-}
-
-function rideBarMechanicalBull(state: GameState): {
-  state: GameState;
-  message: string;
-} {
-  if (!isBarTriggerActive(state, BAR_BULL_ADHESIVE_TRIGGER)) {
-    return {
-      state: applyPlayerDamage(state, 5),
-      message:
-        "You climb onto the mechanical bull. For one gentle second it seems manageable, then the machine bucks hard, twists under you, and launches you sideways into the bar. You hit the floor in a deeply educational way.",
-    };
-  }
-
-  const pantsId = state.itemState.wornByPlayer.legs;
-
-  if (!pantsId) {
-    return {
-      state,
-      message: "I don't think that's such a good idea with no pants on",
-    };
-  }
-
-  const pants = state.world.items.find((item) => item.id === pantsId);
-  let next: GameState = {
-    ...state,
-    player: {
-      ...state.player,
-      inventory: removeFromAllBuckets(state.player.inventory, pantsId),
-    },
-    itemState: {
-      ...state.itemState,
-      attachedTo: {
-        ...state.itemState.attachedTo,
-        [pantsId]: "BarMechanicalBull",
-      },
-      wornByPlayer: {
-        ...state.itemState.wornByPlayer,
-        legs: undefined,
-      },
-    },
-  };
-
-  next = updateItemLocation(next, pantsId, "Bar");
-  next = triggerScoreOnce(next, BAR_BULL_RIDE_SCORE_ID);
-
-  const shouldAwardTicket =
-    !inventoryHas(next.player.inventory, FREE_DRINK_TICKET_ID) &&
-    next.itemState.pickedUpByPlayer[FREE_DRINK_TICKET_ID] !== true;
-
-  if (shouldAwardTicket) {
-    next = updateItemLocation(next, FREE_DRINK_TICKET_ID, "INVENTORY");
-    next = addToInventory(next, FREE_DRINK_TICKET_ID);
-  }
-
-  return {
-    state: next,
-    message: `You climb onto the mechanical bull and hold on. The adhesive does most of the work, keeping you planted through every buck, spin, and spiteful little lurch. When the machine finally winds down, you peel yourself free, but ${
-      pants?.name ?? "your pants"
-    } stay behind, hopelessly stuck to the saddle.${
-      shouldAwardTicket ? `\n\n${BAR_BULL_RIDE_PRIZE_MESSAGE}` : ""
-    }`,
-  };
-}
-
-function dispenseSnapOutChewable(state: GameState): {
-  state: GameState;
-  message: string;
-} {
-  if (inventoryHas(state.player.inventory, BAR_SNAP_OUT_CHEWABLE_ID)) {
-    return { state, message: "You already have one" };
-  }
-
-  let next = updateItemLocation(state, BAR_SNAP_OUT_CHEWABLE_ID, "INVENTORY");
-  next = setItemDoses(next, BAR_SNAP_OUT_CHEWABLE_ID, 1);
-  next = addToInventory(next, BAR_SNAP_OUT_CHEWABLE_ID);
-
-  return {
-    state: next,
-    message:
-      "You turn the crank. The machine clunks, then drops a brick-shaped chewable through the little chute and into your hand.",
-  };
-}
-
-function consumeSnapOutChewable(
-  state: GameState,
-  item: Item,
-): { state: GameState; message: string } {
-  const doses = item.doses ?? 0;
-  if (doses <= 0) {
-    return { state, message: "That's the last of the chewable." };
-  }
-
-  const wasDrunk = state.player.statusEffects.some(
-    (effect) => effect.id === "drunk",
-  );
-
-  let next = setItemDoses(state, item.id, 0);
-  next = {
-    ...next,
-    player: {
-      ...next.player,
-      inventory: removeFromAllBuckets(next.player.inventory, item.id),
-      statusEffects: next.player.statusEffects.filter(
-        (effect) => effect.id !== "drunk",
-      ),
-      vitals: {
-        ...next.player.vitals,
-        brainActivity: wasDrunk ? 1 : next.player.vitals.brainActivity,
-        drunkenness: wasDrunk ? 0 : next.player.vitals.drunkenness,
-      },
-    },
-  };
-
-  return {
-    state: next,
-    message:
-      "You chew the Snap out of It! tablet. It collapses into a sharp citrus foam that seems to scrape the fog right off your thoughts.",
-  };
-}
-
-export function throwDartAtBarDartboard(state: GameState): {
-  state: GameState;
-  message: string;
-} {
-  if (state.player.roomId !== "Bar") {
-    return { state, message: "You don't see a dartboard here." };
-  }
-
-  if (!inventoryHas(state.player.inventory, "Dart")) {
-    return { state, message: "You need to be holding the dart first." };
-  }
-
-  const currentDarts = state.itemState.surfaceContents.BarDartboard ?? [];
-  if (currentDarts.includes("Dart")) {
-    return {
-      state,
-      message: "The dart is already stuck in the dartboard.",
-    };
-  }
-
-  const idx = Math.floor(state.rng() * BAR_DART_HIT_MESSAGES.length);
-  const hitMessage =
-    BAR_DART_HIT_MESSAGES[
-      Math.max(0, Math.min(BAR_DART_HIT_MESSAGES.length - 1, idx))
-    ];
-
-  let next: GameState = {
-    ...state,
-    player: {
-      ...state.player,
-      inventory: removeFromAllBuckets(state.player.inventory, "Dart"),
-    },
-    itemState: {
-      ...state.itemState,
-      surfaceContents: {
-        ...state.itemState.surfaceContents,
-        BarDartboard: [...currentDarts, "Dart"],
-      },
-    },
-  };
-  next = updateItemLocation(next, "Dart", "Bar");
-
-  return {
-    state: next,
-    message: `You throw the dart at the dartboard. ${hitMessage}`,
-  };
-}
-
-export function giveDartToBarBartender(state: GameState): {
-  state: GameState;
-  message: string;
-} {
-  if (state.player.roomId !== "Bar") {
-    return { state, message: "The bartender isn't here." };
-  }
-
-  if (!inventoryHas(state.player.inventory, "Dart")) {
-    return { state, message: "You need to be holding the dart first." };
-  }
-
-  let next: GameState = {
-    ...state,
-    player: {
-      ...state.player,
-      inventory: removeFromAllBuckets(state.player.inventory, "Dart"),
-    },
-  };
-
-  next = removeItemFromSurface(next, "BarDartboard", "Dart");
-  next = updateItemLocation(next, "Dart", "Bar");
-  next = triggerScoreOnce(next, "returned_red_dart");
-  return {
-    state: next,
-    message: `"Hey, you found one of the darts! That's great!"`,
   };
 }
 
@@ -1153,7 +390,7 @@ export const barItems: Item[] = [
       "The bull is big, heavy, and covered in worn leather. Even idle, it has the smug posture of a machine with a litigation history.",
     describe: (state) => {
       const pantsName = getAttachedBullPantsName(state);
-      const adhesive = isBarTriggerActive(state, BAR_BULL_ADHESIVE_TRIGGER)
+      const adhesive = isBarBullAdhesiveApplied(state)
         ? " The saddle has a clear, tacky sheen of adhesive across it."
         : "";
       const pants = pantsName
@@ -1163,7 +400,7 @@ export const barItems: Item[] = [
     },
     describeScenery: (state) => {
       const pantsName = getAttachedBullPantsName(state);
-      const adhesive = isBarTriggerActive(state, BAR_BULL_ADHESIVE_TRIGGER)
+      const adhesive = isBarBullAdhesiveApplied(state)
         ? " Its worn leather saddle has a clear tacky sheen."
         : "";
       const pants = pantsName ? ` A pair of pants is stuck to it.` : "";
@@ -1189,15 +426,13 @@ export const barItems: Item[] = [
     description:
       "The cork dartboard hangs on the southern wall, its face pocked by old hits and near misses.",
     describe: (state) => {
-      const hasDart =
-        state.itemState.surfaceContents.BarDartboard?.includes("Dart") === true;
+      const hasDart = barDartboardHasDart(state);
       return hasDart
         ? "The cork dartboard hangs on the southern wall. The red dart is stuck in it, quivering slightly."
         : "The cork dartboard hangs on the southern wall, though you don't see any darts.";
     },
     describeScenery: (state) => {
-      const hasDart =
-        state.itemState.surfaceContents.BarDartboard?.includes("Dart") === true;
+      const hasDart = barDartboardHasDart(state);
       return hasDart
         ? "On the southern wall hangs a cork dartboard with the red dart stuck in it."
         : "On the southern wall hangs a cork dartboard, though you don't see any darts.";
@@ -1333,205 +568,7 @@ export const barItems: Item[] = [
     itemWeight: 1,
     itemSize: 1,
   },
-  {
-    id: "BarWhiskeySweet",
-    name: "Whiskey Sweet",
-    description:
-      "A small amber cocktail with a candied peel twisted over the rim.",
-    location: "seeded",
-    vocab: ["whiskey", "sweet", "whiskey sweet", "drink", "cocktail"],
-    itemClass: "liquid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    doses: 1,
-    overrides: {
-      smell: `It smells kind of floral, with a whiff of citrus.`,
-    },
-    meta: {
-      barDrink: true,
-      consumable: {
-        emptyCleanup: BAR_DRINK_EMPTY_CLEANUP,
-        kind: "drink",
-        perDose: [
-          {
-            type: "message",
-            text: "You drink the Whiskey Sweet. It goes down warm with the flavor of honey and orange.",
-          },
-          { type: "status", id: "drunk", intensity: 12, duration: 18 },
-        ],
-        onEmpty: [{ type: "message", text: "That drink is finished." }],
-      },
-    },
-  },
-  {
-    id: "BarDurianColada",
-    name: "Durian Colada",
-    description: "A pale tropical drink with a nose-wrinkling smell.",
-    location: "seeded",
-    vocab: ["durian", "colada", "durian colada", "drink", "cocktail"],
-    itemClass: "liquid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    doses: 1,
-    overrides: {
-      smell: `You give the drink a sniff and the smell immediately triggers your gag reflex and a loud 'hork' sound. Ugh, it smells like an onion rotting inside of a used diaper!`,
-    },
-    meta: {
-      barDrink: true,
-      consumable: {
-        emptyCleanup: BAR_DRINK_EMPTY_CLEANUP,
-        kind: "drink",
-        perDose: [
-          {
-            type: "message",
-            text: "You plug your nose and drink the Durian Colada. The flavor isn't bad, creamy and tropical, and it's got a kick, too!",
-          },
-          { type: "status", id: "drunk", intensity: 18, duration: 22 },
-        ],
-        onEmpty: [{ type: "message", text: "That drink is finished." }],
-      },
-    },
-  },
-  {
-    id: "BarBangaloreSling",
-    name: "Bangalore Sling",
-    description: "A deep ruby cocktail in a tall glass.",
-    location: "seeded",
-    vocab: ["bangalore", "sling", "bangalore sling", "drink", "cocktail"],
-    itemClass: "liquid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    doses: 1,
-    overrides: {
-      smell: `It has a perfume smell, filled with galangal, ginger, and mint.`,
-    },
-    meta: {
-      barDrink: true,
-      consumable: {
-        emptyCleanup: BAR_DRINK_EMPTY_CLEANUP,
-        kind: "drink",
-        perDose: [
-          {
-            type: "message",
-            text: "You drink the Bangalore Sling. It is tart, and spicy, and quite strong!",
-          },
-          { type: "status", id: "drunk", intensity: 24, duration: 24 },
-        ],
-        onEmpty: [{ type: "message", text: "That drink is finished." }],
-      },
-    },
-  },
-  {
-    id: "BarFischermeisterShot",
-    name: "Fischermeister Shot",
-    description:
-      "A shot glass filled with a dark, syrupy liquid that smells of juniper, rosemary, and fermented fish.",
-    location: "seeded",
-    vocab: [
-      "fischermeister",
-      "fischermeister shot",
-      "fischermeister bomb",
-      "bomb",
-      "drink",
-      "shot",
-    ],
-    itemClass: "liquid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    doses: 1,
-    overrides: {
-      smell: `The combination of strong smells is weirdly intoxicating.`,
-    },
-    meta: {
-      barDrink: true,
-      consumable: {
-        emptyCleanup: BAR_DRINK_EMPTY_CLEANUP,
-        kind: "drink",
-        perDose: [
-          {
-            type: "message",
-            text: "You drink the Fischermeister shot in one gulp. The taste and the smell that flood your nose are strongly medicinal, with deeply fishy undercurrent, and a kick like a mule!",
-          },
-          { type: "status", id: "drunk", intensity: 34, duration: 28 },
-        ],
-        onEmpty: [{ type: "message", text: "That drink is finished." }],
-      },
-    },
-  },
-  {
-    id: "BarHandStuffOnTheBeach",
-    name: "Hand-stuff on the Beach",
-    description:
-      "A layered peach-orange cocktail floated with a layer of rumchata.",
-    location: "seeded",
-    vocab: [
-      "hand-stuff",
-      "hand stuff",
-      "beach",
-      "hand-stuff on the beach",
-      "hand stuff on the beach",
-      "drink",
-      "cocktail",
-    ],
-    itemClass: "liquid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    doses: 1,
-    overrides: {
-      smell: `You're picking up vanilla and cinnamon.`,
-    },
-    meta: {
-      barDrink: true,
-      consumable: {
-        emptyCleanup: BAR_DRINK_EMPTY_CLEANUP,
-        kind: "drink",
-        perDose: [
-          {
-            type: "message",
-            text: "You drink the Hand-stuff on the Beach. It's fruity in the extreme, and super sweet.",
-          },
-          { type: "status", id: "drunk", intensity: 28, duration: 26 },
-        ],
-        onEmpty: [{ type: "message", text: "That drink is finished." }],
-      },
-    },
-  },
-  {
-    id: "BarGinFizz",
-    name: "Gin Fizz",
-    description:
-      "A cloudy, sparkling gin drink with a foamy cap and a clean citrus snap.",
-    location: "seeded",
-    vocab: ["gin", "fizz", "gin fizz", "drink", "cocktail"],
-    itemClass: "liquid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    doses: 1,
-    overrides: {
-      smell: `It smells of citrus.`,
-    },
-    meta: {
-      barDrink: true,
-      consumable: {
-        emptyCleanup: BAR_DRINK_EMPTY_CLEANUP,
-        kind: "drink",
-        perDose: [
-          {
-            type: "message",
-            text: "You drink the Gin Fizz. It is bright, bubbly, and probably pretty good if you like gin, but you don't seem to.",
-          },
-          { type: "status", id: "drunk", intensity: 15, duration: 20 },
-        ],
-        onEmpty: [{ type: "message", text: "That drink is finished." }],
-      },
-    },
-  },
+  ...barDrinkItems,
   {
     id: "TShirtPrize",
     name: "prize t-shirt",

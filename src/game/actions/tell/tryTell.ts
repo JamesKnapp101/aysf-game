@@ -1,7 +1,7 @@
 import {
+  isRadioTargetItem,
   tellNpc,
   tellRadioDevice,
-  isRadioTargetItem,
 } from "@game/helpers/conversationHelpers";
 import { normalizeTopic } from "@game/rules/scope";
 import type { ActionResult } from "@game/types/actionsTypes";
@@ -9,7 +9,7 @@ import type { ConversationTarget } from "@game/types/npcTypes";
 import {
   maybeAwardBarMemoryBox,
   maybeAwardBarTriviaPrize,
-} from "src/world/maps/levelThree/Park/Bar";
+} from "src/world/maps/levelThree/Park/Bar/barBartenderRewards";
 import { GameState } from "../../types/gameTypes";
 
 export async function tryTell(

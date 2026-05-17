@@ -34,7 +34,7 @@ import {
 import {
   BAR_DRINK_EXIT_BLOCK_MESSAGE,
   shouldBlockLeavingBarWithDrink,
-} from "src/world/maps/levelThree/Park/Bar";
+} from "src/world/maps/levelThree/Park/Bar/barDrinks";
 import { ACTION_HANDLERS } from "../actions";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";

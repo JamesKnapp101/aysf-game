@@ -12,7 +12,7 @@ import {
   createInitialOctopusState,
 } from "src/world/Items/creatures/octopus";
 import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
-import { BAR_BULL_ADHESIVE_TRIGGER } from "src/world/maps/levelThree/Park/Bar";
+import { BAR_BULL_ADHESIVE_TRIGGER } from "src/world/maps/levelThree/Park/Bar/barMechanicalBull";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
   INITIAL_WORLD,

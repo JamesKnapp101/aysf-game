@@ -1,4 +1,5 @@
 import { tryAsk } from "@game/actions/ask/tryAsk";
+import { orderBarDrink } from "src/world/maps/levelThree/Park/Bar/barDrinks";
 import {
   getActiveRadioNpc,
   resolveConversationTarget,
@@ -6,7 +7,6 @@ import {
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
-import { orderBarDrink } from "src/world/maps/levelThree/Park/Bar";
 
 export async function doAsk(
   state: GameState,
@@ -24,8 +24,7 @@ export async function doAsk(
   const target = resolveConversationTarget(state, targetText);
   if (!target) {
     // Better radio-ish feedback if there's no active call and they tried a person
-    if (!getActiveRadioNpc(state))
-      return { state, message: "No one answers." };
+    if (!getActiveRadioNpc(state)) return { state, message: "No one answers." };
     return { state, message: "No response." };
   }
 

@@ -2,7 +2,7 @@ import type { CharacterProfile } from "@game/types/npcTypes";
 import {
   BAR_TRIVIA_ANSWER,
   BAR_TRIVIA_QUESTION,
-} from "src/world/maps/levelThree/Park/Bar";
+} from "src/world/maps/levelThree/Park/Bar/barBartenderRewards";
 
 export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
   you_1st_contact: {

@@ -1,15 +1,15 @@
-import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { dispatchAction } from "@game/actions/dispatchAction";
 import { doExamine } from "@game/actions/examine/examine";
+import {
+  BAR_BOT_CELLAR_DEATH_REGEN_MESSAGE,
+  BAR_BOT_CELLAR_DEATH_RETURN_MESSAGE,
+} from "@game/helpers/barBotAwareness";
 import {
   BAR_VISION_QUEST_DRINK_SEQUENCE,
   BAR_VISION_QUEST_EXPERIENCE_ID,
   BAR_VISION_QUEST_TRIGGER,
 } from "@game/helpers/barVisionQuest";
-import {
-  BAR_BOT_CELLAR_DEATH_REGEN_MESSAGE,
-  BAR_BOT_CELLAR_DEATH_RETURN_MESSAGE,
-} from "@game/helpers/barBotAwareness";
+import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import {
   BAR_BULL_ADHESIVE_TRIGGER,
@@ -28,7 +28,7 @@ import {
   FAKE_ID_ID,
   FREE_DRINK_TICKET_ID,
   MANI_PEDI_VOUCHER_ID,
-} from "src/world/maps/levelThree/Park/Bar";
+} from "src/world/maps/levelThree/Park/Bar/Bar";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createTestState,
@@ -122,9 +122,7 @@ describe("bar area interactions", () => {
     expect(expectInventoryToContain(ridden, "GimOnePants")).toBe(false);
     expect(ridden.itemState.attachedTo.GimOnePants).toBe("BarMechanicalBull");
     expect(expectInventoryToContain(ridden, FREE_DRINK_TICKET_ID)).toBe(true);
-    expect(ridden.itemState.itemRoomId[FREE_DRINK_TICKET_ID]).toBe(
-      "INVENTORY",
-    );
+    expect(ridden.itemState.itemRoomId[FREE_DRINK_TICKET_ID]).toBe("INVENTORY");
     expect(ridden.worldState.scoresTriggered[BAR_BULL_RIDE_SCORE_ID]).toBe(
       true,
     );
@@ -160,8 +158,9 @@ describe("bar area interactions", () => {
     expect(expectInventoryToContain(eaten, BAR_SNAP_OUT_CHEWABLE_ID)).toBe(
       false,
     );
-    expect(eaten.player.statusEffects.some((effect) => effect.id === "drunk"))
-      .toBe(false);
+    expect(
+      eaten.player.statusEffects.some((effect) => effect.id === "drunk"),
+    ).toBe(false);
   });
 
   it("reveals the contraband hidden under the bathroom sink", async () => {
@@ -275,9 +274,7 @@ describe("bar area interactions", () => {
     ]);
 
     expect(start.worldState.conditionalExits.Bar).toBeUndefined();
-    expect(start.worldState.doors[BAR_FLOOR_HATCH_DOOR_ID]?.isOpen).toBe(
-      false,
-    );
+    expect(start.worldState.doors[BAR_FLOOR_HATCH_DOOR_ID]?.isOpen).toBe(false);
     expect(start.worldState.doors[BAR_FLOOR_HATCH_DOOR_ID]?.isLocked).toBe(
       false,
     );
@@ -285,9 +282,7 @@ describe("bar area interactions", () => {
     const lit = await runCommand(start, "turn on flashlight");
     const opened = await runCommand(lit, "open floor hatch");
 
-    expect(opened.worldState.doors[BAR_FLOOR_HATCH_DOOR_ID]?.isOpen).toBe(
-      true,
-    );
+    expect(opened.worldState.doors[BAR_FLOOR_HATCH_DOOR_ID]?.isOpen).toBe(true);
     expect(getCommandEntry(opened, "open floor hatch")).toContain(
       "floor hatch swings open",
     );
@@ -307,7 +302,10 @@ describe("bar area interactions", () => {
   });
 
   it("has the bartender react when the player dies in the cellar and regenerates in the bar", async () => {
-    const opened = await runCommand(createTestState({ roomId: "Bar" }), "open hatch");
+    const opened = await runCommand(
+      createTestState({ roomId: "Bar" }),
+      "open hatch",
+    );
     const died = await runCommand(opened, "down");
 
     expect(died.player.roomId).toBe("Bar");
@@ -318,9 +316,7 @@ describe("bar area interactions", () => {
       sawPlayerEnterCellar: true,
       sawPlayerRegenerateInBar: true,
     });
-    expect(died.log.join("\n")).toContain(
-      BAR_BOT_CELLAR_DEATH_REGEN_MESSAGE,
-    );
+    expect(died.log.join("\n")).toContain(BAR_BOT_CELLAR_DEATH_REGEN_MESSAGE);
   });
 
   it("has the bartender react when the player returns after a cellar death", async () => {
@@ -421,8 +417,9 @@ describe("bar area interactions", () => {
 
     const drank = await runCommand(ordered, "drink whiskey sweet");
 
-    expect(drank.player.statusEffects.some((effect) => effect.id === "drunk"))
-      .toBe(true);
+    expect(
+      drank.player.statusEffects.some((effect) => effect.id === "drunk"),
+    ).toBe(true);
     expect(expectInventoryToContain(drank, "BarWhiskeySweet")).toBe(false);
     expect(drank.itemState.itemRoomId.BarWhiskeySweet).toBe("seeded");
     expect(getCommandEntry(drank, "drink whiskey sweet")).toContain(
@@ -459,8 +456,9 @@ describe("bar area interactions", () => {
       kind: "vision",
       returnRoomId: "Bar",
     });
-    expect(state.player.statusEffects.some((effect) => effect.id === "drunk"))
-      .toBe(false);
+    expect(
+      state.player.statusEffects.some((effect) => effect.id === "drunk"),
+    ).toBe(false);
     expect(state.player.vitals.drunkenness).toBe(0);
     expect(getCommandEntry(state, "drink fischermeister shot")).toContain(
       "the world around you twists into something else entirely",

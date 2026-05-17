@@ -1,20 +1,20 @@
-import { handleCommand } from "../engine/handleCommand";
+import { playBarJukeboxTrack } from "src/world/maps/levelThree/Park/Bar/barJukebox";
 import { parseCommand } from "../../parse/parser";
-import { handleSetCoolerMode } from "../rules/cooler";
-import { setMessageListened } from "../rules/message-machine";
-import { getCoolerMode } from "../selectors/gadgetSelectors";
+import { handleCommand } from "../engine/handleCommand";
 import {
   setGymTreadmillSpeed,
   SPIN_STAGE_SPEED_DIAL_PASSWORD,
 } from "../helpers/gymHelpers";
-import { playBarJukeboxTrack } from "src/world/maps/levelThree/Park/Bar";
+import { handleSetCoolerMode } from "../rules/cooler";
+import { setMessageListened } from "../rules/message-machine";
+import { getCoolerMode } from "../selectors/gadgetSelectors";
 import type { ActionRequest, ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
 import type { CoolerMode } from "../types/itemTypes";
 
 export async function dispatchAction(
   state: GameState,
-  req: ActionRequest
+  req: ActionRequest,
 ): Promise<ActionResult> {
   switch (req.verb) {
     case "command": {

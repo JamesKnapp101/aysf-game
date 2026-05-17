@@ -31,7 +31,7 @@ import {
   AQUARIUM_DROWNING_DEATH_CAUSE,
   AQUARIUM_DROWNING_DEATH_MESSAGE,
 } from "src/world/Items/creatures/octopus";
-import { tickBarJukebox } from "src/world/maps/levelThree/Park/Bar";
+import { tickBarJukebox } from "src/world/maps/levelThree/Park/Bar/barJukebox";
 import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
   canMove,
