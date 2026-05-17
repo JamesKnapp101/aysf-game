@@ -369,6 +369,7 @@ export const createInitialState = (world: World): GameState => {
         viewed_ship_log: false,
         solved_bloodbag_puzzle: false,
         answered_bar_trivia: false,
+        completed_bar_bull_ride: false,
         returned_red_dart: false,
         found_secret_lab: false,
       },

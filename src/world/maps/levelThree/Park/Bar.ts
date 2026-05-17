@@ -20,15 +20,18 @@ export const BAR_FLOOR_HATCH_DOOR_ID = "BarFloorHatchDoor";
 export const BAR_SNAP_OUT_CHEWABLE_ID = "BarSnapOutChewable";
 export const BAR_MEMORY_BOX_ID = "BarMemoryBox";
 export const MANI_PEDI_VOUCHER_ID = "ManiPediVoucher";
+export const FREE_DRINK_TICKET_ID = "FreeDrinkTicket";
 export const BAR_TRIVIA_QUESTION =
   "How long before the Aeneas passes through Bufo Clutch A?";
 export const BAR_TRIVIA_ANSWER = "391 years";
 export const BAR_TRIVIA_SCORE_ID = "answered_bar_trivia";
+export const BAR_BULL_RIDE_SCORE_ID = "completed_bar_bull_ride";
 export const BAR_DRINK_EXIT_BLOCK_MESSAGE = `"Sorry, but you can't take drinks out of the bar, Mayor's orders!"`;
 export const BAR_DRINK_LIMIT_MESSAGE = `"Sorry, only one drink per customer at a time!"`;
 export const BAR_MODERN_DRINK_MESSAGE = `"Sorry, but the only recipe that survived from that era was the gin fizz"`;
 export const BAR_MEMORY_BOX_MESSAGE = `The bartender reaches beneath the bar, retrieves a small metal box, and hands it to you. You take it, turning it over in your hands, but it doesn't look familiar.\n\n"You gave this to me once and said if you were ever in trouble, I should give it to you."`;
 export const BAR_TRIVIA_PRIZE_MESSAGE = `The bartender's face shield lights up with a delighted smile.\n\n"Correct! Tonight's mystery prize is a free mani-pedi at Keratin Kindness. Try to act surprised if they ask."\n\nThe bartender hands you a nail salon voucher.`;
+export const BAR_BULL_RIDE_PRIZE_MESSAGE = `The bartender gives you a free drink ticket.\n\n"It looks like it's not for this bar, sorry, but keep it for next rotation."`;
 
 type BarDrinkMenuEntry = {
   aliases: string[];
@@ -547,12 +550,24 @@ function rideBarMechanicalBull(state: GameState): {
   };
 
   next = updateItemLocation(next, pantsId, "Bar");
+  next = triggerScoreOnce(next, BAR_BULL_RIDE_SCORE_ID);
+
+  const shouldAwardTicket =
+    !inventoryHas(next.player.inventory, FREE_DRINK_TICKET_ID) &&
+    next.itemState.pickedUpByPlayer[FREE_DRINK_TICKET_ID] !== true;
+
+  if (shouldAwardTicket) {
+    next = updateItemLocation(next, FREE_DRINK_TICKET_ID, "INVENTORY");
+    next = addToInventory(next, FREE_DRINK_TICKET_ID);
+  }
 
   return {
     state: next,
     message: `You climb onto the mechanical bull and hold on. The adhesive does most of the work, keeping you planted through every buck, spin, and spiteful little lurch. When the machine finally winds down, you peel yourself free, but ${
       pants?.name ?? "your pants"
-    } stay behind, hopelessly stuck to the saddle.`,
+    } stay behind, hopelessly stuck to the saddle.${
+      shouldAwardTicket ? `\n\n${BAR_BULL_RIDE_PRIZE_MESSAGE}` : ""
+    }`,
   };
 }
 
@@ -1124,6 +1139,18 @@ export const barItems: Item[] = [
       "It says if you present it at Keratin Kindness you get a free mani-pedi, and the offer doesn't expire.",
     location: "seeded",
     vocab: ["voucher", "gift card"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+  },
+  {
+    id: FREE_DRINK_TICKET_ID,
+    name: "free drink ticket",
+    description:
+      "It says if you present it at a bar called 'Whiskey Tango' then you get a free drink, and the offer doesn't expire.",
+    location: "seeded",
+    vocab: ["free", "drink", "ticket"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,

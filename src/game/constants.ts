@@ -108,6 +108,7 @@ export const playerScoreMap = {
   viewed_ship_log: { value: 5 },
   found_secret_lab: { value: 1 },
   answered_bar_trivia: { value: 1 },
+  completed_bar_bull_ride: { value: 3 },
   returned_red_dart: { value: 1 },
 } as const;
 

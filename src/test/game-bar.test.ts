@@ -11,6 +11,8 @@ import {
 import { buildRoomDescription } from "@game/text/roomDescription";
 import {
   BAR_BULL_ADHESIVE_TRIGGER,
+  BAR_BULL_RIDE_PRIZE_MESSAGE,
+  BAR_BULL_RIDE_SCORE_ID,
   BAR_FLOOR_HATCH_DOOR_ID,
   BAR_MEMORY_BOX_ID,
   BAR_MEMORY_BOX_MESSAGE,
@@ -18,6 +20,7 @@ import {
   BAR_TRIVIA_ANSWER,
   BAR_TRIVIA_PRIZE_MESSAGE,
   BAR_TRIVIA_SCORE_ID,
+  FREE_DRINK_TICKET_ID,
   MANI_PEDI_VOUCHER_ID,
 } from "src/world/maps/levelThree/Park/Bar";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -112,7 +115,18 @@ describe("bar area interactions", () => {
     expect(ridden.itemState.wornByPlayer.legs).toBeUndefined();
     expect(expectInventoryToContain(ridden, "GimOnePants")).toBe(false);
     expect(ridden.itemState.attachedTo.GimOnePants).toBe("BarMechanicalBull");
+    expect(expectInventoryToContain(ridden, FREE_DRINK_TICKET_ID)).toBe(true);
+    expect(ridden.itemState.itemRoomId[FREE_DRINK_TICKET_ID]).toBe(
+      "INVENTORY",
+    );
+    expect(ridden.worldState.scoresTriggered[BAR_BULL_RIDE_SCORE_ID]).toBe(
+      true,
+    );
+    expect(ridden.score).toBe(3);
     expect(getCommandEntry(ridden, "ride bull")).toContain("stay behind");
+    expect(getCommandEntry(ridden, "ride bull")).toContain(
+      BAR_BULL_RIDE_PRIZE_MESSAGE,
+    );
   });
 
   it("dispenses one Snap out of It chewable and clears drunk when eaten", async () => {
