@@ -14,6 +14,9 @@ export const levelThreeItems: Item[] = [
     itemCategory: "scenery",
     itemWeight: 1,
     itemSize: 1,
+    meta: {
+      kind: "mens-lockers",
+    },
   },
   {
     id: "WomensLockers",
@@ -28,6 +31,9 @@ export const levelThreeItems: Item[] = [
     itemCategory: "scenery",
     itemWeight: 1,
     itemSize: 1,
+    meta: {
+      kind: "womens-lockers",
+    },
   },
   {
     id: "MensLockerKey5",

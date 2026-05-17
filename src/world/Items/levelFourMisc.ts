@@ -401,6 +401,7 @@ export const levelFourItems: Item[] = [
     itemClass: "solid",
     itemCategory: "scenery",
     meta: {
+      kind: "power-station-terminal",
       sceneryDescriptionOrder: 2,
       onNoPower: "The viewscreen is currently dark.",
     },

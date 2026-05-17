@@ -775,6 +775,7 @@ export const levelFiveItems: Item[] = [
     isOpenable: false,
     capacity: 1,
     meta: {
+      kind: "matter-transmitter",
       onPlateOccupied:
         "There's already another item on the machine's transceiver plate.",
     },

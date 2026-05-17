@@ -1,6 +1,38 @@
+import {
+  PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
+  shouldHijackParkEastPowerKeyTake,
+  triggerParkEastPowerKeySnatch,
+} from "@game/helpers/parkKeyHijack";
 import type { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+
+function takePowerStationKey({ state }: { state: GameState }):
+  | {
+      message: string;
+      state: GameState;
+    }
+  | undefined {
+  if (shouldHijackParkEastPowerKeyTake(state, "PowerStationKey")) {
+    return {
+      state: triggerParkEastPowerKeySnatch(state),
+      message: PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
+    };
+  }
+
+  const keyIsLocked =
+    state.itemState.containerContents["PowerStationKeyhole"]?.includes(
+      "PowerStationKey",
+    ) && state.worldState.powerRestoredSections["power-key-turned"];
+
+  if (!keyIsLocked) return undefined;
+
+  return {
+    state,
+    message:
+      "The key appears to be locked in place now, you can't pull it free again.",
+  };
+}
 
 function turnPowerStationKey({ state }: { state: GameState }): {
   message: string;
@@ -212,6 +244,7 @@ export const parkItems: Item[] = [
       kind: "key",
     },
     overrides: {
+      take: takePowerStationKey,
       turn: turnPowerStationKey,
     },
     scoreId: "obtained_power_key",

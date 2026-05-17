@@ -1,7 +1,6 @@
 import { audioRegistry } from "@game/audioRegistry";
 import { tickAviarySpotlight } from "@game/engine/ticks/aviaryTick";
 import { tickFlashlights } from "@game/engine/ticks/flashlightTick";
-import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { tickActiveExperience } from "@game/experiences/experienceRegistry";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
 import {
@@ -11,12 +10,8 @@ import {
   isCatHeld,
   isRoomInCatHome,
 } from "@game/helpers/catHelpers";
-import { tickRadioConversation } from "@game/helpers/conversationHelpers";
 import { tickUnderwaterVitals } from "@game/helpers/environmentHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
-import { tickGamePreserveAnimals } from "@game/preserve/preserveAnimals";
-import { tickGamePreserveFeedback } from "@game/preserve/preserveFeedback";
-import { tickGamePreserveRun } from "@game/preserve/preserveState";
 import {
   buildMemoryNotification,
   enqueueNotification,
@@ -36,7 +31,10 @@ import {
   removeStatusEffectFromPlayer,
 } from "../rules/status";
 import { applyRegisteredEnvironmentHazards } from "../registries/environmentHazardRegistry";
-import { runRegisteredTurnTicks } from "../registries/turnTickRegistry";
+import {
+  runRegisteredTurnTicks,
+  type TurnTickPhase,
+} from "../registries/turnTickRegistry";
 import { getAnimateItems } from "../selectors/itemSelectors";
 import {
   describeSicknessLevel,
@@ -569,6 +567,20 @@ function tickScoreAndMemory(state: GameState): GameState {
   return next;
 }
 
+function applyRegisteredTurnTickPhase(
+  state: GameState,
+  phase: TurnTickPhase,
+): GameState {
+  const registeredTicks = runRegisteredTurnTicks(state, phase);
+  let next = registeredTicks.state;
+
+  for (const message of registeredTicks.messages) {
+    next = appendLog(next, message);
+  }
+
+  return next;
+}
+
 export function advanceTurn(state: GameState): GameState {
   let next = state;
 
@@ -586,18 +598,10 @@ export function advanceTurn(state: GameState): GameState {
     };
   }
 
-  const ticked = tickRadioConversation(next);
-  next = ticked.state;
-
-  if (ticked.ended) {
-    next = appendLog(
-      next,
-      "The radio channel collapses into a steady hiss, then goes quiet.",
-    );
-  }
+  next = applyRegisteredTurnTickPhase(next, "conversation");
   next = tickFlashlights(next);
   next = tickAviarySpotlight(next);
-  next = tickHydroponics(next);
+  next = applyRegisteredTurnTickPhase(next, "environment");
   next = tickAttachedItems(next);
   next = applyEffects(next);
   next = tickUnderwaterVitals(next);
@@ -607,15 +611,8 @@ export function advanceTurn(state: GameState): GameState {
   next = tickSickness(next);
   next = tickAnimateActivities(next);
   next = tickHeldCat(next);
-  next = tickGamePreserveAnimals(next);
-  next = tickGamePreserveFeedback(next);
-  next = tickGamePreserveRun(next);
-
-  const registeredTicks = runRegisteredTurnTicks(next);
-  next = registeredTicks.state;
-  for (const message of registeredTicks.messages) {
-    next = appendLog(next, message);
-  }
+  next = applyRegisteredTurnTickPhase(next, "simulation");
+  next = applyRegisteredTurnTickPhase(next, "late");
 
   next = emitAdjacentAudioCues(next, {
     registry: audioRegistry,

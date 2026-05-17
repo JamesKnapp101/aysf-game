@@ -1,5 +1,5 @@
 import { getItemById } from "@game/helpers/itemHelpers";
-import { handleGamePreserveTrophySubmission } from "@game/preserve/preserveTrophies";
+import { applyRegisteredPutItemEffects } from "@game/registries/putItemEffectRegistry";
 import { tryPutItemInContainer } from "@game/rules/containers";
 import { updateItemLocation } from "@game/rules/items";
 import { RuleResult } from "@game/rules/result";
@@ -67,11 +67,12 @@ export function tryPutItem(
 
     next = updateItemLocation(next, itemId, hostRoomId);
 
-    const trophyResult = handleGamePreserveTrophySubmission(next, {
+    const registeredEffect = applyRegisteredPutItemEffects(next, {
       hostId,
       itemId,
+      preposition,
     });
-    if (trophyResult) return trophyResult;
+    if (registeredEffect) return registeredEffect;
 
     return { state: next, message: "Done." };
   }

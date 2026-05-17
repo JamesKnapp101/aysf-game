@@ -1,8 +1,3 @@
-import {
-  PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
-  shouldHijackParkEastPowerKeyTake,
-  triggerParkEastPowerKeySnatch,
-} from "@game/helpers/parkKeyHijack";
 import { getItemById } from "@game/helpers/itemHelpers";
 import { applyRegisteredTakeItemEffects } from "@game/registries/takeItemEffectRegistry";
 import { isItemOpen } from "@game/rules/containers";
@@ -10,10 +5,6 @@ import { updateItemLocation } from "@game/rules/items";
 import { RuleResult } from "@game/rules/result";
 import { triggerScoreOnce } from "@game/rules/score";
 import { addToInventory, inventoryHas } from "@game/rules/state";
-import {
-  GAME_PRESERVE_PRIZE_ID,
-  handleGamePreservePrizeTaken,
-} from "@game/preserve/preserveTrophies";
 import {
   getContainerContentsIds,
   getContainerContentsItems,
@@ -79,34 +70,9 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     return nounWords.every((word) => vocabTokens.has(word));
   };
 
-  if (
-    nounWords.includes("key") &&
-    shouldHijackParkEastPowerKeyTake(state, "PowerStationKey")
-  ) {
-    return {
-      state: triggerParkEastPowerKeySnatch(state),
-      message: PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
-    };
-  }
-
   const room = getCurrentRoom(state);
   const itemsHere = getItemsInCurrentRoom(state);
   const itemOnFloor = itemsHere.find((item) => nounMatchesItem(item));
-
-  if (itemOnFloor?.id === "PowerStationKey") {
-    if (
-      state.itemState.containerContents["PowerStationKeyhole"]?.includes(
-        "PowerStationKey",
-      ) &&
-      state.worldState.powerRestoredSections["power-key-turned"]
-    ) {
-      return {
-        state,
-        message:
-          "The key appears to be locked in place now, you can't pull it free again.",
-      };
-    }
-  }
 
   if (noun === "water") {
     const waterSourcesInRoom = getWaterSourcesInRoom(state);
@@ -137,7 +103,9 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
 
     let next = updateItemLocation(state, itemOnFloor.id, "INVENTORY");
     next = addToInventory(next, itemOnFloor.id);
-    const takeEffects = applyRegisteredTakeItemEffects(next, itemOnFloor);
+    const takeEffects = applyRegisteredTakeItemEffects(next, itemOnFloor, {
+      fromRoomId: state.player.roomId,
+    });
     next = takeEffects.state;
 
     const scoreId = getItemById(next, itemOnFloor.id)?.scoreId ?? "";
@@ -149,12 +117,15 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
       );
     }
 
-    if (itemOnFloor.id === GAME_PRESERVE_PRIZE_ID) {
-      return handleGamePreservePrizeTaken(next, state.player.roomId);
-    }
-
     const takeMessage =
       typeof takeOverride === "string" ? takeOverride : "Taken.";
+
+    if (takeEffects.message) {
+      return {
+        state: next,
+        message: takeEffects.message,
+      };
+    }
 
     return {
       state: next,
@@ -202,13 +173,21 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     next = addToInventory(next, found.id);
     next = triggerScoreOnce(next, getItemById(next, found.id)?.scoreId);
 
-    if (found.id === GAME_PRESERVE_PRIZE_ID) {
-      return handleGamePreservePrizeTaken(next, state.player.roomId);
+    const takeEffects = applyRegisteredTakeItemEffects(next, found, {
+      fromRoomId: state.player.roomId,
+    });
+    next = takeEffects.state;
+
+    if (takeEffects.message) {
+      return {
+        state: next,
+        message: takeEffects.message,
+      };
     }
 
     return {
       state: next,
-      message: typeof takeOverride === "string" ? takeOverride : "Taken.",
+      message: `${typeof takeOverride === "string" ? takeOverride : "Taken."}${takeEffects.messageTail ?? ""}`,
     };
   }
 
@@ -258,9 +237,21 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
       },
     };
 
+    const takeEffects = applyRegisteredTakeItemEffects(next, found, {
+      fromRoomId: state.player.roomId,
+    });
+    next = takeEffects.state;
+
+    if (takeEffects.message) {
+      return {
+        state: next,
+        message: takeEffects.message,
+      };
+    }
+
     return {
       state: next,
-      message: typeof takeOverride === "string" ? takeOverride : "Taken.",
+      message: `${typeof takeOverride === "string" ? takeOverride : "Taken."}${takeEffects.messageTail ?? ""}`,
     };
   }
 

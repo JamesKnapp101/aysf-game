@@ -1,5 +1,6 @@
 import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import { provokePreserveAnimalWithWhistle } from "@game/preserve/preserveAnimals";
+import { handleGamePreserveEmptyHandReturn } from "@game/preserve/preserveTrophies";
 import { updatePreserveStructures } from "@game/preserve/preserveState";
 import {
   isPreserveActorId,
@@ -100,6 +101,13 @@ function blowGameWhistle({
     mode,
     getGameWhistleCall(item, mode),
   );
+}
+
+function touchGamePreserveTrophyDais({ state }: { state: GameState }): {
+  message: string;
+  state: GameState;
+} {
+  return handleGamePreserveEmptyHandReturn(state, state.player.roomId);
 }
 
 function dispensePreserveFeed({ state }: { state: GameState }): {
@@ -789,6 +797,9 @@ export const gamePreserveStructureItems: Item[] = [
     isSurface: true,
     meta: {
       kind: "game-preserve-trophy-dais",
+    },
+    overrides: {
+      touch: touchGamePreserveTrophyDais,
     },
   },
   {
