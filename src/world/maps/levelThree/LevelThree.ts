@@ -42,9 +42,15 @@ import {
   gymLockerItems,
   gymRooms,
 } from "src/world/maps/levelThree/Park/Gym";
-import { movieTheaterRooms } from "src/world/maps/levelThree/Park/MovieTheater";
+import {
+  movieTheaterItems,
+  movieTheaterRooms,
+} from "src/world/maps/levelThree/Park/MovieTheater";
 import { parkItems, parkRooms } from "src/world/maps/levelThree/Park/Park";
-import { restaurantRooms } from "src/world/maps/levelThree/Park/Restaurant";
+import {
+  restaurantItems,
+  restaurantRooms,
+} from "src/world/maps/levelThree/Park/Restaurant";
 import { spaItems, spaRooms } from "src/world/maps/levelThree/Park/Spa";
 import {
   warehouseItems,
@@ -109,6 +115,8 @@ export const LEVEL_THREE: WorldChunk = {
     ...warehouseItems,
     ...spaItems,
     ...parkItems,
+    ...movieTheaterItems,
+    ...restaurantItems,
     ...gymItems,
     ...gymLockerItems,
     ...barItems,

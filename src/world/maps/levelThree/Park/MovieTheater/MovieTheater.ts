@@ -1,4 +1,8 @@
+import type { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+import { movieAuditoriumItems } from "./movieAuditoriumItems";
+import { movieEntranceItems } from "./movieEntranceItems";
+import { movieProjectionItems } from "./movieProjectionItems";
 
 export const movieTheaterRooms: Room[] = [
   // MOVIE THEATRE
@@ -40,4 +44,10 @@ export const movieTheaterRooms: Room[] = [
     description: `You are standing at the back of two rows of movie theatre seats which are separated by a center aisle. The movie screen, now lit up with a flat, white light, looms before you to the north.`,
     exits: [{ direction: "south", toRoomId: "MovieTheatreOne" }],
   },
+];
+
+export const movieTheaterItems: Item[] = [
+  ...movieEntranceItems,
+  ...movieProjectionItems,
+  ...movieAuditoriumItems,
 ];

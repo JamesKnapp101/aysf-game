@@ -1,4 +1,9 @@
+import type { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+import { restaurantBathroomItems } from "./restaurantBathroomItems";
+import { restaurantDiningRoomItems } from "./restaurantDiningRoomItems";
+import { restaurantEntranceItems } from "./restaurantEntranceItems";
+import { restaurantKitchenItems } from "./restaurantKitchenItems";
 
 export const restaurantRooms: Room[] = [
   // RESTAURANT AREA
@@ -68,4 +73,11 @@ export const restaurantRooms: Room[] = [
     description: `This is a small bathroom. There is a sink mounted on the north wall, with a mirror mounted in front of it. To the south, there is an enclosed stall. Lying in the middle of the floor is the body of a middle-aged woman with black hair. She looks like she was involved in a struggle.`,
     exits: [{ direction: "west", toRoomId: "BathroomEntrance" }],
   },
+];
+
+export const restaurantItems: Item[] = [
+  ...restaurantEntranceItems,
+  ...restaurantDiningRoomItems,
+  ...restaurantKitchenItems,
+  ...restaurantBathroomItems,
 ];
