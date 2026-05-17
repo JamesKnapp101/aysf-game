@@ -128,7 +128,7 @@ export const DEFAULT_COMET_ENTRIES: CometEntry[] = [
       "secret",
       "keratin love",
     ],
-    body: "A robot known as 'Twizz' works as a nail technician at the nail salon 'Keratin Love', part of the 'U-Deserve-U' Spa located in Vivarium Park. In addition to being an excellent nail technician, it is well known ship-wide for being an obsessive gossip hound, and that it even keeps secrets, which it will only divulge if enticed",
+    body: "A robot known as 'Twizz' works as a nail technician at the nail salon 'Keratin Kindness', part of the 'U-Deserve-U' Spa located in Vivarium Park. In addition to being an excellent nail technician, it is well known ship-wide for being an obsessive gossip hound, and that it even keeps secrets, which it will only divulge if enticed",
   },
   {
     id: "doomed_chef",

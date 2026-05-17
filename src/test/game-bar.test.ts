@@ -1,5 +1,10 @@
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import {
+  BAR_VISION_QUEST_DRINK_SEQUENCE,
+  BAR_VISION_QUEST_EXPERIENCE_ID,
+  BAR_VISION_QUEST_TRIGGER,
+} from "@game/helpers/barVisionQuest";
+import {
   BAR_BOT_CELLAR_DEATH_REGEN_MESSAGE,
   BAR_BOT_CELLAR_DEATH_RETURN_MESSAGE,
 } from "@game/helpers/barBotAwareness";
@@ -26,6 +31,14 @@ function getCommandEntry(state: { log: string[] }, command: string): string {
   }
 
   return "";
+}
+
+async function orderAndDrinkBarSpecial(
+  state: ReturnType<typeof createTestState>,
+  drinkName: string,
+) {
+  const ordered = await runCommand(state, `order ${drinkName}`);
+  return runCommand(ordered, `drink ${drinkName}`);
 }
 
 describe("bar area interactions", () => {
@@ -314,6 +327,108 @@ describe("bar area interactions", () => {
     expect(
       drank.world.items.find((item) => item.id === "BarWhiskeySweet")?.doses,
     ).toBe(0);
+  });
+
+  it("starts the vision quest after the zine drink sequence", async () => {
+    let state = createTestState({ roomId: "Bar" });
+
+    for (const drinkName of [
+      "bangalore sling",
+      "whiskey sweet",
+      "hand-stuff on the beach",
+      "gin fizz",
+      "durian colada",
+      "fischermeister shot",
+    ]) {
+      state = await orderAndDrinkBarSpecial(state, drinkName);
+    }
+
+    expect(state.player.roomId).toBe("BarVisionQuest");
+    expect(state.player.recentDrinkItemIds).toEqual([
+      ...BAR_VISION_QUEST_DRINK_SEQUENCE,
+    ]);
+    expect(state.worldState.conditionalTriggers[BAR_VISION_QUEST_TRIGGER]).toBe(
+      true,
+    );
+    expect(state.worldState.activeExperience).toMatchObject({
+      experienceId: BAR_VISION_QUEST_EXPERIENCE_ID,
+      kind: "vision",
+      returnRoomId: "Bar",
+    });
+    expect(state.player.statusEffects.some((effect) => effect.id === "drunk"))
+      .toBe(false);
+    expect(state.player.vitals.drunkenness).toBe(0);
+    expect(getCommandEntry(state, "drink fischermeister shot")).toContain(
+      "the world around you twists into something else entirely",
+    );
+  });
+
+  it("awards score and silently grants the prize shirt when the vision quest ends", async () => {
+    let state = createTestState({ roomId: "Bar" });
+
+    for (const drinkName of [
+      "bangalore sling",
+      "whiskey sweet",
+      "hand-stuff on the beach",
+      "gin fizz",
+      "durian colada",
+      "fischermeister shot",
+    ]) {
+      state = await orderAndDrinkBarSpecial(state, drinkName);
+    }
+
+    while (state.worldState.activeExperience) {
+      state = await runCommand(state, "wait");
+    }
+
+    const finalWaitEntry = getCommandEntry(state, "wait");
+
+    expect(state.player.roomId).toBe("Bar");
+    expect(state.worldState.scoresTriggered.completed_vision_quest).toBe(true);
+    expect(state.score).toBe(2);
+    expect(expectInventoryToContain(state, "TShirtPrize")).toBe(true);
+    expect(state.itemState.itemRoomId.TShirtPrize).toBe("INVENTORY");
+    expect(finalWaitEntry).toContain("leaving you back in the bar");
+    expect(finalWaitEntry).not.toContain("t-shirt");
+    expect(state.uiState?.notifications).toContainEqual(
+      expect.objectContaining({
+        kind: "score",
+        text: "Your score has just went up by 2 points!",
+      }),
+    );
+  });
+
+  it("counts any other consumed drink against the zine sequence", async () => {
+    let state = setInventory(createTestState({ roomId: "Bar" }), [
+      "BottleOfScotch",
+    ]);
+
+    state = await orderAndDrinkBarSpecial(state, "bangalore sling");
+    state = await runCommand(state, "drink scotch");
+
+    for (const drinkName of [
+      "whiskey sweet",
+      "hand-stuff on the beach",
+      "gin fizz",
+      "durian colada",
+      "fischermeister shot",
+    ]) {
+      state = await orderAndDrinkBarSpecial(state, drinkName);
+    }
+
+    expect(state.player.roomId).toBe("Bar");
+    expect(state.worldState.activeExperience).toBeUndefined();
+    expect(state.worldState.conditionalTriggers[BAR_VISION_QUEST_TRIGGER]).toBe(
+      false,
+    );
+    expect(state.player.recentDrinkItemIds).toEqual([
+      "BottleOfScotch",
+      "BarWhiskeySweet",
+      "BarHandStuffOnTheBeach",
+      "BarGinFizz",
+      "BarDurianColada",
+      "BarFischermeisterShot",
+    ]);
   });
 
   it("lets the player ask the bartender for numbered drinks", async () => {

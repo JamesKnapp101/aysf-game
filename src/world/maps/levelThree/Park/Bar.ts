@@ -711,6 +711,18 @@ export const barItems: Item[] = [
     itemSize: 20,
   },
   {
+    id: "FakeID",
+    name: "fake ID",
+    description:
+      "It's a fake ID, a good fake, but still a fake. The information on it is for Yolonope Fick. It has her current living quarters on level two, Rotation K",
+    location: "seeded",
+    vocab: ["fake", "id", "yolonope id"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1000,
+    itemSize: 20,
+  },
+  {
     id: "BarEntranceExterior",
     name: "bar exterior",
     description:
@@ -1021,14 +1033,12 @@ export const barItems: Item[] = [
     },
   },
   {
-    id: "BarAdhesive",
-    name: "tube of adhesive",
-    description:
-      "The tube is labeled GraviBond Recreation-Grade Adhesive. The warning text insists it is temporary, skin-safe, and fun, in that order.",
-    initialDescription:
-      "A small tube of adhesive sits on the bar, wedged near the drink menu's projector.",
+    id: "AllPurposeAdhesive",
+    name: "tube of 'Crazy Goo'",
+    description: "The tube is labeled 'Crazy Goo'",
+    initialDescription: "A small tube of adhesive sits on the shelf.",
     location: "seeded",
-    vocab: ["adhesive", "glue", "tube", "gravibond", "bond"],
+    vocab: ["adhesive", "glue", "tube", "crazy", "goo", "crazy goo"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -1045,6 +1055,18 @@ export const barItems: Item[] = [
         cmd?: ParsedCommand;
       }) => applyAdhesiveToBull(state, item, cmd),
     },
+  },
+  {
+    id: "ManiPediVoucher",
+    name: "nail salon voucher",
+    description:
+      "It says if you present it at Keratin Kindness you get a free mani-pedi, and the offer doesn't expire.",
+    location: "seeded",
+    vocab: ["voucher", "gift card"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
   },
   {
     id: "BarWhiskeySweet",
@@ -1244,6 +1266,23 @@ export const barItems: Item[] = [
         onEmpty: [{ type: "message", text: "That drink is finished." }],
       },
     },
+  },
+  {
+    id: "TShirtPrize",
+    name: "prize t-shirt",
+    description:
+      "It's a good quality cotton t-shirt, cream colored, and sporting the words 'I Got So Drunk I Became Delirious and Hallucinated Being Thrown Into Six Different Drinks Before Getting Swallowed Alive And On The Last One I Even Got Thrown Up Again, And All I Got Was This Lousy, But Good Quality, T-Shirt That Appeared In My Inventory When I Woke Up Completely Sober'.",
+    readableText:
+      "I Got So Drunk I Became Delirious and Hallucinated Being Thrown Into Six Different Drinks\nBefore Getting Swallowed Alive And On The Last One I Even Got Thrown Up Again,\nAnd All I Got Was This Lousy, But Good Quality, T-Shirt That Appeared In My Inventory\nWhen I Woke Up Completely Sober",
+    location: "seeded",
+    vocab: ["t-shirt", "prize", "gift", "shirt"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    isReadable: true,
+    isWearable: true,
+    clothingSlot: "torso",
   },
   {
     id: "BarBasementLiquorBoxes",

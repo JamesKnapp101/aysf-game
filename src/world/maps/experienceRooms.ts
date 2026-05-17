@@ -42,6 +42,12 @@ export const experienceRooms: Room[] = [
       "You're standing in the bar's cellar. Boxes of liquor line the walls, garnish crates crowd the corners, and a rectangle of warm bar light spills down the wooden steps from the open hatch above.",
     exits: [],
   },
+  {
+    id: "BarVisionQuest",
+    name: "Vision: The Cosmic Drink-Off",
+    description: "",
+    exits: [],
+  },
 ];
 
 export const experienceRoomsItems: Item[] = [

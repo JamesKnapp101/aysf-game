@@ -120,6 +120,7 @@ export const createInitialState = (world: World): GameState => {
       inventory: startingInventory,
       log: [],
       dnaBank: [],
+      recentDrinkItemIds: [],
       spiltTea: [],
       memoriesTriggered: {
         own_name: false,
@@ -323,6 +324,7 @@ export const createInitialState = (world: World): GameState => {
         activated_movie_projector: false,
         activated_comet_link: false,
         completed_engine_shut_down: false,
+        completed_vision_quest: false,
         defeated_xl999: false,
         discovered_magic_word: false,
         found_elephant_lamp: false,
@@ -488,6 +490,7 @@ export const createInitialState = (world: World): GameState => {
         HydroponicsDoorUnblocked: false,
         EscapedWithYellowBadge: false,
         GymWeightlifterMoved: false,
+        BarVisionQuestTriggered: false,
         [BAR_BULL_ADHESIVE_TRIGGER]: false,
       },
     },

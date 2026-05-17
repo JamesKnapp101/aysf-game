@@ -96,7 +96,7 @@ export type GameNotification = GameNotificationDraft & {
   id: number;
 };
 
-export type ExperienceKind = "lesson" | "memory";
+export type ExperienceKind = "lesson" | "memory" | "vision";
 
 export type ActiveExperience = {
   currentStageIndex: number;
@@ -196,6 +196,7 @@ export interface PlayerState {
   log: PlayerLogEntry[];
   memoriesTriggered: Record<PlayerMemoryId, boolean>;
   prevRoomId?: string;
+  recentDrinkItemIds: string[];
   recentMoves?: PlayerMoveEvent[];
   roomId: string;
   spiltTea: JuicyTopic[];

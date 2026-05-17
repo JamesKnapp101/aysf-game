@@ -106,7 +106,7 @@ export function buildMemoryNotification(points: number): GameNotificationDraft {
 export function buildDamageNotification(points: number): GameNotificationDraft {
   return {
     kind: "damage",
-    text: `You take ${points} ${points > 1 ? "points!" : "point!"} of damage!`,
+    text: `You take ${points} ${points > 1 ? "points" : "point"} of damage!`,
   };
 }
 

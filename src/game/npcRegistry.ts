@@ -117,6 +117,13 @@ export const NPCS: Record<string, ConversationNpc> = {
     aiEnabled: true,
     characterProfileId: "disembodied_head_bar_basement",
   },
+  MasterOfDrink: {
+    id: "MasterOfDrink",
+    name: "The Master of Drink",
+    vocab: ["master", "drink", "master of drink", "the master"],
+    aiEnabled: true,
+    characterProfileId: "master_of_drink",
+  },
 };
 
 export function getNpcById(npcId?: string): ConversationNpc | undefined {

@@ -4,6 +4,7 @@ import { livingQuartersThreeWestOrganismItems } from "src/world/Items/creatures/
 import { crushedWeightlifterGymItems } from "src/world/Items/creatures/virtual/crushedWeightlifterGym";
 import { inckGlassboolItems } from "src/world/Items/creatures/virtual/inckGlassboolBarBasement";
 import { lilLillyCorridorThreeItems } from "src/world/Items/creatures/virtual/lilLillyCorridorThree";
+import { masterOfDrinkItems } from "src/world/Items/creatures/virtual/masterOfDrink";
 import { moxStairBottomItems } from "src/world/Items/creatures/virtual/moxStairBottom";
 import { spinInstructorSpinStageItems } from "src/world/Items/creatures/virtual/spinInstructorSpinStage";
 import { barBotItems } from "src/world/Items/robots/barBot";
@@ -36,7 +37,11 @@ import {
   barItems,
   barRooms,
 } from "src/world/maps/levelThree/Park/Bar";
-import { gymItems, gymRooms } from "src/world/maps/levelThree/Park/Gym";
+import {
+  gymItems,
+  gymLockerItems,
+  gymRooms,
+} from "src/world/maps/levelThree/Park/Gym";
 import { movieTheaterRooms } from "src/world/maps/levelThree/Park/MovieTheater";
 import { parkItems, parkRooms } from "src/world/maps/levelThree/Park/Park";
 import { restaurantRooms } from "src/world/maps/levelThree/Park/Restaurant";
@@ -100,10 +105,12 @@ export const LEVEL_THREE: WorldChunk = {
     ...crushedWeightlifterGymItems,
     ...spinInstructorSpinStageItems,
     ...inckGlassboolItems,
+    ...masterOfDrinkItems,
     ...warehouseItems,
     ...spaItems,
     ...parkItems,
     ...gymItems,
+    ...gymLockerItems,
     ...barItems,
   ],
   doors: [

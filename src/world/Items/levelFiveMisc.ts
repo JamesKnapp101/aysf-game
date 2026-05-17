@@ -692,23 +692,7 @@ export const levelFiveItems: Item[] = [
     isContainer: false,
     isContagious: true,
   },
-  {
-    id: "CoordFinder",
-    name: "small rectangular readout",
-    description:
-      "A non-descript black device fits neatly in the palm of your hand, its only feature a narrow red readout on the front. A constant sequence of numbers scrolls across the display, glowing in a flat, unfriendly red. Whatever it’s tracking, it’s doing so with obsessive precision.",
-    initialDescription:
-      "A small, black rectangular device lies nearby, its single red readout cycling through a stream of numbers.",
-    location: "ManLocker13",
-    vocab: ["readout", "small", "rectangular", "device"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isContainer: false,
-    scoreId: "obtained_coord_finder",
-  },
+
   {
     id: "SeatCushion",
     name: "seat cushion",

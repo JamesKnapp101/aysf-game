@@ -62,6 +62,7 @@ export const playerScoreMap = {
   activated_movie_projector: { value: 5 },
   activated_comet_link: { value: 5 },
   completed_engine_shut_down: { value: 5 },
+  completed_vision_quest: { value: 2 },
   defeated_xl999: { value: 5 },
   discovered_magic_word: { value: 5 },
   found_elephant_lamp: { value: 5 },

@@ -62,6 +62,7 @@ const DEVELOPER_MODE_ITEM_IDS = [
   "yellowbadge",
   "whitebadge",
   "flashlight",
+  "AllPurposeAdhesive",
 ] as const;
 
 function moveItemIntoPlayerInventory(
@@ -125,7 +126,11 @@ async function hydrateDeveloperModeItemDefinitions(
     );
     const chunk = await loadWorldChunk(chunkId);
 
-    if (!chunk.items.some((item) => missingItemIds.has(item.id as typeof DEVELOPER_MODE_ITEM_IDS[number]))) {
+    if (
+      !chunk.items.some((item) =>
+        missingItemIds.has(item.id as (typeof DEVELOPER_MODE_ITEM_IDS)[number]),
+      )
+    ) {
       continue;
     }
 

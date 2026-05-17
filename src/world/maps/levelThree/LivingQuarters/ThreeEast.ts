@@ -242,6 +242,19 @@ export const threeEastItems: Item[] = [
     isLoggable: true,
     readableText: `Mind Gun / Mind Extractor\n\nI'm still working on a name, but the device now functions exactly as designed. It works in tandem with the electrode cap, so you need both for it to work. Once the cap is on your head, all you need to do is point at the head of the target, and shoot. The device has two modes but it auto-detects so you don't have to change the setting:\n\nOn Living Targets: When used on a living target the Extractor scans the target's active brainwaves, compiles them, then pipes the output to the wielder, who is able to effectively 'read' the target's thoughts, to a degree.\n\nOn Deceased Targets: When the Extractor is used on a non-living target that still has intact brain tissue, it scans topography and extracts a sample using my patented technique. If viable, it reconstructs the randomly selected memory and replays it for the wielder, who experiences the memory first hand, at least in a fashion.\n\nThere's still testing to do; if it ever does the sample extraction on a living target I'm not sure exactly what will happen but it wouldn't be good. They want it smaller, too, but functionally, it works.\n\nThe DNA sampler wand is ready, too, wasn't too complicated but should be pretty useful.`,
   },
+  {
+    id: "YourID",
+    name: "your ID",
+    description:
+      "It's an official Aeneas ID, with an official seal. The information on it is for Mox Eegler. It has his current living quarters on level three, Rotation H",
+    initialDescription: `On the corner of the workstation sits a laminated ID card.`,
+    location: "SecretLab",
+    vocab: ["id", "my id", "mox id", "id card", "card"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1000,
+    itemSize: 20,
+  },
   // Bedroom
   {
     id: "EeglerBed",

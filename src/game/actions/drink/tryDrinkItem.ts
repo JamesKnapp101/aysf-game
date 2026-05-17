@@ -3,6 +3,7 @@ import {
   setItemDoses,
   updateItemLocation,
 } from "@game/rules/items";
+import { recordConsumedDrinkAndMaybeStartVisionQuest } from "@game/helpers/barVisionQuest";
 import { removeFromInventory } from "@game/rules/state";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { GameState } from "@game/types/gameTypes";
@@ -76,6 +77,13 @@ export function tryDrinkItem(
         baseMsg = [baseMsg, cleanup.message].filter(Boolean).join(" ");
       }
     }
+  }
+
+  const trackedDrink = recordConsumedDrinkAndMaybeStartVisionQuest(next, item);
+  next = trackedDrink.state;
+
+  if (trackedDrink.message) {
+    baseMsg = [baseMsg, trackedDrink.message].filter(Boolean).join("\n\n");
   }
 
   return {

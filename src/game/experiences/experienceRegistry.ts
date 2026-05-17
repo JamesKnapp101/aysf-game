@@ -1,6 +1,9 @@
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
 import { collectTeaResult, queueGossipNotification } from "@game/rules/gossip";
 import { updateItemLocation } from "@game/rules/items";
+import { triggerScoreOnce } from "@game/rules/score";
+import { addToInventory } from "@game/rules/state";
+import { getCurrentScore } from "@game/selectors/scoreSelectors";
 import type {
   ActiveExperience,
   ExperienceKind,
@@ -45,6 +48,7 @@ type ExperienceStageDefinition = {
 
 type ExperienceDefinition = {
   abortMessage?: string;
+  complete?: (state: GameState) => GameState;
   completeMessage?: string;
   id: string;
   kind: ExperienceKind;
@@ -63,6 +67,9 @@ const CRUSHED_WEIGHTLIFTER_MEMORY_SPOTBOT_ITEM_ID =
   "CrushedWeightlifterMemorySpotBot";
 const BAR_BASEMENT_HEAD_MEMORY_ROOM_ID = "BarBasementHeadMemory";
 const BAR_BASEMENT_HEAD_MEMORY_ROOM_ID2 = "BarBasementHeadMemory2";
+const BAR_VISION_QUEST_ROOM_ID = "BarVisionQuest";
+const BAR_VISION_QUEST_PRIZE_ITEM_ID = "TShirtPrize";
+const BAR_VISION_QUEST_SCORE_ID = "completed_vision_quest";
 
 const NURSERY_MISHAP_GOSSIP: JuicyTopic = {
   id: "nursery mishap",
@@ -88,6 +95,14 @@ function setRoomDarkness(
       },
     },
   };
+}
+
+function completeBarVisionQuest(state: GameState): GameState {
+  let next = triggerScoreOnce(state, BAR_VISION_QUEST_SCORE_ID);
+  next = updateItemLocation(next, BAR_VISION_QUEST_PRIZE_ITEM_ID, "INVENTORY");
+  next = addToInventory(next, BAR_VISION_QUEST_PRIZE_ITEM_ID);
+  const score = getCurrentScore(next);
+  return score === next.score ? next : { ...next, score };
 }
 
 const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
@@ -266,6 +281,65 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
     ],
     startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe cellar peels away as the memory takes hold...`,
     transitionMessage: `The bathroom flickers, then fades away in cascading chunks as a new reality warps into place around you...`,
+  },
+  vision_quest: {
+    abortMessage:
+      "You find the edge of the vision and pull. The impossible bar folds shut, and the real one snaps back into place around you.",
+    complete: completeBarVisionQuest,
+    completeMessage:
+      "With that, the scene twists, the forest warping around you until it scatters, leaving you back in the bar.",
+    id: "vision_quest",
+    kind: "vision",
+    stages: [
+      {
+        durationTurns: 9,
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "intro",
+            message: `You find yourself standing in a small clearing in a forest at night, lit only from an unknown source above while beyond that cone of light is darkness all around. A few paces away stands a middle aged man with long hair dressed in denim shorts, a salmon colored polo shirt, and a fishing hat. He's looking up at the sky, holding a beer can in a foam cozy.\n\nYou wait for a moment, not sure where you are or how you got here, or where 'here' even is, before you plaintively call out.\n\n"Hello?"\n\nAfter a beat, the man turns and sees you standing there.\n\n"Oh," the man says. "Somebody's here. Sorry, it's been a while."\n\n"Who are you?" you ask.\n\n"Some call me 'The Master of Drink'," he says.\n\n"Where are we?" you ask. "What is this place?"\n\n"This?" the man asks. "This is all a figment of your mind, none of it is real. This is a place within your own mind, which you've only just now unlocked."\n\n"You mean like a vision quest?" You ask.\n\nThe man shakes his head.\n\n"No," he says. "A vision quest is an ancient Native American rite of passage where young people would fast for days at a sacred site in hopes of seeing a vision that will help them determine their role in life, and their community. You are just super drunk."\n\n"Oh," you say. "Will I have a vision?"\n\n"You might," the man says, "I mean, you really are some kind of drunk alright. If you do though, don't worry! You might not see me, but I'll be right there with you..!"`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "first-toast",
+            message: `Abruptly, you are no longer standing in the forest but falling through the air toward the surface of deep red water with floating chunks of clear ice. You splash down into the liquid (which surprisingly tastes sweet and has a pleasant perfume smell) and the cold grips you, as towering bergs of ice drift to either side of you. In front of you is a sheer wall of clear glass that looms above you, the edge far too high to reach.\n\nSuddenly, a massive shape appears on the horizon and begins to rise up, a wavy black expanse that reveals itself to be the titanic head of a giant man with mocha colored skin and a handsome face. The giant wears a colorful silk shirt, the first few buttons open to showcase a chest covered in thick curly hair. He doesn't acknowledge you at all, or even seem to notice you as he reaches toward you with one enormous hand.\n\nThe hand collides with the glass wall, the huge lines and wrinkles pressing against the outside as the surface sloshes, and the ice chunks shift position.\n\n"Cheers, guru!" a voice calls from above, deep and slow, and the giant smiles, revealing white teeth.\n\nBefore you know it the glass silo, including the icy liquid, and you, is lifted high into the air.\n\n"Wait!" you call, even as the liquid begins to shift, and you're pulled along with it.\n\nThe giant man's giant lips loom closer, blotting out the light until all you can see is the yawning chasm beyond it. Before you can call out again, you are pulled along as the liquid, along with the big ice chunks, begins rushing toward the humid blackness.\n\nYou are powerless to stop yourself as you pitch over the edge of bone white teeth and go tumbling down into the darkness.`,
+          },
+          {
+            atElapsedTurns: 3,
+            id: "second-toast",
+            message: `You plunge down into icy amber liquid, narrowly missing a huge chunk of floating ice, then swim back to the surface again. You open your eyes for a half second then clamp them shut again as it burns like you were pepper-sprayed, until you break the surface and suck in a breath so full of whiskey fumes that it makes your head spin. Whatever it is you're bobbing around in it's sticky, and very sweet.\n\nAs you're rocked by waves you manage to pry your eyes open again in time to see a shadow fall over you. Above, you see the underside of a bushy white mustache large enough to fill the sky, and behind that, a wrinkled lip with rows of deep smoker's lines.\n\n"Bottom's up..." a deep, rumbling voice intones.\n\nYou feel an updraft that intensifies along with the sensation of being pulled along by the rushing liquid, then falling, legs and arms peddling...`,
+          },
+          {
+            atElapsedTurns: 4,
+            id: "third-toast",
+            message: `"Salud..!" a booming voice cries from above as you tumble down toward an ocean of cool pastel blues, while a huge uptake pipe extends high above into the air until it meets a looming pair of plump, pursed lips clamped around it big enough to fill the sky. You steady into a controlled fall as you plummet down, fast enough to close the distance even as the surface below drops away from you at a rapid pace.\n\nYou belly flop down into the sea of blue, but almost as soon as you manage to swim back up to the surface, you feel yourself being pulled back down by some sort of ferocious undercurrent. You keep your head above the surface just long enough to see that you're caught in a whirlpool before getting sucked down into the deep. You get dragged along, then clip the bottom of the giant pipe as you get sucked into it and drawn back up.\n\nYou shoot out the other end of the pipe and try to orient yourself but before you can you hear a booming, guttural 'gulp' and are pulled down into the dark depths again.`,
+          },
+          {
+            atElapsedTurns: 5,
+            id: "fourth-toast",
+            message: `The next time you break the surface you find yourself in a tepid lake of fizzy liquid that has a piney, juniper smell along with a whiff of citrus. The liquid is enclosed in a large circular container of some sort, the surface about a foot from the edge, and you swim to the closest spot you can grab on.\n\nYou pull yourself up and see that there are a series of other circular containers like the one you're currently in, red on the outside, white on the inside, each filled to near the brim with the same liquid, positioned around you in all directions. Before you can make anything of that, you see a huge white sphere come sailing in your direction. It casts a shadow that passes over several of the other containers on its way to yours.\n\nYou plunge down under the liquid just as the giant ball splashes down above you, knocking against the side of the container with a deep drumming sound. From somewhere up in the sky you hear the sounds of cheers, but deep, and slowed down.\n\n"Gin Fizz Pong!" one of them cries, and as you break the surface the ball is lifted away again before the entire container is lifted up into the air, until the contents, yourself included, are poured into dark a cavernous pit...`,
+          },
+          {
+            atElapsedTurns: 6,
+            id: "fifth-toast",
+            message: `You smell what's coming before the reality of it hits you, as you fall through the air once more, this time through a cloud of thick odor. The first whiff hits you so hard that you almost dry heave; the stink of rotting onion, mixed with the reek of a used diaper left in a parking lot. You plug your nose as you plunge into a pool of creamy pale yellow, then surface, wiping your face so you can open your eyes again.\n\nYou're bobbing in a somewhat thick, creamy substance and the smell is unbearable, even breathing through your mouth. Since it ended up getting in your mouth, you're glad that it at least tastes a lot better than it smells. When you look up, you see another giant figure looming over you, this time an Asian woman with graying hair and red cheeks. The head lowers, blotting out the light until the nose casts a dark shadow that consumes you completely. You hold your breath as a strong updraft intensifies, but fails to pull you out of the liquid before subsiding.\n\nThe nose pulls away, replaced by an all consuming, smiling mouth.\n\n"Kanpai!" the giant bellows, the mouth opening as the liquid slides down toward the deep chasm of the titan's throat, taking you with it.`,
+          },
+          {
+            atElapsedTurns: 7,
+            id: "sixth-toast",
+            message: `You splash down into a bath of thick, syrupy liquid that is very dark brown in color, and immediately wish you were back in the diaper-smelling juice. The smell isn't more offensive, although there is a strong undercurrent of fish, in fact the mix of pine and herbs might be pleasant if it wasn't so strong it made it hard to breathe.\n\n"Prosit!" a voice booms from above, thick and slow.\n\nYou wipe your eyes and squint upwards in time to see a huge hand grip the glass tub you're floating in, then you're rocketed up into the air further and further the entire tub tilting further and further until at ninety degrees it stops abruptly. The inertia sends the brown liquid, and you in it, flying through the air and directly into a gaping, waiting mouth below. The liquid splashes down in the dark and you're carried down further.\n\n"Drink, drink, drink!" more voices join in from above, fading as you continue to sink.\n\nSuddenly you hear a deep gurgle from somewhere below, and you're no longer being pulled down.\n\n"Dude, don't puke," a deep voice wails from above. "Dude don't puke!"\n\nA massive air bubble pushes past you, and then you're being pushed back up, faster and faster.\n\n"Dude!"\n\nYou feel yourself blasted through the air in a stream of fluid, a frothy, chunky mix of too many drinks and fast food french fries, the faces of the surrounding giants gaping in horror...`,
+          },
+          {
+            atElapsedTurns: 8,
+            id: "outro",
+            message: `All at once, you find yourself standing back in the dark forest where you started, where the man in the fishing hat is back to gazing at the stars. You check yourself over frantically but you're completely dry, and totally clean again, like none of it ever happened. At the sound of it, the man notices you and turns.\n\n"Hey, you're back," he says. "How'd it go? Was it cool?"\n\n"It was...something," you say.\n\n"Well, something's better than nothing, I guess," the man says amicably.\n\n"I guess," you say.\n\n"Well, what were you expecting?" he asks.\n\n"I don't know," you say. "Just more, I guess."\n\nThe man thinks about it for a minute, then nods.\n\n"Let me see what I can do," he says.\n\n"Really?" you ask. "Thanks!"\n\n"I said I'll see what I can do," the man says, holding up one hand.`,
+          },
+        ],
+        roomId: BAR_VISION_QUEST_ROOM_ID,
+      },
+    ],
+    startMessage:
+      "The final drink joins the others and acts as the final component in some sort of reaction that you feel rush up into your head like the froth from a freshly popped beer can, and something behind your eyes unlocks with a soft little click. The bar lights smear sideways, the music bends into a spiral, and the world around you twists into something else entirely...",
   },
 };
 
@@ -567,6 +641,7 @@ export function tickActiveExperience(state: GameState): {
     fromRoomId: state.player.roomId,
     via: definition.kind,
   });
+  if (definition.complete) next = definition.complete(next);
 
   return {
     state: next,
