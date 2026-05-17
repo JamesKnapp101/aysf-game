@@ -1,4 +1,4 @@
-import { isGymWeightlifterPinningBadge } from "@game/helpers/gymHelpers";
+import { isGymWeightlifterPinningBadge } from "src/world/maps/levelThree/Park/Gym/gymWeightlifterPuzzle";
 import type { GameState } from "../../game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
 

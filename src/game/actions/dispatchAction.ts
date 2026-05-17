@@ -4,7 +4,7 @@ import { handleCommand } from "../engine/handleCommand";
 import {
   setGymTreadmillSpeed,
   SPIN_STAGE_SPEED_DIAL_PASSWORD,
-} from "../helpers/gymHelpers";
+} from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
 import { handleSetCoolerMode } from "../rules/cooler";
 import { setMessageListened } from "../rules/message-machine";
 import { getCoolerMode } from "../selectors/gadgetSelectors";

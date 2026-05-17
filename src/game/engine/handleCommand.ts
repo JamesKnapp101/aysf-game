@@ -12,7 +12,7 @@ import {
   runScriptedEvents,
   triggerPlayerDeath,
 } from "@game/helpers/gameHelpers";
-import { resolveGymTreadmillMovement } from "@game/helpers/gymHelpers";
+import { resolveGymTreadmillMovement } from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { removeItemFromPlacementLists } from "@game/helpers/itemPlacement";
 import { SCRIPTED_EVENTS } from "@game/helpers/scriptedEvents";

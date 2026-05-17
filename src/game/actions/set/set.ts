@@ -1,8 +1,6 @@
 import { resolveItemByNoun } from "../../rules/scope";
 import { isPreserveActorId } from "../../preserve/preserveTypes";
-import {
-  setGymTreadmillAngle,
-} from "@game/helpers/gymHelpers";
+import { setGymTreadmillAngle } from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";

@@ -6,10 +6,10 @@ import {
   shouldBarBotAcknowledgeReturnedFromCellarDeath,
 } from "@game/helpers/barBotAwareness";
 import {
-  GYM_ROOM_ID,
   moveGymExerciseBallToRoom,
   playerHasGymExerciseBall,
-} from "@game/helpers/gymHelpers";
+} from "src/world/maps/levelThree/Park/Gym/gymExerciseBall";
+import { GYM_ROOM_ID } from "src/world/maps/levelThree/Park/Gym/gymConstants";
 import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import {
   armParkEastPowerKeySnatch,

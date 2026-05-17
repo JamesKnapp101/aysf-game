@@ -1,0 +1,9 @@
+export const GYM_ROOM_ID = "Gym";
+export const GYM_SPIN_STAGE_ROOM_ID = "SpinStage";
+export const GYM_WEIGHT_ROOM_ID = "GymWeightRoom";
+export const GYM_EXERCISE_BALL_ID = "GymExerciseBall";
+export const GYM_EXERCISE_BALL_RACK_ID = "GymExerciseBallRack";
+export const GYM_ORANGE_BADGE_ID = "orangebadge";
+export const GYM_TREADMILL_ID = "GymGiantTreadmill";
+export const GYM_WEIGHTLIFTER_MOVED_TRIGGER = "GymWeightlifterMoved";
+export const SPIN_STAGE_SPEED_DIAL_PASSWORD = "YX34-D940-6";
