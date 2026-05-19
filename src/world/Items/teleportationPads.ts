@@ -72,6 +72,7 @@ export const teleportationPadItems: Item[] = [
     itemSize: 1,
     isSurface: true,
     meta: {
+      sceneryDescriptionOrder: 6,
       onPowered: `The disk emits a soft, serene glow.`,
       teleport: {
         section: "teleport-pads-green",

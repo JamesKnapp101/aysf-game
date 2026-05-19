@@ -452,26 +452,6 @@ export const corpseItems: Item[] = [
     isContagious: true,
   },
 
-  {
-    id: "parkwestcorpse",
-    name: "woman's body",
-    description:
-      "The woman has long greying hair that spills over her shoulders. Her face is slack but strangely serene, eyes fixed toward the obelisk even in death. She shows no obvious external wounds, but there is a fine red speckling clustered at the corners of her eyes and mouth. She wears a white blouse and a tartan skirt, now forever still.",
-    initialDescription: undefined,
-    sceneryDescription:
-      "A woman’s body lies near the obelisk, gaze still locked in its direction.",
-    location: "ParkWest",
-    vocab: ["body", "corpse", "woman"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 60,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
-
   // Mens / Womens room – ELVIS, etc. ----------------------------------------
   {
     id: "ELVIS",

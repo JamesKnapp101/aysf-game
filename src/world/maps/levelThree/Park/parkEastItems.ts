@@ -1,0 +1,83 @@
+import type { Item } from "@game/types/itemTypes";
+import { powerStationKey } from "./parkPowerStationKey";
+
+export const parkEastItems: Item[] = [
+  {
+    id: "ParkEastDomedCeiling",
+    name: "domed ceiling",
+    description: `It's impressive. The effect is very convincing.`,
+    sceneryDescription: `a high domed ceiling does a pretty good approximation of making one feel as though they have just stepped outside.`,
+    location: "ParkEast",
+    vocab: ["ceiling", "dome", "domed", "sky"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ParkEastGrass",
+    name: "park grass",
+    description: `The grass is green, and lush.`,
+    sceneryDescription: `The ground is covered in topsoil which is in turn covered with grass, and gentle slopes have been landscaped in giving it a convincing natural look.`,
+    location: "ParkEast",
+    vocab: ["grass", "ground", "dirt"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ParkEastDistantBuildings",
+    name: "distant buildings",
+    description: `It looks like it's open for business, but you'll need to get closer.`,
+    sceneryDescription: `The park is home to several buildings which can be seen in the distance; to the north you can see a gymnasium, and to the south is what looks like a bar.`,
+    location: "ParkEast",
+    vocab: ["bar", "gym", "gymnasium", "building", "buildings"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "ParkEastDistantObelisk",
+    name: "distant obelisk",
+    description: `Some kind of monument, maybe? It's hard to tell from this distance.`,
+    sceneryDescription: `The park continues west, where a squat obelisk stands above a circle of hedges, and beyond that, several more buildings.`,
+    location: "ParkEast",
+    vocab: ["obelisk", "hedges", "circle"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+  },
+  {
+    id: "OmarkBoutrosCorpse",
+    name: "gross corpse",
+    description: `Most of his body seems to have liquefied, or dissolved, leaving empty, stained clothes behind that look like some kind of gray uniform with yellow stripes. There's a patch over the breast pocket that reads 'BOUTROS'`,
+    sceneryDescription: `[[newline]]Sprawled on the grass at your feet are the remains of a man, though there's not much left of him. Part of each hand remains, peeking out of the sleeves of what appears to be some kind of uniform, and only bloodied sticks of bone stick out from the stained dress shoes.`,
+    location: "ParkEast",
+    vocab: ["remains", "body", "corpse", "uniform", "shoes", "dress"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 5,
+      onTake: `It's kind of a mess, just leave it.`,
+    },
+    itemWeight: 2,
+    itemSize: 3,
+    isContagious: true,
+  },
+  powerStationKey,
+];

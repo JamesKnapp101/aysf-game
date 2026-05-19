@@ -24,7 +24,7 @@ const TRASH_BOT_BIN_FULL_THRESHOLD = 3;
 const TRASH_BOT_BIN_FULL_ANNOUNCEMENT =
   '"Trash collection bin full. Initiating bin emptying sequence."';
 const TRASH_BOT_HIDDEN_DOOR_OPEN_TEXT =
-  "With a soft mechanical whir, a hidden panel slides open, revealing a narrow passage into the tree's interior.";
+  "With a soft mechanical whir, a hidden panel slides open, revealing a narrow passage into the concrete structure.";
 const TRASH_BOT_HIDDEN_DOOR_CLOSE_TEXT =
   "The hidden panel slides shut again.";
 
@@ -370,7 +370,7 @@ function tickTrashBot({
       if (playerRoomId === PARK_MAINTENANCE_ROOM_ID) {
         next = appendLog(
           next,
-          "The trashbot putters through the hidden opening and disappears inside the tree.",
+          "The trashbot putters through the hidden opening and disappears inside the concrete structure.",
         );
       } else if (playerRoomId === PARK_MAINTENANCE_INTERIOR_ROOM_ID) {
         next = appendLog(

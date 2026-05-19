@@ -196,7 +196,7 @@ export const createInitialState = (world: World): GameState => {
           conditionalTriggers: ["TrashBotMaintenanceDoorOpen"],
           direction: "in",
           blockMsg: `You don't see an opening there.`,
-          passMsg: `You slip through the hidden opening in the tree.`,
+          passMsg: `You slip through the hidden opening in the concrete structure.`,
         },
         ParkMaintenanceInterior: {
           roomId: "ParkMaintenanceInterior",
@@ -204,7 +204,7 @@ export const createInitialState = (world: World): GameState => {
           conditionalTriggers: ["TrashBotMaintenanceDoorOpen"],
           direction: "out",
           blockMsg: `The hidden panel is closed.`,
-          passMsg: `You step back out through the hidden opening.`,
+          passMsg: `You step back out through the hidden opening in the concrete structure.`,
         },
         LevelSixCorridorEnd: {
           roomId: "LevelSixCorridorEnd",

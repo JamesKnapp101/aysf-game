@@ -9,7 +9,7 @@ export const movieTheaterRooms: Room[] = [
   {
     id: "MovieEntrance",
     name: "Movie Theatre Entrance",
-    description: `This is the entrance to a small movie theater; glass doors lead into the theater to the northwest, hanging over which is a small marquee with the words 'THE TRIALS OF FRED' spelled out in block lettering. There is a narrow, green metal doorway located to the west, and a bent, green door lying in the grass nearby with the words DO NOT ENTER stenciled on its surface in small white lettering. A tan colored brick-paved path leads southwest into the Park's center.`,
+    description: `This is the entrance to a small movie theater; a pair of glass doors lead into the theater to the northwest, hanging over which is a lit marquee with the words 'OUR JOURNEY HOME: CHAPTER 542' spelled out in block lettering. In the windows are displayed several upcoming movies across a spectrum of genres, as well as a cheerful sign promising candy and popcorn. A tan colored brick-paved path leads southwest toward the towering white obelisk in the Park's center.`,
     exits: [
       { direction: "southeast", toRoomId: "ParkCenter" },
       { direction: "northwest", toRoomId: "MovieTheatreOne" },
