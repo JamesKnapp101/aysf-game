@@ -69,7 +69,8 @@ export type StatusId =
   | "explosive follicle growth"
   | "smarter"
   | "stronger"
-  | "pheromoned";
+  | "pheromoned"
+  | "supercontinent";
 
 export interface StatusEffect {
   id: StatusId;

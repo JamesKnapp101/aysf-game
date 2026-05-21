@@ -1,53 +1,98 @@
 import type { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
 import { movieAuditoriumItems } from "./movieAuditoriumItems";
+import { movieBathroomItems } from "./movieBathroom";
 import { movieEntranceItems } from "./movieEntranceItems";
+import { movieLobbyItems } from "./movieLobbyItems";
 import { movieProjectionItems } from "./movieProjectionItems";
+
+export { MOVIE_THEATER_CHEWABLE_ID } from "./movieBathroom";
+export {
+  MOVIE_THEATER_AUDITORIUM_ROOM_IDS,
+  getMovieTheaterMovieLine,
+  isMovieTheaterAuditoriumRoom,
+} from "./movieTheaterMovie";
 
 export const movieTheaterRooms: Room[] = [
   // MOVIE THEATRE
   {
     id: "MovieEntrance",
-    name: "Movie Theatre Entrance",
-    description: `This is the entrance to a small movie theater; a pair of glass doors lead into the theater to the northwest, hanging over which is a lit marquee with the words 'OUR JOURNEY HOME: CHAPTER 542' spelled out in block lettering. In the windows are displayed several upcoming movies across a spectrum of genres, as well as a cheerful sign promising candy and popcorn. A tan colored brick-paved path leads southwest toward the towering white obelisk in the Park's center.`,
+    name: "Movie Theater Entrance",
+    description: `This is the entrance to a small movie theater. [[SCENERY]]`,
     exits: [
       { direction: "southeast", toRoomId: "ParkCenter" },
-      { direction: "northwest", toRoomId: "MovieTheatreOne" },
+      { direction: "northwest", toRoomId: "MovieTheaterLobby" },
       { direction: "southwest", toRoomId: "ParkWest" },
       { direction: "east", toRoomId: "ParkNorth" },
       { direction: "south", toRoomId: "ParkMaintenance" },
-      // { direction: "up", toRoomId: "Projection" },
     ],
   },
   {
     id: "Projection",
-    name: "Projector Room",
-    description: `This is the movie theater's projection room, a small, cozy area which looks to have been torn to shreds; The remains of what looks like a wooden chair lies in pieces and the walls and floor have been gouged with what look like deep claw marks. A trail of dried blood heads in the direction of the door then peters out. There is a small window which overlooks the movie theater below, and the projector, looking a bit battered, stares out through this window, the lens dark.`,
-    exits: [
-      //   { direction: "east", toRoomId: "MovieEntrance" },
-      { direction: "west", toRoomId: "MovieTheatreOne" },
-    ],
+    name: "Movphitheater: Projector Room",
+    description: `The theater's projection room is less glamorous than the show it controls. [[SCENERY]]`,
+    exits: [{ direction: "west", toRoomId: "MovieTheaterLobby" }],
   },
   {
-    id: "MovieTheatreOne",
-    name: "Movie Theatre",
-    description: `This is a small lobby where tickets are purchased and dispensed...it looks like kind of a no-frills affair; there's no candy counter or anything, just a glass partition where a ticket seller might stand. A doorway leads southeast out of the theatre, and wide doorway opens up into the main theatre to the north.`,
+    id: "MovieTheaterLobby",
+    name: "Movphitheater: Lobby",
+    description: `The theater lobby is roomy, with cream colored walls, dark wood trim, and spotless maroon carpet. [[SCENERY]]`,
     exits: [
       { direction: "southeast", toRoomId: "MovieEntrance" },
-      { direction: "north", toRoomId: "MovieTheatreTwo" },
+      { direction: "north", toRoomId: "MovieTheaterA" },
       { direction: "east", toRoomId: "Projection" },
+      { direction: "west", toRoomId: "MovieTheaterBathroom" },
     ],
   },
   {
-    id: "MovieTheatreTwo",
-    name: "Movie Theatre",
-    description: `You are standing at the back of two rows of movie theatre seats which are separated by a center aisle. The movie screen, now lit up with a flat, white light, looms before you to the north.`,
-    exits: [{ direction: "south", toRoomId: "MovieTheatreOne" }],
+    id: "MovieTheaterBathroom",
+    name: "Movphitheater: Rest Room",
+    description: `The theater bathroom is large, bright, and quiet enough that every drip feels rehearsed. [[SCENERY]]`,
+    exits: [{ direction: "east", toRoomId: "MovieTheaterLobby" }],
+  },
+  {
+    id: "MovieTheaterA",
+    name: "Movphitheater: Quadrant A",
+    description: `This is the southwestern quadrant of the arena. [[SCENERY]]`,
+    exits: [
+      { direction: "south", toRoomId: "MovieTheaterLobby" },
+      { direction: "north", toRoomId: "MovieTheaterB" },
+      { direction: "east", toRoomId: "MovieTheaterD" },
+    ],
+  },
+  {
+    id: "MovieTheaterB",
+    name: "Movphitheater: Quadrant B",
+    description: `This is the northwestern quadrant of the arena. [[SCENERY]]`,
+    exits: [
+      { direction: "south", toRoomId: "MovieTheaterA" },
+      { direction: "east", toRoomId: "MovieTheaterC" },
+    ],
+  },
+  {
+    id: "MovieTheaterC",
+    name: "Movphitheater: Quadrant C",
+    description: `This is the northeastern quadrant of the arena. [[SCENERY]]`,
+    exits: [
+      { direction: "south", toRoomId: "MovieTheaterD" },
+      { direction: "west", toRoomId: "MovieTheaterB" },
+    ],
+  },
+  {
+    id: "MovieTheaterD",
+    name: "Movphitheater: Quadrant D",
+    description: `This is the southeastern quadrant of the arena. [[SCENERY]]`,
+    exits: [
+      { direction: "north", toRoomId: "MovieTheaterC" },
+      { direction: "west", toRoomId: "MovieTheaterA" },
+    ],
   },
 ];
 
 export const movieTheaterItems: Item[] = [
   ...movieEntranceItems,
+  ...movieLobbyItems,
+  ...movieBathroomItems,
   ...movieProjectionItems,
   ...movieAuditoriumItems,
 ];

@@ -2,60 +2,82 @@ import type { Item } from "@game/types/itemTypes";
 
 export const movieEntranceItems: Item[] = [
   {
-    id: "GreenDoorway",
-    name: "doorway",
+    id: "MovieEntranceGlassDoors",
+    name: "glass doors",
     description:
-      "A wide doorway framed in dull metal. Just beyond, you can see a flight of steps leading up into deeper shadow.",
+      "A pair of glass doors lead northwest into the theater lobby. The panes are clean enough to reflect the marquee glow in bright, wobbling streaks.",
     sceneryDescription:
-      "The doorway feels like a mouth cut into the wall, the edges scuffed where countless shoulders and packages have brushed past. The steps beyond rise at a shallow angle, the first few visible, the rest swallowed by dim light and whatever waits upstairs.",
+      "A pair of glass doors lead into the theater to the northwest,",
     location: "MovieEntrance",
-    vocab: ["doorway", "steps", "stairs"],
+    vocab: ["door", "doors", "glass", "glass doors", "entrance"],
     itemClass: "solid",
     itemCategory: "scenery",
-    itemWeight: 10,
-    itemSize: 4,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
-  {
-    id: "GreenDoor",
-    name: "green door",
-    description:
-      "The metal door has been physically bent inward and is marred with deep claw marks, as if something wanted in badly enough to ignore metallurgy.",
-    sceneryDescription:
-      "The door’s green paint is scraped and flaked away in long arcs, exposing bright metal beneath. The panel itself is warped, buckled around the frame in a way that suggests brute force rather than tools. The claw marks stand out clearly—long, parallel gouges that dig into the steel like it was soft pine.",
-    location: "MovieEntrance",
-    vocab: ["green", "twisted", "bent", "door"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 60,
-    itemSize: 5,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    overrides: {
-      open: "The door’s already been “opened” the hard way. You’re not going to improve the situation with your bare hands.",
-      examine:
-        "Up close, the buckling around the frame is even worse. Whatever bent this wasn’t subtle, and it definitely wasn’t human.",
+    itemWeight: 120,
+    itemSize: 8,
+    meta: {
+      sceneryDescriptionOrder: 1,
     },
   },
   {
-    id: "DistMarquee3",
-    name: "marquee",
+    id: "MovieEntranceMarquee",
+    name: "lit marquee",
     description:
-      "A theater marquee juts out over the entrance, the face of it filled with block lettering for the last movie that ever mattered here.",
+      "The marquee's block letters advertise a film called 'OUR JOURNEY HOME: CHAPTER 542'. A couple of letters sit a little crooked in their tracks.",
     sceneryDescription:
-      "The lightbox hums faintly, its translucent panels stained with the ghosts of older titles. Black plastic letters slot into narrow tracks, forming a title in clean, utilitarian capitals. A couple of characters are crooked, giving the whole thing a slightly drunk tilt.",
+      "hanging over which is a lit marquee with the words 'OUR JOURNEY HOME: CHAPTER 542' spelled out in block lettering.",
     location: "MovieEntrance",
-    vocab: ["marquee", "block", "lettering"],
+    vocab: ["marquee", "lit marquee", "letters", "lettering", "movie title"],
     itemClass: "solid",
     itemCategory: "scenery",
-    itemWeight: 15,
-    itemSize: 5,
-    isWearable: false,
+    itemWeight: 30,
+    itemSize: 6,
     isReadable: true,
-    readableText: "NOW PLAYING: JEFFY AND PIPPY: STRAIGHT UP THE WALL",
-    isContainer: false,
+    readableText: "NOW PLAYING: OUR JOURNEY HOME: CHAPTER 542",
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+  },
+  {
+    id: "MovieEntrancePosterWindows",
+    name: "poster windows",
+    description:
+      "The display windows hold upcoming movie posters across a suspiciously complete spectrum of genres: romance, disaster, courtroom drama, erotic submarine thriller, and a children's cartoon whose mascot is winking too hard.",
+    sceneryDescription:
+      "In the windows are displayed several upcoming movies across a spectrum of genres, as well as a cheerful sign promising candy and popcorn.",
+    location: "MovieEntrance",
+    vocab: [
+      "window",
+      "windows",
+      "poster",
+      "posters",
+      "upcoming movies",
+      "sign",
+      "candy",
+      "popcorn",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 10,
+    itemSize: 5,
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+  },
+  {
+    id: "MovieEntranceBrickPath",
+    name: "brick-paved path",
+    description:
+      "The tan bricks are laid in a careful herringbone pattern, scuffed pale where park traffic has crossed and recrossed the theater entrance.",
+    sceneryDescription:
+      "A tan colored brick-paved path leads southwest toward the towering white obelisk in the Park's center.",
+    location: "MovieEntrance",
+    vocab: ["path", "brick", "bricks", "brick-paved", "obelisk"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 500,
+    itemSize: 10,
+    meta: {
+      sceneryDescriptionOrder: 4,
+    },
   },
 ];

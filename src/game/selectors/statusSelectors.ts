@@ -61,6 +61,7 @@ const STATUS_EFFECT_LABELS: Record<
   smokeInhalation: { icon: "droplet", name: "Smoke Inhalation" },
   smarter: { icon: "brain", name: "Smarter" },
   stronger: { icon: "bolt", name: "Stronger" },
+  supercontinent: { icon: "droplet", name: "Supercontinent" },
   hyperaroused: { icon: "droplet", name: "Hyperaroused" },
   trixophine: { icon: "spiral", name: "Trixophine" },
   vanitrax: { icon: "cross", name: "Vanitrax" },
@@ -349,6 +350,8 @@ function describeStatusEffect(
       return "Your mind...it's full of stars...";
     case "stronger":
       return "You STRONG.";
+    case "supercontinent":
+      return "Your bladder feels geologically stable.";
     case "nightvision-active": {
       const currentRoom = getCurrentRoom(state);
       return state.worldState.darkRooms[currentRoom.id]

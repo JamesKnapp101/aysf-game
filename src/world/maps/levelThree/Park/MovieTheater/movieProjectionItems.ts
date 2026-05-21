@@ -2,89 +2,61 @@ import type { Item } from "@game/types/itemTypes";
 
 export const movieProjectionItems: Item[] = [
   {
-    id: "bloodytrail",
-    name: "trail of blood",
+    id: "MovieProjectionPortal",
+    name: "circular portal",
     description:
-      "A dried trail of blood snakes across the floor. There are no footprints, just smeared and pooled patches, as if something was carried instead of walking on its own.",
+      "The circular portal looks out over the auditorium dome. Through it you can see the suspended projector sphere turning with patient mechanical grace.",
     sceneryDescription:
-      "The blood has turned a dark, rusted brown, clinging to the floor in uneven streaks and blotches. In places it’s smeared wide, as if a weight shifted mid-carry; in others it pools in small, round stains where something dripped steadily for a while. The lack of footprints makes it worse—whoever bled like this wasn’t ambulatory.",
+      "It does not contain the actual projector, but it does offer a view of it through a circular portal.",
     location: "Projection",
-    vocab: ["blood", "trail", "dried"],
-    itemClass: "liquid",
+    vocab: ["portal", "circular portal", "window", "view", "projector"],
+    itemClass: "solid",
     itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
+    itemWeight: 80,
+    itemSize: 5,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
     overrides: {
-      smell:
-        "Up close it has that stale, metallic tang that blood gets when it’s had time to oxidize and disappoint everyone involved.",
-      taste:
-        "You lean in like you’re actually going to taste it, then decide you like being alive too much. Good call.",
+      lookthrough:
+        "Through the circular portal you can see the projector sphere hanging at the peak of the dome, its tiny lenses shifting as the movie spills across the auditorium.",
     },
   },
   {
-    id: "clawsmarks",
-    name: "claw marks",
+    id: "MovieProjectionSphere",
+    name: "projector sphere",
     description:
-      "Deep claw marks rip through the surfaces here, grouped in sets of six. The claws must have been long and extremely sharp to leave gouges like that.",
+      "The projector itself is a large, intricate sphere covered in tiny glistening lenses and LEDs. It hangs suspended at the peak of the dome, always moving, always stitching the movie together out of light.",
     sceneryDescription:
-      "The gouges bite straight through paint and panel, exposing raw material underneath in six-fingered arcs. Some lines overlap where the creature—or creatures—changed direction mid-swipe, leaving tangled clusters of scars. The geometry doesn’t match anything you’d find in a friendly field guide.",
+      "The projector itself looks like a large, intricate sphere covered in tiny, glistening lenses and LEDs that hangs suspended at the peak of the dome covering the circular theater, and as the movie plays the surface is in constant motion as it projects the intricate light show beneath it.",
     location: "Projection",
-    vocab: ["claw", "marks", "gouges"],
+    vocab: ["sphere", "projector sphere", "projector", "lenses", "leds"],
     itemClass: "solid",
     itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    overrides: {
-      examine:
-        "You trace the air above the gouges with your fingers. Whatever made these didn’t bother negotiating first.",
+    itemWeight: 200,
+    itemSize: 8,
+    meta: {
+      sceneryDescriptionOrder: 2,
     },
   },
   {
-    id: "brokenchairs",
-    name: "wooden debris",
+    id: "MovieProjectionConsole",
+    name: "projection console",
     description:
-      "Splintered wood and twisted hardware litter the floor. At one point it was a chair; now it’s kindling.",
+      "The console occupies one corner, its controls labeled with theater jargon and small warning stickers. A folding chair sits behind it for whoever used to keep the show running.",
     sceneryDescription:
-      "Jagged lengths of varnished wood jut out at random angles, some still attached to bent metal brackets and torn upholstery. The way the pieces are scattered suggests violence, not simple decay—someone or something hit the chair hard enough to turn it into abstract art.",
+      "The booth itself is a little cramped. There is a console in one corner with a folding chair behind it for one person to man it, though it does not look like anyone has been here for a while.",
     location: "Projection",
-    vocab: ["wooden", "chair", "debris", "splinters"],
+    vocab: ["console", "controls", "chair", "folding chair", "booth"],
     itemClass: "solid",
     itemCategory: "scenery",
-    itemWeight: 5,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    overrides: {
-      siton:
-        "You could try to sit in the debris pile, but mostly you’d just collect splinters and regrets.",
+    itemWeight: 90,
+    itemSize: 5,
+    meta: {
+      sceneryDescriptionOrder: 3,
     },
-  },
-  {
-    id: "MovieCartrage",
-    name: "slim cartridge",
-    description:
-      "A slim movie cartridge about the size of a business card and almost as thin. A label on one side bears a stylized logo: “Jeffey and Pippy: Stright Up The Wall.” The cartridge has been bent almost in half.",
-    sceneryDescription:
-      "The cartridge’s casing is a smooth, matte plastic, now creased with a sharp kink where someone folded it past its tolerance. The printed logo is bright and cartoonish, all exaggerated fonts and cheerful colors that feel wildly out of place here.",
-    location: "projector",
-    vocab: ["slim", "cartridge", "movie", "fred"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: true,
-    isContainer: false,
-    readableText: "Jeffey and Pippy: Stright Up The Wall",
     overrides: {
-      take: "You pick up the bent cartridge.",
+      use: "The console is active, but whatever it is doing to keep the movie running is already doing it without you.",
     },
   },
 ];

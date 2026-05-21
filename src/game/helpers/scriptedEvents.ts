@@ -5,6 +5,7 @@ import {
   markBarBotSawPlayerEnterCellar,
   shouldBarBotAcknowledgeReturnedFromCellarDeath,
 } from "@game/helpers/barBotAwareness";
+import { movieTheaterScriptedEvents } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterEvents";
 import {
   moveGymExerciseBallToRoom,
   playerHasGymExerciseBall,
@@ -31,6 +32,7 @@ function runParkEastPowerKeySnatch(state: Parameters<ScriptedEvent["run"]>[0]) {
 }
 
 export const SCRIPTED_EVENTS: ScriptedEvent[] = [
+  ...movieTheaterScriptedEvents,
   {
     id: "barbot_saw_cellar_entry",
     once: false,
