@@ -39,7 +39,7 @@ export const barSeededItems: Item[] = [
     id: BAR_CONTRABAND_ID,
     name: "small wrapped package",
     description:
-      "It's a small package of some sort, no bigger than a deck of cards, wrapped tightly in paper. Written on the paper in ink is the name 'Yolonope'.",
+      "It's a small package of some sort, no bigger than a deck of cards, wrapped tightly in paper. Written on the paper in ink is the name 'Volonope'.",
     location: "seeded",
     vocab: ["package", "packet", "paper"],
     itemClass: "solid",
@@ -56,9 +56,9 @@ export const barSeededItems: Item[] = [
     id: FAKE_ID_ID,
     name: "fake ID",
     description:
-      "It's a fake ID, a good fake, but still a fake. The information on it is for Yolonope Fick. It has her current living quarters on level two, Rotation K",
+      "It's a fake ID, a good fake, but still a fake. The information on it is for Volonope Fick. It has her current living quarters on level two, Rotation K",
     location: "seeded",
-    vocab: ["fake", "id", "yolonope id"],
+    vocab: ["fake", "id", "Volonope id"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1000,

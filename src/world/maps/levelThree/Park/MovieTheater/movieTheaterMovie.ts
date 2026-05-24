@@ -85,7 +85,7 @@ export const MOVIE_THEATER_MOVIE_SEGMENTS: MovieSegment[] = [
     stages: [
       `"Alas, not all the news was good. With every sunrise there is a sunset, so before we go let's take a moment to remember some that we've lost some along the way, too..."`,
       `"A heartfelt farewell to our citizens Xi-Xi Bo, Omark Boulos, Mistopher Breen, Joelson Dend, Daschent Dwong, Mox Eegler, Shanny Fibsen..."`,
-      `"...Yolonope Fick, Inck Glassbool, Ernwith Gob, Grag Jen-Chwen, Sillith LeSconce, Ga-Ga Liz-Sotte, Crenchford Mothworthy..."`,
+      `"...Volonope Fick, Inck Glassbool, Ernwith Gob, Grag Jen-Chwen, Sillith LeSconce, Ga-Ga Liz-Sotte, Crenchford Mothworthy..."`,
       `"...Isosceles Onche, Orgrill Pinthwell, Lil-Lily Tendwick, Dizzy Tsoukann, Gim Sanyi One, Gim Sanyi Two, Gim Sanyi Three..."`,
       `"...Edwardix Shen, Slandry Tex-Mex, Henk Umboltz, Greeg Umboltz, Matthias Venn, Buglous Wimbly, Woo-Zhangk Woo..."`,
     ],
