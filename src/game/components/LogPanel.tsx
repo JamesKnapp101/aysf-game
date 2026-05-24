@@ -56,31 +56,50 @@ function applyCRTColor(colorHex: string) {
 
 function renderLogLine(line: string) {
   const parts: React.ReactNode[] = [];
+  const tokens = [
+    {
+      className: "log-room-name",
+      close: "[[/ROOM_NAME]]",
+      open: "[[ROOM_NAME]]",
+    },
+    {
+      className: "log-movie-stage",
+      close: "[[/MOVIE_STAGE]]",
+      open: "[[MOVIE_STAGE]]",
+    },
+  ];
 
   let rest = line;
   while (true) {
-    const start = rest.indexOf("[[ROOM_NAME]]");
-    if (start === -1) {
+    const match = tokens
+      .map((token) => ({ ...token, start: rest.indexOf(token.open) }))
+      .filter((token) => token.start !== -1)
+      .sort((a, b) => a.start - b.start)[0];
+
+    if (!match) {
       parts.push(rest);
       break;
     }
 
-    const end = rest.indexOf("[[/ROOM_NAME]]", start);
+    const end = rest.indexOf(match.close, match.start);
     if (end === -1) {
       parts.push(rest);
       break;
     }
 
-    if (start > 0) parts.push(rest.slice(0, start));
+    if (match.start > 0) parts.push(rest.slice(0, match.start));
 
-    const roomText = rest.slice(start + 13, end);
+    const markedText = rest.slice(match.start + match.open.length, end);
     parts.push(
-      <span className="log-room-name" key={parts.length}>
-        {roomText}
+      <span className={match.className} key={parts.length}>
+        {markedText}
       </span>,
     );
 
-    rest = rest.slice(end + 14);
+    rest = rest.slice(end + match.close.length);
+    if (match.className === "log-movie-stage" && /^\s*$/.test(rest)) {
+      rest = "\n";
+    }
   }
 
   return <>{parts}</>;

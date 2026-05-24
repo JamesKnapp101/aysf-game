@@ -6,11 +6,10 @@ export const stairwellDoors: DoorDefinition[] = [
     name: "stairwell access door",
     descriptionFromA:
       "There is a door to the west with the words 'COMMUNITY/MEDICAL' printed on it and mounted over it is a plastic sign labeled '2'.",
-    descriptionFromB:
-      "To the east is a plain metal door labeled 'STAIRS', warped, and marred with soot.",
+    descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
     kind: "standard",
     vocab: ["door"],
-    connects: { roomAId: "StairTwo", roomBId: "DestroyedCorridor" },
+    connects: { roomAId: "StairTwo", roomBId: "LevelTwoStairAccess" },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: true,
     initiallyLocked: false,

@@ -3,7 +3,10 @@ import {
   tellNpc,
   tellRadioDevice,
 } from "@game/helpers/conversationHelpers";
-import { applyRegisteredTellRewards } from "@game/registries/actionInteractionRegistry";
+import {
+  applyRegisteredTellRewards,
+  handleRegisteredTellAction,
+} from "@game/registries/actionInteractionRegistry";
 import { normalizeTopic } from "@game/rules/scope";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { ConversationTarget } from "@game/types/npcTypes";
@@ -15,6 +18,9 @@ export async function tryTell(
   topicRaw: string,
 ): Promise<ActionResult> {
   const topic = normalizeTopic(topicRaw, target);
+
+  const registered = handleRegisteredTellAction(state, target, topic);
+  if (registered) return registered;
 
   if (target.kind === "npc") {
     const result = await tellNpc(state, target.npc, topic, target.via);

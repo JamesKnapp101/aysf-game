@@ -1,4 +1,5 @@
 import { isItemUseable, setItemDoses } from "@game/rules/items";
+import { applyRegisteredUseItemEffects } from "@game/registries/useItemEffectRegistry";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
@@ -25,7 +26,7 @@ export function tryUseItem(
   let next = state;
   let baseMsg = "";
   // This is for things that are usable and also have doses, like the vape pen
-  if (item.doses) {
+  if (item.doses != null) {
     const doses = item.doses ?? 0;
     if (doses <= 0) {
       const msg =
@@ -56,8 +57,12 @@ export function tryUseItem(
     next = setItemDoses(next, item.id, newDoses);
   }
 
-  return {
-    state: next,
-    message: baseMsg || "You have a fiddle.",
-  };
+  const message = baseMsg || "You have a fiddle.";
+  const registeredEffect = applyRegisteredUseItemEffects(next, item, {
+    baseMessage: message,
+    cmd,
+    preUseState: state,
+  });
+
+  return registeredEffect ?? { state: next, message };
 }

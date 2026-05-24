@@ -124,6 +124,13 @@ export const NPCS: Record<string, ConversationNpc> = {
     aiEnabled: true,
     characterProfileId: "master_of_drink",
   },
+  MoxTheater: {
+    id: "MoxTheater",
+    name: "The moviegoer",
+    vocab: ["man", "guy", "falling", "mox", "eegler"],
+    aiEnabled: true,
+    characterProfileId: "mox_movie_theater",
+  },
 };
 
 export function getNpcById(npcId?: string): ConversationNpc | undefined {

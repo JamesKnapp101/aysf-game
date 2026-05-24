@@ -260,13 +260,24 @@ export const movieAuditoriumItems: Item[] = [
     sceneryDescription:
       "A trail of slime reveals the head to have rolled to the next tier down, where it stares up at you with blank eyes from where it got wedged next to an aisle seat.",
     location: "MovieTheaterD",
-    vocab: ["head", "severed head", "slime", "aisle seat", "blank eyes"],
+    vocab: [
+      "corpse",
+      "head",
+      "severed head",
+      "slime",
+      "aisle seat",
+      "blank eyes",
+    ],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 10,
     itemSize: 2,
     meta: {
       sceneryDescriptionOrder: 4,
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "mox_movie_memory",
+      },
     },
   },
 ];

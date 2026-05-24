@@ -5,6 +5,7 @@ import { crushedWeightlifterGymItems } from "src/world/Items/creatures/virtual/c
 import { inckGlassboolItems } from "src/world/Items/creatures/virtual/inckGlassboolBarBasement";
 import { lilLillyCorridorThreeItems } from "src/world/Items/creatures/virtual/lilLillyCorridorThree";
 import { masterOfDrinkItems } from "src/world/Items/creatures/virtual/masterOfDrink";
+import { moxMovieTheaterItems } from "src/world/Items/creatures/virtual/moxMovieTheater";
 import { moxStairBottomItems } from "src/world/Items/creatures/virtual/moxStairBottom";
 import { spinInstructorSpinStageItems } from "src/world/Items/creatures/virtual/spinInstructorSpinStage";
 import { barBotItems } from "src/world/Items/robots/barBot";
@@ -107,6 +108,7 @@ export const LEVEL_THREE: WorldChunk = {
     ...nailBotItems,
     ...doomedChefItems,
     ...moxStairBottomItems,
+    ...moxMovieTheaterItems,
     ...lilLillyCorridorThreeItems,
     ...crushedWeightlifterGymItems,
     ...spinInstructorSpinStageItems,

@@ -136,6 +136,11 @@ export interface BarJukeboxState {
   activeTrack?: BarJukeboxActiveTrackState;
 }
 
+export interface MovieTheaterState {
+  bathroomSmokiness: number;
+  usherBotBathroomTurnsRemaining: number;
+}
+
 export interface GameUiState {
   cometPersonality: CometPersonalityMode;
   cometTextSize: CometTextSizeMode;
@@ -440,6 +445,7 @@ export interface WorldState {
   hydroponicsSpider: HydroponicsSpiderState;
   mensLockerContents: LockerContents<MensLockerId>;
   mensLockersOpened: LockerOpenedState<MensLockerId>;
+  movieTheater: MovieTheaterState;
   npcSecrets: Record<string, NpcSecretState>; // Track NPC secret states by NPC ID
   octopusState: OctopusState;
   pendingNarration?: PendingNarration;

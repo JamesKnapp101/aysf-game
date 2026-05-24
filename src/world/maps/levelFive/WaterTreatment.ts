@@ -1,6 +1,7 @@
 import { Room } from "@game/types/roomTypes";
 
 export const waterTreatmentRooms: Room[] = [
+  // I've set up that Isosceles Onche barricaded herself in and they unsuccessfully attempted to cut their way in
   {
     id: "WaterTreatment",
     name: "Water Treatment: Entrance",

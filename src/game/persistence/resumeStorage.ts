@@ -106,10 +106,19 @@ function applySerializedWorldItems(
   const mergedItems = world.items.map((item) => {
     const saved = savedById.get(item.id);
     if (!saved) return item;
-    return {
+    const mergedItem = {
       ...item,
       ...(saved as Partial<Item>),
     };
+
+    if (item.overrides || saved.overrides) {
+      mergedItem.overrides = {
+        ...item.overrides,
+        ...((saved as Partial<Item>).overrides ?? {}),
+      };
+    }
+
+    return mergedItem;
   });
 
   const extraItems = activeSavedItems

@@ -20,6 +20,7 @@ import {
   mergeWorldChunks,
   type WorldChunkId,
 } from "../world/World";
+import { createInitialMovieTheaterState } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 import {
   INITIAL_CONTAINER_CONTENTS,
   INITIAL_SURFACE_CONTENTS,
@@ -465,6 +466,7 @@ export const createInitialState = (world: World): GameState => {
         sawPlayerRegenerateInBar: false,
       },
       barJukebox: {},
+      movieTheater: createInitialMovieTheaterState(),
       bullEncounter: createInitialBullEncounterState(),
       gamePreserve: {
         completedDifficulties: {},

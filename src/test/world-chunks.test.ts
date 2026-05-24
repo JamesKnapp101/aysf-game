@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { deriveRoomCoordMaps } from "../game/helpers/coordHelpers";
 import { createInitialState, mergeWorldChunkIntoState } from "../game/gameInit";
+import { LEVEL_TWO } from "../world/maps/levelTwo/LevelTwo";
+import { STAIRWELL } from "../world/maps/Stairwell";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
   INITIAL_WORLD,
@@ -18,5 +21,32 @@ describe("world chunk loading", () => {
       }).not.toThrow();
       expect(state.world.meta?.loadedChunkIds).toContain(chunkId);
     }
+  });
+
+  it("keeps the level two stairwell access door bidirectional", () => {
+    const roomIds = new Set([
+      "StairTwo",
+      "LevelTwoStairAccess",
+      "LevelTwoBurnedArea",
+    ]);
+    const rooms = [...STAIRWELL.rooms, ...LEVEL_TWO.rooms].filter((room) =>
+      roomIds.has(room.id),
+    );
+    const doors = STAIRWELL.doors.filter((door) => door.id === "StairDoorTwo");
+
+    const maps = deriveRoomCoordMaps(rooms, doors, "StairTwo", {
+      allowAnchorFallback: false,
+    });
+
+    expect(maps.coordByRoomId.LevelTwoStairAccess).toEqual({
+      x: -1,
+      y: 0,
+      z: 0,
+    });
+    expect(maps.coordByRoomId.LevelTwoBurnedArea).toEqual({
+      x: -2,
+      y: 0,
+      z: 0,
+    });
   });
 });

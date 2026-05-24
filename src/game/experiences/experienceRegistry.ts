@@ -57,6 +57,7 @@ type ExperienceDefinition = {
   transitionMessage?: string;
 };
 
+const MOX_MOVIE_MEMORY_ROOM_ID = "TheaterCorpseMemory";
 const HALVED_CORPSE_MEMORY_ROOM_ID = "HalvedCorpseMemory";
 const LIL_LILLY_MEMORY_NPC_ID = "LilLillyCorridorThree";
 const SPIN_INSTRUCTOR_MEMORY_ROOM_ID = "SpinInstructorSpinStageMemory";
@@ -340,6 +341,31 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
     ],
     startMessage:
       "The final drink joins the others and acts as the final component in some sort of reaction that you feel rush up into your head like the froth from a freshly popped beer can, and something behind your eyes unlocks with a soft little click. The bar lights smear sideways, the music bends into a spiral, and the world around you twists into something else entirely...",
+  },
+  mox_movie_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The theater snaps back into place around you.",
+    completeMessage: `A second later something rushes past you, you can't see it in the dark but it feels large, and heavy, but nearly silent. It impacts the man with a bone rattling thud and in the darkness you hear something between a scream and a gasp. When the movie resumes and lights the theater again, the man is gone, leaving only a pile of skin plastered to the floor as his head rolls away.`,
+    id: "mox_movie_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 5,
+        events: [
+          {
+            atElapsedTurns: 4,
+            id: "blackout",
+            message: `\nThe movie transitions, fading to black between scenes and leaving the entire theater in darkness. A moment later you hear movement from several different directions.\n\n"Damnit!" you hear him hiss, and it sounds like he's frantically checking his inventory. "Need light, need light, need light..."`,
+            run: (state) => {
+              let next = setRoomDarkness(state, MOX_MOVIE_MEMORY_ROOM_ID, true);
+              return next;
+            },
+          },
+        ],
+        roomId: MOX_MOVIE_MEMORY_ROOM_ID,
+      },
+    ],
+    startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe hallway peels away as the memory takes hold...`,
   },
 };
 

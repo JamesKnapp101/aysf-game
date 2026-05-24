@@ -48,6 +48,12 @@ export const experienceRooms: Room[] = [
     description: "",
     exits: [],
   },
+  {
+    id: "TheaterCorpseMemory",
+    name: "Memory: Movphitheater: Quadrant D",
+    description: `This is the southeastern quadrant of the arena. Rows of reclining, cushioned seats are arranged in curved, tiered rows. The chairs are upholstered in soft leather, and positioned for a perfect view of the light show playing out above. From this position you see one side of some kind of massive vessel the size of a city hanging suspended in the void above, displaying what might be the rear of the ship where an array of what look like massive engines are mounted.`,
+    exits: [],
+  },
 ];
 
 export const experienceRoomsItems: Item[] = [

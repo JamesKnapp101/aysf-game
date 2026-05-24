@@ -11,8 +11,10 @@ import {
 import { setItemDoses, updateItemLocation } from "@game/rules/items";
 import type { Item } from "@game/types/itemTypes";
 import { INITIAL_WORLD, loadWorldChunk } from "../world/World";
+import { MOVIE_THEATER_CHEWABLE_ID } from "../world/maps/levelThree/Park/MovieTheater";
 import {
   createTestState,
+  expectInventoryToContain,
   getLastLogEntry,
   runCommand,
 } from "./helpers/gameTestHelpers";
@@ -119,7 +121,40 @@ describe("resume storage", () => {
       typeof next.world.items.find((item) => item.id === "TrashBotBin")
         ?.describeLookThrough,
     ).toBe("function");
+    expect(
+      typeof next.world.items.find((item) => item.id === "MovieBathroomDispenser")
+        ?.overrides?.turn,
+    ).toBe("function");
     expect(typeof next.rng).toBe("function");
+
+    clearResumeSnapshot();
+  });
+
+  it("restores turn overrides for JSON-saved world items", async () => {
+    let state = createInitialState(INITIAL_WORLD);
+    const levelThree = await loadWorldChunk("level-three");
+    state = mergeWorldChunkIntoState(state, "level-three", levelThree);
+    state = {
+      ...state,
+      player: {
+        ...state.player,
+        roomId: "MovieTheaterBathroom",
+      },
+    };
+
+    saveResumeSnapshot(state);
+
+    const restored = await restoreResumeSnapshot();
+    expect(restored).not.toBeNull();
+
+    const dispensed = await runCommand(restored!, "turn crank");
+
+    expect(getLastLogEntry(dispensed)).toContain(
+      "drops a wrapped chewable into your hand",
+    );
+    expect(expectInventoryToContain(dispensed, MOVIE_THEATER_CHEWABLE_ID)).toBe(
+      true,
+    );
 
     clearResumeSnapshot();
   });

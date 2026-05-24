@@ -116,4 +116,37 @@ export const movieLobbyItems: Item[] = [
       sceneryDescriptionOrder: 5,
     },
   },
+  {
+    id: "MovieLobbyPedalTrashBin",
+    name: "pedal trash bin",
+    description:
+      "It's a brushed metal pedal bin with a tight-fitting lid and a little foot lever at the base.",
+    sceneryDescription:
+      "A brushed metal pedal trash bin sits neatly beside the auditorium doors.",
+    location: "MovieTheaterLobby",
+    vocab: [
+      "bin",
+      "trash",
+      "trash bin",
+      "trashcan",
+      "trash can",
+      "garbage",
+      "garbage can",
+      "pedal bin",
+      "pedal trash bin",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 12,
+    itemSize: 4,
+    isContainer: true,
+    isOpenable: true,
+    capacity: 6,
+    meta: {
+      contentsAccessibleWhenClosed: false,
+      contentsAccessMessage:
+        "The lid is closed. You'll need to open the trash bin first.",
+      sceneryDescriptionOrder: 6,
+    },
+  },
 ];

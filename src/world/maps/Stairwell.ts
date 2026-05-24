@@ -140,21 +140,10 @@ export const STAIRWELL: WorldChunk = {
       ],
     },
     {
-      id: "DestroyedCorridor",
-      name: "Destroyed Corridor",
-      description:
-        "This area has been almost completely destroyed; almost as soon as you enter you are confronted with a wall of twisted debris which blocks all further progress west, and what remains of the corridor has been completely burned, the walls, floor, and ceiling black with soot. You can just make out one corner of a set of elevator doors, visible at the edge of the debris where they've twisted off their track. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
-      exits: [{ direction: "east", doorId: "StairDoorTwo" }],
-    },
-    {
       id: "LevelTwoStairAccess",
       name: "Level Two Stair Access",
-      description:
-        "This is a small lobby area for accessing an elevator, or what's left of it; something has caused a huge buckle in the deck here, preventing any further movement to the east, and the entire area has been gutted by an intense fire. Every surface is covered in black carbon and a burnt stench lingers in the air. There is a set of elevator doors lying askew against the pile of debris to the east, and the doorway gapes open to the north where you can see rungs are mounted leading up and down. Next to the opening is a call button, covered in soot, and above the opening is an LCD display which has been fused into an opaque blob by the heat. The lobby has an exit to the west.",
-      exits: [
-        { direction: "west", toRoomId: "LevelTwoBurnedArea" },
-        { direction: "north", toRoomId: "ShaftTwo" },
-      ],
+      description: `You are standing in a dimly lit lobby with an arched ceiling and a tiled floor the color of unpolished ivory. [[SCENERY]]`,
+      exits: [{ direction: "east", doorId: "StairDoorTwo" }],
     },
     {
       id: "LevelThreeStairAccess",
@@ -277,6 +266,55 @@ export const STAIRWELL: WorldChunk = {
 };
 
 export const stairwellItems: Item[] = [
+  {
+    id: "levelTwoElevators",
+    name: "elevators",
+    description: `There are little up and down arrows above each door, all dark, along with the call buttons. Something must have lost power, or gotten damaged.`,
+    sceneryDescription: `To the south are a row of three elevator doors, each made of polished steel, all closed, and none of the buttons are lit.`,
+    location: "LevelTwoStairAccess",
+    vocab: ["elevator", "elevators", "doors", "door"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      sceneryDescriptionOrder: 1,
+    },
+  },
+  {
+    id: "levelTwoLCD",
+    name: "lcd screen",
+    description: `It displays the message 'ELEVATOR FAILURE.' The screen is speckled with dead pixels.`,
+    sceneryDescription: `An LCD screen mounted above the elevator doors is tinted red, and displays the message 'ELEVATOR FAILURE.'`,
+    readableText: `ELEVATOR FAILURE`,
+    location: "LevelTwoStairAccess",
+    vocab: ["lcd", "screen", "lcd screen", "message"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    isReadable: true,
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+  },
+  {
+    id: "levelTwoSecurityDoor",
+    name: "security door",
+    description: `It displays the message 'ELEVATOR FAILURE.' The screen is speckled with dead pixels.`,
+    sceneryDescription: `[[newline]]The western exit to blocked by a heavy security door with a notice posted at eye level.`,
+    readableText: `DANGER: Potential explosive device. Keep Out by order of Aeneas Security`,
+    location: "LevelTwoStairAccess",
+    vocab: ["door", "security", "notice", "message"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    isReadable: true,
+    meta: {
+      sceneryDescriptionOrder: 3,
+    },
+  },
   {
     id: "TelepadTerminal",
     name: "terminal",

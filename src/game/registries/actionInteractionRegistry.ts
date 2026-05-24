@@ -11,6 +11,7 @@ import {
   throwDartAtBarDartboard,
 } from "src/world/maps/levelThree/Park/Bar/barDarts";
 import { orderBarDrink } from "src/world/maps/levelThree/Park/Bar/barDrinks";
+import { handleMovieTheaterUsherTell } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 
 type AskForActionHandler = {
   handle: (
@@ -38,6 +39,12 @@ type TellRewardHandler = (
   npcId: string,
   topic: string,
 ) => { message?: string; state: GameState };
+
+type TellActionHandler = (
+  state: GameState,
+  target: ConversationTarget,
+  topic: string,
+) => ActionResult | undefined;
 
 const ASK_FOR_ACTION_HANDLERS: AskForActionHandler[] = [
   {
@@ -71,6 +78,10 @@ const THROW_ACTION_HANDLERS: ThrowActionHandler[] = [
 const TELL_REWARD_HANDLERS: TellRewardHandler[] = [
   maybeAwardBarMemoryBox,
   maybeAwardBarTriviaPrize,
+];
+
+const TELL_ACTION_HANDLERS: TellActionHandler[] = [
+  handleMovieTheaterUsherTell,
 ];
 
 export function hasRegisteredAskForTarget(
@@ -125,6 +136,19 @@ export function handleRegisteredThrowAction(ctx: {
 }): ActionResult | undefined {
   for (const handler of THROW_ACTION_HANDLERS) {
     const result = handler(ctx);
+    if (result) return result;
+  }
+
+  return undefined;
+}
+
+export function handleRegisteredTellAction(
+  state: GameState,
+  target: ConversationTarget,
+  topic: string,
+): ActionResult | undefined {
+  for (const handler of TELL_ACTION_HANDLERS) {
+    const result = handler(state, target, topic);
     if (result) return result;
   }
 
