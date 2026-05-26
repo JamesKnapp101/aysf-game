@@ -21,6 +21,7 @@ import {
   describeHydroponicsSignIn,
   HYDROPONICS_EMPLOYEE_PROFILES,
 } from "../world/maps/levelSix/hydroponicsPuzzle";
+import { LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID } from "../world/maps/levelTwo/levelTwoBomb";
 import {
   createTestState,
   expectInventoryToContain,
@@ -131,6 +132,33 @@ function freezeTickingItemsExcept(
       frozenItems: {
         ...state.itemState.frozenItems,
         ...frozenItems,
+      },
+    },
+  };
+}
+
+function setLevelTwoBomb(
+  state: ReturnType<typeof createTestState>,
+  options: {
+    detonated?: boolean;
+    isActive?: boolean;
+    remainingTurns?: number;
+  },
+) {
+  const detonated = options.detonated ?? state.worldState.levelTwoBomb.detonated;
+
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      conditionalTriggers: {
+        ...state.worldState.conditionalTriggers,
+        [LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID]: detonated,
+      },
+      levelTwoBomb: {
+        ...state.worldState.levelTwoBomb,
+        ...options,
+        detonated,
       },
     },
   };
@@ -911,6 +939,59 @@ describe("Doors and level mechanics", () => {
     expect(revealed.worldState.conditionalTriggers.RobotRefugeAccess).toBe(true);
     expect(getLastLogEntry(revealed)).toContain("hidden panel slides up");
     expect(entered.player.roomId).toBe("RobotRefuge");
+  });
+
+  it("blocks the Robot Refuge conveyor until the level two bomb detonates", async () => {
+    const blocked = await runCommand(
+      createTestState({ roomId: "RobotRefuge" }),
+      "ride conveyor belt",
+    );
+
+    expect(blocked.player.roomId).toBe("RobotRefuge");
+    expect(getLastLogEntry(blocked)).toContain("scrap is jammed");
+
+    const ready = setLevelTwoBomb(blocked, {
+      detonated: true,
+      isActive: false,
+      remainingTurns: 0,
+    });
+    const enteredLevelTwo = await runCommand(ready, "ride conveyor belt");
+
+    expect(enteredLevelTwo.player.roomId).toBe("Storage");
+  });
+
+  it("detonates the level two bomb when the countdown reaches zero", async () => {
+    const start = setLevelTwoBomb(createTestState({ roomId: "RobotRefuge" }), {
+      detonated: false,
+      isActive: true,
+      remainingTurns: 1,
+    });
+
+    const next = await runCommand(start, "wait");
+
+    expect(next.worldState.levelTwoBomb.detonated).toBe(true);
+    expect(
+      next.worldState.conditionalTriggers[LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID],
+    ).toBe(true);
+    expect(getLastLogEntry(next)).toContain("A dull WHUMP");
+    expect(getLastLogEntry(next)).toContain("conveyor's jammed scrap tears loose");
+  });
+
+  it("blocks the level two stairwell door until the bomb detonates", async () => {
+    const start = createTestState({ roomId: "StairTwo" });
+    const blocked = await runCommand(start, "west");
+
+    expect(blocked.player.roomId).toBe("StairTwo");
+    expect(getLastLogEntry(blocked)).toContain("POTENTIAL EXPLOSIVE DEVICE");
+
+    const ready = setLevelTwoBomb(blocked, {
+      detonated: true,
+      isActive: false,
+      remainingTurns: 0,
+    });
+    const enteredLobby = await runCommand(ready, "west");
+
+    expect(enteredLobby.player.roomId).toBe("LevelTwoStairAccess");
   });
 
   it("activates the Power Grid by inserting the key, turning it, and pushing the button", async () => {

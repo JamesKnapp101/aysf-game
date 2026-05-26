@@ -2,15 +2,66 @@ import { movePlayerToRoom } from "@game/helpers/gameHelpers";
 import type { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+import { hasLevelTwoBombDetonated } from "src/world/maps/levelTwo/levelTwoBomb";
 
 function rideWarehouseConveyor(toRoomId: string) {
   return ({ state }: { state: GameState }): {
     message: string;
     state: GameState;
-  } => ({
-    state: movePlayerToRoom(state, toRoomId),
-    message: "You ride the belt to the end.",
-  });
+  } => {
+    if (!hasLevelTwoBombDetonated(state)) {
+      return {
+        state,
+        message:
+          "The conveyor belt twitches under you, but a large piece of scrap is jammed deep in the rollers. The motor hums and strains without moving the belt more than a few centimeters.",
+      };
+    }
+
+    return {
+      state: movePlayerToRoom(state, toRoomId),
+      message: "You ride the belt to the end.",
+    };
+  };
+}
+
+function describeConveyor(state: GameState): string {
+  if (!hasLevelTwoBombDetonated(state)) {
+    return "The conveyor belt is powered, but not moving. A large piece of twisted scrap is wedged between the rollers near the far end, holding the whole thing in a trembling mechanical stalemate.";
+  }
+
+  return "The conveyor belt is running now, its black rubber surface crawling steadily between scuffed metal guide rails.";
+}
+
+function describeConveyorScenery(state: GameState): string {
+  if (!hasLevelTwoBombDetonated(state)) {
+    return "A conveyor belt occupies one side of the refuge, trembling in place around a large piece of scrap wedged deep in its rollers.";
+  }
+
+  return "A conveyor belt runs along one side of the refuge, its surface moving steadily toward an opening in the wall.";
+}
+
+function describeConveyorScrap(state: GameState): string {
+  if (!hasLevelTwoBombDetonated(state)) {
+    return "It is a heavy, jagged slab of scrap metal jammed hard into the conveyor rollers. You can get your hands on it, but it has too much leverage against the belt assembly to pull free.";
+  }
+
+  return "It is a heavy, jagged slab of scrap metal lying beside the conveyor where the blast shook it loose. It still looks too awkward and sharp to carry around.";
+}
+
+function describeConveyorScrapScenery(state: GameState): string {
+  if (!hasLevelTwoBombDetonated(state)) {
+    return "The jammed scrap squeals softly whenever the conveyor motor strains against it.";
+  }
+
+  return "A large piece of scrap lies beside the conveyor, freshly shaken loose.";
+}
+
+function dislodgeConveyorScrap(state: GameState): string {
+  if (!hasLevelTwoBombDetonated(state)) {
+    return "You brace yourself and haul on the scrap until your hands ache, but it is wedged too deeply in the rollers to dislodge.";
+  }
+
+  return "The blast already did the useful part. The scrap is loose now, but still too heavy and jagged to do anything productive with.";
 }
 
 export const warehouseRooms: Room[] = [
@@ -70,8 +121,9 @@ export const warehouseItems: Item[] = [
   {
     id: "Conveyor",
     name: "conveyor belt",
-    description: `It's quite a belt.`,
-    sceneryDescription: `A big old conveyor belt is there doing it's thing.`,
+    description: "",
+    describe: (state) => describeConveyor(state),
+    describeScenery: (state) => describeConveyorScenery(state),
     location: "RobotRefuge",
     vocab: ["conveyor", "belt"],
     itemClass: "solid",
@@ -86,10 +138,36 @@ export const warehouseItems: Item[] = [
     itemSize: 3,
   },
   {
+    id: "RobotRefugeConveyorScrap",
+    name: "large piece of scrap",
+    description: "",
+    describe: (state) => describeConveyorScrap(state),
+    describeScenery: (state) => describeConveyorScrapScenery(state),
+    location: "RobotRefuge",
+    vocab: ["scrap", "large scrap", "piece of scrap", "metal", "scrap metal"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    isPushable: true,
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    overrides: {
+      lift: ({ state }: { state: GameState }) => dislodgeConveyorScrap(state),
+      move: ({ state }: { state: GameState }) => dislodgeConveyorScrap(state),
+      pull: ({ state }: { state: GameState }) => dislodgeConveyorScrap(state),
+      push: ({ state }: { state: GameState }) => dislodgeConveyorScrap(state),
+      take:
+        "You can barely shift it with both hands. Carrying it around is out of the question.",
+    },
+    itemWeight: 80,
+    itemSize: 6,
+  },
+  {
     id: "Conveyor2",
     name: "conveyor belt 2",
-    description: `It's quite a belt.`,
-    sceneryDescription: `A big old conveyor belt is there doing it's thing.`,
+    description: "",
+    describe: (state) => describeConveyor(state),
+    describeScenery: (state) => describeConveyorScenery(state),
     location: "Storage",
     vocab: ["conveyor", "belt"],
     itemClass: "solid",

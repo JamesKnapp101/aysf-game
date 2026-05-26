@@ -1,4 +1,8 @@
 import type { Item } from "@game/types/itemTypes";
+import {
+  describeLevelTwoBombTimer,
+  readLevelTwoBombTimer,
+} from "src/world/maps/levelTwo/levelTwoBomb";
 
 export const movieAuditoriumItems: Item[] = [
   {
@@ -90,7 +94,7 @@ export const movieAuditoriumItems: Item[] = [
     id: "MovieTheaterBDeadMan",
     name: "dead man",
     description:
-      "The dead man sits in one of the seats, dressed in boxers, a t-shirt, and a plush blue robe. His unshaven face is tinted blue, and his greasy hair sticks up in exhausted angles.",
+      "The dead man sits in one of the seats, dressed in boxers, a t-shirt, and a plush blue robe. His unshaven face is tinted blue, and his greasy hair in tangles.",
     sceneryDescription:
       "[[newline]]Sitting in one of the seats is the body of a man dressed in boxers, a t-shirt, and a plush blue robe. His unshaven face is tinted blue, and his hair is greasy and unkempt.",
     location: "MovieTheaterB",
@@ -106,18 +110,20 @@ export const movieAuditoriumItems: Item[] = [
   {
     id: "MovieTheaterTimer",
     name: "little timer",
-    description:
-      "It is some sort of little timer or stopwatch, stopped on a value whose importance is not obvious yet.",
+    description: "",
+    describe: (state) => describeLevelTwoBombTimer(state),
     initialDescription:
-      "Clutched in the dead man's hand is some sort of little timer or stopwatch.",
+      "Clutched in one shriveled hand is some sort of little timer or stopwatch.",
     location: "MovieTheaterB",
     vocab: ["timer", "stopwatch", "little timer", "watch"],
     itemClass: "solid",
     itemCategory: "collectable",
+    isReadable: true,
     itemWeight: 1,
     itemSize: 1,
+    readableText: (state) => readLevelTwoBombTimer(state),
     overrides: {
-      take: "You work the little timer free from the dead man's hand.",
+      take: "You work the little timer free from the corpse's stiff fingers.",
     },
   },
   {

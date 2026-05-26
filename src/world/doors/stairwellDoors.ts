@@ -1,4 +1,5 @@
 import type { DoorDefinition } from "../../game/types/doorTypes";
+import { hasLevelTwoBombDetonated } from "../maps/levelTwo/levelTwoBomb";
 
 export const stairwellDoors: DoorDefinition[] = [
   {
@@ -7,6 +8,14 @@ export const stairwellDoors: DoorDefinition[] = [
     descriptionFromA:
       "There is a door to the west with the words 'COMMUNITY/MEDICAL' printed on it and mounted over it is a plastic sign labeled '2'.",
     descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
+    describeFromA: (state) =>
+      hasLevelTwoBombDetonated(state)
+        ? "There is a door to the west with the words 'COMMUNITY/MEDICAL' printed on it and mounted over it is a plastic sign labeled '2'. The doorframe is scorched around the edges."
+        : "There is a door to the west with the words 'COMMUNITY/MEDICAL' printed on it and mounted over it is a plastic sign labeled '2'. A warning panel beside it flashes red.",
+    describeFromB: (state) =>
+      hasLevelTwoBombDetonated(state)
+        ? "To the east is a plain metal door labeled 'STAIRS', warped, and marred with soot."
+        : "To the east is a plain metal door labeled 'STAIRS'. A warning panel beside it flashes red.",
     kind: "standard",
     vocab: ["door"],
     connects: { roomAId: "StairTwo", roomBId: "LevelTwoStairAccess" },

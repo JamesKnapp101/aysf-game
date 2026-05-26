@@ -1,5 +1,5 @@
 import { Item } from "@game/types/itemTypes";
-import type { WorldChunk } from "../../game/types/gameTypes";
+import type { GameState, WorldChunk } from "../../game/types/gameTypes";
 import { badgeScannerDoors } from "../doors/badgeScannerDoors";
 import { stairwellDoors } from "../doors/stairwellDoors";
 import { badgeItems } from "../Items/badges";
@@ -12,6 +12,15 @@ import { stairwellBottomItems } from "../Items/levelSevenMisc";
 import { teleportationPadItems } from "../Items/teleportationPads";
 import { weaponItems } from "../Items/weapons";
 import { experienceRooms, experienceRoomsItems } from "./experienceRooms";
+import { hasLevelTwoBombDetonated } from "./levelTwo/levelTwoBomb";
+
+function describeStairTwo(state: GameState): string {
+  if (!hasLevelTwoBombDetonated(state)) {
+    return "This is the stair landing for Level Two. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the words 'LIVING QUARTERS' printed on it, and mounted over it is a plastic sign labeled '2'. A warning panel beside the door flashes red, cycling the words 'POTENTIAL EXPLOSIVE DEVICE - KEEP OUT.' The stairs, flanked by a metal railing, continue up and down.";
+  }
+
+  return "This is the stair landing for Level Two. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the words 'LIVING QUARTERS' printed on it, and mounted over it is a plastic sign labeled '2'. The area around the edge of the doorway is slightly blackened, and there is a lingering burnt smell in the landing here. A series of blackened footprints lead from the door to the stairs and then down. The stairs, flanked by a metal railing, also continue up.";
+}
 
 export const STAIRWELL: WorldChunk = {
   items: [
@@ -43,8 +52,8 @@ export const STAIRWELL: WorldChunk = {
     {
       id: "StairTwo",
       name: "Stairs Level Two",
-      description:
-        "This is the stair landing for Level Two. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the words 'LIVING QUARTERS' printed on it, and mounted over it is a plastic sign labeled '2'. The area around the edge of the doorway is slightly blackened, and there is a lingering burnt smell in the landing here. A series of blackened footprints lead from the door to the stairs and then down. The stairs, flanked by a metal railing, also continue up.",
+      description: "",
+      describe: (state) => describeStairTwo(state),
       exits: [
         { direction: "up", toRoomId: "StairOne" },
         { direction: "down", toRoomId: "StairThree" },

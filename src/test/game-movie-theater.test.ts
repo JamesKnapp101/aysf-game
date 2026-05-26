@@ -7,6 +7,7 @@ import {
   MOVIE_THEATER_TOTAL_MOVIE_TURNS,
   getMovieTheaterMovieLine,
 } from "src/world/maps/levelThree/Park/MovieTheater";
+import { LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID } from "src/world/maps/levelTwo/levelTwoBomb";
 import { describe, expect, it } from "vitest";
 import { getItemsInRoom } from "../game/selectors/roomSelectors";
 import {
@@ -27,6 +28,28 @@ function getCommandEntry(state: { log: string[] }, command: string): string {
   return "";
 }
 
+function setLevelTwoBombTurns(
+  state: ReturnType<typeof createTestState>,
+  remainingTurns: number,
+) {
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      conditionalTriggers: {
+        ...state.worldState.conditionalTriggers,
+        [LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID]: remainingTurns <= 0,
+      },
+      levelTwoBomb: {
+        ...state.worldState.levelTwoBomb,
+        detonated: remainingTurns <= 0,
+        isActive: remainingTurns > 0,
+        remainingTurns,
+      },
+    },
+  };
+}
+
 describe("movie theater zone", () => {
   it("builds entrance, lobby, and auditorium descriptions from ordered scenery", () => {
     const state = createTestState({ roomId: "MovieEntrance" });
@@ -39,6 +62,9 @@ describe("movie theater zone", () => {
     const auditorium = buildRoomDescription(state, "MovieTheaterB", {
       mode: "panel",
     });
+    const auditoriumD = buildRoomDescription(state, "MovieTheaterD", {
+      mode: "panel",
+    });
 
     expect(entrance.indexOf("A pair of glass doors")).toBeLessThan(
       entrance.indexOf("hanging over which is a lit marquee"),
@@ -49,8 +75,8 @@ describe("movie theater zone", () => {
     expect(auditorium.indexOf("Rows of reclining")).toBeLessThan(
       auditorium.indexOf("Sitting in one of the seats"),
     );
-    expect(auditorium).toContain(
-      "Clutched in the dead man's hand is some sort of little timer or stopwatch.",
+    expect(auditoriumD).toContain(
+      "Clutched in one shriveled hand is some sort of little timer or stopwatch.",
     );
 
     const theaterRoomIds = new Set([
@@ -117,6 +143,21 @@ describe("movie theater zone", () => {
 
     const reachedQuadrantC = await runCommand(reachedQuadrantD, "north");
     expect(reachedQuadrantC.player.roomId).toBe("MovieTheaterC");
+  });
+
+  it("shows the live level two bomb countdown on the little timer", async () => {
+    const start = setLevelTwoBombTurns(
+      createTestState({ roomId: "MovieTheaterD" }),
+      5,
+    );
+
+    const firstLook = await runCommand(start, "examine timer");
+    expect(getCommandEntry(firstLook, "examine timer")).toContain("00:05");
+
+    const waited = await runCommand(firstLook, "wait");
+    const secondLook = await runCommand(waited, "examine timer");
+
+    expect(getCommandEntry(secondLook, "examine timer")).toContain("00:03");
   });
 
   it("tracks bathroom vapor from the e-cigar or TrixPen and ejects the player at three clouds", async () => {

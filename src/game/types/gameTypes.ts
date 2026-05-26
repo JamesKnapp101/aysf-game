@@ -229,6 +229,10 @@ export interface Countdown {
   remainingTurns: number;
 }
 
+export type LevelTwoBombState = Countdown & {
+  detonated: boolean;
+};
+
 export type OctopusArmState = {
   id: string;
   path: string[];
@@ -443,6 +447,7 @@ export interface WorldState {
   gamePreserve: GamePreserveState;
   hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;
   hydroponicsSpider: HydroponicsSpiderState;
+  levelTwoBomb: LevelTwoBombState;
   mensLockerContents: LockerContents<MensLockerId>;
   mensLockersOpened: LockerOpenedState<MensLockerId>;
   movieTheater: MovieTheaterState;

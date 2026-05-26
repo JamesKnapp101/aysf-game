@@ -22,6 +22,10 @@ import {
 } from "../world/World";
 import { createInitialMovieTheaterState } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 import {
+  createInitialLevelTwoBombState,
+  LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID,
+} from "src/world/maps/levelTwo/levelTwoBomb";
+import {
   INITIAL_CONTAINER_CONTENTS,
   INITIAL_SURFACE_CONTENTS,
   INITIAL_UNDER_CONTENTS,
@@ -214,6 +218,14 @@ export const createInitialState = (world: World): GameState => {
           direction: "south",
           blockMsg: `The door is jammed tight in the damaged metal frame, with or without a security badge, you'll never get it open.`,
           passMsg: `You step through the large gap that has been burned through the metal.`,
+        },
+        StairTwo: {
+          roomId: "StairTwo",
+          unlockTriggers: [],
+          conditionalTriggers: [LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID],
+          direction: "west",
+          blockMsg: `The Level Two stairwell door refuses to cycle. A warning panel beside it flashes: POTENTIAL EXPLOSIVE DEVICE - KEEP OUT.`,
+          passMsg: `The damaged stairwell door grinds open far enough for you to squeeze through.`,
         },
       },
       scriptedEventsTripped: {
@@ -467,6 +479,7 @@ export const createInitialState = (world: World): GameState => {
       },
       barJukebox: {},
       movieTheater: createInitialMovieTheaterState(),
+      levelTwoBomb: createInitialLevelTwoBombState(),
       bullEncounter: createInitialBullEncounterState(),
       gamePreserve: {
         completedDifficulties: {},
@@ -493,6 +506,7 @@ export const createInitialState = (world: World): GameState => {
         EeglerSecretLabOpen: false,
         TrashBotMaintenanceDoorOpen: false,
         HydroponicsDoorUnblocked: false,
+        [LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID]: false,
         EscapedWithYellowBadge: false,
         GymWeightlifterMoved: false,
         BarVisionQuestTriggered: false,

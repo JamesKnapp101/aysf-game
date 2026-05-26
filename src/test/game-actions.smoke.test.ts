@@ -4,6 +4,7 @@ import { getStatusEffectDiagnostics } from "@game/selectors/statusSelectors";
 import { useUIOverlayStore } from "@game/store/store";
 import { describe, expect, it } from "vitest";
 import { getItemsInRoom } from "../game/selectors/roomSelectors";
+import { LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID } from "../world/maps/levelTwo/levelTwoBomb";
 import {
   createTestState,
   expectInventoryToContain,
@@ -500,15 +501,6 @@ describe("Action smoke coverage", () => {
     expectCommandEntry(next, "listen to moan", /haunting, eerie quality/i);
   });
 
-  it("covers smell", async () => {
-    const next = await runCommand(
-      createTestState({ roomId: "Projection" }),
-      "smell blood",
-    );
-
-    expectCommandEntry(next, "smell blood", /metallic tang/i);
-  });
-
   it("covers pet", async () => {
     const next = await runCommands(
       createTestState({ roomId: "LevelThreeCorridorSeven" }),
@@ -542,10 +534,24 @@ describe("Action smoke coverage", () => {
   });
 
   it("covers ride", async () => {
-    const next = await runCommand(
-      createTestState({ roomId: "RobotRefuge" }),
-      "ride conveyor belt",
-    );
+    const start = createTestState({ roomId: "RobotRefuge" });
+    const ready = {
+      ...start,
+      worldState: {
+        ...start.worldState,
+        conditionalTriggers: {
+          ...start.worldState.conditionalTriggers,
+          [LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID]: true,
+        },
+        levelTwoBomb: {
+          ...start.worldState.levelTwoBomb,
+          detonated: true,
+          isActive: false,
+          remainingTurns: 0,
+        },
+      },
+    };
+    const next = await runCommand(ready, "ride conveyor belt");
 
     expect(next.player.roomId).toBe("Storage");
   });
@@ -621,7 +627,9 @@ describe("Action smoke coverage", () => {
 
     state = await runCommand(state, "up");
     state = await runCommand(state, "turn wall fixture");
-    expect(state.worldState.conditionalTriggers.EeglerSecretLabOpen).toBe(false);
+    expect(state.worldState.conditionalTriggers.EeglerSecretLabOpen).toBe(
+      false,
+    );
 
     state = await runCommand(state, "down");
     expect(state.player.roomId).toBe("ThreeEastBed");

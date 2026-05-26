@@ -7,6 +7,7 @@ import { tickGamePreserveRun } from "@game/preserve/preserveState";
 import { tickBarJukebox } from "src/world/maps/levelThree/Park/Bar/barJukebox";
 import { tickMovieTheaterProjectionLighting } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterMovie";
 import { tickMovieTheaterUsher } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
+import { tickLevelTwoBomb } from "src/world/maps/levelTwo/levelTwoBomb";
 
 export type TurnTickPhase =
   | "conversation"
@@ -52,6 +53,7 @@ function tickGamePreserveTurn(state: GameState): TurnTickResult {
 const TURN_TICK_HANDLERS: RegisteredTurnTickHandler[] = [
   { phase: "conversation", tick: tickRadioConversationTurn },
   { phase: "environment", tick: tickHydroponicsTurn },
+  { phase: "environment", tick: tickLevelTwoBomb },
   { phase: "environment", tick: tickMovieTheaterProjectionLighting },
   { phase: "simulation", tick: tickGamePreserveTurn },
   { phase: "late", tick: tickBarJukebox },
