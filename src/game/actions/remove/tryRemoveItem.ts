@@ -16,10 +16,14 @@ export function tryRemoveItem(
       message: `You aren't wearing the ${item.name}`,
     };
   }
+  const removeOverride = item.overrides?.remove;
+  if (typeof removeOverride === "function") {
+    return removeOverride({ state, item });
+  }
   let next = state;
   const baseMsg =
     item?.meta?.clothing?.removeMessage ??
-    item?.overrides?.remove ??
+    (typeof removeOverride === "string" ? removeOverride : undefined) ??
     `You remove the ${item.name}`;
 
   next = {

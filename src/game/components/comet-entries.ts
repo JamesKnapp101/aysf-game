@@ -57,7 +57,7 @@ export const DEFAULT_COMET_ENTRIES: CometEntry[] = [
     body: "Aeneas is the civic designation used by many shipboard institutions, including security, identity records, public services, and navigation notices. In everyday use, residents often use Aeneas to mean the shipboard society itself rather than any single department.",
   },
   {
-    id: "aeneas",
+    id: "aeneas_ship",
     terms: ["aeneas", "ship", "vessel"],
     body: "The Aeneas is a long-duration generation vessel built around layered civic, residential, industrial, recreational, and scientific sectors. Public-facing records usually describe it as functional rather than elegant, which is library language for 'built by committee and then made everyone live inside the committee.'",
   },

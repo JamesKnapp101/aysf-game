@@ -40,7 +40,7 @@
     top: 72px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 12;
+    z-index: 80;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -111,7 +111,8 @@
         0 0 28px rgba(52, 226, 52, 0.22);
 }
 
-.game-notification--damage {
+.game-notification--damage,
+.game-notification--danger {
     background:
         linear-gradient(180deg,
             rgba(255, 92, 92, 0.98),

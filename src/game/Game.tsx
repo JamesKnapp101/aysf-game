@@ -1,5 +1,6 @@
 import { SplashModal } from "@game/components/SplashModal";
 import { OPENING_SPLASH } from "@game/constants";
+import { isDeepStorageSuitOverlayActive } from "src/world/maps/levelSeven/deepStorage";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   getCurrentMemory,
@@ -7,6 +8,7 @@ import {
 } from "../game/selectors/scoreSelectors";
 import { DEFERRED_WORLD_CHUNK_IDS } from "../world/World";
 import { LogPanel } from "./components/LogPanel";
+import { DeepStorageSuitOverlay } from "./components/DeepStorageSuitOverlay";
 import { NotificationHost } from "./components/NotificationHost";
 import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
@@ -218,6 +220,13 @@ export const Game: React.FC = () => {
       : roomIsDark && flashlightOn
         ? "flashlight"
         : "ambient";
+  const deepStorageSuitOverlayActive = isDeepStorageSuitOverlayActive(gs);
+
+  useEffect(() => {
+    if (!deepStorageSuitOverlayActive) return;
+    inputRef.current?.blur();
+    cometInputRef.current?.blur();
+  }, [deepStorageSuitOverlayActive]);
 
   const overlayRunAction = useCallback(
     (verb: string, payload?: any) => {
@@ -225,6 +234,13 @@ export const Game: React.FC = () => {
     },
     [runAction],
   );
+
+  const handleDeepStorageHome = useCallback(() => {
+    runAction({
+      payload: {},
+      verb: "deepStorageHome",
+    });
+  }, [runAction]);
 
   return (
     <>
@@ -269,6 +285,13 @@ export const Game: React.FC = () => {
             onClick={handleRootClick}
           >
             <NotificationHost state={gs} setGameState={setGameState} />
+            {deepStorageSuitOverlayActive && (
+              <DeepStorageSuitOverlay
+                state={gs}
+                onCommand={enqueueCommand}
+                onHome={handleDeepStorageHome}
+              />
+            )}
 
             {/* HEADER */}
             <div className="game-header">
@@ -322,6 +345,7 @@ export const Game: React.FC = () => {
               cometInputRef={cometInputRef}
               rootRef={rootRef}
               activeTab={activeTab}
+              inputDisabled={deepStorageSuitOverlayActive}
               isCometFocusOwner={lastFocusedPrompt === "comet"}
               onCometPromptFocus={handleCometPromptFocus}
               onGamePromptFocus={handleGamePromptFocus}

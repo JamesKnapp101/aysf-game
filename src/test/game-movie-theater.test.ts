@@ -75,9 +75,10 @@ describe("movie theater zone", () => {
     expect(auditorium.indexOf("Rows of reclining")).toBeLessThan(
       auditorium.indexOf("Sitting in one of the seats"),
     );
-    expect(auditoriumD).toContain(
+    expect(auditorium).toContain(
       "Clutched in one shriveled hand is some sort of little timer or stopwatch.",
     );
+    expect(auditoriumD).toContain("Fused to the floor is a nude body");
 
     const theaterRoomIds = new Set([
       "MovieEntrance",
@@ -147,7 +148,7 @@ describe("movie theater zone", () => {
 
   it("shows the live level two bomb countdown on the little timer", async () => {
     const start = setLevelTwoBombTurns(
-      createTestState({ roomId: "MovieTheaterD" }),
+      createTestState({ roomId: "MovieTheaterB" }),
       5,
     );
 

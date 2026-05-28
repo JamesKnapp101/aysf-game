@@ -1,5 +1,9 @@
 import { getFlashlightSettings } from "@game/helpers/flashlightHelpers";
 import type { Item } from "../../game/types/itemTypes";
+import {
+  removeDeepStorageSuit,
+  wearDeepStorageSuit,
+} from "../maps/levelSeven/deepStorage";
 
 const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
   {
@@ -140,13 +144,6 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     isReadable: false,
     isContainer: false,
     providesLight: true,
-
-    overrides: {
-      examine:
-        "The disk is perfectly smooth, perfectly white, and utterly indifferent to your presence.",
-      switch:
-        "There’s no visible control. If this light ever goes out, it won’t be because you asked nicely.",
-    },
   },
   {
     id: "LabChambers",
@@ -404,13 +401,13 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     description:
       "A silvery cold suit lies crumpled on the floor, its skin a dull reflective sheen that drinks in the room’s pale light. The gloves and helmet are integrated, forming a single airtight shell from head to toe. The feet end in flexible, form-fitting booties designed to seal perfectly against the rest of the suit.\nMounted on the back is a self-contained oxygen unit, its casing scuffed but intact. A thin black tube snakes down one arm, ending at a wrist-mounted gauge with a tiny, stubborn-looking readout.",
     initialDescription:
-      "Lying in a heap on the floor is a silvery suit of some kind.",
+      "A large metal harness stands near the Deep Storage entrance, nearly brushing the ceiling. Hanging in the harness is a heavy environmental suit, fitted with tubes and a pressurized tank mounted on the back. The front of the suit is open, and the docking cradle has a little raised platform to help you slip into and wear it.",
     sceneryDescription:
       "A silvery cryonic suit sprawls on the deck, helmet, gloves, and booties all fused into a single sealed shell.",
-    location: "CryoLab",
+    location: "Stasis",
     vocab: ["suit", "space", "gague", "gauge", "cryonic", "cold"],
     itemClass: "solid",
-    itemCategory: "collectable",
+    itemCategory: "static",
     itemWeight: 10,
     itemSize: 101,
     isWearable: true,
@@ -418,12 +415,11 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     isReadable: false,
     isContainer: false,
     overrides: {
-      take: "You haul the cold suit upright. It’s heavier than it looks, dense with insulation, tanks, and whatever passes for safety on this ship.",
-      wear: "You climb into the cold suit and pull the helmet into place. The neck seal locks with a soft click, followed by a low hiss as the oxygen system spins up and the suit pressurizes around you.",
-      remove:
-        "You run a hand along the collar seal and imagine opening it in hard vacuum. It’s a good reminder that timing is everything.",
+      take: "The suit is too bulky to carry around. It needs to stay docked until you are wearing it.",
+      wear: wearDeepStorageSuit,
+      remove: removeDeepStorageSuit,
       examine:
-        "The silvery skin is scarred with use, but the seams look intact. The rear-mounted oxygen pack is still connected, and the wrist gauge shows a finite reserve of breathable air—whatever’s left of your margin for error.",
+        "The heavy skin is scarred with use, but the seams look intact. The rear-mounted oxygen pack is still connected, and the wrist gauge shows your reserve of breathable air.",
     },
     providesLight: false,
     isRadioactive: false,

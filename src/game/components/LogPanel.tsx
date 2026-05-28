@@ -37,6 +37,7 @@ type LogPanelProps = {
   activeTab: SidebarTab;
   setActiveTab: (t: SidebarTab) => void;
   cometInputRef?: React.RefObject<HTMLInputElement | null>;
+  inputDisabled?: boolean;
   isCometFocusOwner?: boolean;
   onCometPromptFocus?: () => void;
   onGamePromptFocus?: () => void;
@@ -118,6 +119,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   activeTab,
   setActiveTab,
   cometInputRef,
+  inputDisabled = false,
   isCometFocusOwner = false,
   onCometPromptFocus = () => undefined,
   onGamePromptFocus = () => undefined,
@@ -138,6 +140,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (inputDisabled) return;
     const trimmed = input.trim();
     if (!trimmed) return;
     setCommandHistory((prev) =>
@@ -307,11 +310,17 @@ export const LogPanel: React.FC<LogPanelProps> = ({
           </div>
         </div>
 
-        <form className="game-footer" onSubmit={onSubmit}>
+        <form
+          className={
+            "game-footer" + (inputDisabled ? " game-footer--disabled" : "")
+          }
+          onSubmit={onSubmit}
+        >
           <span className="game-prompt">&gt;</span>
           <input
             ref={inputRef}
             className="game-input"
+            disabled={inputDisabled}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={onInputKeyDown}

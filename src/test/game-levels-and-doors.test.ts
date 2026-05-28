@@ -973,7 +973,7 @@ describe("Doors and level mechanics", () => {
     expect(
       next.worldState.conditionalTriggers[LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID],
     ).toBe(true);
-    expect(getLastLogEntry(next)).toContain("A dull WHUMP");
+    expect(getLastLogEntry(next)).toContain("loud, low BOOM");
     expect(getLastLogEntry(next)).toContain("conveyor's jammed scrap tears loose");
   });
 

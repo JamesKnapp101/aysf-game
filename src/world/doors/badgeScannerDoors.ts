@@ -18,13 +18,13 @@ export const badgeScannerDoors: DoorDefinition[] = [
     directions: { fromA: "north", fromB: "south" },
     initiallyOpen: false,
     initiallyLocked: true,
-    badgeItemId: "maroonbadge",
+    badgeItemId: "violetbadge",
   },
   {
     id: "BridgeStairDoors",
     name: "bridge access door",
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a maroon horizontal stripe across it at eye level. Stenciled across the banner is the word 'MAIN BRIDGE', and mounted above the doorway is a small panel marked '1'. ",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a violet horizontal stripe across it at eye level. Stenciled across the banner is the word 'LOGISTICS', and mounted above the doorway is a small panel marked '1'. ",
     descriptionFromB:
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",
@@ -33,7 +33,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     directions: { fromA: "east", fromB: "west" },
     initiallyOpen: false,
     initiallyLocked: true,
-    badgeItemId: "maroonbadge",
+    badgeItemId: "violetbadge",
     checkBadgeOnDir: "west",
   },
   // MEDICAL LAB

@@ -5,6 +5,7 @@ import {
   setGymTreadmillSpeed,
   SPIN_STAGE_SPEED_DIAL_PASSWORD,
 } from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
+import { returnDeepStorageSuitHome } from "src/world/maps/levelSeven/deepStorage";
 
 type ActionRequestHandler = (
   state: GameState,
@@ -51,9 +52,14 @@ function handleSubmitSpinStageSpeedPassword(
   };
 }
 
+function handleDeepStorageHome(state: GameState): ActionResult {
+  return returnDeepStorageSuitHome(state, "manual");
+}
+
 const ACTION_REQUEST_HANDLERS: Partial<
   Record<ActionRequest["verb"], ActionRequestHandler>
 > = {
+  deepStorageHome: handleDeepStorageHome,
   playJukeboxTrack: handlePlayJukeboxTrack,
   submitSpinStageSpeedPassword: handleSubmitSpinStageSpeedPassword,
 };

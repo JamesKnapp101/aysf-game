@@ -45,6 +45,7 @@ import { advanceTurn } from "./turn";
 // Older entries are pruned to prevent unbounded memory growth during long play sessions
 const MAX_LOG_ENTRIES = 500;
 const DEVELOPER_MODE_ITEM_IDS = [
+  "MensLockerKey1",
   "ECigar",
   "ParkPass",
   "MindGun",

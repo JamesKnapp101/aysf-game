@@ -25,6 +25,7 @@ import {
   createInitialLevelTwoBombState,
   LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID,
 } from "src/world/maps/levelTwo/levelTwoBomb";
+import { createInitialDeepStorageState } from "src/world/maps/levelSeven/deepStorage";
 import {
   INITIAL_CONTAINER_CONTENTS,
   INITIAL_SURFACE_CONTENTS,
@@ -43,7 +44,11 @@ export const DEV_PLAYER_START_ROOM_ID: string | undefined = undefined;
 export const INITIAL_PLAYER_ROOM_ID =
   DEV_PLAYER_START_ROOM_ID ?? FINAL_PLAYER_START_ROOM_ID;
 
-const TRANSMITTER_COORD_EXCLUDE_PATTERNS = [/Elevator/i, /Shaft/i];
+const TRANSMITTER_COORD_EXCLUDE_PATTERNS = [
+  /DeepStorageGrid/i,
+  /Elevator/i,
+  /Shaft/i,
+];
 const TRANSMITTER_ANCHOR_ROOM_IDS = [
   "ShuttleBay",
   "InsideShuttle",
@@ -271,6 +276,7 @@ export const createInitialState = (world: World): GameState => {
         Warehouse: true,
         LevelFiveStairAccess: true,
       },
+      deepStorage: createInitialDeepStorageState(),
       powerRestoredSections: {
         "lights-level-one": true,
         "lights-level-two": false,

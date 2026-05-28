@@ -28,6 +28,7 @@ export type ActionRequest = {
     | "openCoolerPanel"
     | "markMessagePlayed"
     | "cycleCameraGunView"
+    | "deepStorageHome"
     | "playJukeboxTrack"
     | "submitSpinStageSpeedPassword"
     | "command";

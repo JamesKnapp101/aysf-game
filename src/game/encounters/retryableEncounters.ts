@@ -32,6 +32,12 @@ import {
   maybeInitializeHydroponicsCocoonPuzzle,
   resetHydroponicsEncounter,
 } from "src/world/maps/levelSix/hydroponicsPuzzle";
+import {
+  getDeepStorageActionGuard,
+  getDeepStorageRespawnDockRoomId,
+  matchesDeepStorageRetryableDeath,
+  resetDeepStorageAfterDeath,
+} from "src/world/maps/levelSeven/deepStorage";
 
 type EncounterMoveGuardResult =
   | {
@@ -178,6 +184,16 @@ const RETRYABLE_ENCOUNTERS: RetryableEncounterDefinition[] = [
     getRetryableDeathOverride: () => ({
       respawnRoomId: AVIARY_RETRY_RESPAWN_ROOM_ID,
       reset: resetAviaryEncounter,
+    }),
+  },
+  {
+    id: "deep-storage",
+    beforeAction: (state, cmd) => getDeepStorageActionGuard(state, cmd),
+    matchesRetryableDeath: (state, cause, roomId) =>
+      matchesDeepStorageRetryableDeath(state, cause, roomId),
+    getRetryableDeathOverride: (state, _cause, roomId) => ({
+      respawnRoomId: getDeepStorageRespawnDockRoomId(state, roomId),
+      reset: resetDeepStorageAfterDeath,
     }),
   },
 ];

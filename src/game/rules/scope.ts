@@ -133,6 +133,10 @@ export function resolveItemByNoun(
     if (inventoryHas(state.player.inventory, it.id)) inScopeIds.add(it.id);
   }
 
+  for (const wornItemId of Object.values(state.itemState.wornByPlayer ?? {})) {
+    if (wornItemId) inScopeIds.add(wornItemId);
+  }
+
   // 2) Add contents of open containers in the room (recursively)
   const queue: string[] = [];
   const visitedContainers = new Set<string>();

@@ -8,6 +8,11 @@ import {
   AQUARIUM_DROWNING_DEATH_CAUSE,
   AQUARIUM_DROWNING_DEATH_MESSAGE,
 } from "src/world/Items/creatures/octopus";
+import {
+  DEEP_STORAGE_HYPOTHERMIA_CAUSE,
+  getDeepStorageDeathMessage,
+  shouldDeepStorageExposureKill,
+} from "src/world/maps/levelSeven/deepStorage";
 
 type EnvironmentHazardRule = (state: GameState) => GameState;
 
@@ -26,6 +31,17 @@ const ENVIRONMENT_HAZARD_RULES: EnvironmentHazardRule[] = [
       state,
       AQUARIUM_DROWNING_DEATH_MESSAGE,
       AQUARIUM_DROWNING_DEATH_CAUSE,
+    );
+  },
+  (state) => {
+    if (!shouldDeepStorageExposureKill(state)) {
+      return state;
+    }
+
+    return triggerPlayerDeath(
+      state,
+      getDeepStorageDeathMessage(state),
+      DEEP_STORAGE_HYPOTHERMIA_CAUSE,
     );
   },
 ];

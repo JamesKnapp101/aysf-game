@@ -81,6 +81,7 @@ export interface StatusEffect {
 }
 
 export type GameNotificationKind =
+  | "danger"
   | "damage"
   | "score"
   | "memory"
@@ -317,6 +318,16 @@ export type BrainSlugState = {
   isHydrated: boolean;
 };
 
+export type DeepStorageState = {
+  coord: {
+    x: number;
+    y: number;
+  };
+  exposureTurns: number;
+  lastDockRoomId: string;
+  oxygenGraceTurns: number;
+};
+
 export type CatState = {
   heldTurns?: number;
   isWearingCollar: boolean;
@@ -443,6 +454,7 @@ export interface WorldState {
   conditionalTriggers: Record<string, boolean>;
   damagedFlashlight?: DamagedFlashlightState;
   darkRooms: Record<string, boolean>;
+  deepStorage: DeepStorageState;
   doors: Record<string, DoorState>;
   gamePreserve: GamePreserveState;
   hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;

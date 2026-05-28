@@ -9,6 +9,10 @@ export function tryWearItem(
   if (!item.isWearable || !item.clothingSlot) {
     return { state, message: "You can't wear that." };
   }
+  const wearOverride = item.overrides?.wear;
+  if (typeof wearOverride === "function") {
+    return wearOverride({ state, item });
+  }
   if (item.meta?.clothing?.tooSmall) {
     const art =
       item.clothingSlot === "feet" || item.clothingSlot === "legs"
@@ -25,7 +29,7 @@ export function tryWearItem(
   let next = state;
   const baseMsg =
     item?.meta?.clothing?.wearMessage ??
-    item?.overrides?.wear ??
+    (typeof wearOverride === "string" ? wearOverride : undefined) ??
     `You put on the ${item.name}`;
 
   next = {

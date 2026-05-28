@@ -8,6 +8,7 @@ import { tickBarJukebox } from "src/world/maps/levelThree/Park/Bar/barJukebox";
 import { tickMovieTheaterProjectionLighting } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterMovie";
 import { tickMovieTheaterUsher } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 import { tickLevelTwoBomb } from "src/world/maps/levelTwo/levelTwoBomb";
+import { tickDeepStorageExposure } from "src/world/maps/levelSeven/deepStorage";
 
 export type TurnTickPhase =
   | "conversation"
@@ -54,6 +55,7 @@ const TURN_TICK_HANDLERS: RegisteredTurnTickHandler[] = [
   { phase: "conversation", tick: tickRadioConversationTurn },
   { phase: "environment", tick: tickHydroponicsTurn },
   { phase: "environment", tick: tickLevelTwoBomb },
+  { phase: "environment", tick: tickDeepStorageExposure },
   { phase: "environment", tick: tickMovieTheaterProjectionLighting },
   { phase: "simulation", tick: tickGamePreserveTurn },
   { phase: "late", tick: tickBarJukebox },

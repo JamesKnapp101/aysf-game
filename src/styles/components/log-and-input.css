@@ -74,6 +74,14 @@
     padding: 2px 0;
 }
 
+.game-footer--disabled {
+    opacity: 0.42;
+}
+
+.game-footer--disabled .game-input {
+    cursor: not-allowed;
+}
+
 .log-room-name {
     display: inline-block;
     opacity: 0.90;

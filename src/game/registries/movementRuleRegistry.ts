@@ -5,6 +5,7 @@ import {
 } from "src/world/maps/levelThree/Park/Bar/barDrinks";
 import { resolveGymTreadmillMovement } from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
 import { resolveMovieTheaterMovement } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
+import { resolveDeepStorageMovement } from "src/world/maps/levelSeven/deepStorage";
 
 export type MovementRuleContext = {
   destinationRoomId: string;
@@ -47,10 +48,14 @@ const resolveGymTreadmillMovementRule: MovementRule = (state, ctx) =>
 const resolveMovieTheaterMovementRule: MovementRule = (state, ctx) =>
   resolveMovieTheaterMovement(state, ctx);
 
+const resolveDeepStorageMovementRule: MovementRule = (state, ctx) =>
+  resolveDeepStorageMovement(state, ctx);
+
 const MOVEMENT_RULES: MovementRule[] = [
   blockLeavingBarWithDrink,
   resolveGymTreadmillMovementRule,
   resolveMovieTheaterMovementRule,
+  resolveDeepStorageMovementRule,
 ];
 
 export function resolveRegisteredMovementRule(

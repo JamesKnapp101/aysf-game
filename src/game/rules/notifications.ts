@@ -110,6 +110,13 @@ export function buildDamageNotification(points: number): GameNotificationDraft {
   };
 }
 
+export function buildDangerNotification(text: string): GameNotificationDraft {
+  return {
+    kind: "danger",
+    text,
+  };
+}
+
 export function buildGossipNotification(): GameNotificationDraft {
   return {
     kind: "gossip",
