@@ -110,24 +110,6 @@ export const levelFiveItems: Item[] = [
     providesLight: false,
   },
   {
-    id: "EngineRoomKey",
-    name: "large orange and black key",
-    description:
-      "It's a large key of some kind with a rectangular orange and black grip.",
-    initialDescription:
-      "Floating nearby in a slow end-over-end spin is a key with a rectangular orange and black grip.",
-    location: "AboveTheQuadThree",
-    vocab: ["large", "key", "black", "orange"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 2,
-    itemSize: 2,
-    scoreId: "obtained_engine_room_key",
-    meta: {
-      kind: "key",
-    },
-  },
-  {
     id: "EngineRoomButton",
     name: "square red button",
     description:

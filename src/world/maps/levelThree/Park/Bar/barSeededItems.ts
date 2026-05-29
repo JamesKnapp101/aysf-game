@@ -104,7 +104,7 @@ export const barSeededItems: Item[] = [
     id: FREE_DRINK_TICKET_ID,
     name: "free drink ticket",
     description:
-      "It says if you present it at a bar called 'Whiskey Tango' then you get a free drink, and the offer doesn't expire.",
+      "It says if you present it at a bar called 'The Loosened Tongue' then you get a free drink, and the offer doesn't expire.",
     location: "seeded",
     vocab: ["free", "drink", "ticket"],
     itemClass: "solid",

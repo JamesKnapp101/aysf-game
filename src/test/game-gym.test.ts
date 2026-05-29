@@ -1,8 +1,13 @@
+import { LockerModal } from "@game/components/LockerModal";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { dispatchAction } from "@game/actions/dispatchAction";
 import { buildDamageNotification } from "@game/rules/notifications";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
 import { useUIOverlayStore } from "@game/store/store";
+import type { GameState } from "@game/types/gameTypes";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import React from "react";
 import { describe, expect, it } from "vitest";
 import {
   createTestState,
@@ -31,6 +36,50 @@ function createMindScannerState(roomId: string) {
 }
 
 describe("Gym interactions", () => {
+  it("opens men's locker 1 with the underground zine page inside", async () => {
+    const user = userEvent.setup();
+    let currentState = setInventory(createTestState({ roomId: "MensShower" }), [
+      "MensLockerKey1",
+    ]);
+    const setGameState: React.Dispatch<React.SetStateAction<GameState>> = (
+      update,
+    ) => {
+      currentState =
+        typeof update === "function"
+          ? (update as (prevState: GameState) => GameState)(currentState)
+          : update;
+    };
+
+    expect(currentState.worldState.mensLockerContents.menLocker1).toEqual([
+      "UndergroundZinePage",
+    ]);
+
+    render(
+      React.createElement(LockerModal, {
+        onClose: () => undefined,
+        state: currentState,
+        setGameState,
+        type: "men",
+      }),
+    );
+
+    await user.click(screen.getByRole("button", { name: /^Locker 1$/i }));
+
+    expect(
+      await screen.findByText(
+        /Inside the locker you find a torn out magazine page/i,
+      ),
+    ).toBeInTheDocument();
+    expect(expectInventoryToContain(currentState, "UndergroundZinePage")).toBe(
+      true,
+    );
+    expect(currentState.itemState.itemRoomId.UndergroundZinePage).toBe(
+      "INVENTORY",
+    );
+    expect(currentState.worldState.mensLockersOpened.menLocker1).toBe(true);
+    expect(currentState.worldState.mensLockerContents.menLocker1).toEqual([]);
+  });
+
   it("updates the giant treadmill angle from the gym angle dial", async () => {
     const state = createTestState({ roomId: "Gym" });
 

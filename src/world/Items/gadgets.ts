@@ -78,23 +78,6 @@ export const specialItems: Item[] = [
   },
 
   // 3. EMP capsule -----------------------------------------------------------
-  {
-    id: "EMP",
-    name: "metallic capsule",
-    description:
-      "A sleek capsule-shaped metallic device, about seven inches long and three inches in diameter. A subtle seam divides it into two halves, and a recessed LED on one side sits dark above the letters Ã¢â‚¬Å“E.M.P.Ã¢â‚¬Â etched along the seam.",
-    location: "LevelTwoSafe",
-    vocab: ["emp", "capsule", "grenade", "device"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 3,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isSwitchable: false,
-    isOn: false,
-  },
 
   // 4. DNA Reader ------------------------------------------------------------
 

@@ -393,7 +393,7 @@ export const createInitialState = (world: World): GameState => {
         found_secret_lab: false,
       },
       mensLockerContents: {
-        menLocker1: [],
+        menLocker1: ["UndergroundZinePage"],
         menLocker2: [],
         menLocker3: [],
         menLocker4: [],

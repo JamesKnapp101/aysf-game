@@ -1,6 +1,9 @@
 import { CrtModal } from "@game/components/CrtModal";
 import { getItemById } from "@game/helpers/itemHelpers";
+import { updateItemLocation } from "@game/rules/items";
+import { addToInventory } from "@game/rules/state";
 import { GameState } from "@game/types/gameTypes";
+import type { Item } from "@game/types/itemTypes";
 import React, { useMemo, useState } from "react";
 import "../../styles/components/locker-modal.css";
 
@@ -60,11 +63,20 @@ function appendLog(
   });
 }
 
-function getAllInventoryItems(state: any): any[] {
-  // Legacy path used by your prior modal (world items w/ location === "INVENTORY")
-  const items: any[] =
-    state?.world?.items ?? state?.worldState?.items ?? state?.items ?? [];
-  return items.filter((it) => it?.location === "INVENTORY");
+function getInventoryItemIds(state: any): string[] {
+  const inventory = state?.player?.inventory;
+
+  if (Array.isArray(inventory)) return inventory;
+
+  if (inventory && typeof inventory === "object") {
+    return [
+      ...(inventory.general ?? []),
+      ...(inventory.badges ?? []),
+      ...(inventory.keys ?? []),
+    ];
+  }
+
+  return [];
 }
 
 function playerHasKeyForLocker(
@@ -72,54 +84,21 @@ function playerHasKeyForLocker(
   type: LockerType,
   lockerIndex: number
 ): boolean {
-  const inv = getAllInventoryItems(state);
-  return inv.some(
+  const inventoryIds = new Set(getInventoryItemIds(state));
+  return ((state?.world?.items ?? []) as Item[]).some(
     (it) =>
+      (inventoryIds.has(it.id) ||
+        it?.location === "INVENTORY" ||
+        state?.itemState?.itemRoomId?.[it.id] === "INVENTORY") &&
       it?.meta?.lockerType === type && it?.meta?.lockerIndex === lockerIndex
   );
 }
 
-function moveItemIdsToWorldInventoryLocation(
-  prev: any,
-  itemIds: string[]
-): any {
-  // Keeps your previous behavior: set item.location = "INVENTORY" if items live in world list
-  const items: any[] = prev?.world?.items ?? prev?.items ?? [];
-  if (!Array.isArray(items) || items.length === 0) return prev;
-
-  const idSet = new Set(itemIds);
-  const updated = items.map((it) =>
-    idSet.has(it.id) ? { ...it, location: "INVENTORY" } : it
-  );
-
-  if (prev.world?.items)
-    return { ...prev, world: { ...prev.world, items: updated } };
-  return { ...prev, items: updated };
-}
-
-function moveItemIdsToPlayerInventoryArray(prev: any, itemIds: string[]): any {
-  // NEW behavior you requested: also push into state.player.inventory
-  // Assumes inventory is an array of item ids. If yours is different, tweak here.
-  const currentInv: string[] = Array.isArray(prev?.player?.inventory)
-    ? prev.player.inventory
-    : [];
-
-  const invSet = new Set(currentInv);
-  const nextInv = [...currentInv];
-  for (const id of itemIds) {
-    if (!invSet.has(id)) {
-      invSet.add(id);
-      nextInv.push(id);
-    }
-  }
-
-  return {
-    ...prev,
-    player: {
-      ...prev.player,
-      inventory: nextInv,
-    },
-  };
+function moveItemIdsToInventory(prev: GameState, itemIds: string[]): GameState {
+  return itemIds.reduce((next, itemId) => {
+    const moved = updateItemLocation(next, itemId, "INVENTORY");
+    return addToInventory(moved, itemId);
+  }, prev);
 }
 
 export function LockerModal({
@@ -201,10 +180,7 @@ export function LockerModal({
       };
 
       if (contents?.length) {
-        // 1) Old system: mark items as located in INVENTORY in the world list (if you use it)
-        next = moveItemIdsToWorldInventoryLocation(next, contents);
-        // 2) New system: push item ids into state.player.inventory
-        next = moveItemIdsToPlayerInventoryArray(next, contents);
+        next = moveItemIdsToInventory(next, contents);
       }
 
       // Clear contents after opening

@@ -324,9 +324,7 @@ export const levelSixItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 1,
     itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
+    scoreId: "obtained_engine_room_key",
     meta: {
       kind: "key",
     },
