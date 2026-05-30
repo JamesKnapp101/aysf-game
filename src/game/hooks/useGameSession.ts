@@ -103,6 +103,7 @@ export function useGameSession({
           useUIOverlayStore.getState().closeOverlay();
           const uiEffects = useUIEffectsStore.getState();
           uiEffects.clearMindFlash();
+          uiEffects.clearSyndromeXSignal();
           uiEffects.clearOrganismDeath();
           setIsSessionReady(true);
         }

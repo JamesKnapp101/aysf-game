@@ -7,6 +7,8 @@ import { LogTab } from "@game/components/LogTab";
 import { NotificationHost } from "@game/components/NotificationHost";
 import { buildDamageNotification } from "@game/rules/notifications";
 import { StatusTab } from "@game/components/StatusTab";
+import { SyndromeXSignalOverlay } from "@game/components/SyndromeXSignalOverlay";
+import { useUIEffectsStore } from "@game/store/store";
 import type { GameState } from "@game/types/gameTypes";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -210,6 +212,17 @@ describe("UI panels", () => {
     expect(
       screen.getAllByText(/No detailed diagnostic is available/i),
     ).toHaveLength(2);
+  });
+
+  it("renders the syndrome x signal overlay text", () => {
+    useUIEffectsStore.getState().playSyndromeXSignal({
+      id: "test-signal",
+      text: "FFVGG TWSMSUWG",
+    });
+
+    render(<SyndromeXSignalOverlay visualEffectsMode="full" />);
+
+    expect(screen.getByText("FFVGG TWSMSUWG")).toBeInTheDocument();
   });
 
   it("dims completed game preserve difficulties in the terminal", async () => {

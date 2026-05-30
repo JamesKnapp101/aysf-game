@@ -16,6 +16,7 @@ beforeEach(() => {
 
   useUIEffectsStore.setState({
     mindFlash: null,
+    syndromeXSignal: null,
     organismDeath: null,
     teleportFlashNonce: 0,
   });

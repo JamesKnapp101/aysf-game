@@ -156,49 +156,64 @@ export function describeSicknessLevel(state: GameState): string {
   const s = state.player.vitals?.theSickness;
 
   if (s === undefined || s > 1975) {
-    return "You don't seem to have contracted anything.";
+    return "You feel totally normal.";
   }
   if (s > 1900) {
-    return "You feel a little bit tired, for some reason.";
+    return "You feel normal, why wouldn't you feel normal?";
   }
   if (s > 1700) {
-    return "Something has you feeling just a little off, some kind of bug, maybe.";
+    return "You feel normal, just a little off. It's normal to feel a little off, sometimes.";
   }
   if (s > 1500) {
-    return "You seem to have come down with a case of the sniffles.";
+    return "You feel normal, just a little off, as well as experiencing the occasional bright white spot in your field of vision that swims away.";
   }
   if (s > 1200) {
-    return "You seem to have come down with a cold or something.";
+    return "You feel fine, except for those bright white spots that keep swimming around in the air in front of you, and a persistent feeling that something isn't quite right.";
   }
   if (s > 900) {
-    return "You seem to have come down with a bad cold or something.";
+    return "The swimming white spots have been joined by an occasional humming sound that persists even when you plug your ears, but you feel okay, except for the unease and the light sweating.";
   }
   if (s > 700) {
-    return "You seem to have come down with a severe cold or something.";
+    return "The white lights are beginning to form patterns, and the humming sound in your ears has been joined by what sounds like faint, indecipherable chattering. You still feel mostly okay except for the increasing sense of unease, increased sweating, and worsening muscle tics.";
   }
   if (s > 500) {
-    return "You've come down with some kind of illness that seems to be getting worse.";
+    return "The patterns in the swimming white lights shift at regular intervals, as the faint chattering grows louder, and more clear, but you can't understand it. You've developed a persistent sense that a presence is behind you, just out of your sight, as sweat runs down your face and neck, and the muscle tics intensify.";
   }
   if (s > 300) {
-    return "You've come down with some kind of flu-like illness that is getting worse.";
+    return "The patterns in the white lights are repeating, you're sure of it, and the chattering is very clear now but it's not in your ears it's in your head, and not in any language you understand. Something is nearby, behind you, or maybe right in front of you but just out of phase, and is attempting to make some kind of connection, triggering the tics that now twitch in every muscle of your body.";
   }
   if (s > 150) {
-    return "You've contracted some kind of flu-like illness. Your condition is getting serious.";
+    return "The sweat has dried up, leaving your mouth dry and your face hot. The patterns of white light have grown dimmer but the chatter in your head has grown stronger, and the presence how feels as though it's sharing your skin, its chattering filling your head. The connection it pushes to make is intrusive and unrelenting, and the constant overlapping tics make it feel as though the blood in your muscles is boiling.";
   }
   if (s > 100) {
-    return "You've contracted some kind of very serious illness. Your condition is getting critical.";
+    return "You're as dry as a bone, your throat raw. The swimming light patterns have disappeared but you get the sense they're still there, you just can't see them anymore. With each new thread of the connection formed you feel more and more like the presence is slipping into your body like it's some kind of suit. The chattering has grown softer but like the swimming lights, you sense that the intensity of it has if anything grown.";
   }
   if (s > 50) {
-    return "You've contracted some kind of deadly illness. Without medical attention of some kind, you're going to die.";
+    return "Your body has grown hot, and parched. Your throat is raw and it hurts to try and swallow. The swimming lights are gone, and the chattering voice is, too. The presence is so close now that it's hard to tell who's who anymore as the last of the connection's threads form.";
   }
   if (s > 25) {
-    return "You've contracted a deadly illness and you are burning up with fever; without medication you won't have long to live.";
+    return "Your body temperature has unexpectedly, abruptly dropped back into the normal range. With the lights and sounds having faded, you feel, at the moment, pretty normal.";
   }
   if (s > 0) {
-    return "You've contracted a deadly illness which is entering its final stages; your tongue is swelling and you've developed an itching at the corners of the mouth and eyes.";
+    return "You feel totally normal. Maybe you feel even better than normal, as the last of the connection's threads form.";
   }
 
-  return "You've contracted a deadly illness which is entering its final stages...";
+  return "It's inside, now. Don't think about it...";
+}
+
+function describeSyndromeXStatusEffect(state: GameState): string {
+  const s = state.player.vitals?.theSickness;
+
+  if (s === undefined || s > 1700) return "???";
+  if (s > 1500) return "Mild photopsia";
+  if (s > 1200) return "Photopsia, anxiety";
+  if (s > 900) return "Photpsia, anxiety. Auditory hallucinations";
+  if (s > 500) {
+    return "Photopsia, anxiety. Auditory hallucinations. Muscle tics.";
+  }
+  if (s > 150) return "I think something's knocking...";
+  if (s > 25) return "Whatever was knocking, it's coming in...";
+  return "Benign";
 }
 
 export function describeRadiationLevel(state: GameState): string {
@@ -268,7 +283,7 @@ export function describeBodyTemperatureLevel(state: GameState): string {
     return "You feel warm and slightly flushed, with a dull ache behind the eyes.";
   }
   if (t < 103) {
-    return "Your skin is hot and sweaty. Your head throbs, and you feel nauseous.";
+    return "Your skin is hot and achy. Your head throbs, and you feel nauseous.";
   }
   if (t < 105) {
     return "Your body is overheating. You feel dizzy and weak, struggling to stay focused.";
@@ -313,6 +328,8 @@ function describeStatusEffect(
       return "You have been drinking alcohol. Was it too much?";
     case "radiation":
       return describeRadiationLevel(state);
+    case "syndrome x":
+      return describeSyndromeXStatusEffect(state);
     case "hyperaroused": {
       const remainingTurns = statusEffect.remainingTurns ?? 0;
       if (remainingTurns > 49) return "You're feeling a bit horny.";

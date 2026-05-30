@@ -476,6 +476,9 @@ export const createInitialState = (world: World): GameState => {
         attachedTo: "none",
       },
       playerDeaths: {},
+      syndromeX: {
+        organismAwakened: false,
+      },
       aviarySpotlight: createInitialAviarySpotlightState(),
       barBot: {
         cellarDeathAcknowledged: false,

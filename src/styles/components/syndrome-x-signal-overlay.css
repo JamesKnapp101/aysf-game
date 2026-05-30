@@ -1,0 +1,104 @@
+.syndrome-x-signal-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 95;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    pointer-events: none;
+    backdrop-filter: blur(2.5px);
+    background: rgb(0 0 0 / 0.12);
+    animation: syndrome-x-signal-life 2700ms ease-in-out both;
+}
+
+.syndrome-x-signal-text {
+    max-width: min(680px, calc(100vw - 48px));
+    color: rgb(var(--crt-color-rgb) / 0.96);
+    font-family: "Courier New", monospace;
+    font-size: clamp(1rem, 1.8vw, 1.45rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.45;
+    text-align: center;
+    text-shadow:
+        0 0 10px rgb(var(--crt-color-rgb) / 0.75),
+        0 0 26px rgb(var(--crt-color-rgb) / 0.32),
+        1px 0 0 rgb(255 255 255 / 0.22),
+        -1px 0 0 rgb(0 255 255 / 0.18);
+    text-transform: uppercase;
+    animation:
+        syndrome-x-signal-text-life 2700ms ease-in-out both,
+        syndrome-x-signal-quiver 90ms steps(2, end) infinite;
+}
+
+.syndrome-x-signal-overlay[data-visual-effects="reduced"] {
+    backdrop-filter: blur(1px);
+}
+
+.syndrome-x-signal-overlay[data-visual-effects="reduced"] .syndrome-x-signal-text {
+    animation: syndrome-x-signal-text-life 2700ms ease-in-out both;
+}
+
+.syndrome-x-signal-overlay[data-visual-effects="off"] {
+    backdrop-filter: none;
+    background: rgb(0 0 0 / 0.04);
+}
+
+.syndrome-x-signal-overlay[data-visual-effects="off"] .syndrome-x-signal-text {
+    animation: syndrome-x-signal-text-life 2700ms ease-in-out both;
+    text-shadow: none;
+}
+
+@keyframes syndrome-x-signal-life {
+    0% {
+        opacity: 0;
+    }
+
+    10%,
+    78% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes syndrome-x-signal-text-life {
+    0% {
+        opacity: 0;
+        transform: scale(0.98);
+        filter: blur(1px);
+    }
+
+    12% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+
+    78% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.02);
+        filter: blur(1px);
+    }
+}
+
+@keyframes syndrome-x-signal-quiver {
+    0% {
+        transform: translate(-1px, 0) skewX(-0.35deg);
+    }
+
+    50% {
+        transform: translate(1px, -1px) skewX(0.45deg);
+    }
+
+    100% {
+        transform: translate(0, 1px) skewX(-0.15deg);
+    }
+}

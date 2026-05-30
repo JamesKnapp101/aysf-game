@@ -28,11 +28,22 @@ export type MindFlashPayload = {
   onEnd?: () => void;
 };
 
+export type SyndromeXSignalPayload = {
+  id: string;
+  text: string;
+  onStart?: () => void;
+  onEnd?: () => void;
+};
+
 type UIEffectsState = {
   teleportFlashNonce: number;
   mindFlash: MindFlashPayload | null;
   playMindFlash: (payload: MindFlashPayload) => void;
   clearMindFlash: () => void;
+
+  syndromeXSignal: SyndromeXSignalPayload | null;
+  playSyndromeXSignal: (payload: SyndromeXSignalPayload) => void;
+  clearSyndromeXSignal: () => void;
 
   organismDeath: OrganismDeathPayload | null;
   playOrganismDeath: (payload: OrganismDeathPayload) => void;
@@ -54,6 +65,18 @@ export const useUIEffectsStore = create<UIEffectsState>((set) => ({
     set((s) => {
       s.mindFlash?.onEnd?.();
       return { mindFlash: null };
+    }),
+  syndromeXSignal: null,
+  playSyndromeXSignal: (payload) =>
+    set((s) => {
+      s.syndromeXSignal?.onEnd?.();
+      payload.onStart?.();
+      return { syndromeXSignal: payload };
+    }),
+  clearSyndromeXSignal: () =>
+    set((s) => {
+      s.syndromeXSignal?.onEnd?.();
+      return { syndromeXSignal: null };
     }),
   organismDeath: null,
   playOrganismDeath: (payload) =>

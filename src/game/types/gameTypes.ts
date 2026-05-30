@@ -371,6 +371,11 @@ type PlayerDeath = {
   cause: string;
 };
 
+export type SyndromeXState = {
+  organismAwakened: boolean;
+  organismAwakenedAtMove?: number;
+};
+
 type ConditionalExit = {
   blockMsg: string;
   conditionalTriggers?: string[];
@@ -473,6 +478,7 @@ export interface WorldState {
   roomTemp: Record<string, RoomTemperature>;
   scoresTriggered: Record<PlayerScoreId, boolean>;
   scriptedEventsTripped: Record<string, boolean>;
+  syndromeX?: SyndromeXState;
   trashBot: TrashBotState;
   visitedRooms: Record<string, boolean>;
   womensLockerContents: LockerContents<WomensLockerId>;

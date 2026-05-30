@@ -5,10 +5,20 @@ import {
   AQUARIUM_DROWNING_DAMAGE_PER_TURN,
   AQUARIUM_OXYGEN_LOSS_PER_TURN,
 } from "@game/helpers/environmentHelpers";
+import { getFlashlightDefaults } from "@game/helpers/flashlightHelpers";
 import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { applyStatusEffectToPlayer } from "@game/rules/status";
-import { getRadiationIntensity } from "@game/selectors/statusSelectors";
+import {
+  getRadiationIntensity,
+  getStatusEffectDiagnostics,
+} from "@game/selectors/statusSelectors";
+import {
+  getSyndromeXSignalFragment,
+  SYNDROME_X_SIGNAL_FRAGMENT_COUNT,
+  SYNDROME_X_SIGNAL_LOG_SOURCE,
+  SYNDROME_X_SIGNAL_TRANSCRIPT_NOTE,
+} from "@game/text/secretOrganismMessage";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { AQUARIUM_BREATHER_ITEM_ID } from "src/world/Items/creatures/octopus";
@@ -263,6 +273,259 @@ describe("General gameplay", () => {
 
     expect(getRadiationIntensity(afterTurn)).toBe(20);
     expect(afterTurn.player.vitals.health).toBe(99);
+  });
+
+  it("curves syndrome x temperature through the sickness stages", () => {
+    const withSickness = (theSickness: number, temperature = 98.6) => {
+      const baseState = createTestState({ roomId: "LevelSixCorridorBend" });
+
+      return {
+        ...baseState,
+        player: {
+          ...baseState.player,
+          statusEffects: [
+            {
+              id: "syndrome x" as const,
+              intensity: 1,
+              remainingTurns: 2000,
+            },
+          ],
+          vitals: {
+            ...baseState.player.vitals,
+            temperature,
+            theSickness,
+          },
+        },
+      };
+    };
+
+    const early = advanceTurn(withSickness(1901));
+    const high = advanceTurn(withSickness(151, 101.9));
+    const capped = advanceTurn(withSickness(101, 104));
+    const dropped = advanceTurn(withSickness(51, 102));
+    const normalized = advanceTurn(withSickness(26, 98.9));
+
+    expect(early.player.vitals.temperature).toBeCloseTo(98.8);
+    expect(high.player.vitals.temperature).toBeCloseTo(102);
+    expect(capped.player.vitals.temperature).toBeCloseTo(102);
+    expect(dropped.player.vitals.temperature).toBeCloseTo(98.9);
+    expect(normalized.player.vitals.temperature).toBeCloseTo(98.6);
+  });
+
+  it("describes syndrome x diagnostics by logged sickness milestone", () => {
+    const withSickness = (theSickness: number) => {
+      const baseState = createTestState({ roomId: "LevelSixCorridorBend" });
+
+      return {
+        ...baseState,
+        player: {
+          ...baseState.player,
+          statusEffects: [
+            {
+              id: "syndrome x" as const,
+              intensity: 1,
+              remainingTurns: 2000,
+            },
+          ],
+          vitals: {
+            ...baseState.player.vitals,
+            theSickness,
+          },
+        },
+      };
+    };
+
+    const diagnosisFor = (theSickness: number) =>
+      getStatusEffectDiagnostics(withSickness(theSickness))[0]?.message;
+
+    expect(diagnosisFor(1800)).toBe("???");
+    expect(diagnosisFor(1700)).toBe("Mild photopsia");
+    expect(diagnosisFor(1500)).toBe("Photopsia, anxiety");
+    expect(diagnosisFor(1200)).toBe(
+      "Photpsia, anxiety. Auditory hallucinations",
+    );
+    expect(diagnosisFor(900)).toBe(
+      "Photopsia, anxiety. Auditory hallucinations. Muscle tics.",
+    );
+    expect(diagnosisFor(500)).toBe("I think something's knocking...");
+    expect(diagnosisFor(150)).toBe(
+      "Whatever was knocking, it's coming in...",
+    );
+    expect(diagnosisFor(25)).toBe("Benign");
+  });
+
+  it("logs growing syndrome x cipher fragments at sickness milestones", () => {
+    const withSickness = (theSickness: number) => {
+      const baseState = createTestState({ roomId: "LevelSixCorridorBend" });
+
+      return {
+        ...baseState,
+        player: {
+          ...baseState.player,
+          statusEffects: [
+            {
+              id: "syndrome x" as const,
+              intensity: 1,
+              remainingTurns: 2000,
+            },
+          ],
+          vitals: {
+            ...baseState.player.vitals,
+            theSickness,
+          },
+        },
+      };
+    };
+
+    const first = advanceTurn(withSickness(1901));
+    const firstFragments = first.player.log.filter(
+      (entry) => entry.source === SYNDROME_X_SIGNAL_LOG_SOURCE,
+    );
+
+    expect(first.log.join("\n")).toContain(SYNDROME_X_SIGNAL_TRANSCRIPT_NOTE);
+    expect(firstFragments).toHaveLength(1);
+    expect(firstFragments[0]).toMatchObject({
+      body: getSyndromeXSignalFragment(0),
+      source: SYNDROME_X_SIGNAL_LOG_SOURCE,
+      title: "Unidentified Signal Fragment 01",
+    });
+
+    const second = advanceTurn({
+      ...first,
+      player: {
+        ...first.player,
+        vitals: {
+          ...first.player.vitals,
+          theSickness: 1701,
+        },
+      },
+    });
+    const secondFragments = second.player.log.filter(
+      (entry) => entry.source === SYNDROME_X_SIGNAL_LOG_SOURCE,
+    );
+
+    expect(secondFragments).toHaveLength(2);
+    expect(secondFragments[1]?.body).toBe(getSyndromeXSignalFragment(1));
+    expect(secondFragments[1]?.body.split(/\s+/).length).toBeGreaterThan(
+      firstFragments[0]?.body.split(/\s+/).length ?? 0,
+    );
+  });
+
+  it("awakens the syndrome x organism when the final cipher fragment is logged", () => {
+    const baseState = createTestState({ roomId: "LevelSixCorridorBend" });
+    const priorFragments = Array.from(
+      { length: SYNDROME_X_SIGNAL_FRAGMENT_COUNT - 1 },
+      (_, index) => ({
+        body: getSyndromeXSignalFragment(index) ?? "",
+        loggedAtTurn: index,
+        source: SYNDROME_X_SIGNAL_LOG_SOURCE,
+        title: `Unidentified Signal Fragment ${String(index + 1).padStart(
+          2,
+          "0",
+        )}`,
+      }),
+    );
+    const start = {
+      ...baseState,
+      player: {
+        ...baseState.player,
+        log: priorFragments,
+        statusEffects: [
+          {
+            id: "syndrome x" as const,
+            intensity: 1,
+            remainingTurns: 2000,
+          },
+        ],
+        vitals: {
+          ...baseState.player.vitals,
+          theSickness: 1,
+        },
+      },
+    };
+
+    const next = advanceTurn(start);
+    const fragments = next.player.log.filter(
+      (entry) => entry.source === SYNDROME_X_SIGNAL_LOG_SOURCE,
+    );
+
+    expect(next.player.vitals.theSickness).toBe(0);
+    expect(fragments).toHaveLength(SYNDROME_X_SIGNAL_FRAGMENT_COUNT);
+    expect(next.worldState.syndromeX?.organismAwakened).toBe(true);
+    expect(next.worldState.syndromeX?.organismAwakenedAtMove).toBe(start.moves);
+    expect(
+      next.worldState.playerDeaths.LevelSixCorridorBend,
+    ).toBeUndefined();
+  });
+
+  it("lets the awakened syndrome x organism absorb the player in darkness", () => {
+    const start = setInventory(
+      patchRoomDarkness(
+        createTestState({
+          roomId: "LevelSixCorridorBend",
+          visitedRooms: ["LevelSixCorridorBend", "PowerGrid"],
+        }),
+        "LevelSixCorridorBend",
+        true,
+      ),
+      [],
+    );
+    const awakened = {
+      ...start,
+      worldState: {
+        ...start.worldState,
+        syndromeX: {
+          organismAwakened: true,
+          organismAwakenedAtMove: start.moves - 1,
+        },
+      },
+    };
+
+    const next = advanceTurn(awakened);
+
+    expect(next.player.roomId).not.toBe("LevelSixCorridorBend");
+    expect(next.worldState.playerDeaths.LevelSixCorridorBend?.cause).toBe(
+      "organismAttack",
+    );
+  });
+
+  it("does not let the awakened syndrome x organism attack through a light source", () => {
+    const darkRoomState = patchRoomDarkness(
+      createTestState({
+        roomId: "LevelSixCorridorBend",
+        visitedRooms: ["LevelSixCorridorBend", "PowerGrid"],
+      }),
+      "LevelSixCorridorBend",
+      true,
+    );
+    const withFlashlight = setInventory(darkRoomState, ["flashlight"]);
+    const start = {
+      ...withFlashlight,
+      itemState: {
+        ...withFlashlight.itemState,
+        itemSettings: {
+          ...withFlashlight.itemState.itemSettings,
+          flashlight: {
+            ...getFlashlightDefaults("flashlight"),
+            isOn: true,
+          },
+        },
+      },
+      worldState: {
+        ...withFlashlight.worldState,
+        syndromeX: {
+          organismAwakened: true,
+          organismAwakenedAtMove: withFlashlight.moves - 1,
+        },
+      },
+    };
+
+    const next = advanceTurn(start);
+
+    expect(next.player.roomId).toBe("LevelSixCorridorBend");
+    expect(
+      next.worldState.playerDeaths.LevelSixCorridorBend,
+    ).toBeUndefined();
   });
 
   it("shows the full room description when a room is lit", async () => {

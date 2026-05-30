@@ -21,6 +21,7 @@
 .crt-button {
     appearance: none;
     border: 1px solid color-mix(in srgb, var(--crt-color) 65%, #000);
+    border-radius: 18px;
     background:
         linear-gradient(to bottom,
             color-mix(in srgb, var(--crt-color) 18%, #000),

@@ -12,6 +12,7 @@ import { DeepStorageSuitOverlay } from "./components/DeepStorageSuitOverlay";
 import { NotificationHost } from "./components/NotificationHost";
 import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
+import { SyndromeXSignalOverlay } from "./components/SyndromeXSignalOverlay";
 import { isPlayerUnderwater } from "./helpers/environmentHelpers";
 import { isAnyFlashlightOn } from "./helpers/flashlightHelpers";
 import { useGameSession } from "./hooks/useGameSession";
@@ -23,6 +24,7 @@ import {
 } from "./selectors/statusSelectors";
 import { useUIEffectsStore } from "./store/store";
 import { buildRoomDescription } from "./text/roomDescription";
+import { SYNDROME_X_SIGNAL_LOG_SOURCE } from "./text/secretOrganismMessage";
 import type { ActionRequest } from "./types/actionsTypes";
 import type { StatusEffect } from "./types/gameTypes";
 
@@ -86,6 +88,8 @@ export const Game: React.FC = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const cometInputRef = useRef<HTMLInputElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const hasObservedSyndromeXSignalRef = useRef(false);
+  const lastSyndromeXSignalRef = useRef<string | null>(null);
 
   const restorePromptFocus = useCallback(() => {
     if (
@@ -129,6 +133,7 @@ export const Game: React.FC = () => {
   });
 
   const nonce = useUIEffectsStore((s) => s.teleportFlashNonce);
+  const playSyndromeXSignal = useUIEffectsStore((s) => s.playSyndromeXSignal);
 
   useEffect(() => {
     if (nonce === 0) return;
@@ -139,6 +144,31 @@ export const Game: React.FC = () => {
     void el.offsetWidth;
     el.classList.add("teleport-flash");
   }, [nonce]);
+
+  useEffect(() => {
+    const latestSignalEntry = [...(gs.player.log ?? [])]
+      .reverse()
+      .find((entry) => entry.source === SYNDROME_X_SIGNAL_LOG_SOURCE);
+    const signalKey = latestSignalEntry
+      ? `${latestSignalEntry.loggedAtTurn}|${latestSignalEntry.title}|${latestSignalEntry.body}`
+      : null;
+
+    if (!hasObservedSyndromeXSignalRef.current) {
+      hasObservedSyndromeXSignalRef.current = true;
+      lastSyndromeXSignalRef.current = signalKey;
+      return;
+    }
+
+    if (!latestSignalEntry || signalKey === lastSyndromeXSignalRef.current) {
+      return;
+    }
+
+    lastSyndromeXSignalRef.current = signalKey;
+    playSyndromeXSignal({
+      id: signalKey ?? `${gs.moves}`,
+      text: latestSignalEntry.body,
+    });
+  }, [gs.moves, gs.player.log, playSyndromeXSignal]);
 
   // -------- horizontal resize: room vs main row -----------------------------
   const handleStartResizeHorizontal = useCallback(
@@ -285,6 +315,7 @@ export const Game: React.FC = () => {
             onClick={handleRootClick}
           >
             <NotificationHost state={gs} setGameState={setGameState} />
+            <SyndromeXSignalOverlay visualEffectsMode={visualEffectsMode} />
             {deepStorageSuitOverlayActive && (
               <DeepStorageSuitOverlay
                 state={gs}

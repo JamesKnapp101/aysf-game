@@ -282,7 +282,8 @@ export function triggerPlayerDeath(
       id: `playerRegenHusk${Object.keys(next.worldState.playerDeaths).length}`,
       location: safeRegenRoom,
       name: "a lifeless husk",
-      description: "It's identical to the one you found when you first woke up.",
+      description:
+        "It's identical to the one you found when you first woke up.",
       initialDescription:
         "Curled up on the floor nearby you see what looks like a dead bug, or spider.",
       vocab: ["husk", "lifeless husk", "bug husk"],

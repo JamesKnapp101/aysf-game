@@ -12,6 +12,7 @@ import {
 } from "@game/helpers/catHelpers";
 import { tickUnderwaterVitals } from "@game/helpers/environmentHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
+import { canPlayerSeeInRoom } from "@game/helpers/visibilityHelpers";
 import {
   buildMemoryNotification,
   enqueueNotification,
@@ -48,6 +49,12 @@ import {
   pickRandomFromMsgArray,
   TRIXOPHINE_MESSAGES,
 } from "../text/messageMaps";
+import {
+  getSyndromeXSignalFragment,
+  SYNDROME_X_SIGNAL_FRAGMENT_COUNT,
+  SYNDROME_X_SIGNAL_LOG_SOURCE,
+  SYNDROME_X_SIGNAL_TRANSCRIPT_NOTE,
+} from "../text/secretOrganismMessage";
 import type { GameState, StatusEffect } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
 import { appendLog } from "./handleCommand";
@@ -71,6 +78,135 @@ function sicknessStage(s: number): number {
   if (s > 25) return 11;
   if (s > 0) return 12;
   return 13;
+}
+
+const NORMAL_BODY_TEMPERATURE = 98.6;
+const SYNDROME_X_MAX_TEMPERATURE = 102;
+const SYNDROME_X_STAGE_TEMP_DELTA = 0.6;
+const SYNDROME_X_TICK_TEMP_DELTA = 0.003;
+const SYNDROME_X_STAGE_TEMP_DROP_DELTA = 3.1;
+const SYNDROME_X_TICK_TEMP_DROP_DELTA = 0.08;
+const SYNDROME_X_ORGANISM_ATTACK_DEATH_MESSAGE =
+  "The darkness gathers in the back of your throat. Something inside you moves toward it, unfolding through your nerves before you can make a sound. For one impossible moment you feel it surround you from within, and then there is no you left for the dark to hold.";
+
+function syndromeXTemperatureTarget(s: number): number {
+  if (s <= 0 || s > 1900) return NORMAL_BODY_TEMPERATURE;
+  if (s > 1700) return 98.8;
+  if (s > 1500) return 99;
+  if (s > 1200) return 99.3;
+  if (s > 900) return 99.8;
+  if (s > 700) return 100.2;
+  if (s > 500) return 100.7;
+  if (s > 300) return 101.3;
+  if (s > 50) return SYNDROME_X_MAX_TEMPERATURE;
+  if (s > 25) return 98.9;
+  return NORMAL_BODY_TEMPERATURE;
+}
+
+function approachTemperatureTarget(
+  current: number | undefined,
+  target: number,
+  stageTransitioned: boolean,
+): number {
+  const currentTemp = Math.min(
+    current ?? NORMAL_BODY_TEMPERATURE,
+    SYNDROME_X_MAX_TEMPERATURE,
+  );
+  const delta = target - currentTemp;
+  if (delta === 0) return target;
+
+  let maxDelta: number;
+  if (delta > 0) {
+    maxDelta = stageTransitioned
+      ? SYNDROME_X_STAGE_TEMP_DELTA
+      : SYNDROME_X_TICK_TEMP_DELTA;
+  } else {
+    maxDelta = stageTransitioned
+      ? SYNDROME_X_STAGE_TEMP_DROP_DELTA
+      : SYNDROME_X_TICK_TEMP_DROP_DELTA;
+  }
+
+  if (Math.abs(delta) <= maxDelta) return target;
+  return currentTemp + Math.sign(delta) * maxDelta;
+}
+
+function nextSyndromeXTemperature(
+  current: number | undefined,
+  nextSickness: number,
+  stageTransitioned: boolean,
+): number {
+  return approachTemperatureTarget(
+    current,
+    syndromeXTemperatureTarget(nextSickness),
+    stageTransitioned,
+  );
+}
+
+function markSyndromeXOrganismAwakened(state: GameState): GameState {
+  const previous = state.worldState.syndromeX ?? { organismAwakened: false };
+
+  if (previous.organismAwakened) return state;
+
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      syndromeX: {
+        ...previous,
+        organismAwakened: true,
+        organismAwakenedAtMove: state.moves,
+      },
+    },
+  };
+}
+
+function appendSyndromeXStageLog(state: GameState): GameState {
+  let next = appendLog(state, describeSicknessLevel(state));
+  const fragmentIndex = next.player.log.filter(
+    (entry) => entry.source === SYNDROME_X_SIGNAL_LOG_SOURCE,
+  ).length;
+  const fragment = getSyndromeXSignalFragment(fragmentIndex);
+
+  if (!fragment) {
+    if (
+      next.player.vitals.theSickness === 0 &&
+      fragmentIndex >= SYNDROME_X_SIGNAL_FRAGMENT_COUNT
+    ) {
+      return markSyndromeXOrganismAwakened(next);
+    }
+
+    return next;
+  }
+
+  next = appendLog(next, SYNDROME_X_SIGNAL_TRANSCRIPT_NOTE);
+
+  const withFragment: GameState = {
+    ...next,
+    player: {
+      ...next.player,
+      log: [
+        ...next.player.log,
+        {
+          body: fragment,
+          loggedAtTurn: next.moves,
+          source: SYNDROME_X_SIGNAL_LOG_SOURCE,
+          title: `Unidentified Signal Fragment ${String(fragmentIndex + 1).padStart(
+            2,
+            "0",
+          )}`,
+        },
+      ],
+    },
+  };
+
+  if (
+    withFragment.player.vitals.theSickness === 0 &&
+    fragmentIndex + 1 >= SYNDROME_X_SIGNAL_FRAGMENT_COUNT
+  ) {
+    return markSyndromeXOrganismAwakened(withFragment);
+  }
+
+  return withFragment;
 }
 
 export function applyStatusEffectTick(
@@ -169,20 +305,16 @@ export function applyStatusEffectTick(
       const stageTransitioned = nextStage > prevStage;
 
       let nextHealth = vitals.health;
-      let nextTemp = vitals.temperature ?? 98.6;
+      const nextTemp = nextSyndromeXTemperature(
+        vitals.temperature,
+        nextSickness,
+        stageTransitioned,
+      );
 
       if (nextSickness <= 500 && nextSickness > 0) {
         if (nextSickness % 5 === 0) {
           nextHealth = Math.max(0, nextHealth - 1);
         }
-      }
-
-      if (stageTransitioned) {
-        nextTemp = Math.min(105, nextTemp + 0.6);
-      }
-
-      if (!stageTransitioned && nextStage >= 2 && nextTemp < 105) {
-        nextTemp = Math.min(105, nextTemp + 0.003);
       }
 
       nextVitals = {
@@ -197,7 +329,7 @@ export function applyStatusEffectTick(
           ...state,
           player: { ...state.player, vitals: nextVitals },
         };
-        return appendLog(nextState, describeSicknessLevel(nextState));
+        return appendSyndromeXStageLog(nextState);
       }
 
       break;
@@ -333,9 +465,11 @@ function tickSickness(state: GameState): GameState {
   };
 
   if (stage1 > stage0) {
-    const temp0 = next.player.vitals.temperature ?? 98.6;
-    const delta = 0.6;
-    const temp1 = Math.min(106, temp0 + delta);
+    const temp1 = nextSyndromeXTemperature(
+      next.player.vitals.temperature,
+      s1,
+      true,
+    );
 
     next = {
       ...next,
@@ -347,10 +481,24 @@ function tickSickness(state: GameState): GameState {
         },
       },
     };
-    next = appendLog(next, describeSicknessLevel(next));
+    next = appendSyndromeXStageLog(next);
   }
 
   return next;
+}
+
+function tickSyndromeXOrganism(state: GameState): GameState {
+  const syndromeX = state.worldState.syndromeX;
+
+  if (!syndromeX?.organismAwakened) return state;
+  if (syndromeX.organismAwakenedAtMove === state.moves) return state;
+  if (canPlayerSeeInRoom(state, state.player.roomId)) return state;
+
+  return triggerPlayerDeath(
+    state,
+    SYNDROME_X_ORGANISM_ATTACK_DEATH_MESSAGE,
+    "organismAttack",
+  );
 }
 
 function applyEffects(state: GameState): GameState {
@@ -609,6 +757,7 @@ export function advanceTurn(state: GameState): GameState {
 
   next = tickStatusEffects(next);
   next = tickSickness(next);
+  next = tickSyndromeXOrganism(next);
   next = tickAnimateActivities(next);
   next = tickHeldCat(next);
   next = applyRegisteredTurnTickPhase(next, "simulation");
