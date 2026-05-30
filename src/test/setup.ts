@@ -19,6 +19,7 @@ beforeEach(() => {
     syndromeXSignal: null,
     organismDeath: null,
     teleportFlashNonce: 0,
+    screenShakeNonce: 0,
   });
 
   Object.defineProperty(window, "requestIdleCallback", {

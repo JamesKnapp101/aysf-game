@@ -37,6 +37,7 @@ export type SyndromeXSignalPayload = {
 
 type UIEffectsState = {
   teleportFlashNonce: number;
+  screenShakeNonce: number;
   mindFlash: MindFlashPayload | null;
   playMindFlash: (payload: MindFlashPayload) => void;
   clearMindFlash: () => void;
@@ -50,6 +51,7 @@ type UIEffectsState = {
   clearOrganismDeath: () => void;
 
   triggerTeleportFlash: () => void;
+  triggerScreenShake: () => void;
 };
 
 export const useUIEffectsStore = create<UIEffectsState>((set) => ({
@@ -93,4 +95,7 @@ export const useUIEffectsStore = create<UIEffectsState>((set) => ({
   teleportFlashNonce: 0,
   triggerTeleportFlash: () =>
     set((s) => ({ teleportFlashNonce: s.teleportFlashNonce + 1 })),
+  screenShakeNonce: 0,
+  triggerScreenShake: () =>
+    set((s) => ({ screenShakeNonce: s.screenShakeNonce + 1 })),
 }));

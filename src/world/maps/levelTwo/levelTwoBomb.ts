@@ -1,3 +1,4 @@
+import { useUIEffectsStore } from "@game/store/store";
 import type { GameState, LevelTwoBombState } from "@game/types/gameTypes";
 
 export const LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID = "LevelTwoBombDetonated";
@@ -109,6 +110,8 @@ export function tickLevelTwoBomb(state: GameState): {
       },
     },
   };
+
+  useUIEffectsStore.getState().triggerScreenShake();
 
   return {
     state: next,

@@ -6,6 +6,7 @@ import {
   PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE,
   PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
 } from "@game/helpers/parkKeyHijack";
+import { useUIEffectsStore } from "@game/store/store";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { LEVEL_FIVE } from "../world/maps/levelFive/LevelFive";
@@ -973,6 +974,7 @@ describe("Doors and level mechanics", () => {
     expect(
       next.worldState.conditionalTriggers[LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID],
     ).toBe(true);
+    expect(useUIEffectsStore.getState().screenShakeNonce).toBe(1);
     expect(getLastLogEntry(next)).toContain("loud, low BOOM");
     expect(getLastLogEntry(next)).toContain("conveyor's jammed scrap tears loose");
   });

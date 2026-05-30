@@ -133,6 +133,7 @@ export const Game: React.FC = () => {
   });
 
   const nonce = useUIEffectsStore((s) => s.teleportFlashNonce);
+  const screenShakeNonce = useUIEffectsStore((s) => s.screenShakeNonce);
   const playSyndromeXSignal = useUIEffectsStore((s) => s.playSyndromeXSignal);
 
   useEffect(() => {
@@ -144,6 +145,16 @@ export const Game: React.FC = () => {
     void el.offsetWidth;
     el.classList.add("teleport-flash");
   }, [nonce]);
+
+  useEffect(() => {
+    if (screenShakeNonce === 0) return;
+    const el = rootRef.current;
+    if (!el) return;
+
+    el.classList.remove("screen-shake");
+    void el.offsetWidth;
+    el.classList.add("screen-shake");
+  }, [screenShakeNonce]);
 
   useEffect(() => {
     const latestSignalEntry = [...(gs.player.log ?? [])]
