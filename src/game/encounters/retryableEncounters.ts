@@ -3,23 +3,17 @@ import { getGamePreserveMoveGuard } from "@game/preserve/preserveTraversal";
 import type { GameState } from "@game/types/gameTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
 import {
-  AQUARIUM_DROWNING_DEATH_CAUSE,
-  getAquariumMoveGuard,
-  AQUARIUM_RETRY_RESPAWN_ROOM_ID,
-  resetAquariumEncounter,
-} from "src/world/Items/creatures/octopus";
-import {
-  BULL_RETRY_RESPAWN_ROOM_ID,
-  resetBullEncounter,
-} from "src/world/Items/creatures/bull";
+  AVIARY_RETRY_RESPAWN_ROOM_ID,
+  resetAviaryEncounter,
+} from "src/world/Items/creatures/aviaryOrganisms";
 import {
   BADGER_RETRY_RESPAWN_ROOM_ID,
   resetBadgerEncounter,
 } from "src/world/Items/creatures/badger";
 import {
-  AVIARY_RETRY_RESPAWN_ROOM_ID,
-  resetAviaryEncounter,
-} from "src/world/Items/creatures/aviaryOrganisms";
+  BULL_RETRY_RESPAWN_ROOM_ID,
+  resetBullEncounter,
+} from "src/world/Items/creatures/bull";
 import {
   HYDROPONICS_SPIDER_ITEM_ID,
   HYDROPONICS_SPIDER_REACHABILITY_MESSAGE,
@@ -29,15 +23,21 @@ import {
   isHydroponicsSpiderVisibleFromRoom,
 } from "src/world/Items/creatures/giantSpider";
 import {
-  maybeInitializeHydroponicsCocoonPuzzle,
-  resetHydroponicsEncounter,
-} from "src/world/maps/levelSix/hydroponicsPuzzle";
+  AQUARIUM_DROWNING_DEATH_CAUSE,
+  AQUARIUM_RETRY_RESPAWN_ROOM_ID,
+  getAquariumMoveGuard,
+  resetAquariumEncounter,
+} from "src/world/Items/creatures/octopus";
 import {
   getDeepStorageActionGuard,
   getDeepStorageRespawnDockRoomId,
   matchesDeepStorageRetryableDeath,
   resetDeepStorageAfterDeath,
 } from "src/world/maps/levelSeven/deepStorage";
+import {
+  maybeInitializeHydroponicsCocoonPuzzle,
+  resetHydroponicsEncounter,
+} from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 type EncounterMoveGuardResult =
   | {
@@ -97,13 +97,16 @@ function isRemoteHydroponicsSpiderInteraction(
   if (cmd.verb === "examine" || cmd.verb === "look") return false;
   if (!isHydroponicsSpiderRoom(state.player.roomId)) return false;
   if (!isHydroponicsSpiderVisibleFromRoom(state.player.roomId)) return false;
-  if (canReachHydroponicsSpiderFromRoom(state, state.player.roomId)) return false;
+  if (canReachHydroponicsSpiderFromRoom(state, state.player.roomId))
+    return false;
 
-  const spider = state.world.items.find((item) => item.id === HYDROPONICS_SPIDER_ITEM_ID);
+  const spider = state.world.items.find(
+    (item) => item.id === HYDROPONICS_SPIDER_ITEM_ID,
+  );
   if (!spider) return false;
 
-  const targets = [cmd.direct, cmd.indirect].filter(
-    (noun): noun is string => Boolean(noun?.trim()),
+  const targets = [cmd.direct, cmd.indirect].filter((noun): noun is string =>
+    Boolean(noun?.trim()),
   );
 
   return targets.some((noun) => isHydroponicsSpiderNoun(spider, noun));
@@ -118,7 +121,7 @@ const RETRYABLE_ENCOUNTERS: RetryableEncounterDefinition[] = [
       if (
         ctx.fromRoomId === "HydroponicsPlatform" &&
         ctx.direction === "down" &&
-        state.worldState.conditionalTriggers.EscapedWithYellowBadge &&
+        state.worldState.conditionalTriggers.EscapedWithOrangeBadge &&
         !state.worldState.hydroponicsSpider.isAlive
       ) {
         return {
@@ -148,7 +151,8 @@ const RETRYABLE_ENCOUNTERS: RetryableEncounterDefinition[] = [
   },
   {
     id: "aquarium",
-    beforeMove: (state, ctx) => getAquariumMoveGuard(state, ctx.destinationRoomId),
+    beforeMove: (state, ctx) =>
+      getAquariumMoveGuard(state, ctx.destinationRoomId),
     matchesRetryableDeath: (_state, cause) =>
       cause === "aquarium octopus" || cause === AQUARIUM_DROWNING_DEATH_CAUSE,
     getRetryableDeathOverride: () => ({

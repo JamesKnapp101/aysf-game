@@ -11,8 +11,14 @@ import {
   AQUARIUM_ELECTRIC_PROD_ITEM_ID,
   createInitialOctopusState,
 } from "src/world/Items/creatures/octopus";
+import { createInitialDeepStorageState } from "src/world/maps/levelSeven/deepStorage";
 import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
 import { BAR_BULL_ADHESIVE_TRIGGER } from "src/world/maps/levelThree/Park/Bar/barMechanicalBull";
+import { createInitialMovieTheaterState } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
+import {
+  createInitialLevelTwoBombState,
+  LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID,
+} from "src/world/maps/levelTwo/levelTwoBomb";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
   INITIAL_WORLD,
@@ -20,12 +26,6 @@ import {
   mergeWorldChunks,
   type WorldChunkId,
 } from "../world/World";
-import { createInitialMovieTheaterState } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
-import {
-  createInitialLevelTwoBombState,
-  LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID,
-} from "src/world/maps/levelTwo/levelTwoBomb";
-import { createInitialDeepStorageState } from "src/world/maps/levelSeven/deepStorage";
 import {
   INITIAL_CONTAINER_CONTENTS,
   INITIAL_SURFACE_CONTENTS,
@@ -516,7 +516,7 @@ export const createInitialState = (world: World): GameState => {
         TrashBotMaintenanceDoorOpen: false,
         HydroponicsDoorUnblocked: false,
         [LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID]: false,
-        EscapedWithYellowBadge: false,
+        EscapedWithOrangeBadge: false,
         GymWeightlifterMoved: false,
         BarVisionQuestTriggered: false,
         [BAR_BULL_ADHESIVE_TRIGGER]: false,

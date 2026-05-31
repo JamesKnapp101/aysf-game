@@ -108,11 +108,9 @@ export const badgeItems: Item[] = [
   {
     id: "orangebadge",
     name: "orange plastic badge",
-    initialDescription:
-      "The corner of an orange plastic badge peeks out from under the back of the pinned weightlifter.",
     description:
       "This is a slim, rectangular plastic badge that is entirely orange except for a white insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name '' and beneath that a bar code of some kind.",
-    location: "GymWeightRoom",
+    location: "seeded",
     vocab: ["orange", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -159,10 +157,11 @@ export const badgeItems: Item[] = [
   {
     id: "yellowbadge",
     name: "yellow plastic badge",
-    initialDescription: "Lying in the damp grass is a sooty yellow badge",
+    initialDescription:
+      "The corner of a yellow plastic badge peeks out from under the back of the pinned weightlifter.",
     description:
       "This is a slim, rectangular plastic badge that is entirely yellow except for a black insignia of an upside-down isosceles triangle within a circle, with a V shape piercing the triangle's base, its point connecting with the triangle's point. Written in a neutral font in the bottom left is the name 'JOHN RAWLINS, EE2' and beneath that a bar code of some kind.",
-    location: "seeded",
+    location: "GymWeightRoom",
     vocab: ["yellow", "badge", "plastic"],
     itemClass: "solid",
     itemCategory: "collectable",

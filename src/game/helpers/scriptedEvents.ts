@@ -1,16 +1,10 @@
-import { queueAfterRoomDescription } from "@game/helpers/gameHelpers";
 import {
-  BAR_BOT_CELLAR_DEATH_RETURN_MESSAGE,
   acknowledgeBarBotReturnedFromCellarDeath,
+  BAR_BOT_CELLAR_DEATH_RETURN_MESSAGE,
   markBarBotSawPlayerEnterCellar,
   shouldBarBotAcknowledgeReturnedFromCellarDeath,
 } from "@game/helpers/barBotAwareness";
-import { movieTheaterScriptedEvents } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterEvents";
-import {
-  moveGymExerciseBallToRoom,
-  playerHasGymExerciseBall,
-} from "src/world/maps/levelThree/Park/Gym/gymExerciseBall";
-import { GYM_ROOM_ID } from "src/world/maps/levelThree/Park/Gym/gymConstants";
+import { queueAfterRoomDescription } from "@game/helpers/gameHelpers";
 import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import {
   armParkEastPowerKeySnatch,
@@ -21,6 +15,12 @@ import {
   triggerParkEastPowerKeySnatch,
 } from "@game/helpers/parkKeyHijack";
 import { ScriptedEvent } from "@game/types/eventTypes";
+import { GYM_ROOM_ID } from "src/world/maps/levelThree/Park/Gym/gymConstants";
+import {
+  moveGymExerciseBallToRoom,
+  playerHasGymExerciseBall,
+} from "src/world/maps/levelThree/Park/Gym/gymExerciseBall";
+import { movieTheaterScriptedEvents } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterEvents";
 
 function runParkEastPowerKeySnatch(state: Parameters<ScriptedEvent["run"]>[0]) {
   let next = triggerParkEastPowerKeySnatch(state);
@@ -219,7 +219,7 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
       ctx.kind === "onTurnEnd" &&
       state.worldState.hydroponicsCocoonPuzzle.resolved &&
       state.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining > 0 &&
-      !state.worldState.conditionalTriggers.EscapedWithYellowBadge,
+      !state.worldState.conditionalTriggers.EscapedWithOrangeBadge,
     run: (state) => {
       let next = state;
       const turnsRemaining =
@@ -241,7 +241,7 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
     when: (state, ctx) =>
       ctx.kind === "onTurnEnd" &&
       ctx.roomId === "HydroponicsPlatform" &&
-      state.worldState.conditionalTriggers.EscapedWithYellowBadge,
+      state.worldState.conditionalTriggers.EscapedWithOrangeBadge,
     run: (state) => {
       let next = state;
       next = queueAfterRoomDescription(

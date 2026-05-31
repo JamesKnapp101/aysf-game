@@ -5,9 +5,9 @@ import { addToInventory, inventoryHas } from "@game/rules/state";
 import type { GameState, StatusId } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import {
-  GYM_ORANGE_BADGE_ID,
   GYM_WEIGHT_ROOM_ID,
   GYM_WEIGHTLIFTER_MOVED_TRIGGER,
+  GYM_YELLOW_BADGE_ID,
 } from "./gymConstants";
 
 export function isGymWeightlifterPinningBadge(state: GameState): boolean {
@@ -46,29 +46,29 @@ export function liftGymWeightlifterBarbell(state: GameState): {
       ...state.itemState,
       containerContents: removeItemFromPlacementLists(
         state.itemState.containerContents,
-        GYM_ORANGE_BADGE_ID,
+        GYM_YELLOW_BADGE_ID,
       ),
       surfaceContents: removeItemFromPlacementLists(
         state.itemState.surfaceContents,
-        GYM_ORANGE_BADGE_ID,
+        GYM_YELLOW_BADGE_ID,
       ),
       underContents: removeItemFromPlacementLists(
         state.itemState.underContents,
-        GYM_ORANGE_BADGE_ID,
+        GYM_YELLOW_BADGE_ID,
       ),
       searchableContents: removeItemFromPlacementLists(
         state.itemState.searchableContents,
-        GYM_ORANGE_BADGE_ID,
+        GYM_YELLOW_BADGE_ID,
       ),
     },
   };
 
-  if (!inventoryHas(next.player.inventory, GYM_ORANGE_BADGE_ID)) {
-    next = updateItemLocation(next, GYM_ORANGE_BADGE_ID, "INVENTORY");
-    next = addToInventory(next, GYM_ORANGE_BADGE_ID);
+  if (!inventoryHas(next.player.inventory, GYM_YELLOW_BADGE_ID)) {
+    next = updateItemLocation(next, GYM_YELLOW_BADGE_ID, "INVENTORY");
+    next = addToInventory(next, GYM_YELLOW_BADGE_ID);
     next = triggerScoreOnce(
       next,
-      next.world.items.find((item) => item.id === GYM_ORANGE_BADGE_ID)?.scoreId,
+      next.world.items.find((item) => item.id === GYM_YELLOW_BADGE_ID)?.scoreId,
     );
   }
 

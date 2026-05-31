@@ -255,10 +255,10 @@ function shuffle<T>(input: readonly T[], rng: () => number): T[] {
   return next;
 }
 
-function hasResolvedYellowBadge(state: GameState): boolean {
+function hasResolvedOrangeBadge(state: GameState): boolean {
   return (
-    inventoryHas(state.player.inventory, "yellowbadge") ||
-    state.worldState.scoresTriggered.obtained_yellow_badge === true
+    inventoryHas(state.player.inventory, "orangebadge") ||
+    state.worldState.scoresTriggered.obtained_orange_badge === true
   );
 }
 
@@ -317,7 +317,7 @@ export function resetHydroponicsCocoonPuzzle(state: GameState): GameState {
     shuffledBodyIds.map((bodyId, idx) => [bodyId, roomSlots[idx]]),
   );
 
-  const alreadySolved = hasResolvedYellowBadge(state);
+  const alreadySolved = hasResolvedOrangeBadge(state);
 
   return {
     ...state,
@@ -350,7 +350,7 @@ export function resetHydroponicsEncounter(state: GameState): GameState {
       hydroponicsSpider: createInitialHydroponicsSpiderState(),
       conditionalTriggers: {
         ...state.worldState.conditionalTriggers,
-        EscapedWithYellowBadge: false,
+        EscapedWithOrangeBadge: false,
       },
       roomAudioLevel: {
         ...state.worldState.roomAudioLevel,
@@ -381,7 +381,7 @@ export function describeHydroponicsSignIn(state: GameState): string {
     return "The tablet display has gone dim, leaving nothing readable on it.";
   }
 
-  return `The sign-in tablet shows the most recent visitor entry: ${profile.name}, Power Department. Clipped across the front of the visitor's coveralls is a yellow plastic security badge.`;
+  return `The sign-in tablet shows the most recent visitor entry: ${profile.name}, Zoology Department. Clipped across the front of the visitor's coveralls is an orange plastic security badge.`;
 }
 
 export function buildHydroponicsTerminalMenu(state: GameState): MenuBranchNode {
@@ -448,7 +448,7 @@ export function tickHydroponicsCocoonPuzzle(state: GameState): {
           ...nextState.worldState,
           conditionalTriggers: {
             ...nextState.worldState.conditionalTriggers,
-            EscapedWithYellowBadge: true,
+            EscapedWithOrangeBadge: true,
           },
           hydroponicsSpider: {
             ...nextState.worldState.hydroponicsSpider,
@@ -489,11 +489,11 @@ export function openHydroponicsCocoon(
     : resetHydroponicsCocoonPuzzle(state);
   const puzzle = getPuzzleState(workingState);
 
-  if (hasResolvedYellowBadge(workingState)) {
+  if (hasResolvedOrangeBadge(workingState)) {
     return {
       state: workingState,
       message:
-        "You've already got the yellow badge. Cutting open another cocoon would only be morbid.",
+        "You've already got the orange badge. Cutting open another cocoon would only be morbid.",
     };
   }
 
@@ -515,8 +515,8 @@ export function openHydroponicsCocoon(
     };
   }
 
-  let next = addToInventory(workingState, "yellowbadge");
-  next = triggerScoreOnce(next, "obtained_yellow_badge");
+  let next = addToInventory(workingState, "orangebadge");
+  next = triggerScoreOnce(next, "obtained_orange_badge");
   next = {
     ...next,
     worldState: {

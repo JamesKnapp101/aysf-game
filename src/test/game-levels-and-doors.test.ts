@@ -1,22 +1,22 @@
-import { advanceTurn } from "@game/engine/turn";
-import { startGamePreserveRun } from "@game/preserve/preserveState";
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
+import { advanceTurn } from "@game/engine/turn";
 import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import {
   PARK_EAST_POWER_KEY_DELAYED_SNATCH_MESSAGE,
   PARK_EAST_POWER_KEY_TAKE_SNATCH_MESSAGE,
 } from "@game/helpers/parkKeyHijack";
+import { startGamePreserveRun } from "@game/preserve/preserveState";
 import { useUIEffectsStore } from "@game/store/store";
 import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
+import {
+  AQUARIUM_BREATHER_ITEM_ID,
+  AQUARIUM_ELECTRIC_PROD_ITEM_ID,
+  createInitialOctopusState,
+} from "../world/Items/creatures/octopus";
 import { LEVEL_FIVE } from "../world/maps/levelFive/LevelFive";
 import { GAME_PRESERVE_SPAWN_ROOM_ID } from "../world/maps/levelFour/gamePreserveRules";
 import { hydroponicsItems } from "../world/maps/levelSix/Hydroponics";
-import {
-  AQUARIUM_ELECTRIC_PROD_ITEM_ID,
-  AQUARIUM_BREATHER_ITEM_ID,
-  createInitialOctopusState,
-} from "../world/Items/creatures/octopus";
 import {
   buildHydroponicsTerminalMenu,
   describeHydroponicsSignIn,
@@ -91,7 +91,10 @@ function setContainerContents(
         ...Object.fromEntries(itemIds.map((itemId) => [itemId, containerId])),
       },
       containerContents: {
-        ...removeIdsFromPlacementList(state.itemState.containerContents, itemIds),
+        ...removeIdsFromPlacementList(
+          state.itemState.containerContents,
+          itemIds,
+        ),
         [containerId]: [...itemIds],
       },
       surfaceContents: removeIdsFromPlacementList(
@@ -146,7 +149,8 @@ function setLevelTwoBomb(
     remainingTurns?: number;
   },
 ) {
-  const detonated = options.detonated ?? state.worldState.levelTwoBomb.detonated;
+  const detonated =
+    options.detonated ?? state.worldState.levelTwoBomb.detonated;
 
   return {
     ...state,
@@ -180,7 +184,9 @@ describe("Doors and level mechanics", () => {
     const employeeIds = new Set(
       HYDROPONICS_EMPLOYEE_PROFILES.map((profile) => profile.id),
     );
-    const cocoonItems = hydroponicsItems.filter((item) => employeeIds.has(item.id));
+    const cocoonItems = hydroponicsItems.filter((item) =>
+      employeeIds.has(item.id),
+    );
 
     expect(cocoonItems).toHaveLength(HYDROPONICS_EMPLOYEE_PROFILES.length);
     expect(new Set(cocoonItems.map((item) => item.name)).size).toBe(
@@ -200,7 +206,9 @@ describe("Doors and level mechanics", () => {
   });
 
   it("uses visible employee traits in cocoon descriptions", async () => {
-    const sillith = hydroponicsItems.find((item) => item.id === "SillithLeSconce");
+    const sillith = hydroponicsItems.find(
+      (item) => item.id === "SillithLeSconce",
+    );
     const ernwith = hydroponicsItems.find((item) => item.id === "ErnwithGob");
 
     expect(sillith?.description).toContain("long, straight red hair");
@@ -214,8 +222,8 @@ describe("Doors and level mechanics", () => {
 
     const signInText = describeHydroponicsSignIn(state);
 
-    expect(signInText).toContain("Sillith LeSconce, Power Department");
-    expect(signInText).toContain("yellow plastic security badge");
+    expect(signInText).toContain("Sillith LeSconce, Zoology Department");
+    expect(signInText).toContain("orange plastic security badge");
     expect(signInText).not.toContain("thumbnail photo");
     expect(signInText).not.toContain("long, straight red hair");
     expect(signInText).not.toContain("bionic replacement knee");
@@ -253,23 +261,29 @@ describe("Doors and level mechanics", () => {
 
     expect(expectInventoryToContain(openedUnderWeb, "yellowbadge")).toBe(true);
     expect(expectInventoryToContain(openedBottom, "yellowbadge")).toBe(true);
-    expect(openedUnderWeb.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining).toBe(3);
-    expect(openedBottom.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining).toBe(2);
+    expect(
+      openedUnderWeb.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining,
+    ).toBe(3);
+    expect(
+      openedBottom.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining,
+    ).toBe(2);
   });
 
   it("lets the player escape with the yellow badge if they reach the top platform in time", async () => {
-    const escaped = await runCommands(createHydroponicsEscapeState("UnderWebOne"), [
-      "open statuesque cocoon",
-      "southeast",
-      "up",
-      "up",
-    ]);
+    const escaped = await runCommands(
+      createHydroponicsEscapeState("UnderWebOne"),
+      ["open statuesque cocoon", "southeast", "up", "up"],
+    );
 
     expect(escaped.player.roomId).toBe("HydroponicsPlatform");
     expect(expectInventoryToContain(escaped, "yellowbadge")).toBe(true);
-    expect(escaped.worldState.conditionalTriggers.EscapedWithYellowBadge).toBe(true);
+    expect(escaped.worldState.conditionalTriggers.EscapedWithOrangeBadge).toBe(
+      true,
+    );
     expect(escaped.worldState.hydroponicsSpider.isAlive).toBe(false);
-    expect(escaped.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining).toBe(0);
+    expect(escaped.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining).toBe(
+      0,
+    );
     expect(escaped.worldState.playerDeaths.HydroponicsPlatform).toBeUndefined();
   });
 
@@ -298,15 +312,15 @@ describe("Doors and level mechanics", () => {
   });
 
   it("kills the player if the yellow-badge timer expires before they reach the top platform", async () => {
-    const doomed = await runCommands(createHydroponicsEscapeState("UnderWebOne"), [
-      "open statuesque cocoon",
-      "southeast",
-      "up",
-      "north",
-    ]);
+    const doomed = await runCommands(
+      createHydroponicsEscapeState("UnderWebOne"),
+      ["open statuesque cocoon", "southeast", "up", "north"],
+    );
 
     expect(doomed.player.roomId).toBe("LevelSixCorridorEnd");
-    expect(doomed.worldState.conditionalTriggers.EscapedWithYellowBadge).toBe(false);
+    expect(doomed.worldState.conditionalTriggers.EscapedWithOrangeBadge).toBe(
+      false,
+    );
     expect(doomed.worldState.playerDeaths.HydroponicsPlatformMid?.cause).toBe(
       "hydroponics cocoon trap",
     );
@@ -340,18 +354,18 @@ describe("Doors and level mechanics", () => {
 
     expect(next.player.roomId).toBe("LevelSixCorridorEnd");
     expect(next.worldState.hydroponicsSpider.isAlive).toBe(true);
-    expect(next.worldState.conditionalTriggers.EscapedWithYellowBadge).toBe(false);
+    expect(next.worldState.conditionalTriggers.EscapedWithOrangeBadge).toBe(
+      false,
+    );
     expect(next.worldState.hydroponicsCocoonPuzzle.resolved).toBe(false);
     expect(next.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining).toBe(0);
   });
 
   it("describes the dead spider aftermath and blocks descending back into the nest after a successful escape", async () => {
-    const escaped = await runCommands(createHydroponicsEscapeState("UnderWebOne"), [
-      "open statuesque cocoon",
-      "southeast",
-      "up",
-      "up",
-    ]);
+    const escaped = await runCommands(
+      createHydroponicsEscapeState("UnderWebOne"),
+      ["open statuesque cocoon", "southeast", "up", "up"],
+    );
 
     const description = buildRoomDescription(escaped, "HydroponicsPlatform", {
       mode: "panel",
@@ -359,10 +373,14 @@ describe("Doors and level mechanics", () => {
     });
     const blocked = await runCommand(escaped, "down");
 
-    expect(description).toContain("the spider's carcass sags deep into its own torn webbing");
+    expect(description).toContain(
+      "the spider's carcass sags deep into its own torn webbing",
+    );
     expect(description).toContain("millions of hand-sized spiders");
     expect(blocked.player.roomId).toBe("HydroponicsPlatform");
-    expect(getLastLogEntry(blocked)).toContain("There is no chance you're going back down there.");
+    expect(getLastLogEntry(blocked)).toContain(
+      "There is no chance you're going back down there.",
+    );
   });
 
   it("starts the visible hydroponics spider on a new paragraph after cocoon scenery", async () => {
@@ -378,10 +396,14 @@ describe("Doors and level mechanics", () => {
       },
     };
 
-    const description = buildRoomDescription(state, "HydroponicsPlatformBottom", {
-      mode: "panel",
-      forceFull: true,
-    });
+    const description = buildRoomDescription(
+      state,
+      "HydroponicsPlatformBottom",
+      {
+        mode: "panel",
+        forceFull: true,
+      },
+    );
     const spiderText =
       "Above you, the web canopy bows under the weight of a massive spider suspended near the center, its silhouette shifting whenever the whole structure creaks.";
     const spiderIndex = description.indexOf(spiderText);
@@ -402,10 +424,9 @@ describe("Doors and level mechanics", () => {
   });
 
   it("allows the player into the park when they have a park pass", async () => {
-    const start = setInventory(
-      createTestState({ roomId: "ParkEntrance" }),
-      ["ParkPass"],
-    );
+    const start = setInventory(createTestState({ roomId: "ParkEntrance" }), [
+      "ParkPass",
+    ]);
 
     const next = await runCommand(start, "west");
 
@@ -413,10 +434,9 @@ describe("Doors and level mechanics", () => {
   });
 
   it("arms the park key snatch on first entry and triggers it on the next action", async () => {
-    const start = setInventory(
-      createTestState({ roomId: "ParkEntrance" }),
-      ["ParkPass"],
-    );
+    const start = setInventory(createTestState({ roomId: "ParkEntrance" }), [
+      "ParkPass",
+    ]);
 
     const entered = await runCommand(start, "west");
     const next = await runCommand(entered, "look");
@@ -434,10 +454,9 @@ describe("Doors and level mechanics", () => {
   });
 
   it("triggers the park key snatch when the player leaves ParkEast after first entering it", async () => {
-    const start = setInventory(
-      createTestState({ roomId: "ParkEntrance" }),
-      ["ParkPass"],
-    );
+    const start = setInventory(createTestState({ roomId: "ParkEntrance" }), [
+      "ParkPass",
+    ]);
 
     const entered = await runCommand(start, "west");
     const next = await runCommand(entered, "west");
@@ -510,8 +529,12 @@ describe("Doors and level mechanics", () => {
     expect(examined.log.join("\n\n")).toContain(
       "A large, heavy key with a rectangular grip striped with black and yellow.",
     );
-    expect(expectInventoryToContain(blockedTake, "PowerStationKey")).toBe(false);
-    expect(blockedTake.worldState.scoresTriggered.obtained_power_key).toBe(false);
+    expect(expectInventoryToContain(blockedTake, "PowerStationKey")).toBe(
+      false,
+    );
+    expect(blockedTake.worldState.scoresTriggered.obtained_power_key).toBe(
+      false,
+    );
     expect(blockedTake.log.join("\n\n")).toContain(
       "You can see through the wire mesh, but you can't get at anything inside the trash bot's bin.",
     );
@@ -527,9 +550,13 @@ describe("Doors and level mechanics", () => {
       mode: "panel",
       forceFull: true,
     });
-    const itemOnlyDescription = buildRoomItemsDescription(atCenter, "ParkCenter");
+    const itemOnlyDescription = buildRoomItemsDescription(
+      atCenter,
+      "ParkCenter",
+    );
     const robotText = "A little robot with treads putters around nearby.";
-    const binText = "Inside the trash bot bin you can see large yellow and black key.";
+    const binText =
+      "Inside the trash bot bin you can see large yellow and black key.";
 
     expect(panelDescription).toContain(robotText);
     expect(panelDescription).toContain(binText);
@@ -559,7 +586,9 @@ describe("Doors and level mechanics", () => {
 
     expect(next.itemState.itemRoomId.TrashBot).toBe("ParkEast");
     expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkEast");
-    expect(getLastLogEntry(next)).toContain("The trashbot putters in from the west.");
+    expect(getLastLogEntry(next)).toContain(
+      "The trashbot putters in from the west.",
+    );
   });
 
   it("reports when the player and the trash bot pass each other", async () => {
@@ -656,7 +685,9 @@ describe("Doors and level mechanics", () => {
     expect(next.log.join("\n\n")).not.toContain(
       "You pass the trashbot as it putters by, its wire bin rattling softly.",
     );
-    expect(next.log.join("\n\n")).toContain("The trashbot putters off to the north.");
+    expect(next.log.join("\n\n")).toContain(
+      "The trashbot putters off to the north.",
+    );
   });
 
   it("keeps the maintenance opening hidden until the trash bot starts emptying", async () => {
@@ -673,7 +704,9 @@ describe("Doors and level mechanics", () => {
     const blocked = await runCommand(withBin, "in");
 
     expect(blocked.player.roomId).toBe("ParkMaintenance");
-    expect(getLastLogEntry(blocked)).toContain("You don't see an opening there.");
+    expect(getLastLogEntry(blocked)).toContain(
+      "You don't see an opening there.",
+    );
   });
 
   it("has the trash bot head straight to maintenance once its bin is full", async () => {
@@ -697,9 +730,9 @@ describe("Doors and level mechanics", () => {
     expect(next.itemState.itemRoomId.TrashBot).toBe("ParkMaintenance");
     expect(next.itemState.itemRoomId.TrashBotBin).toBe("ParkMaintenance");
     expect(next.worldState.trashBot.mode).toBe("door_open_for_entry");
-    expect(next.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
-      true,
-    );
+    expect(
+      next.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen,
+    ).toBe(true);
     expect(next.log.join("\n\n")).toContain(
       '"Trash collection bin full. Initiating bin emptying sequence."',
     );
@@ -725,19 +758,21 @@ describe("Doors and level mechanics", () => {
     const entered = await runCommand(opened, "in");
     const dumped = await runCommand(entered, "wait");
 
-    expect(opened.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
-      true,
-    );
+    expect(
+      opened.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen,
+    ).toBe(true);
     expect(opened.log.join("\n\n")).toContain(
       '"Trash collection bin full. Initiating bin emptying sequence."',
     );
     expect(opened.log.join("\n\n")).toContain("hidden panel slides open");
 
     expect(entered.player.roomId).toBe("ParkMaintenanceInterior");
-    expect(entered.itemState.itemRoomId.TrashBot).toBe("ParkMaintenanceInterior");
-    expect(entered.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
-      true,
+    expect(entered.itemState.itemRoomId.TrashBot).toBe(
+      "ParkMaintenanceInterior",
     );
+    expect(
+      entered.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen,
+    ).toBe(true);
     expect(entered.log.join("\n\n")).toContain(
       "The trashbot putters in through the opening and rolls toward the dumpster.",
     );
@@ -749,12 +784,14 @@ describe("Doors and level mechanics", () => {
       expect.arrayContaining(["PowerStationKey", "Scalpel", "ShedCellarKey"]),
     );
     expect(dumped.itemState.containerContents.TrashBotBin ?? []).toEqual([]);
-    expect(dumped.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
-      false,
-    );
+    expect(
+      dumped.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen,
+    ).toBe(false);
     expect(dumped.log.join("\n\n")).toContain("The trashbot tips");
     expect(dumped.log.join("\n\n")).toContain("into the dumpster.");
-    expect(dumped.log.join("\n\n")).toContain("The hidden panel slides shut again.");
+    expect(dumped.log.join("\n\n")).toContain(
+      "The hidden panel slides shut again.",
+    );
   });
 
   it("can repeat the maintenance-emptying cycle after the bin fills again", async () => {
@@ -786,36 +823,37 @@ describe("Doors and level mechanics", () => {
     ]);
     const triggeredAgain = await runCommand(refilled, "wait");
 
-    expect(reopened.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
-      true,
-    );
+    expect(
+      reopened.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen,
+    ).toBe(true);
     expect(reopened.log.join("\n\n")).toContain("hidden panel slides open");
 
     expect(exited.itemState.itemRoomId.TrashBot).toBe("ParkMaintenance");
-    expect(exited.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
-      true,
-    );
+    expect(
+      exited.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen,
+    ).toBe(true);
     expect(exited.log.join("\n\n")).toContain(
       "The trashbot putters back out through the opening.",
     );
 
-    expect(closed.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
-      false,
-    );
+    expect(
+      closed.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen,
+    ).toBe(false);
     expect(closed.worldState.trashBot.mode).toBe("wandering");
 
-    expect(triggeredAgain.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen).toBe(
-      true,
-    );
+    expect(
+      triggeredAgain.worldState.conditionalTriggers.TrashBotMaintenanceDoorOpen,
+    ).toBe(true);
     expect(triggeredAgain.worldState.trashBot.mode).toBe("door_open_for_entry");
-    expect(triggeredAgain.log.join("\n\n")).toContain("hidden panel slides open");
+    expect(triggeredAgain.log.join("\n\n")).toContain(
+      "hidden panel slides open",
+    );
   });
 
   it("unlocks keyed doors with the correct key", async () => {
-    const start = setInventory(
-      createTestState({ roomId: "InsideTheShed" }),
-      ["ShedCellarKey"],
-    );
+    const start = setInventory(createTestState({ roomId: "InsideTheShed" }), [
+      "ShedCellarKey",
+    ]);
 
     const opened = await runCommand(start, "open hatch");
     const entered = await runCommand(opened, "down");
@@ -839,7 +877,9 @@ describe("Doors and level mechanics", () => {
     const allowed = await runCommand(correctBadgeState, "south");
 
     expect(blocked.player.roomId).toBe("LevelFourCorridorTwo");
-    expect(getLastLogEntry(blocked)).toContain("badge scanner emits a flat buzz");
+    expect(getLastLogEntry(blocked)).toContain(
+      "badge scanner emits a flat buzz",
+    );
     expect(allowed.player.roomId).toBe("PowerGrid");
   });
 
@@ -879,10 +919,14 @@ describe("Doors and level mechanics", () => {
       },
     };
 
-    const description = buildRoomDescription(litState, "LivingQuartersThreeWest", {
-      mode: "panel",
-      forceFull: true,
-    });
+    const description = buildRoomDescription(
+      litState,
+      "LivingQuartersThreeWest",
+      {
+        mode: "panel",
+        forceFull: true,
+      },
+    );
 
     expect(description).toContain("strange, glassy black sculpture");
   });
@@ -937,7 +981,9 @@ describe("Doors and level mechanics", () => {
     const entered = await runCommand(revealed, "east");
 
     expect(blocked.player.roomId).toBe("L3Warehouse");
-    expect(revealed.worldState.conditionalTriggers.RobotRefugeAccess).toBe(true);
+    expect(revealed.worldState.conditionalTriggers.RobotRefugeAccess).toBe(
+      true,
+    );
     expect(getLastLogEntry(revealed)).toContain("hidden panel slides up");
     expect(entered.player.roomId).toBe("RobotRefuge");
   });
@@ -976,7 +1022,9 @@ describe("Doors and level mechanics", () => {
     ).toBe(true);
     expect(useUIEffectsStore.getState().screenShakeNonce).toBe(1);
     expect(getLastLogEntry(next)).toContain("loud, low BOOM");
-    expect(getLastLogEntry(next)).toContain("conveyor's jammed scrap tears loose");
+    expect(getLastLogEntry(next)).toContain(
+      "conveyor's jammed scrap tears loose",
+    );
   });
 
   it("blocks the level two stairwell door until the bomb detonates", async () => {
@@ -1007,8 +1055,12 @@ describe("Doors and level mechanics", () => {
       "push button",
     ]);
 
-    expect(next.worldState.powerRestoredSections["power-key-turned"]).toBe(true);
-    expect(next.worldState.powerRestoredSections["power-initialized"]).toBe(true);
+    expect(next.worldState.powerRestoredSections["power-key-turned"]).toBe(
+      true,
+    );
+    expect(next.worldState.powerRestoredSections["power-initialized"]).toBe(
+      true,
+    );
     expect(next.worldState.roomAudioLevel.PowerGrid).toBe(3);
   });
 
@@ -1075,9 +1127,7 @@ describe("Doors and level mechanics", () => {
           ...baseOcto,
           isAware: true,
           arms: baseOcto.arms.map((arm, index) =>
-            index === 0
-              ? { ...arm, path: ["AqCross", "AqOpen2"] }
-              : arm,
+            index === 0 ? { ...arm, path: ["AqCross", "AqOpen2"] } : arm,
           ),
         },
       },
@@ -1092,7 +1142,10 @@ describe("Doors and level mechanics", () => {
   });
 
   it("lets the player use the local aqua pad without a badge", async () => {
-    const start = setInventory(createTestState({ roomId: "VeterinaryCenter" }), []);
+    const start = setInventory(
+      createTestState({ roomId: "VeterinaryCenter" }),
+      [],
+    );
 
     const next = await runCommand(start, "stand on aqua disk");
 
@@ -1113,16 +1166,16 @@ describe("Doors and level mechanics", () => {
           ...baseOcto,
           isAware: true,
           arms: baseOcto.arms.map((arm, index) =>
-            index === 0
-              ? { ...arm, path: ["AqCross", "AqRock3"] }
-              : arm,
+            index === 0 ? { ...arm, path: ["AqCross", "AqRock3"] } : arm,
           ),
         },
       },
     };
 
     const next = await runCommand(start, "use prod on tentacle");
-    const prod = next.world.items.find((item) => item.id === AQUARIUM_ELECTRIC_PROD_ITEM_ID);
+    const prod = next.world.items.find(
+      (item) => item.id === AQUARIUM_ELECTRIC_PROD_ITEM_ID,
+    );
 
     expect(prod?.doses).toBe(1);
     expect(next.worldState.octopusState.arms[0]?.path).toEqual(["AqRock7"]);
@@ -1130,9 +1183,14 @@ describe("Doors and level mechanics", () => {
   });
 
   it("finds the breather by searching the dead diver", async () => {
-    const next = await runCommand(createTestState({ roomId: "AqRock2" }), "search dead diver");
+    const next = await runCommand(
+      createTestState({ roomId: "AqRock2" }),
+      "search dead diver",
+    );
 
-    expect(expectInventoryToContain(next, AQUARIUM_BREATHER_ITEM_ID)).toBe(true);
+    expect(expectInventoryToContain(next, AQUARIUM_BREATHER_ITEM_ID)).toBe(
+      true,
+    );
   });
 
   it("gives the player enough time to reach and secure the breather", async () => {
@@ -1289,9 +1347,8 @@ function createHydroponicsPuzzleState(
       },
       conditionalTriggers: {
         ...baseState.worldState.conditionalTriggers,
-        EscapedWithYellowBadge: false,
+        EscapedWithOrangeBadge: false,
       },
     },
   };
 }
-
