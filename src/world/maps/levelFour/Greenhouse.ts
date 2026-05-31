@@ -1,3 +1,4 @@
+import { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
 
 export const greenhouseRooms: Room[] = [
@@ -19,5 +20,39 @@ export const greenhouseRooms: Room[] = [
 
 Laying prone on the floor near the far end of the walkway is the body of a young man dressed in a dirt-covered green jumpsuit, his back arched, his hands clawed, and his mouth pulled into a frozen grimace. His face is puffy to the degree that it squeezes his eyes shut, and his skin is covered in tiny red dots or hives.`,
     exits: [{ direction: "out", toRoomId: "Greenhouse" }],
+  },
+];
+
+export const greenhouseItems: Item[] = [
+  {
+    id: "DeactivatedBee",
+    name: "deactivated robo-bee",
+    description:
+      "At a glace it looks like a normal bumblebee, but a closer inspection reveals that it's actually made up of tiny robotics. It's a machine.",
+    initialDescription:
+      "Lying in the grass is what appears to be a dead bumblebee.",
+    location: "Greenhouse",
+    vocab: ["bee", "robo-bee", "bumblebee"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      specs: `Model:                  POL-ES991
+              Version:                5.23.01   
+              Uptime:                 19282322231123
+              Ping freq:              550ms
+              Last ping:              19234234234234
+              Trips:                  207
+              Total payloads:         3.105g
+              Status:                 Idle
+              Error Code:             AG4E
+              Req Shutdown?           false
+              Shutdown freq:          168.880MHz
+              Swarm ID:               400190
+              Hive ID:                H02
+              Region:                 L
+              Section:                7`,
+    },
   },
 ];

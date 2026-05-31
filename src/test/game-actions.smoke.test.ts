@@ -255,6 +255,25 @@ describe("Action smoke coverage", () => {
     expectCommandEntry(next, "set cooler", /^> set cooler/m);
   });
 
+  it("opens the radio frequency overlay with either set frequency wording", async () => {
+    const first = await runCommand(
+      setInventory(createTestState({ roomId: "StairSix" }), ["Radio"]),
+      "set frequency",
+    );
+
+    expect(useUIOverlayStore.getState().overlay.kind).toBe("radio-frequency");
+    expectCommandEntry(first, "set frequency", "frequency display");
+
+    useUIOverlayStore.getState().closeOverlay();
+
+    await runCommand(
+      setInventory(createTestState({ roomId: "StairSix" }), ["Radio"]),
+      "set radio frequency",
+    );
+
+    expect(useUIOverlayStore.getState().overlay.kind).toBe("radio-frequency");
+  });
+
   it("covers empty", async () => {
     const start = setInventory(createTestState(), ["FISHBOWL"]);
     const next = await runCommand(
@@ -425,6 +444,29 @@ describe("Action smoke coverage", () => {
     );
 
     expect(next.radio?.activeNpcId).toBe("you_1st_contact");
+  });
+
+  it("describes and beeps at the current radio frequency", async () => {
+    const start = {
+      ...setInventory(createTestState({ roomId: "StairSix" }), ["Radio"]),
+      radio: {
+        currentFrequency: 151.25,
+      },
+    };
+
+    const examined = await runCommand(start, "examine radio");
+    expectCommandEntry(
+      examined,
+      "examine radio",
+      "It is currently set to frequency 151.250 MHz.",
+    );
+
+    const pushed = await runCommand(start, "push radio");
+    expectCommandEntry(
+      pushed,
+      "push radio",
+      "it emits a beep at frequency 151.250 MHz",
+    );
   });
 
   it("covers play", async () => {

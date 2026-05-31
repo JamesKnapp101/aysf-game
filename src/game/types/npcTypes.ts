@@ -65,6 +65,7 @@ export interface NpcConversationState {
 
 export interface RadioState {
   activeNpcId?: string;
+  currentFrequency?: number;
   queuedLog?: string[];
   turnsRemaining?: number;
 }

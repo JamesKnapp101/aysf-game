@@ -1,4 +1,5 @@
 import { startRadioCall } from "@game/helpers/conversationHelpers";
+import { getCurrentRadioFrequencyDisplay } from "@game/helpers/radioHelpers";
 import { YOU_FIRST_CONTACT_ID } from "@game/npcRegistry";
 import type { GameState } from "../../game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
@@ -10,7 +11,7 @@ function pushRadioCallButton({ state }: { state: GameState }): {
   state: GameState;
 } {
   let next = state;
-  let message = `You press the radio's call button, and it emits a flat beep.`;
+  let message = `You press the radio's call button, and it emits a beep at frequency ${getCurrentRadioFrequencyDisplay(state)}.`;
 
   if (!state.worldState.conditionalTriggers.radioFirstCall) {
     next = {
@@ -30,6 +31,18 @@ function pushRadioCallButton({ state }: { state: GameState }): {
   }
 
   return { state: next, message };
+}
+
+function describePrimaryRadio(state: GameState, item: Item): string {
+  return `${item.description} It is currently set to frequency ${getCurrentRadioFrequencyDisplay(state)}.`;
+}
+
+function openRadioFrequencyDisplay({ state }: { state: GameState }) {
+  return {
+    state,
+    message: "You open the radio's frequency display.",
+    overlay: { kind: "radio-frequency" as const },
+  };
 }
 
 export const specialItems: Item[] = [
@@ -208,19 +221,31 @@ export const specialItems: Item[] = [
     id: "Radio",
     name: "a two-way radio",
     description:
-      "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, and a squat black antenna jutting from the top. The casing is cracked on one corner, but it still works. There's a red call button on one side of it.",
+      "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, a small green frequency display above the speaker grille, and a squat black antenna jutting from the top. The casing is cracked on one corner, but it still works. There's a red call button on one side of it.",
     initialDescription:
       "Laying on the floor near the young man's body is some kind of small, hand-held walkie-talkie.",
     location: "StairSix",
-    vocab: ["radio", "walkie-talkie", "walkie", "cb", "call", "button"],
+    vocab: [
+      "radio",
+      "walkie-talkie",
+      "walkie",
+      "cb",
+      "call",
+      "button",
+      "frequency",
+      "display",
+    ],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 3,
     itemSize: 2,
     isContagious: true,
     isPushable: true,
+    isSettable: true,
+    describe: describePrimaryRadio,
     overrides: {
       push: pushRadioCallButton,
+      set: openRadioFrequencyDisplay,
     },
   },
   {

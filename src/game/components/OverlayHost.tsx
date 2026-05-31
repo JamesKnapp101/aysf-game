@@ -58,6 +58,11 @@ const LazyBarJukeboxModal = lazy(() =>
     default: mod.BarJukeboxModal,
   })),
 );
+const LazyRadioFrequencyModal = lazy(() =>
+  import("@game/components/RadioFrequencyModal").then((mod) => ({
+    default: mod.RadioFrequencyModal,
+  })),
+);
 
 function OverlayLoadingModal({
   onClose,
@@ -323,6 +328,22 @@ export function OverlayHost({
           }
         >
           <LazyBarJukeboxModal onClose={onClose} onPlayTrack={onPlayTrack} />
+        </Suspense>
+      );
+    }
+
+    case "radio-frequency": {
+      return (
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Radio" />
+          }
+        >
+          <LazyRadioFrequencyModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
         </Suspense>
       );
     }

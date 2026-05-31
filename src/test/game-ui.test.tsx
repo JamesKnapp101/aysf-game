@@ -5,12 +5,13 @@ import { HydroponicsAdminTerminalModal } from "@game/components/HydroponicsAdmin
 import { LogPanel } from "@game/components/LogPanel";
 import { LogTab } from "@game/components/LogTab";
 import { NotificationHost } from "@game/components/NotificationHost";
+import { RadioFrequencyModal } from "@game/components/RadioFrequencyModal";
 import { buildDamageNotification } from "@game/rules/notifications";
 import { StatusTab } from "@game/components/StatusTab";
 import { SyndromeXSignalOverlay } from "@game/components/SyndromeXSignalOverlay";
 import { useUIEffectsStore } from "@game/store/store";
 import type { GameState } from "@game/types/gameTypes";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it } from "vitest";
@@ -310,6 +311,49 @@ describe("UI panels", () => {
       "game-notification--damage",
     );
     expect(state.log).toHaveLength(0);
+  });
+
+  it("updates the radio frequency from the slider overlay", () => {
+    function Harness() {
+      const [state, setState] = React.useState(
+        setInventory(createTestState({ roomId: "StairSix" }), ["Radio"]),
+      );
+
+      return (
+        <>
+          <RadioFrequencyModal
+            onClose={() => undefined}
+            state={state}
+            setGameState={setState}
+          />
+          <div data-testid="radio-frequency">
+            {state.radio?.currentFrequency ?? "unset"}
+          </div>
+        </>
+      );
+    }
+
+    render(<Harness />);
+
+    fireEvent.change(screen.getByRole("slider", { name: /radio frequency/i }), {
+      target: { value: "150" },
+    });
+
+    expect(screen.getByText("150.000 MHz")).toBeInTheDocument();
+    expect(screen.getByTestId("radio-frequency")).toHaveTextContent("150");
+
+    fireEvent.wheel(screen.getByText("150.000 MHz"), { deltaY: -100 });
+
+    expect(screen.getByText("150.005 MHz")).toBeInTheDocument();
+    expect(screen.getByTestId("radio-frequency")).toHaveTextContent("150.005");
+
+    fireEvent.wheel(screen.getByText("150.005 MHz"), {
+      deltaY: 100,
+      shiftKey: true,
+    });
+
+    expect(screen.getByText("149.955 MHz")).toBeInTheDocument();
+    expect(screen.getByTestId("radio-frequency")).toHaveTextContent("149.955");
   });
 });
 

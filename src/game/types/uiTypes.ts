@@ -43,6 +43,7 @@ export type Overlay =
   | ({ kind: "teleportation-terminal" } & OverlayPostClose)
   | ({ kind: "game-preserve-terminal" } & OverlayPostClose)
   | ({ kind: "bar-jukebox" } & OverlayPostClose)
+  | ({ kind: "radio-frequency" } & OverlayPostClose)
   | ({
       kind: "mindFlash";
       memory: string;
