@@ -44,6 +44,7 @@ export type Overlay =
   | ({ kind: "game-preserve-terminal" } & OverlayPostClose)
   | ({ kind: "bar-jukebox" } & OverlayPostClose)
   | ({ kind: "radio-frequency" } & OverlayPostClose)
+  | ({ kind: "apiary-terminal" } & OverlayPostClose)
   | ({
       kind: "mindFlash";
       memory: string;

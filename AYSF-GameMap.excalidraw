@@ -14011,8 +14011,8 @@
       "type": "line",
       "x": 875.303673517139,
       "y": 6090.163014293869,
-      "width": 0,
-      "height": 251.99996948242188,
+      "width": 3.99993896484375,
+      "height": 243.99993896484375,
       "angle": 0,
       "strokeColor": "#1e1e1e",
       "backgroundColor": "#ffffff",
@@ -14028,11 +14028,11 @@
         "type": 2
       },
       "seed": 718724188,
-      "version": 496,
-      "versionNonce": 660451356,
+      "version": 505,
+      "versionNonce": 762061934,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1770503090179,
+      "updated": 1780276257247,
       "link": null,
       "locked": false,
       "points": [
@@ -14041,8 +14041,8 @@
           0
         ],
         [
-          0,
-          251.99996948242188
+          -3.99993896484375,
+          243.99993896484375
         ]
       ],
       "startBinding": null,

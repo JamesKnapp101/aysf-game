@@ -1,3 +1,4 @@
+import { ApiaryTerminalModal } from "@game/components/ApiaryTerminalModal";
 import { RoomCompass } from "@game/components/Compass";
 import { DNASampleTab } from "@game/components/DNASampleTab";
 import { GamePreserveTerminalModal } from "@game/components/GamePreserveTerminalModal";
@@ -20,6 +21,10 @@ import {
   runCommands,
   setInventory,
 } from "./helpers/gameTestHelpers";
+import {
+  APIARY_TRAY_ITEM_ID,
+} from "src/world/maps/levelFour/Apiary";
+import { DEACTIVATED_BEE_ITEM_ID } from "src/world/maps/levelFour/Greenhouse";
 
 const layout = {
   roomHeightRatio: 0.33,
@@ -354,6 +359,41 @@ describe("UI panels", () => {
 
     expect(screen.getByText("149.955 MHz")).toBeInTheDocument();
     expect(screen.getByTestId("radio-frequency")).toHaveTextContent("149.955");
+  });
+
+  it("renders the apiary terminal prompt and bee diagnostics", () => {
+    const emptyState = createTestState({ roomId: "Apiary" });
+    const empty = render(
+      <ApiaryTerminalModal onClose={() => undefined} state={emptyState} />,
+    );
+
+    expect(
+      screen.getByRole("dialog", { name: "OMNI-Bee" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Place Unit on Tray")).toBeInTheDocument();
+
+    empty.unmount();
+
+    const withBee = {
+      ...emptyState,
+      itemState: {
+        ...emptyState.itemState,
+        surfaceContents: {
+          ...emptyState.itemState.surfaceContents,
+          [APIARY_TRAY_ITEM_ID]: [DEACTIVATED_BEE_ITEM_ID],
+        },
+      },
+    };
+
+    render(<ApiaryTerminalModal onClose={() => undefined} state={withBee} />);
+
+    expect(screen.getByLabelText("Bee diagnostics")).toBeInTheDocument();
+    expect(screen.getByText("Model:")).toBeInTheDocument();
+    expect(screen.getByText("POL-ES991")).toBeInTheDocument();
+    expect(screen.getByText("Shutdown freq:")).toBeInTheDocument();
+    expect(screen.getByText("168.8800MHz")).toBeInTheDocument();
+    expect(screen.getByText("Status:")).toBeInTheDocument();
+    expect(screen.getByText("Idle")).toBeInTheDocument();
   });
 });
 

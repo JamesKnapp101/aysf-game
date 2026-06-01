@@ -38,6 +38,7 @@ import {
   maybeInitializeHydroponicsCocoonPuzzle,
   resetHydroponicsEncounter,
 } from "src/world/maps/levelSix/hydroponicsPuzzle";
+import { getGreenhouseMoveGuard } from "src/world/maps/levelFour/Greenhouse";
 
 type EncounterMoveGuardResult =
   | {
@@ -165,6 +166,10 @@ const RETRYABLE_ENCOUNTERS: RetryableEncounterDefinition[] = [
     initializeOnEnter: (state, roomId) =>
       ensureGamePreserveRunForRoom(state, roomId),
     beforeMove: (state, ctx) => getGamePreserveMoveGuard(state, ctx),
+  },
+  {
+    id: "greenhouse",
+    beforeMove: (state, ctx) => getGreenhouseMoveGuard(state, ctx),
   },
   {
     id: "bull",

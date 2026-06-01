@@ -63,6 +63,11 @@ const LazyRadioFrequencyModal = lazy(() =>
     default: mod.RadioFrequencyModal,
   })),
 );
+const LazyApiaryTerminalModal = lazy(() =>
+  import("@game/components/ApiaryTerminalModal").then((mod) => ({
+    default: mod.ApiaryTerminalModal,
+  })),
+);
 
 function OverlayLoadingModal({
   onClose,
@@ -344,6 +349,18 @@ export function OverlayHost({
             state={state}
             setGameState={setGameState}
           />
+        </Suspense>
+      );
+    }
+
+    case "apiary-terminal": {
+      return (
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Apiary" />
+          }
+        >
+          <LazyApiaryTerminalModal onClose={onClose} state={state} />
         </Suspense>
       );
     }

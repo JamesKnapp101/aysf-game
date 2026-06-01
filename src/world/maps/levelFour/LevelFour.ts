@@ -6,11 +6,19 @@ import { boarItems } from "src/world/Items/creatures/boar";
 import { bullItems } from "src/world/Items/creatures/bull";
 import { octopusItems } from "src/world/Items/creatures/octopus";
 import { gamePreserveStructureItems } from "src/world/Items/gamePreserveStructures";
+import { apiaryItems, apiaryRooms } from "src/world/maps/levelFour/Apiary";
 import { aquariumRooms } from "src/world/maps/levelFour/Aquarium";
 import { aviaryRooms } from "src/world/maps/levelFour/Aviary";
+import {
+  botanicalItems,
+  botanicalRooms,
+} from "src/world/maps/levelFour/Botanical";
 import { fungalCaveRooms } from "src/world/maps/levelFour/FungalCave";
 import { gamePreserveRooms } from "src/world/maps/levelFour/GamePreserve";
-import { greenhouseRooms } from "src/world/maps/levelFour/Greenhouse";
+import {
+  greenhouseItems,
+  greenhouseRooms,
+} from "src/world/maps/levelFour/Greenhouse";
 import { pondRooms } from "src/world/maps/levelFour/Pond";
 import { preserveRooms } from "src/world/maps/levelFour/Preserve";
 import { seedBankRooms } from "src/world/maps/levelFour/SeedBank";
@@ -30,6 +38,9 @@ export const LEVEL_FOUR: WorldChunk = {
     ...boarItems,
     ...bullItems,
     ...octopusItems,
+    ...apiaryItems,
+    ...botanicalItems,
+    ...greenhouseItems,
   ],
   doors: [...levelFourDoors],
   teleportPads: [],
@@ -40,6 +51,8 @@ export const LEVEL_FOUR: WorldChunk = {
     ...gamePreserveRooms,
     ...veterinaryCenterRooms,
     ...pondRooms,
+    ...apiaryRooms,
+    ...botanicalRooms,
     ...greenhouseRooms,
     ...seedBankRooms,
     ...fungalCaveRooms,
@@ -65,19 +78,6 @@ export const LEVEL_FOUR: WorldChunk = {
         { direction: "north", doorId: "ZoologicalDoors" },
       ],
     },
-    {
-      id: "BotanicalOne",
-      name: "Botanical One",
-      description:
-        "This is the summit of a grassy hill in a large simulated outdoor setting which stretches forward, sloping downward to the north. The area immediately surrounding you is still relatively green, but down the slope you can see a terrible fire still burning; what looks like the remains of hundreds of plants and trees now lie in twisted black ruin, their burning cores still glowing hotly in a vast expanse of smouldering charcoal. Low flames flicker over the field, and you hear the popping of pitch like gunshots as hot embers are cast on the hot, rising air. From where you stand, the air is hot, but the high ceiling seems to be trapping the worst of the heat. You can see a network of sprinkler heads high above, but for some reason they have not activated. In the grass nearby you can see a circular hatch of some kind, and next to that, a four foot by four foot stepping stone upon which is a slightly raised green disk, made of some glassy substance.",
-      exits: [
-        { direction: "east", doorId: "HydroponicsDoors" },
-        { direction: "north", toRoomId: "Greenhouse" },
-        { direction: "west", toRoomId: "FungalCave" },
-        { direction: "south", toRoomId: "SeedBank" },
-      ],
-    },
-
     {
       id: "ZooOne",
       name: "Zoological One",

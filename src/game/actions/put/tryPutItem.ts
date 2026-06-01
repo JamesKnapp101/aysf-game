@@ -44,6 +44,13 @@ export function tryPutItem(
       return { state, message: "You can't put things on that." };
     }
 
+    if (
+      host.allowedContentsIds?.length &&
+      !host.allowedContentsIds.includes(itemId)
+    ) {
+      return { state, message: "That doesn't fit there." };
+    }
+
     const hostRoomId = state.itemState.itemRoomId[hostId] ?? host.location;
     const nextInventory = removeFromAllBuckets(state.player.inventory, itemId);
 

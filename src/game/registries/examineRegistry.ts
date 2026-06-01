@@ -198,6 +198,18 @@ function buildBarJukeboxOverlay(ctx: ExamineItemContext): ActionResult {
   };
 }
 
+function buildApiaryTerminalOverlay(ctx: ExamineItemContext): ActionResult {
+  return {
+    state: ctx.state,
+    overlay: withPostCloseNotifications(
+      {
+        kind: "apiary-terminal" as const,
+      },
+      ctx.postCloseNotifications,
+    ),
+  };
+}
+
 const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
   {
     matches: (item) => item.isReflective === true,
@@ -216,6 +228,10 @@ const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
   {
     matches: (item) => item.meta?.kind === "bar-jukebox",
     handle: buildBarJukeboxOverlay,
+  },
+  {
+    matches: (item) => item.meta?.kind === "apiary-terminal",
+    handle: buildApiaryTerminalOverlay,
   },
   {
     matches: (item) => item.meta?.kind === "phone",

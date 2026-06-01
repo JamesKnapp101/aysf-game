@@ -326,7 +326,7 @@ export function resetHydroponicsCocoonPuzzle(state: GameState): GameState {
       itemRoomId: {
         ...state.itemState.itemRoomId,
         ...bodyRoomPatch,
-        ...(alreadySolved ? {} : { yellowbadge: powerWorkerBodyId }),
+        ...(alreadySolved ? {} : { orangebadge: powerWorkerBodyId }),
       },
     },
     worldState: {
@@ -538,6 +538,6 @@ export function openHydroponicsCocoon(
   return {
     state: next,
     message:
-      "The cocoon parts under your hands and a yellow plastic badge comes away with the loosened silk. Somewhere overhead the web canopy begins to shiver. Whatever is sleeping above you has noticed. If you move now, you might just make it back to the upper platform before the whole nest erupts.",
+      "The cocoon parts under your hands and an orange plastic badge comes away with the loosened silk. Somewhere overhead the web canopy begins to shiver. Whatever is sleeping above you has noticed. If you move now, you might just make it back to the upper platform before the whole nest erupts.",
   };
 }

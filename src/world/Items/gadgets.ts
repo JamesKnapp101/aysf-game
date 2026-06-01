@@ -1,6 +1,10 @@
 import { startRadioCall } from "@game/helpers/conversationHelpers";
-import { getCurrentRadioFrequencyDisplay } from "@game/helpers/radioHelpers";
+import {
+  getCurrentRadioFrequency,
+  getCurrentRadioFrequencyDisplay,
+} from "@game/helpers/radioHelpers";
 import { YOU_FIRST_CONTACT_ID } from "@game/npcRegistry";
+import { applyRegisteredRadioCallEffects } from "@game/registries/radioCallEffectRegistry";
 import type { GameState } from "../../game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
 
@@ -11,7 +15,18 @@ function pushRadioCallButton({ state }: { state: GameState }): {
   state: GameState;
 } {
   let next = state;
-  let message = `You press the radio's call button, and it emits a beep at frequency ${getCurrentRadioFrequencyDisplay(state)}.`;
+  const frequency = getCurrentRadioFrequency(state);
+  const frequencyDisplay = getCurrentRadioFrequencyDisplay(state);
+  let message = `You press the radio's call button, and it emits a beep at frequency ${frequencyDisplay}.`;
+
+  const radioEffects = applyRegisteredRadioCallEffects(next, {
+    frequency,
+    frequencyDisplay,
+  });
+  next = radioEffects.state;
+  if (radioEffects.message) {
+    message += ` ${radioEffects.message}`;
+  }
 
   if (!state.worldState.conditionalTriggers.radioFirstCall) {
     next = {
@@ -75,7 +90,7 @@ export const specialItems: Item[] = [
     initialDescription:
       "Lying on the bed is a slim electronic device of some kind.",
     location: "INVENTORY", //"SixWestBed",
-    vocab: ["comet", "terminal", "library", "device", "portable"],
+    vocab: ["comet"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,

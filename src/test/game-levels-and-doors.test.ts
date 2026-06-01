@@ -249,7 +249,7 @@ describe("Doors and level mechanics", () => {
     );
   });
 
-  it("sets the yellow-badge escape timer based on the current cocoon room", async () => {
+  it("sets the orange-badge escape timer based on the current cocoon room", async () => {
     const openedUnderWeb = await runCommand(
       createHydroponicsEscapeState("UnderWebOne"),
       "open statuesque cocoon",
@@ -259,8 +259,8 @@ describe("Doors and level mechanics", () => {
       "open statuesque cocoon",
     );
 
-    expect(expectInventoryToContain(openedUnderWeb, "yellowbadge")).toBe(true);
-    expect(expectInventoryToContain(openedBottom, "yellowbadge")).toBe(true);
+    expect(expectInventoryToContain(openedUnderWeb, "orangebadge")).toBe(true);
+    expect(expectInventoryToContain(openedBottom, "orangebadge")).toBe(true);
     expect(
       openedUnderWeb.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining,
     ).toBe(3);
@@ -276,7 +276,7 @@ describe("Doors and level mechanics", () => {
     );
 
     expect(escaped.player.roomId).toBe("HydroponicsPlatform");
-    expect(expectInventoryToContain(escaped, "yellowbadge")).toBe(true);
+    expect(expectInventoryToContain(escaped, "orangebadge")).toBe(true);
     expect(escaped.worldState.conditionalTriggers.EscapedWithOrangeBadge).toBe(
       true,
     );
@@ -311,7 +311,7 @@ describe("Doors and level mechanics", () => {
     );
   });
 
-  it("kills the player if the yellow-badge timer expires before they reach the top platform", async () => {
+  it("kills the player if the orange-badge timer expires before they reach the top platform", async () => {
     const doomed = await runCommands(
       createHydroponicsEscapeState("UnderWebOne"),
       ["open statuesque cocoon", "southeast", "up", "north"],
