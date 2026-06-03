@@ -1,4 +1,5 @@
 import { createInitialState } from "@game/gameInit";
+import { applySnapshotMigrations } from "@game/registries/snapshotMigrationRegistry";
 import type { GameState, World } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import {
@@ -288,7 +289,7 @@ async function restoreSnapshotFromStorage(
       return null;
     }
 
-    return restoredState;
+    return applySnapshotMigrations(restoredState);
   } catch (error) {
     console.error("Failed to restore game snapshot.", error);
     clearSnapshotFromStorage(storageKey);

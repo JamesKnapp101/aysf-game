@@ -164,7 +164,7 @@ describe("Gym interactions", () => {
     expect(getLastLogEntry(leftGym)).toContain("too bulky to carry");
   });
 
-  it("blocks the orange badge while the weightlifter is pinning it", async () => {
+  it("blocks the yellow badge while the weightlifter is pinning it", async () => {
     const state = createTestState({ roomId: "GymWeightRoom" });
 
     expect(
@@ -172,11 +172,11 @@ describe("Gym interactions", () => {
         mode: "panel",
         forceFull: true,
       }),
-    ).toContain("orange plastic badge peeks out");
+    ).toContain("yellow plastic badge peeks out");
 
-    const blocked = await runCommand(state, "take orange badge");
+    const blocked = await runCommand(state, "take yellow badge");
 
-    expect(expectInventoryToContain(blocked, "orangebadge")).toBe(false);
+    expect(expectInventoryToContain(blocked, "yellowbadge")).toBe(false);
     expect(getLastLogEntry(blocked)).toContain("trapped");
 
     const freed = {
@@ -189,18 +189,18 @@ describe("Gym interactions", () => {
         },
       },
     };
-    const taken = await runCommand(freed, "take orange badge");
+    const taken = await runCommand(freed, "take yellow badge");
 
-    expect(expectInventoryToContain(taken, "orangebadge")).toBe(true);
+    expect(expectInventoryToContain(taken, "yellowbadge")).toBe(true);
     expect(getLastLogEntry(taken)).toContain("Taken.");
   });
 
-  it("lets a stronger player lift the barbell and grab the orange badge", async () => {
+  it("lets a stronger player lift the barbell and grab the yellow badge", async () => {
     const weak = createTestState({ roomId: "GymWeightRoom" });
 
     const failed = await runCommand(weak, "lift barbell");
 
-    expect(expectInventoryToContain(failed, "orangebadge")).toBe(false);
+    expect(expectInventoryToContain(failed, "yellowbadge")).toBe(false);
     expect(getLastLogEntry(failed)).toContain("can't move it an inch");
 
     const strong = applyStatusEffectToPlayer(
@@ -211,12 +211,12 @@ describe("Gym interactions", () => {
     );
     const lifted = await runCommand(strong, "move barbell");
 
-    expect(expectInventoryToContain(lifted, "orangebadge")).toBe(true);
-    expect(lifted.itemState.itemRoomId.orangebadge).toBe("INVENTORY");
+    expect(expectInventoryToContain(lifted, "yellowbadge")).toBe(true);
+    expect(lifted.itemState.itemRoomId.yellowbadge).toBe("INVENTORY");
     expect(lifted.worldState.conditionalTriggers.GymWeightlifterMoved).toBe(
       true,
     );
-    expect(lifted.log.join("\n")).toContain("hook the orange badge");
+    expect(lifted.log.join("\n")).toContain("hook the yellow badge");
     expect(getLastLogEntry(lifted)).toContain(
       "You feel a warmth flooding through you",
     );

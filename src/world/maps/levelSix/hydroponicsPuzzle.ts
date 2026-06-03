@@ -1,4 +1,5 @@
 import { triggerScoreOnce } from "@game/rules/score";
+import { updateItemLocation } from "@game/rules/items";
 import { addToInventory, inventoryHas } from "@game/rules/state";
 import type {
   GameState,
@@ -515,7 +516,8 @@ export function openHydroponicsCocoon(
     };
   }
 
-  let next = addToInventory(workingState, "orangebadge");
+  let next = updateItemLocation(workingState, "orangebadge", "INVENTORY");
+  next = addToInventory(next, "orangebadge");
   next = triggerScoreOnce(next, "obtained_orange_badge");
   next = {
     ...next,

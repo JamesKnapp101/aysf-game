@@ -120,16 +120,6 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_orange_badge",
-    overrides: {
-      take: ({ state }: { state: GameState }) =>
-        isGymWeightlifterPinningBadge(state)
-          ? {
-              state,
-              message:
-                "You can get your fingers on the exposed corner of the orange badge, but the pinned weightlifter's body has the rest of it trapped. You'll need to move him first.",
-            }
-          : undefined,
-    },
     meta: {
       kind: "security-badge",
     },
@@ -171,6 +161,16 @@ export const badgeItems: Item[] = [
     isReadable: false,
     isContainer: false,
     scoreId: "obtained_yellow_badge",
+    overrides: {
+      take: ({ state }: { state: GameState }) =>
+        isGymWeightlifterPinningBadge(state)
+          ? {
+              state,
+              message:
+                "You can get your fingers on the exposed corner of the yellow badge, but the pinned weightlifter's body has the rest of it trapped. You'll need to move him first.",
+            }
+          : undefined,
+    },
     meta: {
       kind: "security-badge",
     },

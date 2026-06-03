@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import cors from "cors";
 import express from "express";
 import conversationRouter from "./routes/conversation.js";
+import gameplayRouter from "./routes/gameplay.js";
 import { getClientIp, getUserAgent } from "./utils/requestMeta.js";
 
 const app = express();
@@ -107,6 +108,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api/conversation", conversationRouter);
+app.use("/api/gameplay", gameplayRouter);
 
 // Root health check
 app.get("/api/health", (req, res) => {
@@ -162,6 +164,6 @@ app.listen(PORT, () => {
     `   API Key configured: ${process.env.ANTHROPIC_API_KEY ? "Yes" : "No"}`,
   );
   console.log(`   Serving frontend build: ${hasBuiltFrontend ? "Yes" : "No"}`);
-  console.log(`   Request logging: page + api requests`);
+  console.log(`   Request logging: page + api requests + gameplay events`);
   console.log(`\n   Try: http://localhost:${PORT}/api/health\n`);
 });

@@ -261,6 +261,8 @@ describe("Doors and level mechanics", () => {
 
     expect(expectInventoryToContain(openedUnderWeb, "orangebadge")).toBe(true);
     expect(expectInventoryToContain(openedBottom, "orangebadge")).toBe(true);
+    expect(openedUnderWeb.itemState.itemRoomId.orangebadge).toBe("INVENTORY");
+    expect(openedBottom.itemState.itemRoomId.orangebadge).toBe("INVENTORY");
     expect(
       openedUnderWeb.worldState.hydroponicsCocoonPuzzle.graceTurnsRemaining,
     ).toBe(3);
@@ -269,7 +271,7 @@ describe("Doors and level mechanics", () => {
     ).toBe(2);
   });
 
-  it("lets the player escape with the yellow badge if they reach the top platform in time", async () => {
+  it("lets the player escape with the orange badge if they reach the top platform in time", async () => {
     const escaped = await runCommands(
       createHydroponicsEscapeState("UnderWebOne"),
       ["open statuesque cocoon", "southeast", "up", "up"],

@@ -17,6 +17,7 @@ import {
   expectInventoryToContain,
   getLastLogEntry,
   runCommand,
+  setInventory,
 } from "./helpers/gameTestHelpers";
 import { describe, expect, it } from "vitest";
 
@@ -154,6 +155,96 @@ describe("resume storage", () => {
     );
     expect(expectInventoryToContain(dispensed, MOVIE_THEATER_CHEWABLE_ID)).toBe(
       true,
+    );
+
+    clearResumeSnapshot();
+  });
+
+  it("normalizes restored inventory item locations", async () => {
+    const base = setInventory(createTestState(), ["orangebadge"]);
+    const state = {
+      ...base,
+      world: {
+        ...base.world,
+        items: base.world.items.map((item) =>
+          item.id === "orangebadge"
+            ? { ...item, location: "SillithLeSconce" }
+            : item,
+        ),
+      },
+      itemState: {
+        ...base.itemState,
+        itemRoomId: {
+          ...base.itemState.itemRoomId,
+          orangebadge: "SillithLeSconce",
+        },
+      },
+    };
+
+    saveResumeSnapshot(state);
+
+    const restored = await restoreResumeSnapshot();
+
+    expect(restored).not.toBeNull();
+    expect(expectInventoryToContain(restored!, "orangebadge")).toBe(true);
+    expect(restored!.itemState.itemRoomId.orangebadge).toBe("INVENTORY");
+    expect(
+      restored!.world.items.find((item) => item.id === "orangebadge")
+        ?.location,
+    ).toBe("INVENTORY");
+
+    clearResumeSnapshot();
+  });
+
+  it("preserves badge-swap progress from older snapshots", async () => {
+    const oldGymSave = setInventory(createTestState(), ["orangebadge"]);
+    saveResumeSnapshot({
+      ...oldGymSave,
+      worldState: {
+        ...oldGymSave.worldState,
+        conditionalTriggers: {
+          ...oldGymSave.worldState.conditionalTriggers,
+          GymWeightlifterMoved: true,
+        },
+      },
+    });
+
+    const restoredGymSave = await restoreResumeSnapshot();
+
+    expect(restoredGymSave).not.toBeNull();
+    expect(expectInventoryToContain(restoredGymSave!, "orangebadge")).toBe(
+      true,
+    );
+    expect(expectInventoryToContain(restoredGymSave!, "yellowbadge")).toBe(
+      true,
+    );
+    expect(restoredGymSave!.itemState.itemRoomId.yellowbadge).toBe("INVENTORY");
+
+    clearResumeSnapshot();
+
+    const oldHydroponicsSave = setInventory(createTestState(), ["yellowbadge"]);
+    saveResumeSnapshot({
+      ...oldHydroponicsSave,
+      worldState: {
+        ...oldHydroponicsSave.worldState,
+        hydroponicsCocoonPuzzle: {
+          ...oldHydroponicsSave.worldState.hydroponicsCocoonPuzzle,
+          resolved: true,
+        },
+      },
+    });
+
+    const restoredHydroponicsSave = await restoreResumeSnapshot();
+
+    expect(restoredHydroponicsSave).not.toBeNull();
+    expect(
+      expectInventoryToContain(restoredHydroponicsSave!, "yellowbadge"),
+    ).toBe(true);
+    expect(
+      expectInventoryToContain(restoredHydroponicsSave!, "orangebadge"),
+    ).toBe(true);
+    expect(restoredHydroponicsSave!.itemState.itemRoomId.orangebadge).toBe(
+      "INVENTORY",
     );
 
     clearResumeSnapshot();

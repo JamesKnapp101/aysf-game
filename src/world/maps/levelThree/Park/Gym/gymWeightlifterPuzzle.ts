@@ -75,7 +75,7 @@ export function liftGymWeightlifterBarbell(state: GameState): {
   return {
     state: next,
     message:
-      "You plant your feet, take hold of the barbell, and lift. The bar rises just enough for you to hook the orange badge out from beneath the body. You grab it, then ease the weight back down before your grip gives out.",
+      "You plant your feet, take hold of the barbell, and lift. The bar rises just enough for you to hook the yellow badge out from beneath the body. You grab it, then ease the weight back down before your grip gives out.",
   };
 }
 
