@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import { generateClaudeResponse } from "../services/claudeService.js";
 import {
+  formatPlayerInputForLog,
   getClientIp,
   summarizeErrorForLog,
   summarizeTopicForLog,
@@ -117,7 +118,10 @@ export function createConversationRouter(
       }
 
       console.log(
-        `[AI GENERATE ${requestId}] ip=${clientIp} npc=${request.npcId} type=${request.playerInput.type} topic=${topicSummary} history=${request.conversationHistory.length}`,
+        `[AI GENERATE ${requestId}] ip=${clientIp} npc=${request.npcId} ${formatPlayerInputForLog(
+          request.playerInput.type,
+          request.playerInput.topic,
+        )} history=${request.conversationHistory.length}`,
       );
       const response = await generateResponse(request);
 

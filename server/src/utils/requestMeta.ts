@@ -31,8 +31,20 @@ export function getUserAgent(req: Request): string {
   return sanitizeLogValue(value, MAX_USER_AGENT_LENGTH);
 }
 
+function normalizeTopicForLog(topic: string | undefined): string {
+  return topic?.trim().replace(/\s+/g, " ") ?? "";
+}
+
+export function formatPlayerInputForLog(
+  type: "ask" | "tell",
+  topic: string | undefined,
+): string {
+  const normalized = normalizeTopicForLog(topic);
+  return `${type}="${sanitizeLogValue(normalized)}" chars=${normalized.length}`;
+}
+
 export function summarizeTopicForLog(topic: string | undefined): string {
-  const normalized = topic?.trim().replace(/\s+/g, " ") ?? "";
+  const normalized = normalizeTopicForLog(topic);
   return `chars=${normalized.length}`;
 }
 

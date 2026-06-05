@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const frontendFixtureDir = path.join(__dirname, "fixtures", "frontend");
 
-function validConversationBody(topic = "reactor") {
+function validConversationBody(topic = "reactor", type: "ask" | "tell" = "ask") {
   return {
     characterProfile: {
       directives: ["Stay brief."],
@@ -26,7 +26,7 @@ function validConversationBody(topic = "reactor") {
     npcId: "test_npc",
     playerInput: {
       topic,
-      type: "ask",
+      type,
     },
   };
 }
@@ -146,4 +146,47 @@ test("malformed conversation requests are rejected before the AI provider", asyn
       assert.equal((await response.json()).fallback, true);
     },
   );
+});
+
+test("AI generate logs include sanitized ask and tell text", async () => {
+  const originalLog = console.log;
+  const logLines: string[] = [];
+
+  console.log = (...args: unknown[]) => {
+    logLines.push(args.map(String).join(" "));
+  };
+
+  try {
+    await withServer(
+      async () => "Test response.",
+      async (baseUrl) => {
+        for (const [type, topic] of [
+          ["ask", 'where is the "reactor"\nnow?'],
+          ["tell", "the reactor is humming"],
+        ] as const) {
+          const response = await fetch(`${baseUrl}/api/conversation/ask`, {
+            body: JSON.stringify(validConversationBody(topic, type)),
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+          });
+
+          assert.equal(response.status, 200);
+        }
+      },
+    );
+  } finally {
+    console.log = originalLog;
+  }
+
+  const generateLogs = logLines.filter((line) => line.includes("[AI GENERATE "));
+
+  assert.equal(generateLogs.length, 2);
+  assert.match(
+    generateLogs[0],
+    /ask="where is the 'reactor' now\?" chars=27/,
+  );
+  assert.match(generateLogs[1], /tell="the reactor is humming" chars=22/);
+  assert.doesNotMatch(generateLogs[0], /topic=chars=/);
 });
