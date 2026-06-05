@@ -25,13 +25,13 @@ From the `server/` directory:
 
 ```bash
 pnpm install
-cp .env.local.example .env.local
+cp .env.example .env.local
 ```
 
 Set your API key in `.env.local`:
 
 ```env
-ANTHROPIC_API_KEY=sk-ant-your-api-key-here
+ANTHROPIC_API_KEY=replace-with-your-anthropic-api-key
 PORT=3001
 NODE_ENV=development
 ```

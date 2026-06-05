@@ -27,13 +27,13 @@ Copy the example environment file and add your API key:
 
 ```bash
 cd server
-copy .env.local.example .env.local
+copy .env.example .env.local
 ```
 
 Edit `server/.env.local` and add your actual API key:
 
 ```env
-ANTHROPIC_API_KEY=sk-ant-your-actual-api-key-here
+ANTHROPIC_API_KEY=replace-with-your-anthropic-api-key
 PORT=3001
 NODE_ENV=development
 ```

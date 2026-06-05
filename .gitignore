@@ -10,11 +10,34 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+coverage
+*.tsbuildinfo
 *.local
 
-# Server environment files
-server/.env.local
+# Environment and local config files
+.env
+.env.*
+!.env.example
 server/.env
+server/.env.*
+!server/.env.example
+
+# Credential and service-account files
+.aws/
+aws.env
+credentials.json
+secrets.json
+secret.json
+config.json
+config.local.json
+service-account.json
+firebase.json
+firebase-adminsdk*.json
+gcp-credentials.json
+key.json
+keyfile.json
+*.pem
+*.key
 
 # Editor directories and files
 .vscode/*

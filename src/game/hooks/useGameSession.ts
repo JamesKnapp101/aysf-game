@@ -51,17 +51,9 @@ type UseGameSessionResult = {
 
 type ResultLike = Pick<ActionResult, "state" | "message" | "overlay">;
 const FIRST_RUN_HELP_HINT = "For instructions and other game info, type 'help'";
-const LOGGED_COMMAND_MAX_LENGTH = 120;
 
 function roundedMetric(value: number): number {
   return Math.round(value * 10) / 10;
-}
-
-function truncateForGameplayLog(value: string): string {
-  const normalized = value.trim().replace(/\s+/g, " ");
-  return normalized.length <= LOGGED_COMMAND_MAX_LENGTH
-    ? normalized
-    : `${normalized.slice(0, LOGGED_COMMAND_MAX_LENGTH - 3)}...`;
 }
 
 function getInventoryItemCount(state: GameState): number {
@@ -81,12 +73,8 @@ function getActiveStatusEffectIds(state: GameState): string[] {
     .map((effect) => effect.id);
 }
 
-function getCommandSummary(
-  parsed: ParsedCommand,
-  rawInput: string,
-): GameplayEventPayload {
+function getCommandSummary(parsed: ParsedCommand): GameplayEventPayload {
   const summary: GameplayEventPayload = {
-    command: truncateForGameplayLog(rawInput),
     commandType: parsed.type,
   };
 
@@ -97,8 +85,6 @@ function getCommandSummary(
 
   if (parsed.type === "action") {
     summary.verb = parsed.verb;
-    summary.direct = parsed.direct;
-    summary.indirect = parsed.indirect;
     summary.preposition = parsed.preposition;
   }
 
@@ -419,7 +405,6 @@ export function useGameSession({
         overlayAfter,
       );
       const commandSourcePayload: GameplayEventPayload = {
-        command: truncateForGameplayLog(trimmed),
         commandType: parsed.type,
         direction: parsed.type === "move" ? parsed.direction : undefined,
         source: "command",
@@ -427,7 +412,7 @@ export function useGameSession({
       };
 
       trackGameplayEvent("command", {
-        ...getCommandSummary(parsed, trimmed),
+        ...getCommandSummary(parsed),
         ...getStateDeltaPayload(before, nextState),
         fromRoomId: before.player.roomId,
         overlayKind: openedOverlayKind ?? undefined,
@@ -491,7 +476,7 @@ export function useGameSession({
           try {
             await executeCommand(trimmed);
           } catch (error) {
-            console.error(`Failed to process command "${trimmed}"`, error);
+            console.error("Failed to process command.", error);
           }
         });
     },

@@ -10,6 +10,12 @@ const MAX_FIELD_NAME_LENGTH = 40;
 const MAX_FIELD_VALUE_LENGTH = 160;
 const MAX_SESSION_ID_LENGTH = 80;
 const MAX_ARRAY_VALUES = 8;
+const SENSITIVE_FIELD_NAME_PATTERN =
+  /(?:authorization|cookie|secret|token|password|api_?key|apikey|credential|private_?key)/i;
+const FREE_TEXT_FIELD_NAME_PATTERN =
+  /(?:command|topic|message|text|input|response|assistantContext)/i;
+const SENSITIVE_VALUE_PATTERN =
+  /(?:sk-ant-|bearer\s+|-----BEGIN [A-Z ]*PRIVATE KEY-----|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.)/i;
 
 type LogPayloadValue = string | number | boolean | null;
 type LogPayload = Record<string, LogPayloadValue>;
@@ -57,7 +63,8 @@ function sanitizeScalar(value: unknown): LogPayloadValue | undefined {
   if (value === null) return null;
 
   if (typeof value === "string") {
-    return normalizeText(value, MAX_FIELD_VALUE_LENGTH);
+    const normalized = normalizeText(value, MAX_FIELD_VALUE_LENGTH);
+    return SENSITIVE_VALUE_PATTERN.test(normalized) ? "[redacted]" : normalized;
   }
 
   if (typeof value === "number") {
@@ -98,6 +105,13 @@ function sanitizePayload(payload: unknown): LogPayload {
         "field",
         MAX_FIELD_NAME_LENGTH,
       );
+      if (
+        SENSITIVE_FIELD_NAME_PATTERN.test(key) ||
+        FREE_TEXT_FIELD_NAME_PATTERN.test(key)
+      ) {
+        return next;
+      }
+
       const value = sanitizePayloadValue(rawValue);
 
       if (value !== undefined) {

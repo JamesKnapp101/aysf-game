@@ -60,7 +60,7 @@ export async function getClaudeResponse(
 
   const existingRequest = pendingRequests.get(requestKey);
   if (existingRequest) {
-    console.log(`Reusing pending request for ${requestKey}`);
+    console.log(`Reusing pending Claude request for ${npcId}`);
     return existingRequest;
   }
 
