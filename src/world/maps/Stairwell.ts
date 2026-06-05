@@ -174,7 +174,7 @@ export const STAIRWELL: WorldChunk = {
       id: "LevelFourStairAccess",
       name: "Level Four Stair Access",
       description:
-        "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'. Smeared on the north wall next to the elevator doors are the words 'They WAnt bloOD'. The words appear to be written in blood.",
+        "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
       exits: [
         { direction: "east", doorId: "StairDoorFour" },
         { direction: "west", toRoomId: "LevelFourCorridorTwo" },
