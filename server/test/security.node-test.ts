@@ -61,6 +61,17 @@ test("known secret and probe paths return 404 before SPA fallback", async () => 
       "/.env",
       "/.git/config",
       "/credentials.json",
+      "/root/.boto",
+      "/root/.git-credentials",
+      "/root/.gitconfig",
+      "/root/.netrc",
+      "/root/.s3cfg",
+      "/rest/users",
+      "/rest/workflows",
+      "/s3/credentials",
+      "/symfony/_profiler/phpinfo",
+      "/webhook",
+      "/wp-json/wp/v2/users",
       "/wp-includes/wlwmanifest.xml",
     ];
 
@@ -68,6 +79,18 @@ test("known secret and probe paths return 404 before SPA fallback", async () => 
       const response = await fetch(`${baseUrl}${probePath}`);
       assert.equal(response.status, 404, probePath);
       assert.match(await response.text(), /Not found/);
+    }
+  });
+});
+
+test("unknown extensionless page paths return 404 instead of the SPA shell", async () => {
+  await withServer(async () => "unused", async (baseUrl) => {
+    const unknownPagePaths = ["/feed/", "/products", "/projects/*", "/test"];
+
+    for (const pagePath of unknownPagePaths) {
+      const response = await fetch(`${baseUrl}${pagePath}`);
+      assert.equal(response.status, 404, pagePath);
+      assert.doesNotMatch(await response.text(), /AYSF test frontend/);
     }
   });
 });
@@ -86,6 +109,40 @@ test("frontend root and real API endpoints still work", async () => {
     assert.equal(gameplayHealthResponse.status, 200);
     assert.equal((await gameplayHealthResponse.json()).service, "gameplay-events");
   });
+});
+
+test("probe logs prefer validated visitor IP headers", async () => {
+  const originalWarn = console.warn;
+  const warnLines: string[] = [];
+
+  console.warn = (...args: unknown[]) => {
+    warnLines.push(args.map(String).join(" "));
+  };
+
+  try {
+    await withServer(async () => "unused", async (baseUrl) => {
+      const cloudflareResponse = await fetch(`${baseUrl}/.env`, {
+        headers: {
+          "CF-Connecting-IP": "203.0.113.8",
+          "User-Agent": "test scanner",
+        },
+      });
+      assert.equal(cloudflareResponse.status, 404);
+
+      const forwardedResponse = await fetch(`${baseUrl}/.git/config`, {
+        headers: {
+          "User-Agent": "test scanner",
+          "X-Forwarded-For": "198.51.100.44, 104.22.24.197",
+        },
+      });
+      assert.equal(forwardedResponse.status, 404);
+    });
+  } finally {
+    console.warn = originalWarn;
+  }
+
+  assert.match(warnLines.join("\n"), /ip=203\.0\.113\.8/);
+  assert.match(warnLines.join("\n"), /ip=198\.51\.100\.44/);
 });
 
 test("conversation endpoint returns 429 after repeated valid requests", async () => {

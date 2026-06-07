@@ -1,3 +1,4 @@
+import { isIP } from "node:net";
 import type { Request } from "express";
 
 const MAX_USER_AGENT_LENGTH = 120;
@@ -20,8 +21,40 @@ export function sanitizeLogValue(
     : `${normalized.slice(0, maxLength - 3)}...`;
 }
 
+function normalizeIpCandidate(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+
+  const bracketedIpv6Match = trimmed.match(/^\[([^\]]+)\](?::\d+)?$/);
+  const unbracketed = bracketedIpv6Match?.[1] ?? trimmed;
+  const withoutIpv4Port = unbracketed.replace(
+    /^(\d{1,3}(?:\.\d{1,3}){3}):\d+$/,
+    "$1",
+  );
+
+  return isIP(withoutIpv4Port) ? withoutIpv4Port : undefined;
+}
+
+function firstValidIpFromHeader(value: string | undefined): string | undefined {
+  return value
+    ?.split(",")
+    .map((part) => normalizeIpCandidate(part))
+    .find((ip): ip is string => Boolean(ip));
+}
+
 export function getClientIp(req: Request): string {
-  return sanitizeLogValue(req.ip || req.socket.remoteAddress || "unknown", 80);
+  // Log-facing only: auth and rate limits should rely on Express trust-proxy state.
+  const ip =
+    firstValidIpFromHeader(req.get("cf-connecting-ip")) ??
+    firstValidIpFromHeader(req.get("x-forwarded-for")) ??
+    req.ips.map((candidate) => normalizeIpCandidate(candidate)).find(Boolean) ??
+    normalizeIpCandidate(req.ip) ??
+    normalizeIpCandidate(req.socket.remoteAddress) ??
+    "unknown";
+
+  return sanitizeLogValue(ip, 80);
 }
 
 export function getUserAgent(req: Request): string {

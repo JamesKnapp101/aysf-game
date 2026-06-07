@@ -43,6 +43,10 @@ function classifyRequestPath(pathname: string): "api" | "page" | "asset" {
   return "page";
 }
 
+function isFrontendEntryPath(pathname: string): boolean {
+  return pathname === "/" || pathname === "";
+}
+
 function formatDurationMs(startNs: bigint): string {
   const durationMs = Number(process.hrtime.bigint() - startNs) / 1_000_000;
   return `${durationMs.toFixed(durationMs >= 100 ? 0 : 1)}ms`;
@@ -151,7 +155,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
     );
 
     app.get(/^(?!\/api(?:\/|$)).*/, (req, res, next) => {
-      if (path.extname(req.path)) {
+      if (!isFrontendEntryPath(req.path)) {
         next();
         return;
       }

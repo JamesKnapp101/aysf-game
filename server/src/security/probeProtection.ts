@@ -6,15 +6,17 @@ import {
 } from "../utils/requestMeta.js";
 
 const SUSPICIOUS_PATH_PATTERNS: RegExp[] = [
-  /(?:^|\/)\.env(?:$|[./_-])/i,
-  /(?:^|\/)\.git(?:$|\/)/i,
-  /(?:^|\/)\.aws(?:$|\/)/i,
-  /(?:^|\/)aws\.env$/i,
-  /(?:^|\/)(?:config|credentials|secrets?|service-account|gcp-credentials|firebase|key|keyfile)\.json$/i,
+  /(?:^|\/)\.[^/]+/i,
+  /(?:^|\/)(?:config|credentials?|secrets?|service-account|gcp-credentials|firebase|key|keyfile)\.json$/i,
   /(?:^|\/)firebase-adminsdk[^/]*\.json$/i,
-  /(?:^|\/)xmlrpc\.php$/i,
+  /(?:^|\/)(?:phpinfo|xmlrpc\.php)(?:$|[/?#])/i,
+  /\.(?:php|cgi)(?:$|[/?#])/i,
   /(?:^|\/)wp-(?:admin|content|includes)(?:\/|$)/i,
+  /(?:^|\/)(?:wordpress|wp-json)(?:\/|$)/i,
   /(?:^|\/)wlwmanifest\.xml$/i,
+  /(?:^|\/)(?:rest|webhook|trpc|graphql)(?:\/|$)/i,
+  /(?:^|[\/._-])(?:aws|s3|stripe|sendgrid|credentials?|secrets?|token|config)(?:$|[\/._-])/i,
+  /(?:^|[\/._-])(?:terraform|serverless|docker-compose|vercel\.json|netlify\.toml)(?:$|[\/._-])/i,
   /^\/api\/(?:env|config)\/?$/i,
 ];
 

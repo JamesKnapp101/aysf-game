@@ -6,6 +6,9 @@ import {
 
 export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
   you_1st_contact: {
+    directives: [
+      "If the player asks anything that you don't have specific information for, let the player know that you are suffering from memory loss and so have a lot of blank spots",
+    ],
     goals: [
       "Keep the player alive long enough to stabilize things",
       "Help restore facility power",
