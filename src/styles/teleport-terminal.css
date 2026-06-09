@@ -3,411 +3,239 @@
 }
 
 .tterm2-root {
+    --crt-color: #62ff3f;
+    --tterm-bg: #020503;
+    --tterm-line: color-mix(in srgb, var(--crt-color) 66%, transparent);
+    --tterm-soft-line: color-mix(in srgb, var(--crt-color) 34%, transparent);
+    --tterm-panel: rgba(1, 12, 7, 0.72);
+
     height: 100%;
     width: 100%;
+    min-width: 0;
+    min-height: 0;
     box-sizing: border-box;
-    padding: 16px;
+    padding: 14px;
     color: var(--crt-color);
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
         "Noto Sans", "Liberation Sans", sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(98, 255, 63, 0.075), transparent 36%),
+        repeating-linear-gradient(0deg,
+            rgba(98, 255, 63, 0.035) 0,
+            rgba(98, 255, 63, 0.035) 1px,
+            transparent 1px,
+            transparent 6px),
+        var(--tterm-bg);
+    border: 1px solid color-mix(in srgb, var(--crt-color) 52%, transparent);
+    border-radius: 8px;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        0 0 30px rgba(98, 255, 63, 0.12) inset;
+}
+
+.tterm2-banner,
+.tterm2-panel,
+.tterm2-hcell,
+.tterm2-statusCell,
+.tterm2-destCell,
+.tterm2-step {
+    box-sizing: border-box;
 }
 
 .tterm2-banner {
-    border: 2px solid color-mix(in srgb, var(--crt-color) 85%, transparent);
-    border-radius: 12px;
-    padding: 12px 16px;
+    min-height: 100px;
+    flex: 0 0 auto;
+    border: 1px solid var(--tterm-line);
+    border-radius: 8px;
+    padding: 10px 16px;
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    align-items: end;
-    gap: 12px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65) inset,
-        0 0 18px color-mix(in srgb, var(--crt-color) 20%, transparent);
-}
-
-.tterm2-brand {
-    font-size: 48px;
-    line-height: 0.5;
-    margin-bottom: 12px;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.35),
-        0 0 14px color-mix(in srgb, var(--crt-color) 28%, transparent);
-}
-
-.tterm2-title {
-    font-size: 44px;
-    line-height: 1;
-    text-align: right;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.35),
-        0 0 14px color-mix(in srgb, var(--crt-color) 28%, transparent);
-}
-
-.tterm2-panel {
-    margin-top: 12px;
-    border: 2px solid color-mix(in srgb, var(--crt-color) 85%, transparent);
-    border-radius: 12px;
-    height: calc(100% - 86px);
-    box-sizing: border-box;
-    padding: 12px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65) inset,
-        0 0 20px rgba(0, 0, 0, 0.35);
-}
-
-.tterm2-gridHeader {
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 12px;
-    margin-bottom: 10px;
-}
-
-.tterm2-hcell {
-    border: 1px solid color-mix(in srgb, var(--crt-color) 65%, transparent);
-    border-radius: 12px;
-    padding: 8px 10px;
-    font-size: 18px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65) inset;
-}
-
-.tterm2-hcell-left {
-    text-align: center;
-    font-size: 24px;
-}
-
-.tterm2-hcell-right {
-    display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(220px, 0.82fr) minmax(270px, 360px) minmax(330px, 1.08fr);
     align-items: center;
-    /* gap: 12px; */
-}
-
-.tterm2-htext {
-    text-align: left;
-}
-.tterm2-htext2 {
-    text-align: center;
-    font-size: 18px;
-}
-
-.tterm2-hline {
-    height: 0;
-    position: relative;
-}
-
-.tterm2-hline::after {
-    content: "";
-    position: absolute;
-    right: -1px;
-    top: -7px;
-    width: 0;
-    height: 0;
-}
-
-.tterm2-gridBody {
-    display: grid;
-    gap: 10px;
-}
-
-.tterm2-row {
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 12px;
-    align-items: center;
-    --ringColor: var(--crt-color);
-    position: relative;
-}
-
-/* Active lane glow */
-.tterm2-row::before {
-    content: "";
-    position: absolute;
-    left: -6px;
-    right: -6px;
-    top: -6px;
-    bottom: -6px;
-    pointer-events: none;
-    opacity: 0;
-    border-radius: 12px;
-    background: linear-gradient(90deg,
-            transparent 0%,
-            color-mix(in srgb, var(--ringColor) 10%, transparent) 20%,
-            color-mix(in srgb, var(--ringColor) 16%, transparent) 50%,
-            color-mix(in srgb, var(--ringColor) 10%, transparent) 80%,
-            transparent 100%);
-    transition: opacity 160ms ease;
-}
-
-.tterm2-row:hover::before,
-.tterm2-row:focus-within::before {
-    opacity: 1;
-}
-
-/* Status cell */
-.tterm2-statusCell {
-    border: 1px solid color-mix(in srgb, var(--crt-color) 55%, transparent);
-    border-radius: 12px;
-    padding: 10px 12px;
-    display: grid;
-    grid-template-columns: 34px 1fr;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65) inset;
-}
-
-.tterm2-dot {
-    width: 28px;
-    height: 28px;
-    border-radius: 999px;
-    border: 2px solid var(--ringColor);
-    background: rgba(0, 0, 0, 0.35);
-    box-sizing: border-box;
-}
-
-.tterm2-dot.isOnline {
-    opacity: 1;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.55) inset,
-        0 0 14px color-mix(in srgb, var(--ringColor) 55%, transparent);
-    filter: brightness(1.08);
-}
-
-.tterm2-dot.isOffline {
-    opacity: 0.32;
-    box-shadow: none;
-    filter: saturate(0.9) brightness(0.85);
-}
-
-.tterm2-statusText {
-    font-size: 16px;
-    margin-bottom: 4px;
-}
-
-.tterm2-statusText.isOffline {
-    opacity: 0.55;
-}
-
-/* Destinations cell */
-.tterm2-destCell {
-    border: 1px solid color-mix(in srgb, var(--crt-color) 55%, transparent);
-    border-radius: 12px;
-    padding: 10px 12px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65) inset;
-    display: grid;
-    grid-template-columns: 150px 1fr;
-    gap: 12px;
-    align-items: center;
-}
-
-.tterm2-zoneLabel {
-    font-size: 24px;
-    line-height: 1;
-    text-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
-}
-
-.tterm2-steps {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
-    gap: 10px;
-    /* space between segments */
-    align-items: stretch;
-    width: 100%;
-    min-height: 40px;
-}
-
-/* Each button uses ring color */
-.tterm2-step {
-    flex: 1 1 0;
-    min-width: 0;
-    position: relative;
-
-    border-radius: 12px;
-    border: 1px solid color-mix(in srgb, var(--ringColor) 85%, transparent);
-    background: color-mix(in srgb, var(--ringColor) 14%, rgba(0, 0, 0, 0.55));
-    color: color-mix(in srgb, var(--ringColor) 90%, white 10%);
-    padding: 10px 12px;
-
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-
-    box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.55) inset,
-        0 0 10px color-mix(in srgb, var(--ringColor) 20%, transparent);
-
-    /* remove any leftover chevron logic */
-    clip-path: none !important;
-    margin-left: 0 !important;
-
-    transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease,
-        filter 120ms ease, opacity 120ms ease;
-}
-
-.tterm2-stepText {
-    display: block;
-    width: 100%;
-    text-align: center;
-    font-size: 13px;
-    white-space: nowrap;
+    gap: 16px;
     overflow: hidden;
-    text-overflow: ellipsis;
     position: relative;
-    z-index: 2;
-    color: color-mix(in srgb, var(--ringColor) 65%);
+    background:
+        linear-gradient(90deg, rgba(98, 255, 63, 0.11), transparent 28%),
+        linear-gradient(270deg, rgba(38, 191, 255, 0.08), transparent 32%),
+        rgba(0, 8, 4, 0.88);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.74) inset,
+        0 0 24px color-mix(in srgb, var(--crt-color) 18%, transparent);
 }
 
-/* Sweep overlay (diagonal scan) */
-/* .tterm2-step::after {
+.tterm2-banner::before {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0;
-    transform: translateX(-120%);
-    z-index: 1;
+    background:
+        linear-gradient(90deg, transparent 0, rgba(98, 255, 63, 0.12) 50%, transparent 100%),
+        repeating-linear-gradient(90deg,
+            transparent 0,
+            transparent 21px,
+            rgba(98, 255, 63, 0.045) 21px,
+            rgba(98, 255, 63, 0.045) 22px);
+    mix-blend-mode: screen;
+    opacity: 0.45;
+}
 
-    background: linear-gradient(115deg,
-            transparent 0%,
-            color-mix(in srgb, var(--ringColor) 18%, transparent) 33%,
-            color-mix(in srgb, var(--ringColor) 38%, transparent) 50%,
-            color-mix(in srgb, var(--ringColor) 18%, transparent) 67%,
-            transparent 100%);
-} */
-
-/* Thin top highlight line */
-.tterm2-step::before {
-    content: "";
-    position: absolute;
-    left: 10px;
-    right: 10px;
-    top: 6px;
-    /* height: 1px; */
-    opacity: 0.35;
-    background: color-mix(in srgb, var(--ringColor) 70%, transparent);
-    pointer-events: none;
+.tterm2-banner>* {
+    position: relative;
     z-index: 1;
 }
 
-/* Online hover */
-/* .tterm2-step.isOnline:hover {
-    background: color-mix(in srgb, var(--ringColor) 22%, rgba(0, 0, 0, 0.55));
+.tterm2-brandBlock,
+.tterm2-titleBlock {
+    min-width: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.tterm2-brandBlock {
+    justify-items: start;
+}
+
+.tterm2-titleBlock {
+    justify-items: end;
+}
+
+.tterm2-brand,
+.tterm2-title {
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow:
+        0 0 10px rgba(0, 0, 0, 0.45),
+        0 0 16px color-mix(in srgb, var(--crt-color) 24%, transparent);
+}
+
+.tterm2-brand {
+    font-size: 39px;
+    font-weight: 750;
+}
+
+.tterm2-title {
+    font-size: 36px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.tterm2-brandSub,
+.tterm2-titleSub {
+    color: color-mix(in srgb, var(--crt-color) 66%, white 12%);
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0.72;
+}
+
+.tterm2-titleSub {
+    color: color-mix(in srgb, #26bfff 58%, var(--crt-color) 42%);
+}
+
+.tterm2-bannerSpacer {
+    width: 100%;
+    height: 82px;
+}
+
+.tterm2-panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    border: 1px solid var(--tterm-line);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    background:
+        linear-gradient(180deg, rgba(98, 255, 63, 0.04), transparent 44%),
+        var(--tterm-panel);
     box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.55) inset,
-        0 0 16px color-mix(in srgb, var(--ringColor) 28%, transparent);
-    filter: brightness(1.06);
-} */
-
-/* Trigger the sweep on hover/focus */
-.tterm2-step.isOnline:hover::after,
-.tterm2-step.isOnline:focus-visible::after {
-    opacity: 1;
-    animation: tterm2-sweep 650ms ease-out 1;
+        0 0 0 1px rgba(0, 0, 0, 0.74) inset,
+        0 0 22px rgba(0, 0, 0, 0.38);
 }
 
-/* @keyframes tterm2-sweep {
-    0% {
-        transform: translateX(-120%);
-    }
-
-    100% {
-        transform: translateX(120%);
-    }
-} */
-
-/* Focus ring that matches the lane */
-/* .tterm2-step:focus-visible {
-    outline: none;
-    box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.55) inset,
-        0 0 0 2px color-mix(in srgb, var(--ringColor) 55%, transparent),
-        0 0 18px color-mix(in srgb, var(--ringColor) 25%, transparent);
-} */
-
-/* Active press */
-.tterm2-step.isOnline:active {
-    transform: translateY(1px);
+.tterm2-gridHeader {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 9px;
+    flex: 0 0 auto;
 }
 
-/* Offline / disabled */
-.tterm2-step.isOffline,
-.tterm2-step:disabled {
-    opacity: 0.30;
-    cursor: not-allowed;
-    filter: saturate(0.8);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55) inset;
-}
-/* ===== Hover/online states (unchanged behavior) ===== */
-
-.tterm2-step.isOnline:hover {
-    background: color-mix(in srgb, var(--ringColor) 22%, rgba(0, 0, 0, 0.55));
-    box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.55) inset,
-        0 0 16px color-mix(in srgb, var(--ringColor) 28%, transparent);
-    filter: brightness(1.06);
+.tterm2-hcell {
+    border: 1px solid var(--tterm-soft-line);
+    border-radius: 8px;
+    min-height: 58px;
+    padding: 8px 10px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.66) inset;
+    background: rgba(0, 0, 0, 0.3);
 }
 
-.tterm2-step.isOnline:hover::after,
-.tterm2-step.isOnline:focus-visible::after {
-    opacity: 1;
-    animation: tterm2-sweep 650ms ease-out 1;
+.tterm2-hcell-left {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 650;
 }
 
-/* @keyframes tterm2-sweep {
-    0% {
-        transform: translateX(-120%);
-    }
-
-    100% {
-        transform: translateX(120%);
-    }
-} */
-
-.tterm2-step:focus-visible {
-    outline: none;
-    box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.55) inset,
-        0 0 0 2px color-mix(in srgb, var(--ringColor) 55%, transparent),
-        0 0 18px color-mix(in srgb, var(--ringColor) 25%, transparent);
+.tterm2-hcell-right {
+    display: grid;
+    grid-template-rows: 1px minmax(20px, 1fr) 1px;
+    gap: 6px;
+    align-items: center;
+    overflow: hidden;
 }
 
-.tterm2-step.isOnline:active {
-    transform: translateY(1px);
+.tterm2-hline {
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            color-mix(in srgb, var(--crt-color) 45%, transparent),
+            transparent);
+    opacity: 0.8;
 }
 
-.tterm2-step.isOffline,
-.tterm2-step:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    filter: saturate(0.8);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55) inset;
-}
-
-/* scrolling container */
 .tterm2-hscroll {
     position: relative;
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
+    min-width: 0;
+    mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
 }
 
-/* moving track */
 .tterm2-hscrollTrack {
-    display: inline-flex;
-    gap: 48px;
-    /* space between repeats */
+    display: flex;
+    width: max-content;
     will-change: transform;
-    animation: tterm2-marquee 22s linear infinite;
+    animation: tterm2-marquee 26s linear infinite;
 }
 
-/* the text itself */
-.tterm2-htext2 {
+.tterm2-hscrollGroup {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+}
+
+.tterm2-hscrollText {
+    flex: 0 0 auto;
+    padding-right: 64px;
+    color: color-mix(in srgb, var(--crt-color) 84%, white 6%);
     font-size: 14px;
-    letter-spacing: 0.8px;
-    opacity: 0.9;
+    line-height: 1;
+    opacity: 0.92;
     text-shadow:
-        0 0 6px rgba(0, 0, 0, 0.4),
-        0 0 12px color-mix(in srgb, var(--crt-color) 25%, transparent);
+        0 0 6px rgba(0, 0, 0, 0.48),
+        0 0 12px color-mix(in srgb, var(--crt-color) 24%, transparent);
 }
 
-/* marquee animation */
 @keyframes tterm2-marquee {
     from {
         transform: translateX(0);
@@ -422,33 +250,307 @@
     animation-play-state: paused;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: reduce) {
     .tterm2-hscrollTrack {
-        animation:
-            tterm2-marquee 22s linear infinite,
-            tterm2-jitter 3.5s steps(2, end) infinite;
-    }
-
-    @keyframes tterm2-jitter {
-
-        0%,
-        100% {
-            filter: none;
-        }
-
-        50% {
-            filter: brightness(1.05);
-        }
+        animation: none;
     }
 }
 
-.tterm2-foot {
-    margin-top: 12px;
+.tterm2-gridBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.tterm2-row {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 12px;
+    align-items: stretch;
+    --ringColor: var(--crt-color);
+    position: relative;
+}
+
+.tterm2-row::before {
+    content: "";
+    position: absolute;
+    left: -5px;
+    right: -5px;
+    top: -4px;
+    bottom: -4px;
+    pointer-events: none;
+    opacity: 0;
+    border-radius: 8px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            color-mix(in srgb, var(--ringColor) 8%, transparent) 20%,
+            color-mix(in srgb, var(--ringColor) 14%, transparent) 50%,
+            color-mix(in srgb, var(--ringColor) 8%, transparent) 80%,
+            transparent 100%);
+    transition: opacity 160ms ease;
+}
+
+.tterm2-row:hover::before,
+.tterm2-row:focus-within::before {
+    opacity: 1;
+}
+
+.tterm2-statusCell {
+    border: 1px solid color-mix(in srgb, var(--ringColor) 58%, transparent);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    background: rgba(0, 0, 0, 0.34);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.66) inset;
+}
+
+.tterm2-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 2px solid var(--ringColor);
+    background: radial-gradient(circle at 50% 50%,
+            color-mix(in srgb, var(--ringColor) 24%, rgba(0, 0, 0, 0.25)) 0 34%,
+            rgba(0, 0, 0, 0.45) 35% 100%);
+}
+
+.tterm2-dot.isOnline {
+    opacity: 1;
+    box-shadow:
+        0 0 0 2px rgba(0, 0, 0, 0.58) inset,
+        0 0 16px color-mix(in srgb, var(--ringColor) 58%, transparent);
+    filter: brightness(1.08);
+}
+
+.tterm2-dot.isOffline {
+    opacity: 0.32;
+    filter: saturate(0.85) brightness(0.82);
+}
+
+.tterm2-statusText {
+    min-width: 0;
+    font-size: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tterm2-statusText.isOffline {
+    opacity: 0.55;
+}
+
+.tterm2-destCell {
+    border: 1px solid color-mix(in srgb, var(--ringColor) 58%, transparent);
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.66) inset;
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    min-width: 0;
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--ringColor) 7%, transparent), transparent 36%),
+        rgba(0, 0, 0, 0.28);
+}
+
+.tterm2-zoneLabel {
+    min-width: 0;
+    color: color-mix(in srgb, var(--ringColor) 88%, white 12%);
+    font-size: 23px;
+    line-height: 1;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+    text-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+}
+
+.tterm2-steps {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 10px;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+}
+
+.tterm2-step {
+    min-width: 0;
+    position: relative;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--ringColor) 78%, transparent);
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--ringColor) 15%, rgba(0, 0, 0, 0.58)),
+            color-mix(in srgb, var(--ringColor) 6%, rgba(0, 0, 0, 0.74)));
+    color: color-mix(in srgb, var(--ringColor) 92%, white 8%);
+    padding: 9px 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.6) inset,
+        0 0 10px color-mix(in srgb, var(--ringColor) 18%, transparent);
+    transition:
+        transform 120ms ease,
+        background 120ms ease,
+        box-shadow 120ms ease,
+        filter 120ms ease,
+        opacity 120ms ease;
+}
+
+.tterm2-step::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 6px;
+    height: 1px;
+    opacity: 0.45;
+    background: color-mix(in srgb, var(--ringColor) 72%, transparent);
+    pointer-events: none;
+}
+
+.tterm2-step::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateX(-115%);
+    pointer-events: none;
+    background: linear-gradient(115deg,
+            transparent 0%,
+            color-mix(in srgb, var(--ringColor) 16%, transparent) 34%,
+            color-mix(in srgb, white 30%, transparent) 50%,
+            color-mix(in srgb, var(--ringColor) 16%, transparent) 66%,
+            transparent 100%);
+}
+
+.tterm2-stepText {
+    display: block;
+    width: 100%;
+    text-align: center;
     font-size: 13px;
-    opacity: 0.85;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    z-index: 1;
+    color: color-mix(in srgb, var(--ringColor) 88%, white 12%);
+}
+
+.tterm2-step.isOnline:hover {
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--ringColor) 24%, rgba(0, 0, 0, 0.52)),
+            color-mix(in srgb, var(--ringColor) 10%, rgba(0, 0, 0, 0.68)));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.55) inset,
+        0 0 16px color-mix(in srgb, var(--ringColor) 28%, transparent);
+    filter: brightness(1.06);
+}
+
+.tterm2-step.isOnline:hover::after,
+.tterm2-step.isOnline:focus-visible::after {
+    opacity: 1;
+    animation: tterm2-sweep 650ms ease-out 1;
+}
+
+@keyframes tterm2-sweep {
+    from {
+        transform: translateX(-115%);
+    }
+
+    to {
+        transform: translateX(115%);
+    }
+}
+
+.tterm2-step:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.55) inset,
+        0 0 0 2px color-mix(in srgb, var(--ringColor) 58%, transparent),
+        0 0 18px color-mix(in srgb, var(--ringColor) 28%, transparent);
+}
+
+.tterm2-step.isOnline:active {
+    transform: translateY(1px);
+}
+
+.tterm2-step.isOffline,
+.tterm2-step:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: saturate(0.75);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.58) inset;
+}
+
+.tterm2-foot {
+    margin-top: 10px;
+    flex: 0 0 auto;
+    color: color-mix(in srgb, var(--crt-color) 74%, white 6%);
+    font-size: 13px;
+    line-height: 1;
+    opacity: 0.86;
 }
 
 .tterm2-footAccent {
     opacity: 1;
-    text-shadow: 0 0 12px color-mix(in srgb, var(--crt-color) 25%, transparent);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--crt-color) 26%, transparent);
+}
+
+@media (max-width: 960px) {
+    .tterm2-root {
+        padding: 10px;
+    }
+
+    .tterm2-banner {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        gap: 8px;
+    }
+
+    .tterm2-brandBlock,
+    .tterm2-titleBlock {
+        justify-items: center;
+        text-align: center;
+    }
+
+    .tterm2-brand {
+        font-size: 30px;
+    }
+
+    .tterm2-title {
+        font-size: 25px;
+        text-align: center;
+    }
+
+    .tterm2-bannerSpacer {
+        max-width: 360px;
+        height: 70px;
+    }
+
+    .tterm2-gridHeader,
+    .tterm2-row {
+        grid-template-columns: 145px minmax(0, 1fr);
+    }
+
+    .tterm2-destCell {
+        grid-template-columns: 132px minmax(0, 1fr);
+    }
+
+    .tterm2-zoneLabel {
+        font-size: 18px;
+    }
 }

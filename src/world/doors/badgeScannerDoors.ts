@@ -6,7 +6,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "BridgeDoors",
     name: "a security door",
     descriptionFromA:
-      "To the north is a security door, mounted next to which is a badge scanner of some kind with a dark maroon strip across the top. A sign over the door reads 'BRIDGE'.",
+      "To the north is a security door, mounted next to which is a badge scanner of some kind with a maroon strip across the top. A sign over the door reads 'BRIDGE'.",
     descriptionFromB:
       "To the south is a security door leading back to the corridor.",
     kind: "badgeScanner",
@@ -18,13 +18,13 @@ export const badgeScannerDoors: DoorDefinition[] = [
     directions: { fromA: "north", fromB: "south" },
     initiallyOpen: false,
     initiallyLocked: true,
-    badgeItemId: "violetbadge",
+    badgeItemId: "maroonbadge",
   },
   {
     id: "BridgeStairDoors",
     name: "bridge access door",
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a violet horizontal stripe across it at eye level. Stenciled across the banner is the word 'LOGISTICS', and mounted above the doorway is a small panel marked '1'. ",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a maroon horizontal stripe across it at eye level. Stenciled across the banner is the word 'LOGISTICS', and mounted above the doorway is a small panel marked '1'. ",
     descriptionFromB:
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",
@@ -33,7 +33,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     directions: { fromA: "east", fromB: "west" },
     initiallyOpen: false,
     initiallyLocked: true,
-    badgeItemId: "violetbadge",
+    badgeItemId: "maroonbadge",
     checkBadgeOnDir: "west",
   },
   // MEDICAL LAB
@@ -137,7 +137,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     id: "EngineeringDoors",
     name: "a security door",
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with an brown horizontal stripe across it at eye level. Stenciled across the banner is the word 'ENGINEERING.'",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with an violet horizontal stripe across it at eye level. Stenciled across the banner is the word 'ENGINEERING.'",
     descriptionFromB:
       "To the east is a security door leading back to the stairwell.",
     kind: "badgeScanner",
@@ -149,7 +149,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
     initiallyLocked: true,
-    badgeItemId: "brownbadge",
+    badgeItemId: "violetbadge",
     checkBadgeOnDir: "west",
   },
 ];

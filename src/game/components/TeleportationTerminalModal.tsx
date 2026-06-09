@@ -46,49 +46,49 @@ const RINGS: RingConfig[] = [
     id: "botanical",
     label: "BOTANICAL",
     sectionKey: "teleport-pads-green",
-    ringColor: "#00ff4a",
+    ringColor: "#24ff68",
     destinations: ["ParkCenter", "HydroponicsOne", "BotanicalOne"],
   },
   {
     id: "medical",
     label: "MEDICAL",
     sectionKey: "teleport-pads-blue",
-    ringColor: "#2aa7ff",
+    ringColor: "#38a7ff",
     destinations: ["Lab", "RemoteMedicalOne"],
   },
   {
     id: "operations",
     label: "OPERATIONS",
     sectionKey: "teleport-pads-maroon",
-    ringColor: "#a22d4c",
+    ringColor: "#ff3d45",
     destinations: ["Bridge"],
   },
   {
     id: "powerGrid",
     label: "POWER GRID",
     sectionKey: "teleport-pads-yellow",
-    ringColor: "#ffe600",
+    ringColor: "#ffdf38",
     destinations: ["PowerGrid", "RemotePowerStation"],
   },
   {
     id: "utilities",
     label: "UTILITIES",
     sectionKey: "teleport-pads-violet",
-    ringColor: "#8a2be2",
+    ringColor: "#b15cff",
     destinations: ["MainReactorPlatform", "MaintenanceDuct"],
   },
   {
     id: "zoological",
     label: "ZOOLOGICAL",
     sectionKey: "teleport-pads-orange",
-    ringColor: "#ff8c00",
+    ringColor: "#ff982f",
     destinations: ["VeterinaryCenter", "OuterRingSouth", "XenobiologyLab"],
   },
   {
     id: "deepStorage",
     label: "DEEP STORAGE",
     sectionKey: "teleport-pads-white",
-    ringColor: "#ffffff",
+    ringColor: "#f4f7ff",
     destinations: ["CryoLab", "GridC3"],
   },
 ];
@@ -110,6 +110,29 @@ const destinationLabelMap = {
   GridC3: "Grid",
   XenobiologyLab: "Xenobiology Lab",
 };
+
+const MARQUEE_MESSAGE =
+  "PLEASE SELECT YOUR TRAVEL DESTINATION! SOME DESTINATIONS MAY REQUIRE AUTHORIZATION.";
+
+function ScrollingBannerMessage() {
+  const repeats = Array.from({ length: 3 }, (_, index) => index);
+
+  return (
+    <span className="tterm2-hscroll" aria-label={MARQUEE_MESSAGE}>
+      <span className="tterm2-hscrollTrack" aria-hidden="true">
+        {[0, 1].map((group) => (
+          <span className="tterm2-hscrollGroup" key={group}>
+            {repeats.map((repeat) => (
+              <span className="tterm2-hscrollText" key={`${group}-${repeat}`}>
+                {MARQUEE_MESSAGE}
+              </span>
+            ))}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
 
 function isRingOnline(state: GameState, key: RingKey): boolean {
   return Boolean((state.worldState.powerRestoredSections as any)?.[key]);
@@ -182,8 +205,15 @@ export function TeleportationTerminalModal({
     >
       <div className="tterm2-root" role="document" aria-label={title}>
         <div className="tterm2-banner">
-          <div className="tterm2-brand">OMNI→BEAM</div>
-          <div className="tterm2-title">TRANSLOCATION TERMINAL</div>
+          <div className="tterm2-brandBlock">
+            <div className="tterm2-brand">OMNI JAUNT</div>
+            <div className="tterm2-brandSub">POINT TO POINT TRANSIT</div>
+          </div>
+          <div className="tterm2-bannerSpacer" aria-hidden="true" />
+          <div className="tterm2-titleBlock">
+            <div className="tterm2-title">TRANSLOCATION TERMINAL</div>
+            <div className="tterm2-titleSub">RING DESTINATION MATRIX</div>
+          </div>
         </div>
 
         <div className="tterm2-panel">
@@ -191,18 +221,7 @@ export function TeleportationTerminalModal({
             <div className="tterm2-hcell tterm2-hcell-left">RING STATUS</div>
             <div className="tterm2-hcell tterm2-hcell-right">
               <span className="tterm2-hline" aria-hidden="true" />
-              <span className="tterm2-hscroll">
-                <span className="tterm2-hscrollTrack">
-                  <span className="tterm2-htext2">
-                    PLEASE SELECT YOUR TRAVEL DESTINATION! SOME DESTINATIONS MAY
-                    REQUIRE AUTHORIZATION.
-                  </span>
-                  <span className="tterm2-htext2" aria-hidden="true">
-                    PLEASE SELECT YOUR TRAVEL DESTINATION! SOME DESTINATIONS MAY
-                    REQUIRE AUTHORIZATION.
-                  </span>
-                </span>
-              </span>
+              <ScrollingBannerMessage />
               <span className="tterm2-hline" aria-hidden="true" />
             </div>
           </div>
