@@ -1,54 +1,224 @@
 .radio-frequency-panel {
+    --radio-green: var(--crt-color);
+    --radio-bg: #020503;
+    --radio-line: color-mix(in srgb, var(--radio-green) 66%, transparent);
+    --radio-line-soft: color-mix(in srgb, var(--radio-green) 34%, transparent);
+    --radio-panel: rgba(0, 12, 6, 0.76);
+
+    position: relative;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-    padding: 16px;
+    width: 100%;
+    min-height: 386px;
+    padding: 14px;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    gap: 12px;
+    color: var(--radio-green);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--radio-green) 8%, transparent), transparent 36%),
+        repeating-linear-gradient(0deg,
+            color-mix(in srgb, var(--radio-green) 3.5%, transparent) 0,
+            color-mix(in srgb, var(--radio-green) 3.5%, transparent) 1px,
+            transparent 1px,
+            transparent 6px),
+        var(--radio-bg);
+    border: 1px solid color-mix(in srgb, var(--radio-green) 64%, transparent);
+    border-radius: 8px;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.76) inset,
+        0 0 34px color-mix(in srgb, var(--radio-green) 12%, transparent) inset,
+        0 0 22px rgba(0, 0, 0, 0.46);
+    overflow: hidden;
+    isolation: isolate;
+    text-transform: uppercase;
+    letter-spacing: 0;
     font-family: var(--crt-font, "Courier New", monospace);
 }
 
-.radio-frequency-readout {
-    box-sizing: border-box;
-    width: min(100%, 430px);
-    border: 1px solid color-mix(in srgb, var(--crt-color) 55%, transparent);
+.radio-frequency-panel:focus {
+    outline: none;
+}
+
+.radio-frequency-panel:focus-visible {
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.76) inset,
+        0 0 0 2px color-mix(in srgb, var(--radio-green) 22%, transparent),
+        0 0 34px color-mix(in srgb, var(--radio-green) 12%, transparent) inset,
+        0 0 24px color-mix(in srgb, var(--radio-green) 18%, transparent);
+}
+
+.radio-frequency-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
     background:
-        linear-gradient(
-            180deg,
-            rgb(var(--crt-color-rgb) / 0.1),
-            rgb(var(--crt-color-rgb) / 0.03)
-        ),
-        rgba(0, 0, 0, 0.72);
-    color: color-mix(in srgb, var(--crt-color) 90%, white 10%);
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    padding: 14px 16px;
+        radial-gradient(92% 120% at 50% 0%,
+            color-mix(in srgb, var(--radio-green) 9%, transparent),
+            transparent 58%),
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+    opacity: 0.72;
+    z-index: 0;
+}
+
+.radio-frequency-panel::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    pointer-events: none;
+    border: 1px solid color-mix(in srgb, var(--radio-green) 24%, transparent);
+    border-radius: 7px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.64) inset;
+    z-index: 1;
+}
+
+.radio-frequency-panel>* {
+    position: relative;
+    z-index: 2;
+}
+
+.radio-frequency-header {
+    min-width: 0;
+    min-height: 74px;
+    border: 1px solid var(--radio-line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(178px, auto);
+    gap: 16px;
+    align-items: center;
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--radio-green) 11%, transparent), transparent 34%),
+        linear-gradient(270deg, color-mix(in srgb, #26bfff 7%, transparent), transparent 30%),
+        rgba(0, 8, 4, 0.88);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        0 0 24px color-mix(in srgb, var(--radio-green) 14%, transparent);
+}
+
+.radio-frequency-brand,
+.radio-frequency-status {
+    min-width: 0;
+    display: grid;
+    gap: 7px;
+}
+
+.radio-frequency-status {
+    justify-items: end;
+}
+
+.radio-frequency-brandName,
+.radio-frequency-brandSub,
+.radio-frequency-statusLabel,
+.radio-frequency-statusPill {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.radio-frequency-brandName {
+    color: color-mix(in srgb, var(--radio-green) 92%, white 8%);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-shadow:
+        0 0 10px rgba(0, 0, 0, 0.48),
+        0 0 16px color-mix(in srgb, var(--radio-green) 22%, transparent);
+}
+
+.radio-frequency-brandSub,
+.radio-frequency-statusLabel {
+    color: color-mix(in srgb, var(--radio-green) 68%, white 12%);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    opacity: 0.78;
+}
+
+.radio-frequency-statusLabel {
+    margin-right: 1rem;
+}
+
+.radio-frequency-statusPill {
+    min-width: 140px;
+    border: 1px solid color-mix(in srgb, var(--radio-green) 44%, transparent);
+    border-radius: 999px;
+    padding: 5px 12px;
     text-align: center;
-    text-shadow: 0 0 16px rgb(var(--crt-color-rgb) / 0.28);
+    color: color-mix(in srgb, var(--radio-green) 82%, white 8%);
+    background: rgba(0, 0, 0, 0.36);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.58) inset;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.14em;
+}
+
+.radio-frequency-readout {
+    min-width: 0;
+    min-height: 78px;
+    border: 1px solid var(--radio-line);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    padding: 10px 16px;
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--radio-green) 9%, transparent), transparent 38%),
+        rgba(0, 0, 0, 0.58);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        inset 0 0 34px rgba(0, 0, 0, 0.42),
+        0 0 20px color-mix(in srgb, var(--radio-green) 9%, transparent);
+}
+
+.radio-frequency-readoutValue {
+    color: color-mix(in srgb, var(--radio-green) 92%, white 8%);
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-align: center;
+    text-shadow:
+        0 0 14px color-mix(in srgb, var(--radio-green) 28%, transparent),
+        0 0 2px color-mix(in srgb, var(--radio-green) 42%, transparent);
+}
+
+.radio-frequency-tuner {
+    min-width: 0;
+    min-height: 0;
+    border: 1px solid var(--radio-line);
+    border-radius: 8px;
+    padding: 12px;
+    display: grid;
+    grid-template-rows: minmax(122px, 1fr) auto auto;
+    gap: 14px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--radio-green) 4%, transparent), transparent 46%),
+        var(--radio-panel);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        0 0 18px rgba(0, 0, 0, 0.35);
 }
 
 .radio-frequency-band {
-    box-sizing: border-box;
     position: relative;
-    width: min(100%, 430px);
-    min-height: 96px;
-    border: 1px solid color-mix(in srgb, var(--crt-color) 42%, transparent);
-    background:
-        repeating-linear-gradient(
-            90deg,
-            rgb(var(--crt-color-rgb) / 0.28) 0,
-            rgb(var(--crt-color-rgb) / 0.28) 1px,
-            transparent 1px,
-            transparent 24px
-        ),
-        linear-gradient(
-            180deg,
-            rgb(var(--crt-color-rgb) / 0.07),
-            rgb(var(--crt-color-rgb) / 0.02)
-        );
-    box-shadow: inset 0 0 24px rgb(var(--crt-color-rgb) / 0.08);
+    min-width: 0;
+    min-height: 122px;
+    border: 1px solid var(--radio-line-soft);
+    border-radius: 8px;
     overflow: hidden;
+    background:
+        repeating-linear-gradient(90deg,
+            color-mix(in srgb, var(--radio-green) 26%, transparent) 0,
+            color-mix(in srgb, var(--radio-green) 26%, transparent) 1px,
+            transparent 1px,
+            transparent 30px),
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--radio-green) 7%, transparent),
+            rgba(0, 0, 0, 0.55));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        inset 0 0 34px rgba(0, 0, 0, 0.48);
 }
 
 .radio-frequency-band::before {
@@ -58,42 +228,264 @@
     right: 0;
     top: 50%;
     height: 2px;
-    background: color-mix(in srgb, var(--crt-color) 72%, transparent);
-    box-shadow: 0 0 14px rgb(var(--crt-color-rgb) / 0.22);
+    background: color-mix(in srgb, var(--radio-green) 72%, transparent);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--radio-green) 22%, transparent);
+    transform: translateY(-50%);
 }
 
 .radio-frequency-band::after {
     content: "";
     position: absolute;
     left: var(--radio-frequency-pos);
-    top: 12px;
-    bottom: 12px;
-    width: 3px;
-    background: color-mix(in srgb, var(--crt-color) 82%, white 18%);
+    top: 16px;
+    bottom: 26px;
+    width: 4px;
+    background: color-mix(in srgb, var(--radio-green) 88%, white 12%);
     box-shadow:
-        0 0 0 1px rgb(var(--crt-color-rgb) / 0.18),
-        0 0 18px rgb(var(--crt-color-rgb) / 0.34);
+        0 0 0 1px rgba(0, 0, 0, 0.42),
+        0 0 20px color-mix(in srgb, var(--radio-green) 34%, transparent);
     transform: translateX(-50%);
+}
+
+.radio-frequency-sweep {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 18px;
+    bottom: 34px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    align-items: end;
+    opacity: 0.34;
+    pointer-events: none;
+}
+
+.radio-frequency-sweep span {
+    display: block;
+    height: var(--radio-sweep-height);
+    border-radius: 2px 2px 0 0;
+    background: color-mix(in srgb, var(--radio-green) 64%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--radio-green) 16%, transparent);
 }
 
 .radio-frequency-ticks {
     position: absolute;
-    inset: auto 12px 12px;
-    display: flex;
-    justify-content: space-between;
-    color: color-mix(in srgb, var(--crt-color) 70%, white 30%);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
+    left: 14px;
+    right: 14px;
+    bottom: 11px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    color: color-mix(in srgb, var(--radio-green) 72%, white 14%);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+}
+
+.radio-frequency-ticks span:nth-child(2) {
+    text-align: center;
+}
+
+.radio-frequency-ticks span:nth-child(3) {
+    text-align: right;
+}
+
+.radio-frequency-sliderRail {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.radio-frequency-sliderLabel {
+    color: color-mix(in srgb, var(--radio-green) 68%, white 8%);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    opacity: 0.76;
 }
 
 .radio-frequency-slider {
-    accent-color: var(--crt-color);
-    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    min-width: 0;
+    height: 28px;
+    border: 0;
+    background: transparent;
     cursor: pointer;
-    width: min(100%, 430px);
 }
 
-.radio-mouse-wheel {
-    font-size: 14px;
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+.radio-frequency-slider:focus {
+    outline: none;
+}
+
+.radio-frequency-slider::-webkit-slider-runnable-track {
+    height: 8px;
+    border: 1px solid var(--radio-line-soft);
+    border-radius: 999px;
+    background:
+        linear-gradient(90deg,
+            color-mix(in srgb, var(--radio-green) 78%, white 8%) 0 var(--radio-frequency-pos),
+            rgba(255, 255, 255, 0.24) var(--radio-frequency-pos) 100%),
+        rgba(0, 0, 0, 0.72);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.68) inset,
+        0 0 12px color-mix(in srgb, var(--radio-green) 12%, transparent);
+}
+
+.radio-frequency-slider::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    margin-top: -8px;
+    border: 1px solid color-mix(in srgb, var(--radio-green) 84%, white 10%);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--radio-green) 90%, white 10%);
+    box-shadow:
+        0 0 0 3px rgba(0, 0, 0, 0.72),
+        0 0 16px color-mix(in srgb, var(--radio-green) 30%, transparent);
+}
+
+.radio-frequency-slider::-moz-range-track {
+    height: 8px;
+    border: 1px solid var(--radio-line-soft);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.24);
+}
+
+.radio-frequency-slider::-moz-range-progress {
+    height: 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--radio-green) 78%, white 8%);
+}
+
+.radio-frequency-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border: 1px solid color-mix(in srgb, var(--radio-green) 84%, white 10%);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--radio-green) 90%, white 10%);
+    box-shadow:
+        0 0 0 3px rgba(0, 0, 0, 0.72),
+        0 0 16px color-mix(in srgb, var(--radio-green) 30%, transparent);
+}
+
+.radio-frequency-slider:focus-visible::-webkit-slider-runnable-track {
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.68) inset,
+        0 0 0 2px color-mix(in srgb, var(--radio-green) 22%, transparent),
+        0 0 18px color-mix(in srgb, var(--radio-green) 18%, transparent);
+}
+
+.radio-frequency-slider:focus-visible::-moz-range-track {
+    box-shadow:
+        0 0 0 2px color-mix(in srgb, var(--radio-green) 22%, transparent),
+        0 0 18px color-mix(in srgb, var(--radio-green) 18%, transparent);
+}
+
+.radio-frequency-fineTune {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.radio-frequency-fineButton {
+    min-width: 0;
+    min-height: 38px;
+    border-radius: 8px;
+    border: 1px solid var(--radio-line-soft);
+    display: grid;
+    place-items: center;
+    padding: 7px 8px;
+    color: color-mix(in srgb, var(--radio-green) 88%, white 10%);
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--radio-green) 11%, rgba(0, 0, 0, 0.56)),
+            color-mix(in srgb, var(--radio-green) 4%, rgba(0, 0, 0, 0.74)));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.64) inset,
+        0 0 10px color-mix(in srgb, var(--radio-green) 10%, transparent);
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition:
+        transform 120ms ease,
+        background 120ms ease,
+        box-shadow 120ms ease,
+        filter 120ms ease;
+}
+
+.radio-frequency-fineButton:hover,
+.radio-frequency-fineButton:focus-visible {
+    outline: none;
+    filter: brightness(1.07);
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--radio-green) 20%, rgba(0, 0, 0, 0.5)),
+            color-mix(in srgb, var(--radio-green) 7%, rgba(0, 0, 0, 0.68)));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.58) inset,
+        0 0 0 2px color-mix(in srgb, var(--radio-green) 18%, transparent),
+        0 0 18px color-mix(in srgb, var(--radio-green) 14%, transparent);
+}
+
+.radio-frequency-fineButton:active {
+    transform: translateY(1px);
+}
+
+.radio-frequency-footer {
+    min-width: 0;
+    border: 1px solid var(--radio-line-soft);
+    border-radius: 8px;
+    min-height: 36px;
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 12px;
+    align-items: center;
+    color: color-mix(in srgb, var(--radio-green) 74%, white 8%);
+    background: rgba(0, 0, 0, 0.34);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.66) inset;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+}
+
+@media (max-width: 640px) {
+    .radio-frequency-panel {
+        min-height: 0;
+        overflow: auto;
+    }
+
+    .radio-frequency-header {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .radio-frequency-status {
+        justify-items: start;
+    }
+
+    .radio-frequency-brandName {
+        font-size: 23px;
+    }
+
+    .radio-frequency-readoutValue {
+        font-size: 28px;
+        letter-spacing: 0.12em;
+    }
+
+    .radio-frequency-footer {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .radio-frequency-fineTune {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }

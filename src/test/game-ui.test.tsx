@@ -340,6 +340,10 @@ describe("UI panels", () => {
 
     render(<Harness />);
 
+    const panel = screen.getByRole("group", {
+      name: /radio frequency controls/i,
+    });
+
     fireEvent.change(screen.getByRole("slider", { name: /radio frequency/i }), {
       target: { value: "150" },
     });
@@ -359,6 +363,37 @@ describe("UI panels", () => {
 
     expect(screen.getByText("149.955 MHz")).toBeInTheDocument();
     expect(screen.getByTestId("radio-frequency")).toHaveTextContent("149.955");
+
+    const slider = screen.getByRole("slider", { name: /radio frequency/i });
+
+    fireEvent.keyDown(slider, { key: "ArrowRight" });
+
+    expect(screen.getByText("149.960 MHz")).toBeInTheDocument();
+    expect(screen.getByTestId("radio-frequency")).toHaveTextContent("149.96");
+
+    fireEvent.keyDown(slider, { key: "ArrowLeft", shiftKey: true });
+
+    expect(screen.getByText("149.910 MHz")).toBeInTheDocument();
+    expect(screen.getByTestId("radio-frequency")).toHaveTextContent("149.91");
+
+    fireEvent.keyDown(panel, { key: "ArrowRight" });
+
+    expect(screen.getByText("149.915 MHz")).toBeInTheDocument();
+    expect(screen.getByTestId("radio-frequency")).toHaveTextContent("149.915");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /tune up 0\.005 mhz/i }),
+    );
+
+    expect(screen.getByText("149.920 MHz")).toBeInTheDocument();
+    expect(screen.getByTestId("radio-frequency")).toHaveTextContent("149.92");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /tune down 0\.050 mhz/i }),
+    );
+
+    expect(screen.getByText("149.870 MHz")).toBeInTheDocument();
+    expect(screen.getByTestId("radio-frequency")).toHaveTextContent("149.87");
   });
 
   it("renders the apiary terminal prompt and bee diagnostics", () => {

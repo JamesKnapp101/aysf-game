@@ -153,43 +153,7 @@ export const sixEastItems: Item[] = [
     meta: {
       sceneryDescriptionOrder: 5,
       kind: "phone",
-      messages: [
-        {
-          id: "6EM1",
-          title: "CALLER ID: SANYI, CLONE THREE",
-          transcript: `It's Three, have you been out lately? I saw the strangest thing just now; I've still got plenty of time on my Park Pass so I was at the gym, when one of the TVs went out and just then I felt a brief, stabbing pain in my shoulder. There was even a drop of blood, like a needle prick, and that seemed to be the extent of it, but when I hit the showers I noticed something inside the stall, a group of black dots on the wall inside that turned out to be tiny little holes, like pinpricks. It doesn't look like anybody was hurt and nothing besides the TV got damaged, but let me know if either of you notice anything strange.`,
-        },
-        {
-          id: "6EM2",
-          title: "CALLER ID: SANYI, CLONE TWO",
-          transcript: `It's Two, have either of you encountered anything strange? There's some buzz brewing down here about some sort of micro-breach clusters being spotted all over the place, tiny holes in walls, floors, not everywhere but whatever caused them they seem to go clear through everything. Let me know if either of you see anything.`,
-        },
-        {
-          id: "6EM3",
-          title: "CALLER ID: TENDWICK, LIL-LILLY",
-          transcript: `Hi, this is Lil-Lilly Tendwick in One East and I want you three stem-cells to know that I am onto you, vis-a-vis your three-timing with my poly-group's semi-serious-satellite Isosceles, and not even inviting us! She's not a three-man woman, so back off!`,
-        },
-        {
-          id: "6EM4",
-          title: "CALLER ID: SANYI, CLONE ONE",
-          transcript: `Two, it's One; Three's come down with some kind of fever, and it's quite bad so I'm going to take him up to Medical. It shouldn't be a big deal, but I'll call if anything changes.`,
-        },
-        {
-          id: "6EM5",
-          title: "CALLER ID: UMBOLTZ, HENK",
-          transcript: `Guys call me when you get this, I can hear it again, and I'm telling you it's coming from the storage unit between ours. You ought to be able to hear it through your bathroom wall. And before you tell me it's the pipes again, it's not, when I knocked on the wall, it stopped. Something, or somebody, is going in there. Anyway call me.`,
-        },
-        {
-          id: "6EM6",
-          title: "CALLER ID: SANYI, CLONE TWO",
-          transcript: `One, it's Two; I'm with Three in Medical and it's not just him, more and more are coming in and the waiting room is packed. They gave him the full battery; antibiotics, antivirals, the works so whatever it is should clear up soon. We're heading back, they need the space.`,
-        },
-        {
-          id: "6EM7",
-          title: "CALLER ID: SANYI, CLONE ONE",
-          transcript: `Two, it's One; I've managed to get my hands on some equipment, including the acid you asked for, and a good twenty kilos of ice to keep him cool, was there anything else we need? Any idea yet what's causing it? The lab's got no idea so far, and whatever it is, it's affected a lot of people. This is getting scary. I'm headed back now. They say we should shelter at home until they know more.`,
-        },
-      ],
+      messages: [],
       unreadCount: 0,
       redFlashCount: 0,
     },
@@ -590,9 +554,6 @@ export const sixEastItems: Item[] = [
     overrides: {
       push: `You press the black button on top of the plastic box and some kind of black fluid begins spilling into the first chamber, blooming through the water until it turns completely dark and begins to bleed into the second, then third chambers. When it stops, the box begins to vibrate ever so slightly in your hands as the blackened chambers begin to clear, seemingly just from the gentle rippling of the membranes. In seconds the water is crystal clear again, and the removed material is loaded up for the button to be pressed again.`,
     },
-    // meta: {
-    //   onPush: `You press the black button on top of the plastic box and some kind of black fluid begins spilling into the first chamber, blooming through the water until it turns completely dark and begins to bleed into the second, then third chambers. When it stops, the box begins to vibrate ever so slightly in your hands as the blackened chambers begin to clear, seemingly just from the gentle rippling of the membranes. In seconds the water is crystal clear again, and the removed material is loaded up for the button to be pressed again.`,
-    // },
     itemWeight: 2,
     itemSize: 3,
     isPushable: true,
