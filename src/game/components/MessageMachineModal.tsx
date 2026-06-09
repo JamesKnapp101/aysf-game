@@ -139,6 +139,27 @@ export function MessageMachineModal({
     return activeIndex + 1;
   }, [activeIndex, unlistenedCount, safeMessages.length]);
 
+  const activeMessageOrdinal =
+    activeIndex == null
+      ? "--"
+      : `${String(activeIndex + 1).padStart(2, "0")}/${String(
+          safeMessages.length,
+        ).padStart(2, "0")}`;
+  const machineStatus =
+    safeMessages.length === 0
+      ? "No Messages"
+      : activeMessage
+        ? "Playing"
+        : "Standby";
+  const titleText =
+    activeMessage?.title?.trim() ||
+    (safeMessages.length === 0 ? "Inbox Empty" : "Awaiting Playback");
+  const transcriptText =
+    activeMessage?.transcript ??
+    (safeMessages.length === 0
+      ? "No stored messages."
+      : "Message archive ready.");
+
   return (
     <CrtModal
       title="MESSAGE BUTLER"
@@ -147,16 +168,26 @@ export function MessageMachineModal({
       height={540}
       showHeader={false}
     >
-      <div className="mm-crtWindow crt-modal-fill">
+      <div
+        className={[
+          "mm-crtWindow",
+          "crt-modal-fill",
+          activeMessage ? "is-playing" : "is-standby",
+        ].join(" ")}
+      >
         <header className="mm-header">
           <div className="mm-headerInner">
             <div className="mm-logoText" aria-label="OmniConnect">
               <span className="mm-logoName">OMNICONNECT</span>
               <span className="mm-logoTag">PRO</span>
-              <span className="mm-appName">MESSAGE BUTLER</span>
             </div>
 
-            <div className="mm-headerRight" aria-hidden="true">
+            <div className="mm-appCluster">
+              <span className="mm-appName">MESSAGE BUTLER</span>
+              <span className="mm-statusPill">{machineStatus}</span>
+            </div>
+
+            <div className="mm-headerRight">
               <div className="mm-iconWrap">
                 <DefaultPhoneIcon />
               </div>
@@ -167,16 +198,27 @@ export function MessageMachineModal({
         <div className="mm-body">
           <section className="mm-main">
             <div className="mm-titleBar">
-              {activeMessage?.title?.trim() ?? ""}
+              <span className="mm-titleKicker">{activeMessageOrdinal}</span>
+              <span className="mm-titleText">{titleText}</span>
             </div>
-            <div className="mm-transcript">
-              {activeMessage?.transcript ?? ""}
+            <div className="mm-transcript" aria-live="polite">
+              <div className="mm-transcriptText">{transcriptText}</div>
             </div>
           </section>
 
           <aside className="mm-side">
             <div className="mm-countBox">
+              <div className="mm-countLabel">
+                {activeIndex == null ? "New" : "Msg"}
+              </div>
               <div className="mm-count">{displayNumber}</div>
+            </div>
+
+            <div className="mm-signalPanel" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+              <span />
             </div>
 
             <div className="mm-actions">
@@ -185,11 +227,13 @@ export function MessageMachineModal({
                 onClick={playNext}
                 disabled={safeMessages.length === 0}
               >
-                PLAY
+                <PlayIcon />
+                <span>PLAY</span>
               </button>
 
               <button className="mm-btn mm-btnSecondary" onClick={onClose}>
-                CLOSE
+                <CloseIcon />
+                <span>CLOSE</span>
               </button>
             </div>
           </aside>
@@ -201,12 +245,35 @@ export function MessageMachineModal({
 
 function DefaultPhoneIcon() {
   return (
-    <svg width="48" height="48" viewBox="0 0 64 64" className="mm-phoneSvg">
-      <path d="M22 10h20v36H22z" />
-      <path d="M26 14h12" />
-      <path d="M26 42h12" />
-      <path d="M28 50h8" />
-      <path d="M18 10h-2c-2 0-4 2-4 4v36c0 2 2 4 4 4h32c2 0 4-2 4-4V14c0-2-2-4-4-4h-2" />
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 64 64"
+      className="mm-phoneSvg"
+      aria-hidden="true"
+    >
+      <rect x="20" y="8" width="24" height="42" rx="3" />
+      <path d="M25 14h14" />
+      <path d="M25 38h14" />
+      <path d="M29 45h6" />
+      <path d="M14 18v28c0 5 4 9 9 9h18c5 0 9-4 9-9V18" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg className="mm-btnIcon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg className="mm-btnIcon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
     </svg>
   );
 }

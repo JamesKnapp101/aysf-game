@@ -1,401 +1,489 @@
 :root {
-    /* Single source of truth for CRT hue */
     --crt-color: #39ff14;
-
-    /* Derived aliases so the rest of the file reads cleanly */
-    --mm-green: var(--crt-color);
-    --mm-bg: #000;
-    --mm-panel: rgba(0, 0, 0, 0.78);
-    --mm-panel2: rgba(0, 0, 0, 0.62);
-
-    --mm-radius-lg: 18px;
-    --mm-radius-md: 14px;
-    --mm-radius-sm: 12px;
-
-    /* Use color-mix where available; still looks fine if unsupported */
-    --mm-green-dim: color-mix(in srgb, var(--crt-color) 55%, transparent);
-    --mm-green-faint: color-mix(in srgb, var(--crt-color) 22%, transparent);
-
-    --mm-border: 1px solid color-mix(in srgb, var(--crt-color) 65%, transparent);
-    --mm-border-strong: 2px solid color-mix(in srgb, var(--crt-color) 85%, transparent);
 }
 
-/* ===== Window shell (now "content box") ===== */
 .mm-crtWindow {
-    position: relative;
-    width: min(1000px, 100%);
-    height: min(560px, 100%);
-    padding: 18px;
-    border-radius: var(--mm-radius-lg);
-    background: radial-gradient(120% 110% at 50% 0%,
-            color-mix(in srgb, var(--crt-color) 8%, transparent),
-            rgba(0, 0, 0, 0.96) 60%),
-        linear-gradient(to bottom,
-            color-mix(in srgb, var(--crt-color) 3%, transparent),
-            rgba(0, 0, 0, 0)),
-        #000;
+    --mm-green: var(--crt-color);
+    --mm-bg: #020503;
+    --mm-line: color-mix(in srgb, var(--mm-green) 66%, transparent);
+    --mm-line-soft: color-mix(in srgb, var(--mm-green) 34%, transparent);
+    --mm-panel: rgba(0, 12, 6, 0.76);
 
-    border: var(--mm-border-strong);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--crt-color) 10%, transparent),
-        0 0 26px color-mix(in srgb, var(--crt-color) 10%, transparent),
-        inset 0 0 80px rgba(0, 0, 0, 0.7);
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 14px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    color: var(--mm-green);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--mm-green) 8%, transparent), transparent 36%),
+        repeating-linear-gradient(0deg,
+            color-mix(in srgb, var(--mm-green) 3.5%, transparent) 0,
+            color-mix(in srgb, var(--mm-green) 3.5%, transparent) 1px,
+            transparent 1px,
+            transparent 6px),
+        var(--mm-bg);
+    border: 1px solid color-mix(in srgb, var(--mm-green) 64%, transparent);
+    border-radius: 8px;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.76) inset,
+        0 0 34px color-mix(in srgb, var(--mm-green) 12%, transparent) inset,
+        0 0 22px rgba(0, 0, 0, 0.46);
     overflow: hidden;
     isolation: isolate;
-    transform: none;
-    transform-origin: center center;
-    box-sizing: border-box;
+    text-transform: uppercase;
+    letter-spacing: 0;
 }
 
-/* inner rim (cooler-esque) */
-.mm-crtWindow::after {
-    content: "";
-    position: absolute;
-    inset: 0px;
-    border-radius: calc(var(--mm-radius-lg) - 6px);
-    border: 1px solid color-mix(in srgb, var(--crt-color) 35%, transparent);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.65);
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* vignette */
 .mm-crtWindow::before {
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: var(--mm-radius-lg);
     pointer-events: none;
-    box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.92);
-    opacity: 0.85;
+    background:
+        radial-gradient(95% 120% at 50% 0%,
+            color-mix(in srgb, var(--mm-green) 9%, transparent),
+            transparent 56%),
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+    opacity: 0.72;
     z-index: 0;
 }
 
-/* scanlines layer
-   If you moved scanlines into CrtModal, you can delete this element in JSX
-   and keep the CSS (harmless). */
-.mm-crtScanlines {
+.mm-crtWindow::after {
+    content: "";
     position: absolute;
-    inset: 0;
+    inset: 6px;
     pointer-events: none;
-    z-index: 2;
-    background: linear-gradient(color-mix(in srgb, var(--crt-color) 6%, transparent),
-            color-mix(in srgb, var(--crt-color) 1.5%, transparent)),
-        repeating-linear-gradient(to bottom,
-            rgba(0, 0, 0, 0) 0px,
-            rgba(0, 0, 0, 0) 2px,
-            rgba(0, 0, 0, 0.18) 3px);
-    mix-blend-mode: screen;
-    opacity: 0.62;
+    border: 1px solid color-mix(in srgb, var(--mm-green) 24%, transparent);
+    border-radius: 7px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.64) inset;
+    z-index: 1;
 }
 
-/* ensure content sits above vignette/scanlines */
-.mm-crtWindow>*:not(.mm-crtScanlines) {
+.mm-crtWindow>* {
     position: relative;
-    z-index: 3;
+    z-index: 2;
 }
 
-/* ===== Header ===== */
 .mm-header {
-    border-radius: var(--mm-radius-md);
-    border: var(--mm-border);
-    background: linear-gradient(to bottom,
-            color-mix(in srgb, var(--crt-color) 6%, transparent),
-            rgba(0, 0, 0, 0)),
-        rgba(0, 0, 0, 0.55);
-
-    padding: 6px 16px;
-    margin-bottom: 16px;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.65),
-        0 0 18px color-mix(in srgb, var(--crt-color) 6%, transparent);
+    flex: 0 0 auto;
+    border: 1px solid var(--mm-line);
+    border-radius: 8px;
+    min-height: 88px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--mm-green) 11%, transparent), transparent 34%),
+        linear-gradient(270deg, color-mix(in srgb, #26bfff 7%, transparent), transparent 30%),
+        rgba(0, 8, 4, 0.88);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        0 0 24px color-mix(in srgb, var(--mm-green) 14%, transparent);
 }
 
 .mm-headerInner {
-    display: flex;
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(290px, 1fr) minmax(230px, auto) 84px;
+    gap: 18px;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
 }
 
 .mm-logoText {
+    min-width: 0;
     display: flex;
     align-items: baseline;
     gap: 12px;
-    width: 100%;
 }
 
-.mm-logoName {
-    font-weight: 900;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-size: 28px;
-}
-
-.mm-logoTag {
-    margin-top: 2px;
-    font-size: 22px;
-    opacity: 0.85;
-    letter-spacing: 0.12em;
-}
-
-.mm-appName {
-    margin-left: auto;
-    /* push to the right */
-    padding-left: 24px;
-
-    font-family: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-
-    opacity: 0.65;
-
-    /* subtle CRT separation */
-    text-shadow:
-        0 0 6px color-mix(in srgb, var(--crt-color) 18%, transparent);
-}
-.mm-headerRight {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.mm-headerRight::before {
-    content: "";
-    width: 2px;
-    height: 56px;
-    background: color-mix(in srgb, var(--crt-color) 80%, transparent);
-    opacity: 0.9;
-}
-
-.mm-iconWrap {
-    width: 86px;
-    height: 62px;
-    display: grid;
-    place-items: center;
-    border-radius: 14px;
-    border: var(--mm-border);
-    background: radial-gradient(110% 120% at 50% 0%,
-            color-mix(in srgb, var(--crt-color) 6%, transparent),
-            rgba(0, 0, 0, 0.85) 55%),
-        rgba(0, 0, 0, 0.55);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.7),
-        0 0 16px color-mix(in srgb, var(--crt-color) 8%, transparent);
-}
-
-.mm-phoneSvg {
-    stroke: var(--mm-green);
-    fill: none;
-    stroke-width: 2;
-    shape-rendering: crispEdges;
-    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--crt-color) 22%, transparent));
-    opacity: 0.95;
-}
-
-/* ===== Body layout ===== */
-.mm-body {
-    display: grid;
-    grid-template-columns: 1fr 160px;
-    gap: 16px;
-
-    /* The modal dictates overall height; use all available space */
-    height: calc(100% - 106px);
-    min-height: 0;
-}
-
-/* ===== Main panel ===== */
-.mm-main {
-    border-radius: var(--mm-radius-md);
-    border: var(--mm-border);
-    background: radial-gradient(120% 120% at 50% 0%,
-            color-mix(in srgb, var(--crt-color) 4%, transparent),
-            rgba(0, 0, 0, 0.92) 65%),
-        rgba(0, 0, 0, 0.6);
-
-    padding: 16px;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 14px;
-    min-height: 0;
-
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.65),
-        0 0 18px color-mix(in srgb, var(--crt-color) 6%, transparent);
-}
-
-/* caller id bar */
-.mm-titleBar {
-    border-radius: var(--mm-radius-sm);
-    border: var(--mm-border);
-    background: linear-gradient(to bottom,
-            color-mix(in srgb, var(--crt-color) 5%, transparent),
-            rgba(0, 0, 0, 0)),
-        rgba(0, 0, 0, 0.55);
-
-    padding: 0px 16px;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-
-    font-size: 18px;
-    letter-spacing: 0.06em;
-    text-shadow: 0 0 10px color-mix(in srgb, var(--crt-color) 20%, transparent);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.65);
-
+.mm-logoName,
+.mm-logoTag,
+.mm-appName,
+.mm-statusPill {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* transcript “screen” */
-.mm-transcript {
-    border-radius: var(--mm-radius-sm);
-    border: var(--mm-border);
-    background: radial-gradient(120% 120% at 50% 0%,
-            color-mix(in srgb, var(--crt-color) 3%, transparent),
-            rgba(0, 0, 0, 0.96) 70%),
-        rgba(0, 0, 0, 0.5);
-
-    padding: 18px;
-    font-size: 16px;
-    line-height: 1.5;
-    overflow: auto;
-    white-space: pre-wrap;
-    min-height: 0;
-
-    text-shadow: 0 0 10px color-mix(in srgb, var(--crt-color) 16%, transparent);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.72),
-        inset 0 0 38px rgba(0, 0, 0, 0.55);
+.mm-logoName {
+    font-size: 30px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-shadow:
+        0 0 10px rgba(0, 0, 0, 0.48),
+        0 0 16px color-mix(in srgb, var(--mm-green) 22%, transparent);
 }
 
-/* scrollbar */
+.mm-logoTag {
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    opacity: 0.72;
+}
+
+.mm-appCluster {
+    min-width: 0;
+    display: grid;
+    gap: 8px;
+    justify-items: end;
+}
+
+.mm-appName {
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: 0.28em;
+    opacity: 0.82;
+}
+
+.mm-statusPill {
+    min-width: 118px;
+    border: 1px solid color-mix(in srgb, var(--mm-green) 44%, transparent);
+    border-radius: 999px;
+    padding: 5px 12px;
+    text-align: center;
+    color: color-mix(in srgb, var(--mm-green) 82%, white 8%);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    background: rgba(0, 0, 0, 0.36);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.58) inset;
+}
+
+.mm-headerRight {
+    min-width: 0;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.mm-iconWrap {
+    width: 68px;
+    height: 62px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    border: 1px solid var(--mm-line-soft);
+    background:
+        radial-gradient(110% 120% at 50% 0%,
+            color-mix(in srgb, var(--mm-green) 10%, transparent),
+            rgba(0, 0, 0, 0.86) 58%),
+        rgba(0, 0, 0, 0.42);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        0 0 16px color-mix(in srgb, var(--mm-green) 12%, transparent);
+}
+
+.mm-phoneSvg {
+    width: 42px;
+    height: 42px;
+    stroke: var(--mm-green);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--mm-green) 24%, transparent));
+    opacity: 0.95;
+}
+
+.mm-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 178px;
+    gap: 12px;
+}
+
+.mm-main {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 10px;
+    border: 1px solid var(--mm-line);
+    border-radius: 8px;
+    padding: 12px;
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--mm-green) 4%, transparent), transparent 46%),
+        var(--mm-panel);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        0 0 18px rgba(0, 0, 0, 0.35);
+}
+
+.mm-titleBar {
+    min-height: 48px;
+    min-width: 0;
+    border: 1px solid var(--mm-line-soft);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 8px 12px;
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--mm-green) 8%, transparent), transparent 42%),
+        rgba(0, 0, 0, 0.36);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.66) inset;
+}
+
+.mm-titleKicker {
+    color: color-mix(in srgb, var(--mm-green) 68%, white 10%);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    opacity: 0.86;
+}
+
+.mm-titleText {
+    min-width: 0;
+    color: color-mix(in srgb, var(--mm-green) 90%, white 8%);
+    font-size: 18px;
+    line-height: 1.1;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 0 12px color-mix(in srgb, var(--mm-green) 18%, transparent);
+}
+
+.mm-transcript {
+    min-height: 0;
+    min-width: 0;
+    border: 1px solid var(--mm-line-soft);
+    border-radius: 8px;
+    padding: 18px;
+    overflow: auto;
+    background:
+        radial-gradient(90% 90% at 50% 0%,
+            color-mix(in srgb, var(--mm-green) 5%, transparent),
+            rgba(0, 0, 0, 0.72) 70%),
+        rgba(0, 0, 0, 0.58);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        inset 0 0 36px rgba(0, 0, 0, 0.5);
+}
+
+.mm-transcriptText {
+    color: color-mix(in srgb, var(--mm-green) 84%, white 10%);
+    font-size: 16px;
+    line-height: 1.55;
+    letter-spacing: 0.02em;
+    white-space: pre-wrap;
+    text-transform: none;
+    text-shadow: 0 0 10px color-mix(in srgb, var(--mm-green) 14%, transparent);
+}
+
 .mm-transcript::-webkit-scrollbar {
     width: 10px;
 }
 
 .mm-transcript::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--crt-color) 25%, transparent);
-    border: 1px solid color-mix(in srgb, var(--crt-color) 45%, transparent);
+    background: color-mix(in srgb, var(--mm-green) 26%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mm-green) 42%, transparent);
     border-radius: 999px;
 }
 
 .mm-transcript::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.48);
 }
 
-/* ===== Side panel ===== */
 .mm-side {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 16px;
     min-height: 0;
-}
-
-.mm-countBox {
-    border-radius: var(--mm-radius-md);
-    border: var(--mm-border);
-    background: radial-gradient(120% 120% at 50% 0%,
-            color-mix(in srgb, var(--crt-color) 5%, transparent),
-            rgba(0, 0, 0, 0.95) 70%),
-        rgba(0, 0, 0, 0.55);
-
     display: grid;
-    place-items: center;
-    min-height: 100px;
-
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.7),
-        0 0 18px color-mix(in srgb, var(--crt-color) 6%, transparent);
-}
-
-.mm-count {
-    font-size: 96px;
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1;
-    text-shadow: 0 0 18px color-mix(in srgb, var(--crt-color) 28%, transparent),
-        0 0 2px color-mix(in srgb, var(--crt-color) 35%, transparent);
-}
-
-/* ===== Actions ===== */
-.mm-actions {
-    display: grid;
-    align-content: end;
+    grid-template-rows: auto auto minmax(0, 1fr);
     gap: 12px;
 }
 
-/* Button base */
+.mm-countBox {
+    min-height: 132px;
+    border: 1px solid var(--mm-line);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 4px;
+    background:
+        radial-gradient(100% 120% at 50% 0%,
+            color-mix(in srgb, var(--mm-green) 10%, transparent),
+            rgba(0, 0, 0, 0.9) 68%),
+        rgba(0, 0, 0, 0.48);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.72) inset,
+        0 0 20px color-mix(in srgb, var(--mm-green) 9%, transparent);
+}
+
+.mm-countLabel {
+    color: color-mix(in srgb, var(--mm-green) 68%, white 8%);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.2em;
+    opacity: 0.78;
+}
+
+.mm-count {
+    font-size: 82px;
+    font-weight: 300;
+    line-height: 0.95;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    text-shadow:
+        0 0 18px color-mix(in srgb, var(--mm-green) 32%, transparent),
+        0 0 2px color-mix(in srgb, var(--mm-green) 42%, transparent);
+}
+
+.mm-signalPanel {
+    height: 54px;
+    border: 1px solid var(--mm-line-soft);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: end;
+    gap: 8px;
+    padding: 9px 12px;
+    background: rgba(0, 0, 0, 0.36);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.66) inset;
+}
+
+.mm-signalPanel span {
+    display: block;
+    border-radius: 2px 2px 0 0;
+    background: color-mix(in srgb, var(--mm-green) 76%, transparent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--mm-green) 18%, transparent);
+}
+
+.mm-signalPanel span:nth-child(1) {
+    height: 26%;
+}
+
+.mm-signalPanel span:nth-child(2) {
+    height: 46%;
+}
+
+.mm-signalPanel span:nth-child(3) {
+    height: 68%;
+}
+
+.mm-signalPanel span:nth-child(4) {
+    height: 88%;
+}
+
+.mm-actions {
+    display: grid;
+    align-content: end;
+    gap: 10px;
+}
+
 .mm-btn {
-    border-radius: var(--mm-radius-sm);
-    border: var(--mm-border);
-    background: radial-gradient(120% 140% at 50% 0%,
-            color-mix(in srgb, var(--crt-color) 5%, transparent),
-            rgba(0, 0, 0, 0.95) 70%),
-        rgba(0, 0, 0, 0.55);
-
-    color: var(--mm-green);
+    min-height: 46px;
+    min-width: 0;
+    border-radius: 8px;
+    border: 1px solid var(--mm-line);
+    display: grid;
+    grid-template-columns: 22px auto;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+    justify-items: center;
     padding: 8px 12px;
-    font-size: 18px;
-    letter-spacing: 0.12em;
+    color: color-mix(in srgb, var(--mm-green) 92%, white 8%);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--mm-green) 12%, rgba(0, 0, 0, 0.58)),
+            color-mix(in srgb, var(--mm-green) 5%, rgba(0, 0, 0, 0.74)));
+    font: inherit;
+    font-size: 16px;
+    letter-spacing: 0.14em;
     cursor: pointer;
-
-    text-shadow: 0 0 10px color-mix(in srgb, var(--crt-color) 18%, transparent);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.72),
-        0 0 18px color-mix(in srgb, var(--crt-color) 5%, transparent);
-
-    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease,
-        color 120ms ease, filter 120ms ease;
+    text-transform: uppercase;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.64) inset,
+        0 0 12px color-mix(in srgb, var(--mm-green) 14%, transparent);
+    transition:
+        transform 120ms ease,
+        background 120ms ease,
+        box-shadow 120ms ease,
+        filter 120ms ease,
+        opacity 120ms ease;
 }
 
-/* Hover highlight (no layout change) */
-.mm-btn:hover {
-    filter: brightness(1.08);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.62),
-        0 0 0 2px color-mix(in srgb, var(--crt-color) 25%, transparent),
-        0 0 30px color-mix(in srgb, var(--crt-color) 18%, transparent),
-        inset 0 0 18px color-mix(in srgb, var(--crt-color) 12%, transparent);
+.mm-btn span {
+    min-width: 0;
+    justify-self: center;
 }
 
-/* FIX: your JSX uses "mm-btnSecondary" (camel-ish), and earlier CSS targeted
-   ".mm-btn.mm-btn-secondary". Support both, so it's truly drop-in. */
-.mm-btn.mm-btn-secondary:hover,
-.mm-btn.mm-btnSecondary:hover {
-    filter: brightness(1.05);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.64),
-        0 0 0 2px color-mix(in srgb, var(--crt-color) 18%, transparent),
-        0 0 22px color-mix(in srgb, var(--crt-color) 12%, transparent),
-        inset 0 0 14px color-mix(in srgb, var(--crt-color) 10%, transparent);
+.mm-btnIcon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-.mm-btn:active {
+.mm-btn:hover:not(:disabled),
+.mm-btn:focus-visible {
+    outline: none;
+    filter: brightness(1.07);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--mm-green) 22%, rgba(0, 0, 0, 0.52)),
+            color-mix(in srgb, var(--mm-green) 8%, rgba(0, 0, 0, 0.68)));
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.6) inset,
+        0 0 0 2px color-mix(in srgb, var(--mm-green) 18%, transparent),
+        0 0 22px color-mix(in srgb, var(--mm-green) 16%, transparent);
+}
+
+.mm-btn:active:not(:disabled) {
     transform: translateY(1px);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.78),
-        0 0 16px color-mix(in srgb, var(--crt-color) 6%, transparent);
 }
 
 .mm-btn:disabled {
-    opacity: 0.42;
+    opacity: 0.38;
     cursor: not-allowed;
+    filter: saturate(0.75);
 }
 
-.mm-btn-secondary,
 .mm-btnSecondary {
-    opacity: 0.92;
+    opacity: 0.86;
 }
 
-/* ===== Responsive tweaks ===== */
 @media (max-width: 860px) {
+    .mm-crtWindow {
+        overflow: auto;
+    }
+
+    .mm-headerInner {
+        grid-template-columns: minmax(0, 1fr) 68px;
+    }
+
+    .mm-appCluster {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-items: start;
+    }
+
     .mm-body {
-        grid-template-columns: 1fr;
-        height: auto;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .mm-side {
+        grid-template-columns: 1fr 1fr;
         grid-template-rows: auto auto;
     }
 
-    .mm-countBox {
-        min-height: 140px;
+    .mm-actions {
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr 1fr;
     }
 
     .mm-count {
-        font-size: 72px;
+        font-size: 64px;
     }
 }
