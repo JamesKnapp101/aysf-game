@@ -49,19 +49,19 @@ export const stairwellDoors: DoorDefinition[] = [
     initiallyOpen: true,
     initiallyLocked: false,
   },
-  {
-    id: "StairDoorFive",
-    name: "stairwell access door",
-    descriptionFromA:
-      "There is a door to the west with the word 'ENGINEERING' printed on it and mounted over it is a plastic sign labeled '5'.",
-    descriptionFromB: "To the west is a plain metal door labeled 'STAIRS'.",
-    kind: "standard",
-    vocab: ["door"],
-    connects: { roomAId: "StairFive", roomBId: "LevelFiveStairAccess" },
-    directions: { fromA: "west", fromB: "east" },
-    initiallyOpen: true,
-    initiallyLocked: false,
-  },
+  // {
+  //   id: "StairDoorFive",
+  //   name: "stairwell access door",
+  //   descriptionFromA:
+  //     "There is a door to the west with the word 'ENGINEERING' printed on it and mounted over it is a plastic sign labeled '5'.",
+  //   descriptionFromB: "To the west is a plain metal door labeled 'STAIRS'.",
+  //   kind: "standard",
+  //   vocab: ["door"],
+  //   connects: { roomAId: "StairFive", roomBId: "LevelFiveStairAccess" },
+  //   directions: { fromA: "west", fromB: "east" },
+  //   initiallyOpen: true,
+  //   initiallyLocked: false,
+  // },
   {
     id: "StairDoorSix",
     name: "stairwell access door",

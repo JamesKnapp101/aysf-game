@@ -100,7 +100,7 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "up", toRoomId: "StairFour" },
         { direction: "down", toRoomId: "StairSix" },
-        { direction: "west", toRoomId: "LevelFiveStairAccess" },
+        { direction: "west", doorId: "EngineeringDoors" },
       ],
     },
     {
@@ -186,7 +186,7 @@ export const STAIRWELL: WorldChunk = {
       description:
         "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. The elevator doors are hanging open, allowing entry to the elevator car beyond which is stuck at this floor. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
       exits: [
-        { direction: "east", doorId: "StairDoorFive" },
+        { direction: "east", doorId: "EngineeringDoors" },
         { direction: "north", toRoomId: "Elevator" },
         { direction: "west", toRoomId: "EngCorridorOne" },
       ],

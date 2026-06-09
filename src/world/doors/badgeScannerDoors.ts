@@ -132,4 +132,24 @@ export const badgeScannerDoors: DoorDefinition[] = [
     badgeItemId: "whitebadge",
     checkBadgeOnDir: "west",
   },
+  // ENGINEERING
+  {
+    id: "EngineeringDoors",
+    name: "a security door",
+    descriptionFromA:
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with an brown horizontal stripe across it at eye level. Stenciled across the banner is the word 'ENGINEERING.'",
+    descriptionFromB:
+      "To the east is a security door leading back to the stairwell.",
+    kind: "badgeScanner",
+    vocab: ["door", "security door", "engineering door"],
+    connects: {
+      roomAId: "StairFive",
+      roomBId: "LevelFiveStairAccess",
+    },
+    directions: { fromA: "west", fromB: "east" },
+    initiallyOpen: false,
+    initiallyLocked: true,
+    badgeItemId: "brownbadge",
+    checkBadgeOnDir: "west",
+  },
 ];
