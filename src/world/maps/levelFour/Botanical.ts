@@ -24,7 +24,7 @@ export const botanicalItems: Item[] = [
     name: "bright grass and stone paths",
     description:
       "The grass is uniformly cut and shockingly green, broken by several stone-paved paths that wander through the garden in measured curves.",
-    sceneryDescription: "through which wander several stone paved paths.",
+    sceneryDescription: "through which wander several stone-paved paths.",
     location: BOTANICAL_ONE_ROOM_ID,
     vocab: ["grass", "paths", "path", "stone paths", "paved paths", "stones"],
     itemClass: "solid",

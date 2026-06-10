@@ -1,4 +1,26 @@
+import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
+
+function revealMensStallToilet(state: GameState): GameState {
+  return {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      itemRoomId: {
+        ...state.itemState.itemRoomId,
+        RestaurantMensStallToilet: state.player.roomId,
+      },
+    },
+  };
+}
+
+function revealMensStallToiletResult({ state }: { state: GameState }) {
+  return {
+    state: revealMensStallToilet(state),
+    message:
+      "You lean down and peer under the stall. The boots are attached to a body that is very much done with this whole experience.",
+  };
+}
 
 export const restaurantBathroomItems: Item[] = [
   {
@@ -65,6 +87,7 @@ export const restaurantBathroomItems: Item[] = [
       knock:
         "You give the door a tentative knock. The boots inside don’t react. That’s not comforting.",
       open: "You could open it, sure. The real question is whether you’re ready for what’s on the other side.",
+      lookunder: revealMensStallToiletResult,
     },
   },
   {
@@ -88,13 +111,13 @@ export const restaurantBathroomItems: Item[] = [
     },
   },
   {
-    id: "TIRLET",
+    id: "RestaurantMensStallToilet",
     name: "washlet",
     description:
       "A standard washlet-style toilet. A man’s corpse is currently seated on it, head bowed, as if he simply never bothered to stand up again.",
     sceneryDescription:
       "The washlet’s smooth curves and control panel look almost luxurious, which doesn’t help the overall impression. The man slumped on it is dressed, boots planted solidly on the floor, posture suggesting he was interrupted mid-thought and never got a chance to finish it.",
-    location: "UNKNOWN",
+    location: "MSTALL",
     vocab: ["washlet", "toilet", "can", "shitter", "head"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -128,8 +151,7 @@ export const restaurantBathroomItems: Item[] = [
     capacity: 1,
 
     overrides: {
-      lookunder:
-        "You lean down and peer under the stall. The boots are attached to a body that is very much done with this whole experience.",
+      lookunder: revealMensStallToiletResult,
     },
   },
   {

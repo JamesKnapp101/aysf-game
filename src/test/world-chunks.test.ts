@@ -4,11 +4,34 @@ import { createInitialState, mergeWorldChunkIntoState } from "../game/gameInit";
 import { STAIRWELL } from "../world/maps/Stairwell";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
+  INITIAL_WORLD_CHUNK_IDS,
   INITIAL_WORLD,
   loadWorldChunk,
 } from "../world/World";
 
 describe("world chunk loading", () => {
+  it("does not define duplicate item ids within a raw chunk", async () => {
+    for (const chunkId of [
+      ...INITIAL_WORLD_CHUNK_IDS,
+      ...DEFERRED_WORLD_CHUNK_IDS,
+    ]) {
+      const chunk = await loadWorldChunk(chunkId);
+      const seenItemIds = new Set<string>();
+      const duplicates: string[] = [];
+
+      for (const item of chunk.items) {
+        if (seenItemIds.has(item.id)) {
+          duplicates.push(item.id);
+          continue;
+        }
+
+        seenItemIds.add(item.id);
+      }
+
+      expect(duplicates, `${chunkId} has duplicate item ids`).toEqual([]);
+    }
+  });
+
   it("merges deferred chunks without broken room or door references", async () => {
     let state = createInitialState(INITIAL_WORLD);
 

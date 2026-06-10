@@ -15,8 +15,8 @@ const SUSPICIOUS_PATH_PATTERNS: RegExp[] = [
   /(?:^|\/)(?:wordpress|wp-json)(?:\/|$)/i,
   /(?:^|\/)wlwmanifest\.xml$/i,
   /(?:^|\/)(?:rest|webhook|trpc|graphql)(?:\/|$)/i,
-  /(?:^|[\/._-])(?:aws|s3|stripe|sendgrid|credentials?|secrets?|token|config)(?:$|[\/._-])/i,
-  /(?:^|[\/._-])(?:terraform|serverless|docker-compose|vercel\.json|netlify\.toml)(?:$|[\/._-])/i,
+  /(?:^|[/._-])(?:aws|s3|stripe|sendgrid|credentials?|secrets?|token|config)(?:$|[/._-])/i,
+  /(?:^|[/._-])(?:terraform|serverless|docker-compose|vercel\.json|netlify\.toml)(?:$|[/._-])/i,
   /^\/api\/(?:env|config)\/?$/i,
 ];
 

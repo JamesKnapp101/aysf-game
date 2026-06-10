@@ -1,3 +1,5 @@
+import { GameState } from "@game/types/gameTypes";
+import { DescriptionContext } from "@game/types/itemTypes";
 import type { DoorDefinition } from "../../game/types/doorTypes";
 import { hasLevelTwoBombDetonated } from "../maps/levelTwo/levelTwoBomb";
 
@@ -5,13 +7,20 @@ export const stairwellDoors: DoorDefinition[] = [
   {
     id: "StairDoorTwo",
     name: "stairwell access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "StairTwo"
+          ? `It's a heavy door painted slate gray, with a horizontal blue stripe at eye level, across which is printed the word 'MEDICAL'. Underneath that are the words 'COMMUNITY/RECREATIONAL'.`
+          : `It's a heavy gray door that leads to the stairwell.`;
+      return description;
+    },
     descriptionFromA:
-      "There is a door to the west with the words 'COMMUNITY/MEDICAL' printed on it and mounted over it is a plastic sign labeled '2'.",
+      "There is a door to the west painted slate gray, with a blue horizontal stripe at eye level, across which is printed the word 'MEDICAL'. Underneath that are the words 'COMMUNITY/RECREATIONAL'.",
     descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
     describeFromA: (state) =>
       hasLevelTwoBombDetonated(state)
-        ? "There is a door to the west with the words 'COMMUNITY/MEDICAL' printed on it and mounted over it is a plastic sign labeled '2'. The doorframe is scorched around the edges."
-        : "There is a door to the west with the words 'COMMUNITY/MEDICAL' printed on it and mounted over it is a plastic sign labeled '2'. A warning panel beside it flashes red.",
+        ? "There is a door to the west painted slate gray, with a horizontal blue stripe at eye level, across which is printed the word 'MEDICAL'. Underneath that are the words 'COMMUNITY/RECREATIONAL'. The doorframe is scorched around the edges."
+        : "There is a door to the west painted slate gray, with a horizontal blue stripe at eye level, across which is printed the word 'MEDICAL'. Underneath that are the words 'COMMUNITY/RECREATIONAL'. A warning panel beside it flashes red.",
     describeFromB: (state) =>
       hasLevelTwoBombDetonated(state)
         ? "To the east is a plain metal door labeled 'STAIRS', warped, and marred with soot."
@@ -26,8 +35,15 @@ export const stairwellDoors: DoorDefinition[] = [
   {
     id: "StairDoorThree",
     name: "stairwell access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "StairThree"
+          ? `It's a heavy door painted slate gray, with the words 'COMMUNITY/RECREATIONAL' printed on it.`
+          : `It's a heavy gray door that leads to the stairwell.`;
+      return description;
+    },
     descriptionFromA:
-      "There is a door to the west with the words 'COMMUNITY/RECREATIONAL' printed on it and mounted over it is a plastic sign labeled '3'.",
+      "There is a door to the west painted slate gray, with the words 'COMMUNITY/RECREATIONAL' printed on it.",
     descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
     kind: "standard",
     vocab: ["door"],
@@ -39,8 +55,15 @@ export const stairwellDoors: DoorDefinition[] = [
   {
     id: "StairDoorFour",
     name: "stairwell access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "StairFour"
+          ? `It's a heavy door painted slate gray, with three horizontal stripes at eye level; one orange, one yellow, and one green. The orange stripe has 'ZOOLOGICAL' printed across it, the yellow stripe has the words 'POWER GRID', and the green stripe has the word 'BOTANICAL'.`
+          : `It's a heavy gray door that leads to the stairwell.`;
+      return description;
+    },
     descriptionFromA:
-      "There is a door to the west with the words 'BIOSPHERE/POWER GRID' printed on it and mounted over it is a plastic sign labeled '4'.",
+      "There is a heavy door to the west, painted slate gray with three horizontal stripes at eye level; one orange, one yellow, and one green. The orange stripe has 'ZOOLOGICAL' printed across it, the yellow stripe has the words 'POWER GRID', and the green stripe has the word 'BOTANICAL'.",
     descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
     kind: "standard",
     vocab: ["door"],
@@ -49,24 +72,18 @@ export const stairwellDoors: DoorDefinition[] = [
     initiallyOpen: true,
     initiallyLocked: false,
   },
-  // {
-  //   id: "StairDoorFive",
-  //   name: "stairwell access door",
-  //   descriptionFromA:
-  //     "There is a door to the west with the word 'ENGINEERING' printed on it and mounted over it is a plastic sign labeled '5'.",
-  //   descriptionFromB: "To the west is a plain metal door labeled 'STAIRS'.",
-  //   kind: "standard",
-  //   vocab: ["door"],
-  //   connects: { roomAId: "StairFive", roomBId: "LevelFiveStairAccess" },
-  //   directions: { fromA: "west", fromB: "east" },
-  //   initiallyOpen: true,
-  //   initiallyLocked: false,
-  // },
   {
     id: "StairDoorSix",
     name: "stairwell access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "StairSix"
+          ? `The door is painted slate gray, with a green horizontal stripe at eye level, across which is printed the word 'HYDROPONICS'. Beneath the stripe is the word 'STORAGE'.`
+          : `It's a heavy gray door that leads to the stairwell.`;
+      return description;
+    },
     descriptionFromA:
-      "There is a door to the west with the word 'STORAGE' printed on it and mounted over it is a plastic sign labeled '6'.",
+      "There is a heavy door to the west, painted slate gray with a green horizontal stripe at eye level. Printed across the green stripe is the word 'HYDROPONICS', and underneath the stripe is printed the word 'STORAGE'.",
     descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
     description: `It's a sturdy-looking door, but doesn't appear to have any sort of lock or security scanner.`,
     kind: "standard",

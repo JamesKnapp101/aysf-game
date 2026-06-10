@@ -16,7 +16,32 @@ function dedupeById<T extends { id: string }>(items: T[]): T[] {
   return Array.from(new Map(items.map((item) => [item.id, item])).values());
 }
 
+function assertWorldChunk(
+  chunk: unknown,
+  context: string,
+): asserts chunk is WorldChunk | World {
+  const candidate = chunk as Partial<WorldChunk> | undefined;
+
+  if (
+    !candidate ||
+    !Array.isArray(candidate.rooms) ||
+    !Array.isArray(candidate.items) ||
+    !Array.isArray(candidate.doors) ||
+    !Array.isArray(candidate.teleportPads)
+  ) {
+    const keys =
+      candidate && typeof candidate === "object"
+        ? Object.keys(candidate).join(", ") || "(no keys)"
+        : String(candidate);
+    throw new Error(`${context} is not a valid world chunk. Keys: ${keys}`);
+  }
+}
+
 export function mergeWorldChunks(...chunks: Array<WorldChunk | World>): World {
+  chunks.forEach((chunk, index) =>
+    assertWorldChunk(chunk, `mergeWorldChunks argument ${index}`),
+  );
+
   return {
     rooms: dedupeById(chunks.flatMap((c) => c.rooms)),
     items: dedupeById(chunks.flatMap((c) => c.items)),
@@ -97,7 +122,9 @@ export const INITIAL_WORLD: World = {
 };
 
 export async function loadWorldChunk(chunkId: WorldChunkId): Promise<WorldChunk> {
-  return WORLD_CHUNK_LOADERS[chunkId]();
+  const chunk = await WORLD_CHUNK_LOADERS[chunkId]();
+  assertWorldChunk(chunk, `World chunk "${chunkId}"`);
+  return chunk;
 }
 
 export function getDeferredWorldChunkForEntryRoom(

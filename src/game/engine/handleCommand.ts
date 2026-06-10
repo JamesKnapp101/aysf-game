@@ -39,11 +39,11 @@ import { useUIOverlayStore } from "../store/store";
 import { buildTranscriptRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
 import type { ParsedCommand } from "../types/parserTypes";
+import { appendLog } from "./log";
 import { advanceTurn } from "./turn";
 
-// Maximum number of log entries to keep in memory
-// Older entries are pruned to prevent unbounded memory growth during long play sessions
-const MAX_LOG_ENTRIES = 500;
+export { appendLog } from "./log";
+
 const DEVELOPER_MODE_ITEM_IDS = [
   "MensLockerKey1",
   "ECigar",
@@ -150,16 +150,6 @@ async function grantDeveloperModeItems(state: GameState): Promise<GameState> {
     (nextState, itemId) => moveItemIntoPlayerInventory(nextState, itemId),
     stateWithItemDefinitions,
   );
-}
-
-export function appendLog(state: GameState, text: string): GameState {
-  const newLog = [...state.log, text];
-
-  // Prune old entries if we exceed the maximum
-  const prunedLog =
-    newLog.length > MAX_LOG_ENTRIES ? newLog.slice(-MAX_LOG_ENTRIES) : newLog;
-
-  return { ...state, log: prunedLog };
 }
 
 type HandleCommandOptions = {

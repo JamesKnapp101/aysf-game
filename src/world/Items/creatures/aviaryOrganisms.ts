@@ -145,8 +145,6 @@ function organismOverrideTick(
   const die = () => {
     if (triggerPlayerDeath) {
       triggerPlayerDeath(ORGANISM_ATTACK_MESSAGE, "organismAttack");
-    } else {
-      console.log("TODO: What do I want to do in this case?");
     }
   };
 

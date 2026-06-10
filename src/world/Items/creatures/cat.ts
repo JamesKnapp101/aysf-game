@@ -1,4 +1,4 @@
-import { appendLog } from "@game/engine/handleCommand";
+import { appendLog } from "@game/engine/log";
 import { isCatHeld } from "@game/helpers/catHelpers";
 import { getExitDestinationRoomId } from "@game/helpers/itemHelpers";
 import { TickContext } from "@game/types/context";

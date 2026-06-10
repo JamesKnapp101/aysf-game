@@ -1,4 +1,4 @@
-import { appendLog } from "@game/engine/handleCommand";
+import { appendLog } from "@game/engine/log";
 import {
   getExitDestinationRoomId,
   moveItemToRoom as relocateItemToRoom,

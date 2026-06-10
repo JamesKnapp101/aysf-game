@@ -1,4 +1,4 @@
-import { getCameraFeedDescription } from "@game/components/CameraGunModal";
+import { getCameraFeedDescription } from "@game/components/cameraGunViewerHelpers";
 import { getItemsInRoom } from "@game/selectors/roomSelectors";
 import { describe, expect, it } from "vitest";
 import {

@@ -1,6 +1,6 @@
 import { CrtModal } from "@game/components/CrtModal";
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
-import { appendLog } from "@game/engine/handleCommand";
+import { appendLog } from "@game/engine/log";
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
 import { getRoomById } from "@game/helpers/itemHelpers";
 import { useUIEffectsStore } from "@game/store/store";

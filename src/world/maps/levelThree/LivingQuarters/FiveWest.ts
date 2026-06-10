@@ -410,33 +410,6 @@ export const fiveWestItems: Item[] = [
     },
   },
   {
-    id: "Brinychew",
-    name: "briny chewable",
-    description: `It's a small, brick-shaped chewable inside a thin papery wrapper. The light blue wrapper displays a high-tech logo for something called 'CorteXtra' which promises it contains DNA from real ancient jellyfish that will boost your intelligence. It also promises, in tiny print, that the wrapper is also edible.`,
-    initialDescription: `an individually wrapped chewable sits on one shelf of the medicine chest.`,
-    location: "seeded",
-    vocab: ["chewable", "gummy", "briny", "cortextra"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    meta: {
-      consumable: {
-        kind: "food",
-        perDose: [
-          { type: "status", id: "smarter", intensity: 100, duration: 5 },
-          {
-            type: "message",
-            text: `You pop the chewable in your mouth and squish it between your back teeth. It yields like gum for a moment, then dissolves all at once into a briny syrup. You can really taste the jellyfish!`,
-          },
-        ],
-        onEmpty: [{ type: "message", text: "It's empty." }],
-      },
-    },
-    itemWeight: 2,
-    itemSize: 3,
-    isConsumable: true,
-    doses: 1,
-  },
-  {
     id: "BottleOfScotch",
     name: "a bottle of scotch",
     description:

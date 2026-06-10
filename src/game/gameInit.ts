@@ -229,7 +229,7 @@ export const createInitialState = (world: World): GameState => {
           unlockTriggers: [],
           conditionalTriggers: [LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID],
           direction: "west",
-          blockMsg: `The Level Two stairwell door refuses to cycle. A warning panel beside it flashes: POTENTIAL EXPLOSIVE DEVICE - KEEP OUT.`,
+          blockMsg: `The Level Two stairwell door refuses to cycle. A warning panel beside it flashes: ACTIVE INVESTIGATION AREA - KEEP OUT.`,
           passMsg: `The damaged stairwell door grinds open far enough for you to squeeze through.`,
         },
       },

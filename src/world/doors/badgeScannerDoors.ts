@@ -1,3 +1,5 @@
+import { GameState } from "@game/types/gameTypes";
+import { DescriptionContext } from "@game/types/itemTypes";
 import type { DoorDefinition } from "../../game/types/doorTypes";
 
 export const badgeScannerDoors: DoorDefinition[] = [
@@ -23,8 +25,15 @@ export const badgeScannerDoors: DoorDefinition[] = [
   {
     id: "BridgeStairDoors",
     name: "bridge access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "StairOne"
+          ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a maroon horizontal stripe across it at eye level. Stenciled across the banner is the word 'OPERATIONS'.`
+          : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
+      return description;
+    },
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a maroon horizontal stripe across it at eye level. Stenciled across the banner is the word 'LOGISTICS', and mounted above the doorway is a small panel marked '1'. ",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a maroon horizontal stripe across it at eye level. Stenciled across the banner is the word 'OPERATIONS'. ",
     descriptionFromB:
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",
@@ -39,9 +48,16 @@ export const badgeScannerDoors: DoorDefinition[] = [
   // MEDICAL LAB
   {
     id: "LabDoors",
-    name: "a security door",
+    name: "lab access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "MedicalCorridorOne"
+          ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a blue horizontal stripe across it at eye level. Stenciled across the banner is the word 'LAB'.`
+          : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
+      return description;
+    },
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a blue horizontal stripe across it at eye level. Stenciled across the banner is the word 'LAB'.",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a blue horizontal stripe across it at eye level. Stenciled across the banner is the word 'LAB'.",
     descriptionFromB: "To the east is a security door leading back to Medical.",
     kind: "badgeScanner",
     vocab: ["door", "lab door", "security door"],
@@ -58,9 +74,16 @@ export const badgeScannerDoors: DoorDefinition[] = [
   // POWER GRID
   {
     id: "PowerGridDoors",
-    name: "a security door",
+    name: "power access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "LevelFourCorridorTwo"
+          ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a yellow horizontal stripe across it at eye level. Stenciled across the banner are the words 'MAIN POWER GRID'.`
+          : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
+      return description;
+    },
     descriptionFromA:
-      "To the south is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a yellow horizontal stripe across it at eye level. Stenciled across the banner is the word 'MAIN POWER GRID'.",
+      "To the south is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a yellow horizontal stripe across it at eye level. Stenciled across the banner are the words 'MAIN POWER GRID'.",
     descriptionFromB:
       "To the north is a security door leading back to the corridor.",
     kind: "badgeScanner",
@@ -78,9 +101,16 @@ export const badgeScannerDoors: DoorDefinition[] = [
   // HYDROPONICS
   {
     id: "HydroponicsDoors",
-    name: "a security door",
+    name: "botanical access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "LevelFourCorridorOne"
+          ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a green horizontal stripe across it at eye level. Stenciled across the banner is the word 'BOTANICAL'.`
+          : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
+      return description;
+    },
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a green horizontal stripe across it at eye level. Stenciled across the banner is the word 'BOTANICAL', and mounted above the doorway is a small panel marked '6'.",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a green horizontal stripe across it at eye level. Stenciled across the banner is the word 'BOTANICAL'.",
     descriptionFromB:
       "To the east is a security door leading back to the corridor.",
     kind: "badgeScanner",
@@ -98,9 +128,16 @@ export const badgeScannerDoors: DoorDefinition[] = [
   // ZOOLOGICAL
   {
     id: "ZoologicalDoors",
-    name: "a security door",
+    name: "zoo access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "LevelFourCorridorOne"
+          ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a orange horizontal stripe across it at eye level. Stenciled across the banner is the word 'ZOOLOGICAL'.`
+          : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
+      return description;
+    },
     descriptionFromA:
-      "To the north is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with an orange horizontal stripe across it at eye level. Stenciled across the banner is the word 'ZOOLOGICAL.'",
+      "To the north is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with an orange horizontal stripe across it at eye level. Stenciled across the banner is the word 'ZOOLOGICAL.'",
     descriptionFromB:
       "To the south is a security door leading back to the corridor.",
     kind: "badgeScanner",
@@ -119,8 +156,15 @@ export const badgeScannerDoors: DoorDefinition[] = [
   {
     id: "CryoStairDoors",
     name: "cryo access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "StairSeven"
+          ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a white horizontal stripe across it at eye level. Stenciled across the banner are the words 'DEEP STORAGE'.`
+          : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
+      return description;
+    },
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with a white horizontal stripe across it at eye level. Stenciled across the banner are the words 'DEEP STORAGE', and mounted above the doorway is a small panel marked '7'.",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a white horizontal stripe across it at eye level. Stenciled across the banner are the words 'DEEP STORAGE'.",
     descriptionFromB:
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",
@@ -135,9 +179,16 @@ export const badgeScannerDoors: DoorDefinition[] = [
   // ENGINEERING
   {
     id: "EngineeringDoors",
-    name: "a security door",
+    name: "engineering access door",
+    describe: (state: GameState, ctx: DescriptionContext) => {
+      const description =
+        ctx.roomId === "StairFive"
+          ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a violet horizontal stripe across it at eye level. Stenciled across the banner is the word 'ENGINEERING'.`
+          : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
+      return description;
+    },
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted a neutral grey, with an violet horizontal stripe across it at eye level. Stenciled across the banner is the word 'ENGINEERING.'",
+      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a violet horizontal stripe across it at eye level. Stenciled across the banner is the word 'ENGINEERING.'",
     descriptionFromB:
       "To the east is a security door leading back to the stairwell.",
     kind: "badgeScanner",

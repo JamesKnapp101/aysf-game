@@ -1,4 +1,4 @@
-import { appendLog } from "../engine/handleCommand";
+import { appendLog } from "../engine/log";
 import type { GameState } from "../types/gameTypes";
 import type { TeleportPadDefinition } from "../types/tpadTypes";
 

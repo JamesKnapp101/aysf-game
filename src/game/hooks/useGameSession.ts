@@ -10,7 +10,8 @@ import {
 import { parseCommand } from "../../parse/parser";
 import { INITIAL_WORLD } from "../../world/World";
 import { dispatchAction } from "../actions/dispatchAction";
-import { appendLog, handleCommand } from "../engine/handleCommand";
+import { handleCommand } from "../engine/handleCommand";
+import { appendLog } from "../engine/log";
 import { createInitialState } from "../gameInit";
 import { getPendingConversationLogMessage } from "../helpers/conversationHelpers";
 import {

@@ -8,7 +8,7 @@ import {
   setRadioFrequency,
 } from "@game/helpers/radioHelpers";
 import type { GameState } from "@game/types/gameTypes";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import "../../styles/radio-frequency-modal.css";
 import { CrtModal } from "./CrtModal";
 
@@ -40,13 +40,7 @@ export function RadioFrequencyModal({
 }: RadioFrequencyModalProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const currentFrequency = getCurrentRadioFrequency(state);
-  const draftFrequencyRef = useRef(currentFrequency);
-  const [draftFrequency, setDraftFrequency] = useState(currentFrequency);
-
-  useEffect(() => {
-    draftFrequencyRef.current = currentFrequency;
-    setDraftFrequency(currentFrequency);
-  }, [currentFrequency]);
+  const draftFrequency = currentFrequency;
 
   useEffect(() => {
     rootRef.current?.focus();
@@ -70,8 +64,6 @@ export function RadioFrequencyModal({
     (frequency: number) => {
       const nextFrequency = clampRadioFrequency(frequency);
 
-      draftFrequencyRef.current = nextFrequency;
-      setDraftFrequency(nextFrequency);
       setGameState((prev) => setRadioFrequency(prev, nextFrequency));
     },
     [setGameState],
@@ -83,9 +75,9 @@ export function RadioFrequencyModal({
 
   const adjustFrequency = useCallback(
     (delta: number) => {
-      applyFrequency(draftFrequencyRef.current + delta);
+      applyFrequency(currentFrequency + delta);
     },
-    [applyFrequency],
+    [applyFrequency, currentFrequency],
   );
 
   const onWheel = (event: React.WheelEvent<HTMLDivElement>) => {
@@ -119,9 +111,6 @@ export function RadioFrequencyModal({
 
   const sweepBars = [42, 68, 54, 88, 58];
 
-  const signalState =
-    draftFrequency === currentFrequency ? "Signal Locked" : "Tuning";
-
   return (
     <CrtModal
       title="Radio Frequency"
@@ -147,7 +136,7 @@ export function RadioFrequencyModal({
 
           <div className="radio-frequency-status">
             <span className="radio-frequency-statusLabel">Manual Receiver</span>
-            <span className="radio-frequency-statusPill">{signalState}</span>
+            <span className="radio-frequency-statusPill">Signal Locked</span>
           </div>
         </header>
 

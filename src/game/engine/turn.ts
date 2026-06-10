@@ -1,5 +1,4 @@
 import { audioRegistry } from "@game/audioRegistry";
-import { tickAviarySpotlight } from "@game/engine/ticks/aviaryTick";
 import { tickFlashlights } from "@game/engine/ticks/flashlightTick";
 import { tickActiveExperience } from "@game/experiences/experienceRegistry";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
@@ -57,7 +56,7 @@ import {
 } from "../text/secretOrganismMessage";
 import type { GameState, StatusEffect } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
-import { appendLog } from "./handleCommand";
+import { appendLog } from "./log";
 
 export type TickEvent =
   | { kind: "log"; text: string }
@@ -748,7 +747,6 @@ export function advanceTurn(state: GameState): GameState {
 
   next = applyRegisteredTurnTickPhase(next, "conversation");
   next = tickFlashlights(next);
-  next = tickAviarySpotlight(next);
   next = applyRegisteredTurnTickPhase(next, "environment");
   next = tickAttachedItems(next);
   next = applyEffects(next);

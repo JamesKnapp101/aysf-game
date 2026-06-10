@@ -141,7 +141,7 @@ export const movieBathroomItems: Item[] = [
     name: "salty grape chewable",
     description:
       "It's a small, brick-shaped chewable in a purple wrapper. The label promises zero mid-movie trips to the bathroom.",
-    location: "NOWHERE",
+    location: "seeded",
     vocab: [
       "chewable",
       "gummy",

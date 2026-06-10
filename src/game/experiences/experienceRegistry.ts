@@ -357,7 +357,11 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
             id: "blackout",
             message: `\nThe movie transitions, fading to black between scenes and leaving the entire theater in darkness. A moment later you hear movement from several different directions.\n\n"Damnit!" you hear him hiss, and it sounds like he's frantically checking his inventory. "Need light, need light, need light..."`,
             run: (state) => {
-              let next = setRoomDarkness(state, MOX_MOVIE_MEMORY_ROOM_ID, true);
+              const next = setRoomDarkness(
+                state,
+                MOX_MOVIE_MEMORY_ROOM_ID,
+                true,
+              );
               return next;
             },
           },

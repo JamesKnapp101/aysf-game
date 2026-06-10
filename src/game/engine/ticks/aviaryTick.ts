@@ -1,4 +1,4 @@
-import { appendLog } from "@game/engine/handleCommand";
+import { appendLog } from "@game/engine/log";
 import { isRoomDark, moveItemToRoom } from "@game/helpers/itemHelpers";
 import { GameState } from "@game/types/gameTypes";
 import { ItemId } from "@game/types/ids";

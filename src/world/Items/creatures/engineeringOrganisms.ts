@@ -1,4 +1,4 @@
-import { flashlightOn } from "@game/helpers/gameHelpers";
+import { isAnyFlashlightOn } from "@game/helpers/flashlightHelpers";
 import { TickContext } from "@game/types/context";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
@@ -68,7 +68,7 @@ export function organismOverrideTick(
   if (!item.meta?.isAlive) return;
   if (!item.meta?.canMove) return;
 
-  const playerFlashlightOn = flashlightOn(state);
+  const playerFlashlightOn = isAnyFlashlightOn(state);
   const orgRoom = state.itemState.itemRoomId[item.id] ?? item.location;
   const playerRoom = getPlayerRoomId();
 

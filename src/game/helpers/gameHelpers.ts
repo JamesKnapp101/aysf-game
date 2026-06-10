@@ -1,5 +1,5 @@
 import { getRetryableEncounterDeathOverride } from "@game/encounters/retryableEncounters";
-import { appendLog } from "@game/engine/handleCommand";
+import { appendLog } from "@game/engine/log";
 import { recordBarBotCellarDeathWitness } from "@game/helpers/barBotAwareness";
 import { refreshPlayerOxygenForEnvironment } from "@game/helpers/environmentHelpers";
 import { isAnyFlashlightOn } from "@game/helpers/flashlightHelpers";

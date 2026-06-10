@@ -1,4 +1,4 @@
-import { appendLog } from "@game/engine/handleCommand";
+import { appendLog } from "@game/engine/log";
 import { buildBarBotAssistantContext } from "@game/helpers/barBotAwareness";
 import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
 import { getCharacterProfile } from "@game/npcProfiles";

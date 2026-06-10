@@ -1,4 +1,4 @@
-import { appendLog } from "@game/engine/handleCommand";
+import { appendLog } from "@game/engine/log";
 import {
   buildFlashlightSettings,
   FLASHLIGHT_ITEM_IDS,

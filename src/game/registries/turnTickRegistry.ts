@@ -1,4 +1,5 @@
 import type { GameState } from "@game/types/gameTypes";
+import { tickAviarySpotlight } from "@game/engine/ticks/aviaryTick";
 import { tickHydroponics } from "@game/engine/ticks/hydroponicsTick";
 import { tickRadioConversation } from "@game/helpers/conversationHelpers";
 import { tickGamePreserveAnimals } from "@game/preserve/preserveAnimals";
@@ -43,6 +44,10 @@ function tickHydroponicsTurn(state: GameState): TurnTickResult {
   return { state: tickHydroponics(state) };
 }
 
+function tickAviarySpotlightTurn(state: GameState): TurnTickResult {
+  return { state: tickAviarySpotlight(state) };
+}
+
 function tickGamePreserveTurn(state: GameState): TurnTickResult {
   let next = tickGamePreserveAnimals(state);
   next = tickGamePreserveFeedback(next);
@@ -53,6 +58,7 @@ function tickGamePreserveTurn(state: GameState): TurnTickResult {
 
 const TURN_TICK_HANDLERS: RegisteredTurnTickHandler[] = [
   { phase: "conversation", tick: tickRadioConversationTurn },
+  { phase: "environment", tick: tickAviarySpotlightTurn },
   { phase: "environment", tick: tickHydroponicsTurn },
   { phase: "environment", tick: tickLevelTwoBomb },
   { phase: "environment", tick: tickDeepStorageExposure },

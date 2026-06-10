@@ -885,6 +885,25 @@ describe("Doors and level mechanics", () => {
     expect(allowed.player.roomId).toBe("PowerGrid");
   });
 
+  it("examines badge-scanner doors from the player's side", async () => {
+    const scannerSide = await runCommand(
+      createTestState({ roomId: "LevelFourCorridorTwo" }),
+      "examine power grid door",
+    );
+    const interiorSide = await runCommand(
+      createTestState({ roomId: "PowerGrid" }),
+      "examine power grid door",
+    );
+
+    expect(getLastLogEntry(scannerSide)).toContain(
+      "badge reader mounted next to it",
+    );
+    expect(getLastLogEntry(scannerSide)).toContain("MAIN POWER GRID");
+    expect(getLastLogEntry(interiorSide)).toContain(
+      "no badge reader on this side",
+    );
+  });
+
   it.todo("treats the gray superadmin badge as valid for every badge scanner");
 
   it("records DNA samples when the player touches a body with the DNA sampler", async () => {
@@ -1034,7 +1053,7 @@ describe("Doors and level mechanics", () => {
     const blocked = await runCommand(start, "west");
 
     expect(blocked.player.roomId).toBe("StairTwo");
-    expect(getLastLogEntry(blocked)).toContain("POTENTIAL EXPLOSIVE DEVICE");
+    expect(getLastLogEntry(blocked)).toContain("ACTIVE INVESTIGATION AREA");
 
     const ready = setLevelTwoBomb(blocked, {
       detonated: true,

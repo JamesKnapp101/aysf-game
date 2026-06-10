@@ -1,4 +1,4 @@
-import { appendLog } from "@game/engine/handleCommand";
+import { appendLog } from "@game/engine/log";
 import { getAdjacentItemContacts } from "@game/helpers/adjacentContacts";
 import { GameState } from "@game/types/gameTypes";
 import { Direction } from "@game/types/roomTypes";

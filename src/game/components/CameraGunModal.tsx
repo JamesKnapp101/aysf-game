@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef } from "react";
 import "../../styles/components/camera-gun-viewer.css";
-import { buildRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
 import type { Room } from "../types/roomTypes";
+import { getCameraFeedDescription } from "./cameraGunViewerHelpers";
 import { CrtModal } from "./CrtModal";
 
 type CameraGunViewerModalProps = {
@@ -52,32 +52,6 @@ function resolveCameraRoomId(
   if (seedLocation) return resolveCameraRoomId(state, seedLocation, seen);
 
   return undefined;
-}
-
-export function getCameraFeedDescription(
-  state: GameState,
-  roomId: string | undefined,
-): string {
-  const room = roomId ? getRoomById(state, roomId) : undefined;
-  if (!room || !roomId) return "NO SIGNAL.\n\nThe viewer shows only static.";
-
-  const cameraState = {
-    ...state,
-    worldState: {
-      ...state.worldState,
-      darkRooms: {
-        ...state.worldState.darkRooms,
-        [roomId]: false,
-      },
-    },
-  };
-
-  return (
-    buildRoomDescription(cameraState, roomId, {
-      mode: "panel",
-      forceFull: true,
-    }).trim() || (room.name ?? "NO SIGNAL.").toString()
-  );
 }
 
 export function CameraGunViewerModal({

@@ -135,7 +135,7 @@ export const barSeededItems: Item[] = [
     name: "small metal box",
     description:
       "A small metal box with a snug lid. It is empty for now, but it feels like it was meant to matter.",
-    location: "NOWHERE",
+    location: "seeded",
     vocab: ["box", "small box", "metal box", "small metal box", "memory box"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -150,7 +150,7 @@ export const barSeededItems: Item[] = [
     name: "Snap out of It! chewable",
     description:
       "It's a small, brick-shaped chewable in a breezy white wrapper that promises to get you seeing clear again.",
-    location: "NOWHERE",
+    location: "seeded",
     vocab: ["snap", "snap out of it", "chewable", "gummy", "tablet", "brick"],
     itemClass: "solid",
     itemCategory: "collectable",

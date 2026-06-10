@@ -4,6 +4,7 @@ import {
   withPostCloseNotifications,
   type ExamineItemContext,
 } from "@game/registries/examineRegistry";
+import { getDoorDescriptionForRoom } from "@game/selectors/doorSelectors";
 import { getItemById } from "@game/selectors/itemSelectors";
 import { resolveDoorByNoun, resolveItemByNoun } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
@@ -42,16 +43,20 @@ export function resolveExamineTarget(
 
   const door = resolveDoorByNoun(state, direct);
   if (door) {
+    const doorDescription =
+      door.def.describe?.(state, {
+        kind: "door",
+        doorId: door.def.id,
+        roomId: state.player.roomId,
+      }) ??
+      getDoorDescriptionForRoom(state, door.def, state.player.roomId) ??
+      door.def.description;
+
     return {
       kind: "result",
       result: {
         state,
-        message:
-          door.def.describe?.(state, {
-            kind: "door",
-            doorId: door.def.id,
-            roomId: state.player.roomId,
-          }) ?? door.def.description,
+        message: doorDescription,
       },
     };
   }

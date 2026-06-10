@@ -16,10 +16,10 @@ import { hasLevelTwoBombDetonated } from "./levelTwo/levelTwoBomb";
 
 function describeStairTwo(state: GameState): string {
   if (!hasLevelTwoBombDetonated(state)) {
-    return "This is the stair landing for Level Two. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the words 'LIVING QUARTERS' printed on it, and mounted over it is a plastic sign labeled '2'. A warning panel beside the door flashes red, cycling the words 'POTENTIAL EXPLOSIVE DEVICE - KEEP OUT.' The stairs, flanked by a metal railing, continue up and down.";
+    return "This is the stair landing for Level Two, where a set of emergency lights cast the stairwell in a dim glow. The stairs, flanked by a metal railing, continue up and down.";
   }
 
-  return "This is the stair landing for Level Two. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the words 'LIVING QUARTERS' printed on it, and mounted over it is a plastic sign labeled '2'. The area around the edge of the doorway is slightly blackened, and there is a lingering burnt smell in the landing here. A series of blackened footprints lead from the door to the stairs and then down. The stairs, flanked by a metal railing, also continue up.";
+  return "This is the stair landing for Level Two, where a set of emergency lights cast the stairwell in a dim glow. The stairs, flanked by a metal railing, also continue up.";
 }
 
 export const STAIRWELL: WorldChunk = {
