@@ -2,6 +2,12 @@ import {
   appendNpcConversationHistory,
   getNpcConversationHistory,
 } from "@game/helpers/conversationHelpers";
+import {
+  formatConversationAssistantText,
+  getConversationAssistantName,
+  getConversationMode,
+  shouldUseAiConversation,
+} from "@game/helpers/conversationModeHelpers";
 import { getCharacterProfile } from "@game/npcProfiles";
 import { getClaudeResponse } from "@game/services/claudeClient";
 import {
@@ -57,6 +63,73 @@ type CometTerminalProps = {
   variant?: "modal" | "sidebar";
 };
 
+function AssistantBrandIcon({ isAiMode }: { isAiMode: boolean }) {
+  if (isAiMode) {
+    return (
+      <svg
+        className="comet-brandIcon comet-brandIcon--binary"
+        viewBox="0 0 120 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <rect className="comet-brandBinaryFrame" x="24" y="18" width="72" height="84" rx="14" />
+        <text className="comet-brandBinaryText" x="37" y="40">
+          1
+        </text>
+        <text className="comet-brandBinaryText" x="37" y="60">
+          0
+        </text>
+        <text className="comet-brandBinaryText" x="37" y="80">
+          1
+        </text>
+        <text className="comet-brandBinaryText" x="58" y="40">
+          0
+        </text>
+        <text className="comet-brandBinaryText" x="58" y="60">
+          1
+        </text>
+        <text className="comet-brandBinaryText" x="58" y="80">
+          0
+        </text>
+        <text className="comet-brandBinaryText" x="79" y="40">
+          1
+        </text>
+        <text className="comet-brandBinaryText" x="79" y="60">
+          1
+        </text>
+        <text className="comet-brandBinaryText" x="79" y="80">
+          0
+        </text>
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      className="comet-brandIcon comet-brandIcon--book"
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        className="comet-brandBookPage comet-brandBookPage--left"
+        d="M58 38C48 30 36 28 24 33V86C36 81 48 83 58 91V38Z"
+      />
+      <path
+        className="comet-brandBookPage comet-brandBookPage--right"
+        d="M62 38C72 30 84 28 96 33V86C84 81 72 83 62 91V38Z"
+      />
+      <path className="comet-brandBookSpine" d="M60 39V92" />
+      <path className="comet-brandBookLine" d="M34 45C41 44 47 46 53 50" />
+      <path className="comet-brandBookLine" d="M34 58C41 57 47 59 53 63" />
+      <path className="comet-brandBookLine" d="M86 45C79 44 73 46 67 50" />
+      <path className="comet-brandBookLine" d="M86 58C79 57 73 59 67 63" />
+    </svg>
+  );
+}
+
 function getCometStaticFallbackResponse(
   intent: CometIntent,
   libraryFallback: string,
@@ -72,46 +145,35 @@ function getCometStaticFallbackResponse(
   return libraryFallback;
 }
 
-function CometBrand({ hasLink, isOn }: { hasLink: boolean; isOn: boolean }) {
+function CometBrand({
+  assistantName,
+  hasLink,
+  isAiMode,
+  isOn,
+}: {
+  assistantName: string;
+  hasLink: boolean;
+  isAiMode: boolean;
+  isOn: boolean;
+}) {
+  const assistantLabel = assistantName.toUpperCase();
+
   return (
     <div className="comet-top">
       <div className="comet-brand">
         <div className="comet-brandMark" aria-hidden="true">
-          <svg
-            className="comet-brandIcon"
-            viewBox="0 0 120 120"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <ellipse
-              className="comet-brandOrbit"
-              cx="72"
-              cy="58"
-              rx="45"
-              ry="20"
-              transform="rotate(-24 72 58)"
-            />
-            <circle className="comet-brandStar" cx="77" cy="61" r="18" />
-            <path
-              className="comet-brandTailGlow"
-              d="M28 40C39 45 50 44 61 37C55 46 47 53 34 56"
-            />
-            <path className="comet-brandTail" d="M30 42C40 45 50 44 59 38" />
-            <path
-              className="comet-brandTail comet-brandTail--faint"
-              d="M26 35C37 39 49 39 61 34"
-            />
-            <circle className="comet-brandBody" cx="39" cy="45" r="8" />
-          </svg>
+          <AssistantBrandIcon isAiMode={isAiMode} />
         </div>
 
         <div className="comet-logoArea">
           <div className="comet-logoLine1">
-            <div className="comet-logoText">COMET</div>
-            <div className="comet-logoTag">YOUR AI PAL</div>
+            <div className="comet-logoText">{assistantLabel}</div>
+            <div className="comet-logoTag">
+              {isAiMode ? "YOUR AI PAL" : "YOUR LIBRARY PAL"}
+            </div>
           </div>
           <div className="comet-logoStrap">
-            Have Questions? Comet has Answers! (results may vary)
+            Have Questions? {assistantName} has Answers! (results may vary)
           </div>
         </div>
       </div>
@@ -185,10 +247,6 @@ export function CometTerminal({
   }, [entries]);
 
   const entryList = useMemo(() => loadedEntries ?? [], [loadedEntries]);
-  const historyMessages = useMemo(
-    () => historyToDisplayMessages(conversationHistory),
-    [conversationHistory],
-  );
 
   const [flashKey, setFlashKey] = useState<string | null>(null);
   useEffect(() => {
@@ -219,7 +277,28 @@ export function CometTerminal({
   const hasLink =
     forceLink ||
     Boolean(state.worldState.powerRestoredSections["library-power"]);
+  const conversationMode = getConversationMode(state);
+  const assistantName = getConversationAssistantName(state);
+  const assistantLabel = assistantName.toUpperCase();
+  const isAiMode = shouldUseAiConversation(state);
   const canChat = isOn && hasLink && Boolean(loadedEntries) && !isSubmitting;
+
+  const displayConversationHistory = useMemo(
+    () =>
+      conversationHistory.map((entry) => ({
+        ...entry,
+        response: formatConversationAssistantText(
+          entry.response,
+          conversationMode,
+        ),
+      })),
+    [conversationHistory, conversationMode],
+  );
+  const historyMessages = useMemo(
+    () =>
+      historyToDisplayMessages(displayConversationHistory, { assistantLabel }),
+    [assistantLabel, displayConversationHistory],
+  );
 
   useEffect(() => {
     if (!canChat || !isFocusOwner) return;
@@ -233,18 +312,26 @@ export function CometTerminal({
 
   const readerMessages = useMemo(() => {
     if (!isOn) {
-      return buildCometStatusMessages("Comet is offline.");
+      return buildCometStatusMessages(
+        formatConversationAssistantText("Comet is offline.", conversationMode),
+      );
     }
     if (!hasLink) {
       return buildCometStatusMessages(
-        "No link. Comet cannot reach the Central Library.",
+        formatConversationAssistantText(
+          "No link. Comet cannot reach the Central Library.",
+          conversationMode,
+        ),
         "status",
         "LINK",
       );
     }
     if (!loadedEntries) {
       return buildCometStatusMessages(
-        "Link established. Comet is indexing the Central Library...",
+        formatConversationAssistantText(
+          "Link established. Comet is indexing the Central Library...",
+          conversationMode,
+        ),
         "status",
         "INDEX",
       );
@@ -255,8 +342,19 @@ export function CometTerminal({
         ? [...historyMessages, ...pendingMessages]
         : historyMessages;
 
-    return messages.length > 0 ? messages : getCometWelcomeMessages();
-  }, [hasLink, historyMessages, isOn, loadedEntries, pendingMessages]);
+    return messages.length > 0
+      ? messages
+      : getCometWelcomeMessages({ assistantLabel, assistantName });
+  }, [
+    assistantLabel,
+    assistantName,
+    conversationMode,
+    hasLink,
+    historyMessages,
+    isOn,
+    loadedEntries,
+    pendingMessages,
+  ]);
 
   useEffect(() => {
     const node = readerTextRef.current;
@@ -306,13 +404,30 @@ export function CometTerminal({
       trimmed.length > COMET_MAX_INPUT_CHARS ||
       countCometWords(trimmed) > COMET_MAX_INPUT_WORDS
     ) {
-      const response = getCometWordLimitText();
+      const response = formatConversationAssistantText(
+        getCometWordLimitText(),
+        conversationMode,
+      );
       persistTurn({ type: "tell", topic: trimmed }, response);
       return;
     }
 
     const intent = classifyCometIntent(trimmed);
     const inputType = intent === "ask" ? "ask" : "tell";
+
+    const promptContext = buildCometPromptContext(state, entryList, trimmed);
+    const staticFallback = getCometStaticFallbackResponse(
+      intent,
+      promptContext.fallbackResponse,
+    );
+
+    if (!isAiMode) {
+      const response = normalizeCometResponseText(
+        formatConversationAssistantText(staticFallback, conversationMode),
+      );
+      persistTurn({ type: inputType, topic: trimmed }, response);
+      return;
+    }
 
     const profile = getCharacterProfile(COMET_CHARACTER_PROFILE_ID);
     if (!profile) {
@@ -321,11 +436,6 @@ export function CometTerminal({
       return;
     }
 
-    const promptContext = buildCometPromptContext(state, entryList, trimmed);
-    const staticFallback = getCometStaticFallbackResponse(
-      intent,
-      promptContext.fallbackResponse,
-    );
     const history = conversationHistory.slice(-COMET_HISTORY_LIMIT);
     const pendingText =
       promptContext.mode === "guess"
@@ -339,6 +449,7 @@ export function CometTerminal({
             ? promptContext.analysisBlock
             : undefined,
         idBase: `pending-${Date.now()}`,
+        assistantLabel,
         pendingText,
       }),
     );
@@ -374,7 +485,12 @@ export function CometTerminal({
       onClick={handleShellInteraction}
       onMouseDown={(event) => event.stopPropagation()}
     >
-      <CometBrand hasLink={hasLink} isOn={isOn} />
+      <CometBrand
+        assistantName={assistantName}
+        hasLink={hasLink}
+        isAiMode={isAiMode}
+        isOn={isOn}
+      />
 
       <div className="comet-reader" aria-live="polite">
         <div ref={readerTextRef} className="comet-readerText">
@@ -427,7 +543,7 @@ export function CometTerminal({
             isOn
               ? hasLink
                 ? isSubmitting
-                  ? "Comet is responding..."
+                  ? `${assistantName} is responding...`
                   : "I can not be held legally responsible for injury or death \u2665"
                 : "LINK unavailable"
               : "Power off"

@@ -309,6 +309,13 @@
     margin-top: 2px;
 }
 
+.settings-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
 .settings-optionLabel {
     width: fit-content;
     padding: 0 4px;
@@ -318,6 +325,94 @@
     color: color-mix(in srgb, var(--crt-color) 74%, white 26%);
     text-shadow: 0 0 8px rgb(var(--crt-color-rgb) / 0.18);
     opacity: 1;
+}
+
+.settings-switch {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    cursor: pointer;
+}
+
+.settings-switch-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.settings-switch-track {
+    position: relative;
+    width: 68px;
+    height: 30px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.48);
+    border-radius: 999px;
+    background:
+        linear-gradient(180deg,
+            rgb(0 0 0 / 0.45),
+            rgb(var(--crt-color-rgb) / 0.06));
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.025),
+        inset 0 0 0 1px rgb(0 0 0 / 0.32),
+        0 0 10px rgb(var(--crt-color-rgb) / 0.055);
+    transition:
+        border-color 0.14s ease,
+        background 0.14s ease,
+        box-shadow 0.14s ease;
+}
+
+.settings-switch-thumb {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.62);
+    border-radius: 999px;
+    background:
+        linear-gradient(180deg,
+            color-mix(in srgb, var(--crt-color) 72%, white 12%),
+            color-mix(in srgb, var(--crt-color) 44%, black 32%));
+    box-shadow:
+        0 0 10px rgb(var(--crt-color-rgb) / 0.24),
+        inset 0 1px 0 rgb(255 255 255 / 0.12);
+    transition: transform 0.16s ease;
+}
+
+.settings-switch-input:checked + .settings-switch-track {
+    border-color: rgb(var(--crt-color-rgb) / 0.78);
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.18),
+            rgb(0 0 0 / 0.34) 55%,
+            rgb(var(--crt-color-rgb) / 0.08));
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.035),
+        0 0 14px rgb(var(--crt-color-rgb) / 0.12);
+}
+
+.settings-switch-input:checked + .settings-switch-track .settings-switch-thumb {
+    transform: translateX(38px);
+}
+
+.settings-switch-input:focus-visible + .settings-switch-track {
+    outline: 2px solid var(--crt-color);
+    outline-offset: 2px;
+}
+
+.settings-toggle-labels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 68px;
+    margin-left: auto;
+    font-size: 10px;
+    letter-spacing: 0;
+    text-align: center;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--crt-color) 64%, white 18%);
 }
 
 .settings-select-wrap {

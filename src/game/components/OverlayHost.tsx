@@ -121,7 +121,12 @@ export function OverlayHost({
 
   switch (overlay.kind) {
     case "help":
-      return <HelpModal onClose={onClose} />;
+      return (
+        <HelpModal
+          conversationMode={state.uiState.conversationMode ?? "ai"}
+          onClose={onClose}
+        />
+      );
 
     case "reader":
       return (

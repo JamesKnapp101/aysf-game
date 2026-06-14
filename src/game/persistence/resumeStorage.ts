@@ -37,7 +37,10 @@ type GameSnapshotV1 = {
   radio?: GameState["radio"];
   uiState?: Pick<
     GameState["uiState"],
-    "cometPersonality" | "cometTextSize" | "visualEffectsMode"
+    | "cometPersonality"
+    | "cometTextSize"
+    | "conversationMode"
+    | "visualEffectsMode"
   >;
 };
 
@@ -157,6 +160,7 @@ function buildSnapshot(state: GameState): GameSnapshotV1 {
     uiState: {
       cometPersonality: state.uiState.cometPersonality,
       cometTextSize: state.uiState.cometTextSize,
+      conversationMode: state.uiState.conversationMode,
       visualEffectsMode: state.uiState.visualEffectsMode,
     },
   };
@@ -271,6 +275,8 @@ async function restoreSnapshotFromStorage(
           snapshot.uiState?.cometPersonality ?? baseState.uiState.cometPersonality,
         cometTextSize:
           snapshot.uiState?.cometTextSize ?? baseState.uiState.cometTextSize,
+        conversationMode:
+          snapshot.uiState?.conversationMode ?? baseState.uiState.conversationMode,
         visualEffectsMode:
           snapshot.uiState?.visualEffectsMode ??
           baseState.uiState.visualEffectsMode,

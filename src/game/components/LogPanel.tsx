@@ -1,8 +1,10 @@
 import type { LayoutPrefs } from "../hooks/useLayoutPrefs";
+import { getConversationAssistantNameForMode } from "../helpers/conversationModeHelpers";
 import { getItemsInInventory } from "../selectors/itemSelectors";
 import type {
   CometPersonalityMode,
   CometTextSizeMode,
+  ConversationMode,
   GameState,
   VisualEffectsMode,
 } from "../types/gameTypes";
@@ -133,6 +135,9 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   const logRef = useRef<HTMLDivElement | null>(null);
   const internalCometInputRef = useRef<HTMLInputElement | null>(null);
   const activeCometInputRef = cometInputRef ?? internalCometInputRef;
+  const conversationMode = state.uiState.conversationMode ?? "ai";
+  const conversationAssistantName =
+    getConversationAssistantNameForMode(conversationMode);
   const cometPersonality = state.uiState.cometPersonality ?? "default";
   const cometTextSize = state.uiState.cometTextSize ?? "smaller";
   const visualEffectsMode = state.uiState.visualEffectsMode ?? "full";
@@ -274,6 +279,16 @@ export const LogPanel: React.FC<LogPanelProps> = ({
     }));
   };
 
+  const handleConversationModeChange = (conversationMode: ConversationMode) => {
+    setGameState((prev) => ({
+      ...prev,
+      uiState: {
+        ...prev.uiState,
+        conversationMode,
+      },
+    }));
+  };
+
   const handleCometTextSizeChange = (cometTextSize: CometTextSizeMode) => {
     setGameState((prev) => ({
       ...prev,
@@ -350,7 +365,9 @@ export const LogPanel: React.FC<LogPanelProps> = ({
             }
             onClick={() => setActiveTab("comet")}
           >
-            <span className="game-tab-cometText">Comet</span>
+            <span className="game-tab-cometText">
+              {conversationAssistantName}
+            </span>
             <span className="game-tab-cometStatus" aria-hidden="true">
               <span className="game-tab-cometDot is-on" />
               <span className="game-tab-cometDot is-on" />
@@ -453,9 +470,11 @@ export const LogPanel: React.FC<LogPanelProps> = ({
             <SettingsTab
               cometPersonality={cometPersonality}
               cometTextSize={cometTextSize}
+              conversationMode={conversationMode}
               crtColor={crtColor}
               onCometPersonalityChange={handleCometPersonalityChange}
               onCometTextSizeChange={handleCometTextSizeChange}
+              onConversationModeChange={handleConversationModeChange}
               onVisualEffectsModeChange={handleVisualEffectsModeChange}
               setCrtColor={setCrtColor}
               visualEffectsMode={visualEffectsMode}

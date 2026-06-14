@@ -3,6 +3,8 @@ import { COMET_MAX_INPUT_WORDS } from "./cometHelpers";
 
 export type CometDisplayOptions = {
   analysisBlock?: string;
+  assistantLabel?: string;
+  assistantName?: string;
   confidenceLabel?: string;
   confidenceScore?: number;
   idBase?: string;
@@ -53,8 +55,9 @@ function buildAssistantMessage(
   idBase: string,
   text: string,
   tone: CometDisplayMessageTone = "default",
+  label = "COMET",
 ): CometDisplayMessage {
-  return buildMessage(`${idBase}-assistant`, "assistant", text, tone, "COMET");
+  return buildMessage(`${idBase}-assistant`, "assistant", text, tone, label);
 }
 
 function buildSystemMessage(
@@ -79,12 +82,18 @@ export function normalizeCometResponseText(raw: string): string {
 
 export function historyToDisplayMessages(
   history: ConversationHistoryEntry[],
+  opts?: Pick<CometDisplayOptions, "assistantLabel">,
 ): CometDisplayMessage[] {
   return history.flatMap((entry, index) => {
     const idBase = `turn-${entry.turn}-${index}`;
     return [
       buildUserMessage(idBase, entry.topic),
-      buildAssistantMessage(idBase, renderLibraryText(entry.response)),
+      buildAssistantMessage(
+        idBase,
+        renderLibraryText(entry.response),
+        "default",
+        opts?.assistantLabel,
+      ),
     ];
   });
 }
@@ -122,7 +131,14 @@ export function buildCometExchangeMessages(
     );
   }
 
-  messages.push(buildAssistantMessage(idBase, renderLibraryText(response)));
+  messages.push(
+    buildAssistantMessage(
+      idBase,
+      renderLibraryText(response),
+      "default",
+      opts?.assistantLabel,
+    ),
+  );
 
   return messages;
 }
@@ -147,19 +163,31 @@ export function buildCometPendingMessages(
 
   if (opts?.pendingText) {
     messages.push(
-      buildAssistantMessage(`${idBase}-pending`, opts.pendingText, "pending"),
+      buildAssistantMessage(
+        `${idBase}-pending`,
+        opts.pendingText,
+        "pending",
+        opts.assistantLabel,
+      ),
     );
   }
 
   return messages;
 }
 
-export function getCometWelcomeMessages(): CometDisplayMessage[] {
+export function getCometWelcomeMessages(
+  opts?: Pick<CometDisplayOptions, "assistantLabel" | "assistantName">,
+): CometDisplayMessage[] {
+  const assistantName = opts?.assistantName ?? "Comet";
+
   return [
     buildAssistantMessage(
       "welcome",
-      "Hello, I'm Comet, your AI Assistant. Need a question answered about your interface? Need help surviving in an existential hell? I can help, probably!",
+      `Hello, I'm ${assistantName}, your ${
+        assistantName === "Comet" ? "AI" : "library"
+      } assistant. Need a question answered about your interface? Need help surviving in an existential hell? I can help, probably!`,
       "welcome",
+      opts?.assistantLabel,
     ),
   ];
 }

@@ -1,8 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import "../../styles/help-modal.css";
+import {
+  formatConversationAssistantText,
+  getConversationAssistantNameForMode,
+} from "@game/helpers/conversationModeHelpers";
+import type { ConversationMode } from "@game/types/gameTypes";
 import { CrtModal } from "./CrtModal";
 
 type HelpModalProps = {
+  conversationMode: ConversationMode;
   onClose: () => void;
 };
 
@@ -226,10 +232,11 @@ function renderSectionBody(body: string) {
   });
 }
 
-export function HelpModal({ onClose }: HelpModalProps) {
+export function HelpModal({ conversationMode, onClose }: HelpModalProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [activeSection, setActiveSection] =
     useState<HelpInterfaceSectionId | null>(null);
+  const assistantName = getConversationAssistantNameForMode(conversationMode);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0 });
@@ -396,7 +403,12 @@ export function HelpModal({ onClose }: HelpModalProps) {
                   <div className="help-diagram-tooltipTitle">
                     {selectedSection.title}
                   </div>
-                  {renderSectionBody(selectedSection.body)}
+                  {renderSectionBody(
+                    formatConversationAssistantText(
+                      selectedSection.body,
+                      conversationMode,
+                    ),
+                  )}
                 </>
               ) : (
                 <p className="help-diagram-tooltipBody">
@@ -418,14 +430,13 @@ export function HelpModal({ onClose }: HelpModalProps) {
           </section>
 
           <section className="help-section">
-            <h2 className="help-section-title">AI Assistant</h2>
+            <h2 className="help-section-title">
+              {assistantName === "Comet" ? "AI Assistant" : "Library Assistant"}
+            </h2>
             <p className="help-paragraph">
-              You start the game with a handy AI assistant named Comet, which
-              has its own chat window and chat bar. You can ask Comet anything
-              you want and it will do its best to answer, providing useful
-              information and helping to guide you in times of trouble. Comet
-              has a default personality, which can be changed in the Settings
-              tab.
+              {assistantName === "Comet"
+                ? "You start the game with a handy AI assistant named Comet, which has its own chat window and chat bar. You can ask Comet anything you want and it will do its best to answer, providing useful information and helping to guide you in times of trouble. Comet has a default personality, which can be changed in the Settings tab."
+                : "You start the game with a handy library assistant named Sibyl, which has its own chat window and chat bar. You can ask Sibyl anything you want and it will answer from the indexed library and authored fallback text, providing useful information and helping to guide you in times of trouble."}
             </p>
           </section>
 

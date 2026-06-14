@@ -1,5 +1,6 @@
 import { appendLog } from "@game/engine/log";
 import { buildBarBotAssistantContext } from "@game/helpers/barBotAwareness";
+import { shouldUseAiConversation } from "@game/helpers/conversationModeHelpers";
 import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
 import { getCharacterProfile } from "@game/npcProfiles";
 import { getNpcById } from "@game/npcRegistry";
@@ -34,6 +35,10 @@ export function getPendingConversationLogMessage(
   state: GameState,
   cmd: ParsedCommand,
 ): string | undefined {
+  if (!shouldUseAiConversation(state)) {
+    return undefined;
+  }
+
   if (
     cmd.type !== "action" ||
     (cmd.verb !== "ask" && cmd.verb !== "tell") ||
@@ -430,6 +435,10 @@ async function getNpcAiResponse(
   npc: ConversationNpc,
   playerInput: { type: "ask" | "tell"; topic: string },
 ): Promise<{ state: GameState; response: string | null }> {
+  if (!shouldUseAiConversation(state)) {
+    return { state, response: null };
+  }
+
   const profile = getCharacterProfile(npc.characterProfileId);
   if (!npc.aiEnabled || !profile) {
     return { state, response: null };

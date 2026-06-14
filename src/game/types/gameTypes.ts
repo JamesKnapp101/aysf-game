@@ -113,6 +113,7 @@ export type ActiveExperience = {
 
 export type CometPersonalityMode = SharedCometPersonalityMode;
 export type CometTextSizeMode = "smaller" | "larger";
+export type ConversationMode = "ai" | "authored";
 export type VisualEffectsMode = "full" | "reduced" | "off";
 
 export type BarBotCellarDeathAcknowledgement = "returned";
@@ -143,6 +144,7 @@ export interface MovieTheaterState {
 }
 
 export interface GameUiState {
+  conversationMode: ConversationMode;
   cometPersonality: CometPersonalityMode;
   cometTextSize: CometTextSizeMode;
   visualEffectsMode: VisualEffectsMode;

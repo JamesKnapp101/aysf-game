@@ -178,6 +178,58 @@
     height: 38px;
 }
 
+.comet-brandBinaryFrame,
+.comet-brandBookPage,
+.comet-brandBookSpine,
+.comet-brandBookLine {
+    stroke: var(--comet-c);
+}
+
+.comet-brandBinaryFrame {
+    fill: color-mix(in srgb, var(--comet-c) 5%, rgba(0, 0, 0, 0.86));
+    stroke-width: 3;
+    opacity: 0.78;
+}
+
+.comet-brandBinaryText {
+    fill: color-mix(in srgb, var(--comet-c) 92%, white 8%);
+    font-family: var(--crt-font, monospace);
+    font-size: 19px;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--comet-c) 28%, transparent));
+}
+
+.comet-brandBookPage {
+    fill: color-mix(in srgb, var(--comet-c) 8%, rgba(0, 0, 0, 0.76));
+    stroke-linejoin: round;
+    stroke-width: 3.2;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--comet-c) 14%, transparent));
+}
+
+.comet-brandBookPage--left {
+    transform-origin: 60px 64px;
+    transform: skewY(-2deg);
+}
+
+.comet-brandBookPage--right {
+    transform-origin: 60px 64px;
+    transform: skewY(2deg);
+}
+
+.comet-brandBookSpine {
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0.92;
+}
+
+.comet-brandBookLine {
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    opacity: 0.58;
+}
+
 .comet-brandOrbit,
 .comet-brandTailGlow,
 .comet-brandTail,

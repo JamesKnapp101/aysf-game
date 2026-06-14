@@ -2,9 +2,11 @@ import {
   COMET_PERSONALITY_OPTIONS,
   type CometSettingsDescription,
 } from "@game/constants/cometPersonalities";
+import { getConversationAssistantNameForMode } from "@game/helpers/conversationModeHelpers";
 import type {
   CometPersonalityMode,
   CometTextSizeMode,
+  ConversationMode,
   VisualEffectsMode,
 } from "@game/types/gameTypes";
 import type { Dispatch, SetStateAction } from "react";
@@ -12,9 +14,11 @@ import type { Dispatch, SetStateAction } from "react";
 type SettingsTabProps = {
   cometPersonality: CometPersonalityMode;
   cometTextSize: CometTextSizeMode;
+  conversationMode: ConversationMode;
   crtColor: string;
   onCometPersonalityChange: (mode: CometPersonalityMode) => void;
   onCometTextSizeChange: (mode: CometTextSizeMode) => void;
+  onConversationModeChange: (mode: ConversationMode) => void;
   onVisualEffectsModeChange: (mode: VisualEffectsMode) => void;
   setCrtColor: Dispatch<SetStateAction<string>>;
   visualEffectsMode: VisualEffectsMode;
@@ -72,6 +76,8 @@ const VISUAL_EFFECTS_OPTIONS: {
 
 const COMET_PERSONALITY_SELECT_ID = "settings-comet-personality";
 const COMET_TEXT_SIZE_SELECT_ID = "settings-comet-text-size";
+const CONVERSATION_MODE_SWITCH_ID = "settings-conversation-mode";
+const CONVERSATION_MODE_DESCRIPTION_ID = "settings-conversation-mode-description";
 const VISUAL_EFFECTS_SELECT_ID = "settings-visual-effects";
 
 function renderSettingsDescription(description: CometSettingsDescription) {
@@ -91,13 +97,17 @@ function renderSettingsDescription(description: CometSettingsDescription) {
 export function SettingsTab({
   cometPersonality,
   cometTextSize,
+  conversationMode,
   crtColor,
   onCometPersonalityChange,
   onCometTextSizeChange,
+  onConversationModeChange,
   onVisualEffectsModeChange,
   setCrtColor,
   visualEffectsMode,
 }: SettingsTabProps) {
+  const isAiConversationMode = conversationMode === "ai";
+  const assistantName = getConversationAssistantNameForMode(conversationMode);
   const selectedPersonality =
     COMET_PERSONALITY_OPTIONS.find((opt) => opt.value === cometPersonality) ??
     COMET_PERSONALITY_OPTIONS[0];
@@ -110,6 +120,57 @@ export function SettingsTab({
 
   return (
     <div className="settings-panel">
+      <section className="settings-section">
+        <p className="crt-color-header settings-section-header">
+          Conversation Mode
+        </p>
+
+        <div className="settings-option">
+          <div className="settings-toggle-row">
+            <label
+              className="settings-optionLabel"
+              htmlFor={CONVERSATION_MODE_SWITCH_ID}
+            >
+              Response Source
+            </label>
+
+            <label className="settings-switch">
+              <input
+                id={CONVERSATION_MODE_SWITCH_ID}
+                className="settings-switch-input"
+                type="checkbox"
+                role="switch"
+                checked={isAiConversationMode}
+                aria-describedby={CONVERSATION_MODE_DESCRIPTION_ID}
+                aria-label="Conversation mode"
+                onChange={(event) =>
+                  onConversationModeChange(
+                    event.target.checked ? "ai" : "authored",
+                  )
+                }
+              />
+              <span className="settings-switch-track" aria-hidden="true">
+                <span className="settings-switch-thumb" />
+              </span>
+            </label>
+          </div>
+
+          <div className="settings-toggle-labels" aria-hidden="true">
+            <span>Authored</span>
+            <span>AI</span>
+          </div>
+
+          <p
+            id={CONVERSATION_MODE_DESCRIPTION_ID}
+            className="settings-select-description"
+          >
+            {isAiConversationMode
+              ? "NPCs and Comet use generated responses when available."
+              : "NPCs use authored dialog, and Sibyl answers from the library index."}
+          </p>
+        </div>
+      </section>
+
       <section className="settings-section">
         <p className="crt-color-header settings-section-header">CRT Color</p>
         <div className="settings-color-row">
@@ -132,7 +193,7 @@ export function SettingsTab({
 
       <section className="settings-section">
         <p className="crt-color-header settings-section-header">
-          Comet Settings
+          {assistantName} Settings
         </p>
 
         <div className="settings-option">
@@ -153,7 +214,7 @@ export function SettingsTab({
                     event.target.value as CometPersonalityMode,
                   )
                 }
-                aria-label="Comet personality"
+                aria-label={`${assistantName} personality`}
               >
                 {COMET_PERSONALITY_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -176,7 +237,7 @@ export function SettingsTab({
             className="settings-optionLabel"
             htmlFor={COMET_TEXT_SIZE_SELECT_ID}
           >
-            Comet Text Size
+            {assistantName} Text Size
           </label>
           <div className="settings-select-stack">
             <div className="settings-select-wrap">
@@ -189,7 +250,7 @@ export function SettingsTab({
                     event.target.value as CometTextSizeMode,
                   )
                 }
-                aria-label="Comet text size"
+                aria-label={`${assistantName} text size`}
               >
                 {COMET_TEXT_SIZE_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -202,7 +263,7 @@ export function SettingsTab({
               </span>
             </div>
             <p className="settings-select-description">
-              {selectedTextSize.description}
+              {selectedTextSize.description.replace("Comet", assistantName)}
             </p>
           </div>
         </div>
