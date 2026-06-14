@@ -345,7 +345,8 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     <section
       className="game-room-panel"
       style={{ flex: `0 0 ${roomPanelFlexBasis}`, minHeight: 0 }}
-      onClick={() => {
+      onClick={(event) => {
+        event.stopPropagation();
         if (restorePromptFocus) {
           restorePromptFocus();
           return;

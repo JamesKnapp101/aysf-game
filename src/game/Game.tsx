@@ -106,6 +106,13 @@ export const Game: React.FC = () => {
     }
   }, [lastFocusedPrompt]);
 
+  const focusGamePrompt = useCallback(() => {
+    setLastFocusedPrompt("game");
+    if (inputRef.current && !inputRef.current.disabled) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   const handleGamePromptFocus = useCallback(() => {
     setLastFocusedPrompt("game");
   }, []);
@@ -353,7 +360,7 @@ export const Game: React.FC = () => {
               exits={exits}
               roomPanelFlexBasis={roomPanelFlexBasis}
               inputRef={inputRef}
-              restorePromptFocus={restorePromptFocus}
+              restorePromptFocus={focusGamePrompt}
               activeEffects={activeEffects.join(" ")}
               roomIsDark={roomIsDark}
               roomAmbientLight={roomAmbientLight}
@@ -391,6 +398,7 @@ export const Game: React.FC = () => {
               isCometFocusOwner={lastFocusedPrompt === "comet"}
               onCometPromptFocus={handleCometPromptFocus}
               onGamePromptFocus={handleGamePromptFocus}
+              onLogPanelClick={focusGamePrompt}
               setActiveTab={(tab: SidebarTab) => setActiveTab(tab)}
             />
           </div>

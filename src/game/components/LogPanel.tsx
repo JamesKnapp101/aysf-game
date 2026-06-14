@@ -43,6 +43,7 @@ type LogPanelProps = {
   isCometFocusOwner?: boolean;
   onCometPromptFocus?: () => void;
   onGamePromptFocus?: () => void;
+  onLogPanelClick?: () => void;
 };
 
 function applyCRTColor(colorHex: string) {
@@ -125,6 +126,7 @@ export const LogPanel: React.FC<LogPanelProps> = ({
   isCometFocusOwner = false,
   onCometPromptFocus = () => undefined,
   onGamePromptFocus = () => undefined,
+  onLogPanelClick = () => undefined,
 }) => {
   const [input, setInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -315,7 +317,13 @@ export const LogPanel: React.FC<LogPanelProps> = ({
     <div className="game-main-row">
       {/* LEFT: transcript + prompt */}
       <div className="game-left">
-        <div className="game-log-panel">
+        <div
+          className="game-log-panel"
+          onClick={(event) => {
+            event.stopPropagation();
+            onLogPanelClick();
+          }}
+        >
           <div className="game-log-inner" ref={logRef}>
             {state.log.map((line, idx) => (
               <p key={idx} className="game-line">
