@@ -3,7 +3,7 @@ services:
     name: aysf-game
     runtime: node
     buildCommand: corepack enable && pnpm install --frozen-lockfile && cd server && pnpm install --frozen-lockfile && pnpm run build && cd .. && pnpm run build
-    startCommand: cd server && pnpm start
+    startCommand: node server/dist/index.js
     envVars:
       - key: NODE_ENV
         value: production

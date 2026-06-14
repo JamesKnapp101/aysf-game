@@ -44,7 +44,7 @@ corepack enable && pnpm install --frozen-lockfile && cd server && pnpm install -
 Start command:
 
 ```bash
-cd server && pnpm start
+node server/dist/index.js
 ```
 
 ## Health Check
