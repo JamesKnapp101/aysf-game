@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { createHash } from "node:crypto";
 import rateLimit from "express-rate-limit";
 import { generateClaudeResponse } from "../services/claudeService.js";
 import {
@@ -15,6 +16,7 @@ import {
 const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000;
 const DEFAULT_RATE_LIMIT_REQUESTS = 8;
 const MAX_CACHE_ENTRIES = 500;
+const CACHE_KEY_VERSION = "v2";
 
 export type GenerateConversationResponse = (
   request: ConversationRequest,
@@ -27,7 +29,7 @@ interface ConversationRouterOptions {
 }
 
 export function getConversationCacheKey(request: ConversationRequest): string {
-  return JSON.stringify({
+  const cacheMaterial = JSON.stringify({
     npcId: request.npcId,
     assistantContext: request.assistantContext ?? null,
     characterProfile: request.characterProfile,
@@ -38,6 +40,10 @@ export function getConversationCacheKey(request: ConversationRequest): string {
     },
     gossipContext: request.gossipContext ?? null,
   });
+
+  return `${CACHE_KEY_VERSION}:${createHash("sha256")
+    .update(cacheMaterial)
+    .digest("hex")}`;
 }
 
 function getRequestId(res: Response): string {

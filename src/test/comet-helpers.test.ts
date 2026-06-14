@@ -84,5 +84,6 @@ describe("Comet helpers", () => {
     });
 
     expect(withContext).not.toBe(withoutContext);
+    expect(withContext).toMatch(/^v2:[a-f0-9]{64}$/);
   });
 });

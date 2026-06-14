@@ -119,7 +119,7 @@ export const createInitialState = (world: World): GameState => {
     rating: 0,
     moves: 0,
     uiState: {
-      conversationMode: "authored",
+      conversationMode: "ai",
       cometPersonality: "default",
       cometTextSize: "smaller",
       visualEffectsMode: "full",

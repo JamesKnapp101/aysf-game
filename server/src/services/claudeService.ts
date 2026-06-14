@@ -58,6 +58,18 @@ interface GenerateParams {
   gossipContext?: GossipContext;
 }
 
+let anthropicClient: Anthropic | null = null;
+
+function getAnthropicClient(): Anthropic {
+  if (!anthropicClient) {
+    anthropicClient = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+
+  return anthropicClient;
+}
+
 export async function generateClaudeResponse(
   params: GenerateParams,
 ): Promise<string> {
@@ -69,11 +81,7 @@ export async function generateClaudeResponse(
     gossipContext,
   } = params;
 
-  // Create Anthropic client with API key from environment
-  // This ensures the API key is loaded before the client is created
-  const client = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-  });
+  const client = getAnthropicClient();
 
   // Build system prompt with character context
   const systemPrompt = buildSystemPrompt(

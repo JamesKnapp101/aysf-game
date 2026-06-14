@@ -64,6 +64,18 @@ function formatBytes(value: unknown): string {
   return "?";
 }
 
+function getMemoryHealth() {
+  const bytesPerMiB = 1024 * 1024;
+  const memory = process.memoryUsage();
+
+  return {
+    externalMb: Math.round(memory.external / bytesPerMiB),
+    heapTotalMb: Math.round(memory.heapTotal / bytesPerMiB),
+    heapUsedMb: Math.round(memory.heapUsed / bytesPerMiB),
+    rssMb: Math.round(memory.rss / bytesPerMiB),
+  };
+}
+
 export function createApp(options: CreateAppOptions = {}): express.Express {
   const isProduction =
     options.isProduction ?? process.env.NODE_ENV === "production";
@@ -144,6 +156,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
       status: "ok",
       service: "aysf-game-server",
       timestamp: new Date().toISOString(),
+      memory: getMemoryHealth(),
     });
   });
 
