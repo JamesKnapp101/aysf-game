@@ -4,7 +4,12 @@ import { shouldUseAiConversation } from "@game/helpers/conversationModeHelpers";
 import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
 import { getCharacterProfile } from "@game/npcProfiles";
 import { getNpcById } from "@game/npcRegistry";
-import { getSecretForNpc, revealNpcSecretIfEligible } from "@game/npcSecrets";
+import {
+  canRevealNpcSecret,
+  getSecretForNpc,
+  isNpcSecretRevealed,
+  revealNpcSecretIfEligible,
+} from "@game/npcSecrets";
 import { normalize, resolveConversationTarget } from "@game/rules/scope";
 import {
   getClaudeResponse,
@@ -203,6 +208,31 @@ function buildGossipContext(
       currentCount,
     },
   };
+}
+
+function recordGossipToldIfPlayerHasIt(
+  state: GameState,
+  npcId: string,
+  topic: string,
+): GameState {
+  const gossipId = normalize(topic);
+  const playerHasGossip = state.player.spiltTea?.some(
+    (tea) => normalize(tea.id) === gossipId,
+  );
+
+  return playerHasGossip ? addGossipToldToNpc(state, npcId, gossipId) : state;
+}
+
+function getNpcSecretRevealLine(
+  state: GameState,
+  npcId: string,
+): string | undefined {
+  const secret = getSecretForNpc(npcId);
+  if (!secret || isNpcSecretRevealed(state, npcId)) {
+    return undefined;
+  }
+
+  return canRevealNpcSecret(state, npcId) ? secret.text : undefined;
 }
 
 function recordNpcConversationTurn(
@@ -447,13 +477,11 @@ async function getNpcAiResponse(
   // If this is a 'tell' about gossip, track it BEFORE sending to Claude
   let nextState = state;
   if (playerInput.type === "tell") {
-    const gossipId = normalize(playerInput.topic);
-    const playerHasGossip = state.player.spiltTea?.some(
-      (tea) => normalize(tea.id) === gossipId,
+    nextState = recordGossipToldIfPlayerHasIt(
+      nextState,
+      npc.id,
+      playerInput.topic,
     );
-    if (playerHasGossip) {
-      nextState = addGossipToldToNpc(nextState, npc.id, gossipId);
-    }
   }
 
   const conversationHistory = getNpcConversationHistory(nextState, npc.id);
@@ -562,13 +590,15 @@ async function askRadioNpc(
     };
   }
 
-  if (hasNpcTopicBeenUsed(state, npc.id, topic)) {
+  const resolvedTopic = resolveAskTopic(topic);
+
+  if (hasNpcTopicBeenUsed(state, npc.id, resolvedTopic)) {
     const repeatLine = `"I don't know anything more about that (cough)..."`;
     return {
       state: recordNpcConversationTurn(
         state,
         npc.id,
-        { type: "ask", topic },
+        { type: "ask", topic: resolvedTopic },
         repeatLine,
       ),
       message: wrapRadioLine(repeatLine),
@@ -576,14 +606,13 @@ async function askRadioNpc(
   }
 
   const line =
-    NPC_DIALOG[npc.id]?.ask?.[resolveAskTopic(topic)] ??
-    defaultRadioAskLine(topic);
+    NPC_DIALOG[npc.id]?.ask?.[resolvedTopic] ?? defaultRadioAskLine(topic);
 
   return {
     state: recordNpcConversationTurn(
       state,
       npc.id,
-      { type: "ask", topic },
+      { type: "ask", topic: resolvedTopic },
       line,
     ),
     message: wrapRadioLine(line),
@@ -606,14 +635,15 @@ async function tellRadioNpc(
     };
   }
 
-  const topicKey = `tell:${topic}`;
+  const resolvedTopic = resolveAskTopic(topic);
+  const topicKey = `tell:${resolvedTopic}`;
   if (hasNpcTopicBeenUsed(state, npc.id, topicKey)) {
     const repeatLine = `"I know (cough)...you (cough) told me..."`;
     return {
       state: recordNpcConversationTurn(
         state,
         npc.id,
-        { type: "tell", topic },
+        { type: "tell", topic: resolvedTopic },
         repeatLine,
       ),
       message: wrapRadioLine(repeatLine),
@@ -621,14 +651,13 @@ async function tellRadioNpc(
   }
 
   const line =
-    NPC_DIALOG[npc.id]?.tell?.[resolveAskTopic(topic)] ??
-    defaultRadioTellLine();
+    NPC_DIALOG[npc.id]?.tell?.[resolvedTopic] ?? defaultRadioTellLine();
 
   return {
     state: recordNpcConversationTurn(
       state,
       npc.id,
-      { type: "tell", topic },
+      { type: "tell", topic: resolvedTopic },
       line,
     ),
     message: wrapRadioLine(line),
@@ -671,9 +700,10 @@ export async function askNpc(
     };
   }
 
-  const fallbackLine = getDirectAskFallbackLine(npc, topic);
+  const resolvedTopic = resolveAskTopic(topic);
+  const fallbackLine = getDirectAskFallbackLine(npc, resolvedTopic);
   if (fallbackLine) {
-    const line = hasNpcTopicBeenUsed(state, npc.id, topic)
+    const line = hasNpcTopicBeenUsed(state, npc.id, resolvedTopic)
       ? defaultDirectAskRepeatLine()
       : fallbackLine;
 
@@ -681,7 +711,7 @@ export async function askNpc(
       state: recordNpcConversationTurn(
         state,
         npc.id,
-        { type: "ask", topic },
+        { type: "ask", topic: resolvedTopic },
         line,
       ),
       message: formatDirectSpeech(line),
@@ -721,20 +751,24 @@ export async function tellNpc(
     };
   }
 
-  const fallbackLine = getDirectTellFallbackLine(npc, topic);
+  const fallbackState = recordGossipToldIfPlayerHasIt(state, npc.id, topic);
+  const resolvedTopic = resolveAskTopic(topic);
+  const secretLine = getNpcSecretRevealLine(fallbackState, npc.id);
+  const fallbackLine = secretLine ?? getDirectTellFallbackLine(npc, resolvedTopic);
   if (fallbackLine) {
-    const topicKey = `tell:${topic}`;
+    const topicKey = `tell:${resolvedTopic}`;
     const line = hasNpcTopicBeenUsed(state, npc.id, topicKey)
       ? defaultDirectTellRepeatLine(npc)
       : fallbackLine;
+    const recordedState = recordNpcConversationTurn(
+      fallbackState,
+      npc.id,
+      { type: "tell", topic: resolvedTopic },
+      line,
+    );
 
     return {
-      state: recordNpcConversationTurn(
-        state,
-        npc.id,
-        { type: "tell", topic },
-        line,
-      ),
+      state: revealNpcSecretIfEligible(recordedState, npc.id),
       message: formatDirectSpeech(line),
     };
   }

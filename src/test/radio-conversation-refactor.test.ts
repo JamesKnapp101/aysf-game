@@ -16,6 +16,11 @@ describe("conversation system refactor", () => {
   });
 
   it("keeps the first radio call state separate from NPC conversation state", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: false,
+      status: 429,
+    } as Response);
+
     let state = setInventory(createTestState({ roomId: "StairSix" }), [
       "Radio",
     ]);
@@ -44,6 +49,11 @@ describe("conversation system refactor", () => {
   });
 
   it("routes RangerBot through the shared NPC conversation system", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: false,
+      status: 429,
+    } as Response);
+
     let state = createTestState({ roomId: "ParkEntrance" });
 
     const askParsed = parseCommand("ask ranger about hours");

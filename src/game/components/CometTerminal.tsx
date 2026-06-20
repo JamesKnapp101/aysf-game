@@ -413,11 +413,12 @@ export function CometTerminal({
     }
 
     const intent = classifyCometIntent(trimmed);
-    const inputType = intent === "ask" ? "ask" : "tell";
+    const effectiveIntent = !isAiMode && intent === "tell" ? "ask" : intent;
+    const inputType = effectiveIntent === "ask" ? "ask" : "tell";
 
     const promptContext = buildCometPromptContext(state, entryList, trimmed);
     const staticFallback = getCometStaticFallbackResponse(
-      intent,
+      effectiveIntent,
       promptContext.fallbackResponse,
     );
 

@@ -8,13 +8,13 @@ import { movieProjectionItems } from "./movieProjectionItems";
 
 export { MOVIE_THEATER_CHEWABLE_ID } from "./movieBathroom";
 export {
+  getMovieTheaterMovieLine,
+  isMovieTheaterAuditoriumRoom,
+  isMovieTheaterTransitionTurn,
   MOVIE_THEATER_AUDITORIUM_ROOM_IDS,
   MOVIE_THEATER_MOVIE_SEGMENTS,
   MOVIE_THEATER_ROOM_IDS,
   MOVIE_THEATER_TOTAL_MOVIE_TURNS,
-  getMovieTheaterMovieLine,
-  isMovieTheaterAuditoriumRoom,
-  isMovieTheaterTransitionTurn,
   tickMovieTheaterProjectionLighting,
 } from "./movieTheaterMovie";
 
@@ -23,7 +23,7 @@ export const movieTheaterRooms: Room[] = [
   {
     id: "MovieEntrance",
     name: "Movie Theater Entrance",
-    description: `This is the entrance to a small movie theater. [[SCENERY]]`,
+    description: `This is the entrance to a small movie theater with big bold letters over the entrance that read 'THE MOVPHITHEATER'. [[SCENERY]]`,
     exits: [
       { direction: "southeast", toRoomId: "ParkCenter" },
       { direction: "northwest", toRoomId: "MovieTheaterLobby" },
@@ -52,7 +52,7 @@ export const movieTheaterRooms: Room[] = [
   {
     id: "MovieTheaterBathroom",
     name: "Movphitheater: Rest Room",
-    description: `The theater bathroom is large, bright, and quiet enough that every drip feels rehearsed. [[SCENERY]]`,
+    description: `The theater bathroom is large and bright, with a buzzing florescent light blazing down from above. [[SCENERY]]`,
     exits: [{ direction: "east", toRoomId: "MovieTheaterLobby" }],
   },
   {

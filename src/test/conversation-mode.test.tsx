@@ -2,10 +2,14 @@ import { CometTerminal } from "@game/components/CometTerminal";
 import { SettingsTab } from "@game/components/SettingsTab";
 import { handleCommand } from "@game/engine/handleCommand";
 import { getPendingConversationLogMessage } from "@game/helpers/conversationHelpers";
+import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
+import { COMMON_ASK } from "@game/npcDialogs/common";
+import { NPCS } from "@game/npcRegistry";
 import type { CometEntry } from "@game/components/comet-index";
 import type {
   ConversationMode,
   GameState,
+  JuicyTopic,
 } from "@game/types/gameTypes";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -26,6 +30,15 @@ const sampleCometEntries: CometEntry[] = [
     body: "Comet is a portable Central Library access terminal.",
   },
 ];
+
+const hornyCloneGossip: JuicyTopic = {
+  id: "horny clone",
+  summary:
+    "One of the Sanyi clones harbored a deep lust for Isosceles Onche.",
+  tags: [],
+  title: "Horny Clone",
+  type: "gossip",
+};
 
 function withConversationMode(
   state: GameState,
@@ -67,6 +80,61 @@ describe("conversation mode", () => {
     expect(getLastLogEntry(next)).toMatch(/around the clock|valid park pass/i);
   });
 
+  it("provides authored dialog coverage and forgiving topic resolution for registered NPCs", () => {
+    const missingDialogIds = Object.keys(NPCS).filter(
+      (npcId) => !NPC_DIALOG[npcId],
+    );
+
+    expect(missingDialogIds).toEqual([]);
+
+    const missingCommonAskTopics = Object.entries(NPC_DIALOG).flatMap(
+      ([npcId, dialog]) =>
+        Object.keys(COMMON_ASK)
+          .filter((topic) => !(topic in dialog.ask))
+          .map((topic) => `${npcId}:${topic}`),
+    );
+
+    expect(missingCommonAskTopics).toEqual([]);
+    expect(resolveAskTopic("what is the badge for")).toBe("badge");
+    expect(resolveAskTopic("what can you tell me about rotations")).toBe(
+      "rotations",
+    );
+    expect(resolveAskTopic("where is the new home")).toBe("journey");
+  });
+
+  it("keeps NailBot's secret reward solvable in authored mode", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        response: "Generated response should not be used.",
+      }),
+    } as Response);
+    const baseState = createTestState({ roomId: "NailSalon" });
+    const state = withConversationMode(
+      {
+        ...baseState,
+        player: {
+          ...baseState.player,
+          spiltTea: [hornyCloneGossip],
+        },
+      },
+      "authored",
+    );
+
+    const next = await handleCommand(
+      state,
+      parseCommand("tell robot about horny clone"),
+    );
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(next.player.inventory.general).toContain("RobotWhistle");
+    expect(next.worldState.npcSecrets.NailBot).toMatchObject({
+      gossipSharedIds: ["horny clone"],
+      secretRevealed: true,
+    });
+  });
+
   it("uses Sibyl's indexed fallback and library branding in authored mode", async () => {
     const user = userEvent.setup();
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
@@ -103,6 +171,13 @@ describe("conversation mode", () => {
     expect(
       container.querySelector(".comet-brandIcon--binary"),
     ).not.toBeInTheDocument();
+
+    await user.type(screen.getByLabelText("CHAT"), "NexiCorp{enter}");
+
+    expect(
+      await screen.findByText("NexiCorp is a medical technology company."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/direct edits/i)).not.toBeInTheDocument();
 
     await user.type(screen.getByLabelText("CHAT"), "Tell me about Comet{enter}");
 
