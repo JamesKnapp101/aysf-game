@@ -541,6 +541,13 @@ export const trashBotItems: Item[] = [
   {
     id: "TrashBot",
     name: "The little trash bot",
+    idleActions: [
+      "The little trash bot spins its brushes, sweeping up a few stubborn specks.",
+      "The little trash bot pivots on its treads and scans the floor for litter.",
+      "The little trash bot noses suspiciously at a scrap before whisking it into its chute.",
+      "The little trash bot gives its collection bin a brisk mechanical shake.",
+      "The little trash bot chirps to itself as it traces a tidy circle across the floor.",
+    ],
     itemCategory: "animate",
     initialDescription: `A little robot with treads putters around nearby.`,
     description: `This robot has a cylindrical body atop a pair of treads that it uses to get around. In front it has a pair of brushes that scour the dirt and grass, flicking any foreign objects toward the chute between them.`,

@@ -1,5 +1,6 @@
 import { audioRegistry } from "@game/audioRegistry";
 import { tickFlashlights } from "@game/engine/ticks/flashlightTick";
+import { tickNpcIdleActions } from "@game/engine/ticks/npcIdleActionsTick";
 import { tickActiveExperience } from "@game/experiences/experienceRegistry";
 import { emitAdjacentAudioCues } from "@game/helpers/audioCues";
 import {
@@ -760,6 +761,7 @@ export function advanceTurn(state: GameState): GameState {
   next = tickHeldCat(next);
   next = applyRegisteredTurnTickPhase(next, "simulation");
   next = applyRegisteredTurnTickPhase(next, "late");
+  next = tickNpcIdleActions(next);
 
   next = emitAdjacentAudioCues(next, {
     registry: audioRegistry,
