@@ -49,6 +49,40 @@ describe("NPC idle actions", () => {
     );
   });
 
+  it("runs during an active experience without enabling real-world ticks", () => {
+    const base = createTestState({
+      roomId: "FallenCorpseMemory",
+      rng: () => 0.99,
+    });
+    const state = {
+      ...base,
+      world: {
+        ...base.world,
+        items: base.world.items.map((item) =>
+          item.id === "MoxStairBottom"
+            ? { ...item, idleActions: ["A test memory idles."] }
+            : item,
+        ),
+      },
+      worldState: {
+        ...base.worldState,
+        activeExperience: {
+          currentStageIndex: 0,
+          experienceId: "fallen_corpse_memory",
+          kind: "memory" as const,
+          returnRoomId: "StairWellSeven",
+          startedAtMove: base.moves,
+          turnsRemaining: 3,
+        },
+      },
+    };
+
+    const next = advanceTurn(state);
+
+    expect(next.log).toContain("A test memory idles.");
+    expect(next.worldState.activeExperience).toBeDefined();
+  });
+
   it("gives every robot NPC exactly five idle actions", () => {
     const state = createTestState();
     const robotIds = [

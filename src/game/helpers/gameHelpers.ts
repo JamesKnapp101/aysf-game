@@ -217,7 +217,7 @@ export function triggerPlayerDeath(
     roomId,
   );
 
-  const rebootMessage = `${deathMessage}\n\n\n *** You have died *** \n\n\n...What feels like an instant later you find yourself laying on your back, disoriented, and suck in a panicked breath. You check yourself frantically but whatever happened, you seem to be all in one piece again now. You stand up and look around.\n`;
+  const rebootMessage = `${deathMessage}\n\n\n *** You have died *** \n\n\n...What feels like an instant later you find yourself laying on your back, disoriented, and suck in a panicked breath. You check yourself frantically but whatever happened, you seem to be all in one piece again now. You stand up, confused. How did you get back here?\n\n`;
 
   next = appendLog(next, rebootMessage);
 

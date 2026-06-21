@@ -6,6 +6,7 @@ export const moxStairBottomItems: Item[] = [
     name: "The memory ghost",
     itemCategory: "animate",
     initialDescription: `A bald man wearing a jumpsuit falls alongside you, headfirst, bare toes pointing up. He has a flashlight in one hand, and a paper note in the other that flaps in the wind.`,
+    idleActions: [`The falling man's jumpsuit flaps as he falls headfirst.`],
     description: `He looks surprised.`,
     location: "FallenCorpseMemory",
     vocab: ["scientist", "man", "guy", "mox"],

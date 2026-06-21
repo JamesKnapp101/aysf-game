@@ -740,6 +740,10 @@ export function advanceTurn(state: GameState): GameState {
       next = appendLog(next, tickedExperience.message);
     }
 
+    if (next.worldState.activeExperience) {
+      next = tickNpcIdleActions(next);
+    }
+
     return {
       ...next,
       moves: next.moves + 1,
