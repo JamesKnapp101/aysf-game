@@ -7,16 +7,19 @@ import {
   getExitDestinationRoomId,
   getRoomExits,
 } from "@game/helpers/itemHelpers";
+import {
+  createPlayerHuskMeta,
+  formatPlayerHuskNumber,
+  getPlayerHuskNumberVocab,
+  getPlayerHuskPlateDescription,
+  INITIAL_PLAYER_HUSK_NUMBER,
+} from "@game/helpers/playerHuskHelpers";
 import { useUIEffectsStore } from "@game/store/store";
 import { secretOrganismMessage } from "@game/text/secretOrganismMessage";
 import { ScriptContext, ScriptedEvent } from "@game/types/eventTypes";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import { isGamePreserveRoomId } from "src/world/maps/levelFour/gamePreserveRules";
-
-// Maximum number of player death husks to keep in the world
-// Older husks are removed to prevent world.items array from growing unbounded
-const MAX_PLAYER_DEATH_HUSKS = 10;
 
 export function triggerTeleportFlash(el: HTMLElement | null) {
   if (!el) return;
@@ -270,39 +273,35 @@ export function triggerPlayerDeath(
 
   const shouldCreateDeathHusk = !isGamePreserveRoomId(roomId);
 
-  let itemsToKeep = state.world.items;
   let nextHusk: Item | undefined;
+  let nextHuskNumber =
+    state.worldState.playerHuskCount ?? INITIAL_PLAYER_HUSK_NUMBER;
 
   if (shouldCreateDeathHusk) {
-    const existingHusks = state.world.items.filter((item) =>
-      item.id.startsWith("playerRegenHusk"),
-    );
+    nextHuskNumber += 1;
 
     nextHusk = {
-      id: `playerRegenHusk${Object.keys(next.worldState.playerDeaths).length}`,
+      id: `playerRegenHusk${formatPlayerHuskNumber(nextHuskNumber)}`,
       location: safeRegenRoom,
-      name: "a lifeless husk",
-      description:
-        "It's identical to the one you found when you first woke up.",
+      name: `a little bug-like husk marked '${getPlayerHuskNumberVocab(nextHuskNumber)[3]}'`,
+      description: `It's identical to the one you found when you first woke up. ${getPlayerHuskPlateDescription(nextHuskNumber)}`,
       initialDescription:
         "Curled up on the floor nearby you see what looks like a dead bug, or spider.",
-      vocab: ["husk", "lifeless husk", "bug husk"],
+      vocab: [
+        "husk",
+        "lifeless husk",
+        "bug",
+        "spider",
+        ...getPlayerHuskNumberVocab(nextHuskNumber),
+      ],
       itemClass: "solid",
       itemCategory: "collectable",
       itemWeight: 0,
       itemSize: 0,
+      meta: {
+        playerHusk: createPlayerHuskMeta(nextHuskNumber, state.moves),
+      },
     };
-
-    if (existingHusks.length >= MAX_PLAYER_DEATH_HUSKS) {
-      const husksToRemove = existingHusks.slice(
-        0,
-        existingHusks.length - MAX_PLAYER_DEATH_HUSKS + 1,
-      );
-      const huskIdsToRemove = new Set(husksToRemove.map((h) => h.id));
-      itemsToKeep = state.world.items.filter(
-        (item) => !huskIdsToRemove.has(item.id),
-      );
-    }
   }
 
   let nextState: GameState = {
@@ -313,14 +312,24 @@ export function triggerPlayerDeath(
     },
     world: {
       ...state.world,
-      items: nextHusk ? [...itemsToKeep, nextHusk] : itemsToKeep,
+      items: nextHusk ? [...state.world.items, nextHusk] : state.world.items,
     },
+    itemState: nextHusk
+      ? {
+          ...state.itemState,
+          itemRoomId: {
+            ...state.itemState.itemRoomId,
+            [nextHusk.id]: safeRegenRoom,
+          },
+        }
+      : state.itemState,
     worldState: {
       ...state.worldState,
       playerDeaths: {
         ...state.worldState.playerDeaths,
         [roomId]: { cause, bodyDescription: `` },
       },
+      playerHuskCount: nextHuskNumber,
     },
   };
 

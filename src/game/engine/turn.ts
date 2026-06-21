@@ -11,6 +11,7 @@ import {
   isRoomInCatHome,
 } from "@game/helpers/catHelpers";
 import { tickUnderwaterVitals } from "@game/helpers/environmentHelpers";
+import { tickPlayerHusks } from "@game/helpers/playerHuskHelpers";
 import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { canPlayerSeeInRoom } from "@game/helpers/visibilityHelpers";
 import {
@@ -765,6 +766,7 @@ export function advanceTurn(state: GameState): GameState {
   next = tickHeldCat(next);
   next = applyRegisteredTurnTickPhase(next, "simulation");
   next = applyRegisteredTurnTickPhase(next, "late");
+  next = tickPlayerHusks(next);
   next = tickNpcIdleActions(next);
 
   next = emitAdjacentAudioCues(next, {

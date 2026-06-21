@@ -474,6 +474,7 @@ export interface WorldState {
   octopusState: OctopusState;
   pendingNarration?: PendingNarration;
   playerDeaths: Record<RoomId, PlayerDeath>;
+  playerHuskCount: number;
   powerRestoredSections: Record<PowerSectionId, boolean>;
   roomAirQuality: Record<string, RoomAirQuality>;
   roomAudioLevel: Record<string, number>;

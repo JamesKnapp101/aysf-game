@@ -9,6 +9,7 @@ import {
   saveResumeSnapshot,
 } from "@game/persistence/resumeStorage";
 import { setItemDoses, updateItemLocation } from "@game/rules/items";
+import { getPlayerHuskMeta } from "@game/helpers/playerHuskHelpers";
 import type { Item } from "@game/types/itemTypes";
 import { INITIAL_WORLD, loadWorldChunk } from "../world/World";
 import { MOVIE_THEATER_CHEWABLE_ID } from "../world/maps/levelThree/Park/MovieTheater";
@@ -118,6 +119,12 @@ describe("resume storage", () => {
     expect(next.world.items.find((item) => item.id === runtimeHusk.id)?.name).toBe(
       runtimeHusk.name,
     );
+    const restoredHusk = next.world.items.find(
+      (item) => item.id === runtimeHusk.id,
+    )!;
+    expect(restoredHusk.description).toContain("009");
+    expect(getPlayerHuskMeta(restoredHusk)).toMatchObject({ number: 9 });
+    expect(next.worldState.playerHuskCount).toBe(9);
     expect(
       typeof next.world.items.find((item) => item.id === "TrashBotBin")
         ?.describeLookThrough,

@@ -1,3 +1,8 @@
+import {
+  createPlayerHuskMeta,
+  getPlayerHuskNumberVocab,
+  getPlayerHuskPlateDescription,
+} from "@game/helpers/playerHuskHelpers";
 import type { Item } from "../../game/types/itemTypes";
 
 export const levelTwoItems: Item[] = [
@@ -524,11 +529,18 @@ export const levelTwoItems: Item[] = [
     id: "seedTwo",
     name: "burned spider-like shell",
     location: "LevelTwoBurnedBathOne",
-    vocab: ["spider", "shell", "spider-like", "husk", "burned"],
+    vocab: [
+      "spider",
+      "shell",
+      "spider-like",
+      "husk",
+      "burned",
+      ...getPlayerHuskNumberVocab(7),
+    ],
     initialDescription:
       "There seems to be some kind of small burned husk or something just to the side of the toilet.",
     description:
-      "It’s a small metallic shell shaped vaguely like a spider or beetle, all segmented limbs and a rounded abdomen. The back has split open, exposing an olive-sized cavity smeared with greasy, burned residue.",
+      `It’s a small metallic shell shaped vaguely like a spider or beetle, all segmented limbs and a rounded abdomen. The back has split open, exposing an olive-sized cavity smeared with greasy, burned residue. ${getPlayerHuskPlateDescription(7)}`,
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -537,6 +549,9 @@ export const levelTwoItems: Item[] = [
     isReadable: false,
     isContainer: false,
     doses: 0,
+    meta: {
+      playerHusk: createPlayerHuskMeta(7),
+    },
     overrides: {
       smell:
         "It gives off a faint musty scent under the overwhelming burn-smell, like old machine oil and overheated wiring.",

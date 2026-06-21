@@ -1,4 +1,9 @@
 import { getFlashlightSettings } from "@game/helpers/flashlightHelpers";
+import {
+  createPlayerHuskMeta,
+  getPlayerHuskNumberVocab,
+  getPlayerHuskPlateDescription,
+} from "@game/helpers/playerHuskHelpers";
 import type { Item } from "../../game/types/itemTypes";
 import {
   removeDeepStorageSuit,
@@ -101,11 +106,18 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     id: "seed",
     name: "spider-like shell",
     location: "StairWellSeven",
-    vocab: ["spider", "shell", "spider-like", "bug"],
+    vocab: [
+      "spider",
+      "shell",
+      "spider-like",
+      "bug",
+      "husk",
+      ...getPlayerHuskNumberVocab(8),
+    ],
     initialDescription:
       "There's some sort of large bug or spider on the floor near the body, laying on its back with its many legs curled inward.",
     description:
-      "It’s a small metallic shell shaped vaguely like a spider, with segmented limbs arranged around a rounded abdomen. The abdomen has split open along a perfect seam, exposing an olive-sized cavity smeared with greasy residue.",
+      `It’s a small metallic shell shaped vaguely like a spider, with segmented limbs arranged around a rounded abdomen. The abdomen has split open along a perfect seam, exposing an olive-sized cavity smeared with greasy residue. ${getPlayerHuskPlateDescription(8)}`,
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -114,6 +126,9 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     isReadable: false,
     isContainer: false,
     doses: 0,
+    meta: {
+      playerHusk: createPlayerHuskMeta(8),
+    },
     overrides: {
       smell: "It has a faint organic smell, but you can't place it.",
       taste:

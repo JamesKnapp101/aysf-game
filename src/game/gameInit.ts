@@ -477,6 +477,7 @@ export const createInitialState = (world: World): GameState => {
         attachedTo: "none",
       },
       playerDeaths: {},
+      playerHuskCount: 8,
       syndromeX: {
         organismAwakened: false,
       },
