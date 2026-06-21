@@ -23,6 +23,7 @@ import {
 import { movieTheaterScriptedEvents } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterEvents";
 import { threeWestScriptedEvents } from "src/world/maps/levelThree/LivingQuarters/threeWestRevamp";
 import { greenhouseScriptedEvents } from "src/world/maps/levelFour/Greenhouse";
+import { levelFiveScriptedEvents } from "src/world/maps/levelFive/levelFiveEvents";
 
 function runParkEastPowerKeySnatch(state: Parameters<ScriptedEvent["run"]>[0]) {
   let next = triggerParkEastPowerKeySnatch(state);
@@ -37,6 +38,7 @@ export const SCRIPTED_EVENTS: ScriptedEvent[] = [
   ...greenhouseScriptedEvents,
   ...movieTheaterScriptedEvents,
   ...threeWestScriptedEvents,
+  ...levelFiveScriptedEvents,
   {
     id: "barbot_saw_cellar_entry",
     once: false,

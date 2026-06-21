@@ -348,6 +348,10 @@ export async function handleCommand(
           .join("\n\n");
       }
 
+      if (movementRule?.kind === "redirect") {
+        destinationRoomId = movementRule.destinationRoomId;
+      }
+
       const stateBeforeMove = movementRule?.state ?? state;
 
       let next = movePlayerToRoom(stateBeforeMove, destinationRoomId, {

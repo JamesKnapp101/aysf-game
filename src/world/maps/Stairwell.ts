@@ -87,15 +87,13 @@ export const STAIRWELL: WorldChunk = {
       name: "Stairs Level Five",
       description: "",
       describe: (state) => {
-        let desc = `This is the stair landing for the fifth floor, where a set of emergency lights cast the stairwell in a dim glow that flickers every so often. There is a door to the west with the word 'REACTOR PLATFORM' printed on it, and mounted over it is a plastic sign labeled '5'. There is a badge scanner mounted next to the door with a violet strip, but it appears to have been damaged, scorched around the edges and hanging from wires at an odd angle. The door is wide open, `;
-        const levelFiveStairAccessLit =
-          state.worldState.darkRooms["LevelFiveStairAccess"] === true;
-        if (levelFiveStairAccessLit) {
-          desc += `revealing only darkness beyond, and you can hear something moving in there, even if you can't see it. Whatever is there shifts unnaturally, and seems to gravitate toward you whenever you move, as if it were pressed right to the edge of the light. `;
-        } else {
-          desc += `revealing a lit elevator lobby on the other side.`;
-        }
-        return (desc += `\n\nThe stairs, flanked by a metal railing, continue up and down.`);
+        const levelFiveLightsOn =
+          state.worldState.powerRestoredSections["lights-level-five"];
+        const lobbyLight = levelFiveLightsOn
+          ? "the lit elevator lobby beyond"
+          : "the dim elevator lobby beyond, illuminated mostly by light leaking through from the stairwell";
+
+        return `This is the stair landing for the fifth floor, where emergency lights flicker over the walls. To the west is a slate-gray security door marked 'ENGINEERING' beneath a plastic sign labeled '5'. Its violet-striped badge reader is scorched and hanging from exposed wires, while the door itself is buckled and stuck mostly open, revealing ${lobbyLight}.\n\nThe stairs, flanked by a metal railing, continue up and down.`;
       },
       exits: [
         { direction: "up", toRoomId: "StairFour" },
@@ -183,6 +181,7 @@ export const STAIRWELL: WorldChunk = {
     {
       id: "LevelFiveStairAccess",
       name: "Level Five Stair Access",
+      ambientLightLevel: "dim",
       description:
         "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. The elevator doors are hanging open, allowing entry to the elevator car beyond which is stuck at this floor. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
       exits: [

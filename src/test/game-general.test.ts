@@ -20,6 +20,7 @@ import {
   SYNDROME_X_SIGNAL_TRANSCRIPT_NOTE,
 } from "@game/text/secretOrganismMessage";
 import { buildRoomDescription } from "@game/text/roomDescription";
+import { getRoomVisualLightLevel } from "@game/helpers/visibilityHelpers";
 import { describe, expect, it } from "vitest";
 import { AQUARIUM_BREATHER_ITEM_ID } from "src/world/Items/creatures/octopus";
 import { INITIAL_WORLD } from "src/world/World";
@@ -552,6 +553,9 @@ describe("General gameplay", () => {
     });
 
     expect(description).toBe("It's pitch black in here, you can't see a thing.");
+    expect(getRoomVisualLightLevel(state, state.player.roomId)).toBe(
+      "very-dim",
+    );
   });
 
   it("inserts scenery descriptions in their configured order", async () => {

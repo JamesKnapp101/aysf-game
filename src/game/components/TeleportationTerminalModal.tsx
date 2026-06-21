@@ -75,7 +75,7 @@ const RINGS: RingConfig[] = [
     label: "UTILITIES",
     sectionKey: "teleport-pads-violet",
     ringColor: "#b15cff",
-    destinations: ["MainReactorPlatform", "MaintenanceDuct"],
+    destinations: ["ReactorPlatform"],
   },
   {
     id: "zoological",
@@ -102,8 +102,7 @@ const destinationLabelMap = {
   Bridge: "Command Portal",
   PowerGrid: "Power Station",
   RemotePowerStation: "Remote Power Station",
-  MainReactorPlatform: "Main Platform",
-  MaintenanceDuct: "Maintenance",
+  ReactorPlatform: "Reactor Platform",
   VeterinaryCenter: "Veterinary Center",
   OuterRingSouth: "Aviary",
   CryoLab: "Deep Lab",

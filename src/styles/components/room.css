@@ -44,7 +44,7 @@
     color: color-mix(in srgb, var(--crt-color) 60%, black);
 }
 
-.game-room-panel[data-room-is-dark="false"][data-room-light-level="very-dim"] .game-room-inner {
+.game-room-panel[data-room-light-level="very-dim"] .game-room-inner {
     background:
         linear-gradient(rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.4)),
         var(--crt-panel-surface);
@@ -54,7 +54,7 @@
     animation: room-very-dim-light-flicker 6.8s steps(1, end) infinite;
 }
 
-.game-room-panel[data-room-is-dark="false"][data-room-light-level="very-dim"] .game-room-text {
+.game-room-panel[data-room-light-level="very-dim"] .game-room-text {
     color: color-mix(in srgb, var(--crt-color) 45%, black);
     text-shadow: 0 0 4px rgb(var(--crt-color-rgb) / 0.12);
 }

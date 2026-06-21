@@ -969,7 +969,7 @@ describe("Doors and level mechanics", () => {
     );
   });
 
-  it("lets the level five organism move through engineering and kill in darkness", async () => {
+  it("keeps the level five organism at the edge of the lit engineering corridor", async () => {
     const start = setInventory(
       createTestState({
         roomId: "EngCorridorOne",
@@ -980,15 +980,18 @@ describe("Doors and level mechanics", () => {
 
     const afterStalk = advanceTurn(start);
 
-    expect(afterStalk.itemState.itemRoomId.organism6).toBe("EngCorridorOne");
+    expect(["ShuttleBay", "InsideShuttle"]).toContain(
+      afterStalk.itemState.itemRoomId.organism6,
+    );
     expect(afterStalk.worldState.playerDeaths.EngCorridorOne).toBeUndefined();
 
     const afterAttack = advanceTurn(afterStalk);
 
-    expect(afterAttack.player.roomId).not.toBe("EngCorridorOne");
-    expect(afterAttack.worldState.playerDeaths.EngCorridorOne?.cause).toBe(
-      "organism",
+    expect(afterAttack.player.roomId).toBe("EngCorridorOne");
+    expect(["ShuttleBay", "InsideShuttle"]).toContain(
+      afterAttack.itemState.itemRoomId.organism6,
     );
+    expect(afterAttack.worldState.playerDeaths.EngCorridorOne).toBeUndefined();
   });
 
   it("opens the warehouse secret door after the robot whistle is blown", async () => {
@@ -1084,11 +1087,13 @@ describe("Doors and level mechanics", () => {
     expect(next.worldState.roomAudioLevel.PowerGrid).toBe(3);
   });
 
-  it("defaults every level five room to dark", async () => {
+  it("defaults level five to dark except for stairwell light spill", async () => {
     const state = createTestState();
 
     for (const room of LEVEL_FIVE.rooms) {
-      expect(state.worldState.darkRooms[room.id]).toBe(true);
+      expect(state.worldState.darkRooms[room.id]).toBe(
+        room.id !== "EngCorridorOne",
+      );
     }
   });
 

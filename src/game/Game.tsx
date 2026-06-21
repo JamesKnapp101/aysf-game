@@ -15,6 +15,10 @@ import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
 import { SyndromeXSignalOverlay } from "./components/SyndromeXSignalOverlay";
 import { isPlayerUnderwater } from "./helpers/environmentHelpers";
 import { isAnyFlashlightOn } from "./helpers/flashlightHelpers";
+import {
+  canPlayerSeeInRoom,
+  getRoomVisualLightLevel,
+} from "./helpers/visibilityHelpers";
 import { useGameSession } from "./hooks/useGameSession";
 import { useLayoutPrefs } from "./hooks/useLayoutPrefs";
 import { useWorldChunkHydration } from "./hooks/useWorldChunkHydration";
@@ -261,10 +265,12 @@ export const Game: React.FC = () => {
 
   // Light and Dark
   const roomAmbientLight = !roomIsDark;
-  const roomLightLevel = roomIsDark
-    ? "dark"
-    : (currentRoom?.ambientLightLevel ?? "normal");
-  const playerCanSee = !roomIsDark || nightVisionActive || flashlightOn;
+  const playerCanSee = currentRoom
+    ? canPlayerSeeInRoom(gs, currentRoom.id)
+    : false;
+  const roomLightLevel = currentRoom
+    ? getRoomVisualLightLevel(gs, currentRoom.id)
+    : "normal";
   const playerLightMode =
     roomIsDark && nightVisionActive
       ? "nightvision"

@@ -180,27 +180,30 @@ export const badgeScannerDoors: DoorDefinition[] = [
   {
     id: "EngineeringDoors",
     name: "engineering access door",
-    describe: (state: GameState, ctx: DescriptionContext) => {
+    describe: (_state: GameState, ctx: DescriptionContext) => {
       const description =
         ctx.roomId === "StairFive"
-          ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a violet horizontal stripe across it at eye level. Stenciled across the banner is the word 'ENGINEERING'.`
-          : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
+          ? `It's a slate-gray security door with a violet stripe and the word 'ENGINEERING' stenciled across it. The badge reader is scorched and hanging from its wiring, and the door itself is buckled in its track, stuck mostly open.`
+          : `It's a heavy slate-gray security door buckled in its track. The damaged panels are stuck mostly open, leaving plenty of room to pass through.`;
       return description;
     },
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a violet horizontal stripe across it at eye level. Stenciled across the banner is the word 'ENGINEERING.'",
+      "To the west, the damaged engineering security door is buckled and stuck mostly open. Its violet-striped badge reader hangs uselessly from exposed wires.",
     descriptionFromB:
-      "To the east is a security door leading back to the stairwell.",
-    kind: "badgeScanner",
+      "To the east, the damaged security door is stuck mostly open, revealing the dim stairwell beyond.",
+    kind: "standard",
     vocab: ["door", "security door", "engineering door"],
     connects: {
       roomAId: "StairFive",
       roomBId: "LevelFiveStairAccess",
     },
     directions: { fromA: "west", fromB: "east" },
-    initiallyOpen: false,
-    initiallyLocked: true,
-    badgeItemId: "violetbadge",
-    checkBadgeOnDir: "west",
+    initiallyOpen: true,
+    initiallyLocked: false,
+    beforeClose: (state) => ({
+      state,
+      message:
+        "The warped panels grind a fraction of an inch, then bind hard in their tracks. The damaged door is staying mostly open.",
+    }),
   },
 ];

@@ -21,7 +21,7 @@ export const engineeringOrganismItems: Item[] = [
         `${getRandomOrganismAudioCue(dirFromPlayer)}`,
     },
     description: "You can't see it...",
-    location: "LevelFiveStairAccess",
+    location: "ShuttleBay",
     vocab: ["organism"],
     itemClass: "solid",
     itemWeight: 8,

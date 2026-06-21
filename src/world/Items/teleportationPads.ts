@@ -278,7 +278,7 @@ export const teleportationPadItems: Item[] = [
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     sceneryDescription:
       "In one corner of the room you see a slightly raised violet disk, ringed by a shiny metal band.",
-    location: "MainReactorPlatform",
+    location: "ReactorPlatform",
     vocab: ["violet", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -291,30 +291,6 @@ export const teleportationPadItems: Item[] = [
         section: "teleport-pads-violet",
         ring: "violet",
         order: 2,
-        requires: ["violetbadge", "maroonbadge", "ultravioletbadge"],
-      },
-    },
-  },
-  {
-    id: "VioletTPADMaintenanceDuct",
-    name: "glossy violet disk",
-    description:
-      "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
-    sceneryDescription:
-      "In the corner you see a slightly raised violet disk, made of a hard, glossy material.",
-    location: "MaintenanceDuct",
-    vocab: ["violet", "disk", "pad"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isSurface: true,
-    meta: {
-      onPowered: `The disk emits a soft, serene glow.`,
-      teleport: {
-        section: "teleport-pads-violet",
-        ring: "violet",
-        order: 3,
         requires: ["violetbadge", "maroonbadge", "ultravioletbadge"],
       },
     },

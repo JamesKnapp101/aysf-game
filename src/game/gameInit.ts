@@ -58,6 +58,9 @@ const TRANSMITTER_ANCHOR_ROOM_IDS = [
 
 function deriveTransmitterMeta(world: World) {
   const roomIds = new Set(world.rooms.map((room) => room.id));
+  const excludedRoomIds = world.rooms
+    .filter((room) => room.meta?.excludeFromTransmitterMap === true)
+    .map((room) => room.id);
   const anchorRoomId =
     TRANSMITTER_ANCHOR_ROOM_IDS.find((roomId) => roomIds.has(roomId)) ??
     world.rooms[0]?.id;
@@ -68,6 +71,7 @@ function deriveTransmitterMeta(world: World) {
 
   return deriveRoomCoordMaps(world.rooms, world.doors, anchorRoomId, {
     ignoreIslands: true,
+    excludeRoomIds: excludedRoomIds,
     excludeRoomIdPatterns: TRANSMITTER_COORD_EXCLUDE_PATTERNS,
   });
 }
@@ -263,19 +267,27 @@ export const createInitialState = (world: World): GameState => {
         AviaryMaintenance: true,
         InnerRingSouth: true,
         // Engineering
-        ReactorRoom: true,
-        MainReactorPlatform: true,
-        MaintenanceDuct: true,
-        MaintenanceDuctTwo: true,
-        MaintenanceDuctThree: true,
         ReactorCore: true,
-        EngCorridorOne: true,
+        ReactorControlRoom: true,
+        HeatCoolantExchangePlatform: true,
+        WasteProcessingPlatform: true,
+        LobeStoragePlatform: true,
+        ReadingsPlatform: true,
+        SupplyPlatform: true,
+        MaintenancePlatform: true,
+        ObservationPlatform: true,
+        ReactorPlatform: true,
+        EngCorridorOne: false,
         EngCorridorTwo: true,
-        EngCorridorThree: true,
         ShuttleBay: true,
         InsideShuttle: true,
         Warehouse: true,
-        LevelFiveStairAccess: true,
+        WaterTreatment: true,
+        Intake: true,
+        OzoneGeneratorRoom: true,
+        MembraneHall: true,
+        Reservoir: true,
+        LevelFiveStairAccess: false,
       },
       deepStorage: createInitialDeepStorageState(),
       powerRestoredSections: {

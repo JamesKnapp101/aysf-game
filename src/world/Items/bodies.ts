@@ -580,7 +580,7 @@ export const corpseItems: Item[] = [
     initialDescription: undefined,
     sceneryDescription:
       "A security man lies face down in the duct, one boot missing and both calves shredded and bloodless.",
-    location: "MaintenanceDuctThree",
+    location: "UNPLACED",
     vocab: ["body", "man", "corpse"],
     itemClass: "solid",
     itemCategory: "scenery",

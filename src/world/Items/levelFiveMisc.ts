@@ -1,6 +1,6 @@
 import type { Item } from "../../game/types/itemTypes";
 
-export const levelFiveItems: Item[] = [
+export const levelFiveItems: Item[] = ([
   {
     id: "EngineRoomBulkhead",
     name: "bulkhead doors",
@@ -8,7 +8,7 @@ export const levelFiveItems: Item[] = [
       "A pair of massive, interlocking blast doors seals off the engine core. The metal is warped and buckled as if something hit it from the inside, hard enough to shear the locking braces but not quite enough to tear them free. One door doesn’t fully meet the other, leaving a thin, jagged seam where orange reactor light leaks into the corridor along with a slow, wet hiss of steam. Above the doors, a recessed warning panel glows with the universal radiation symbol, its red halo painting everything in a sickly, emergency-room pall.",
     sceneryDescription:
       "The far wall is dominated by a warped bulkhead, its twin doors welded together by force and heat, bleeding reactor light through a narrow wound in the metal.",
-    location: "EngineRoom",
+    location: "ReactorControlRoom",
     vocab: ["bulkhead", "doors", "door"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -33,7 +33,7 @@ export const levelFiveItems: Item[] = [
       "Up close, the gap between the doors is no wider than the edge of your hand. The light bleeding through it is an ugly, molten orange that feels too bright and too hungry, like staring into a wound that never stops glowing. Steam pulses from the sliver in slow, irritated breaths, carrying a faint metallic tang and the suggestion of burnt insulation.",
     sceneryDescription:
       "A hairline gap splits the warped bulkhead, leaking orange reactor light and a thin vein of steaming air.",
-    location: "EngineRoom",
+    location: "ReactorControlRoom",
     vocab: ["gap", "space"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -58,7 +58,7 @@ export const levelFiveItems: Item[] = [
       "A dense forest of analog gauges, digital readouts, and status LEDs blankets the bulkheads here. Pressure dials swing in lazy arcs, flickering between numbers that mean nothing to you. Bars of neon color climb and fall on vertical displays like heart monitors for dead machines. Some of the screens are cracked, edges spider-webbed and bleeding static. You recognize none of the labels, and the sheer number of indicators only confirms one thing: if something is going catastrophically wrong, you wouldn’t know until it was already too late.",
     sceneryDescription:
       "Banks of monitors and gauges blink and twitch, a wall of incomprehensible telemetry that does absolutely nothing to make you feel safer.",
-    location: "EngineRoom",
+    location: "ReactorControlRoom",
     vocab: ["monitors", "gauges", "equipment"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -76,7 +76,7 @@ export const levelFiveItems: Item[] = [
       "A squat, utilitarian status panel is bolted above the bulkhead doors. The only thing it bothers to show you is a pulsing radiation symbol, lit in deep, angry red. It doesn’t flicker, doesn’t blink out, just burns steadily as if the ship itself is quietly insisting: this is not a safe place to stand.",
     sceneryDescription:
       "A small panel above the doors burns steadily with a red radiation symbol, like an unblinking eye that knows exactly how doomed this space is.",
-    location: "EngineRoom",
+    location: "ReactorControlRoom",
     vocab: ["panel", "radiation", "symbol"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -95,7 +95,7 @@ export const levelFiveItems: Item[] = [
       "A silvery metal receptacle has been set into the wall beside the bulkhead, just below eye level. The slot is shaped for a heavy, specialized key, nothing as mundane as a simple ship’s pass. Two positions are marked with minimalist symbols: a hollow circle and a solid bar. Even without a legend you understand the intent—off and on, sleep and wake, quiet and ignition.",
     sceneryDescription:
       "Beside the doors, a silvery key receptacle waits patiently, marked with a simple circle and bar that promise to change everything if the right key is turned.",
-    location: "EngineRoom",
+    location: "ReactorControlRoom",
     vocab: ["engine", "room", "keyhole", "receptacle", "silvery"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -116,7 +116,7 @@ export const levelFiveItems: Item[] = [
       "A square red button sits recessed in a worn metal plate, its edges polished to a dull shine by nervous fingers over the years. It has that particular look shared by all important hardware: no markings, no explanations, just an implied promise that once you press it, the ship will remember you forever.",
     sceneryDescription:
       "A lone red button waits on a small panel, the sort of control that never exists for anything trivial.",
-    location: "ReactorRoom",
+    location: "ReactorControlRoom",
     vocab: ["square", "red", "button"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -160,7 +160,7 @@ export const levelFiveItems: Item[] = [
     initialDescription: "The disk is glowing with a warm, violet light.",
     sceneryDescription:
       "A small disk in the wall glows with a warm violet light, more mood lighting than warning—though on this ship those lines tend to blur.",
-    location: "ReactorRoom",
+    location: "ReactorControlRoom",
     vocab: ["indicator", "light", "glow", "disk"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -838,4 +838,6 @@ export const levelFiveItems: Item[] = [
       push: "You rest your finger on the green contact. For a heartbeat, nothing happens. Then deep inside the mechanism, something spools up with a rising electronic whine.",
     },
   },
-];
+] satisfies Item[]).filter(
+  (item) => item.location !== "MaintenanceDuctThree",
+);
