@@ -1,6 +1,7 @@
 import { handleGamePreserveTrophySubmission } from "@game/preserve/preserveTrophies";
 import type { RuleResult } from "@game/rules/result";
 import type { GameState } from "@game/types/gameTypes";
+import { handleReactorCargoPut } from "src/world/maps/levelFive/reactorPlatform";
 
 type PutItemEffectContext = {
   hostId: string;
@@ -14,6 +15,7 @@ type PutItemEffectHandler = (
 ) => RuleResult | undefined;
 
 const PUT_ITEM_EFFECT_HANDLERS: PutItemEffectHandler[] = [
+  (state, ctx) => handleReactorCargoPut(state, ctx),
   (state, ctx) => {
     if (ctx.preposition !== "on") return undefined;
     return handleGamePreserveTrophySubmission(state, ctx);

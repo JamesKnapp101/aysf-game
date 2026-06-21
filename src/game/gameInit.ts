@@ -273,6 +273,7 @@ export const createInitialState = (world: World): GameState => {
         WasteProcessingPlatform: true,
         LobeStoragePlatform: true,
         ReadingsPlatform: true,
+        TiltedPlatformPerch: true,
         SupplyPlatform: true,
         MaintenancePlatform: true,
         ObservationPlatform: true,

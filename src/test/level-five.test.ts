@@ -1,13 +1,26 @@
 import { describe, expect, it } from "vitest";
+import { getRoomVisualLightLevel } from "@game/helpers/visibilityHelpers";
 import {
   createTestState,
   getLastLogEntry,
   runCommand,
+  setInventory,
   setPlayerRoom,
 } from "./helpers/gameTestHelpers";
 import { LEVEL_FIVE } from "../world/maps/levelFive/LevelFive";
 import { ENGINEERING_CORRIDOR_FIRST_ENTRY_MESSAGE } from "../world/maps/levelFive/levelFiveEvents";
-import { getTiltingPlatformOrientation } from "../world/maps/levelFive/reactorPlatform";
+import {
+  getPlatformValvePosition,
+  getSmartbellWeight,
+  getTiltingPlatformOrientation,
+  LEFT_SMARTBELL_ID,
+  NORTH_CARGO_CAGE_ID,
+  PLATFORM_PERCH_ROOM_ID,
+  RAFTER_TEST_ITEM_ID,
+  RIGHT_SMARTBELL_ID,
+  setPlatformValvePosition,
+  SOUTH_CARGO_CAGE_ID,
+} from "../world/maps/levelFive/reactorPlatform";
 
 describe("Level Five reactor platforms", () => {
   it("uses the revised two-level map without the retired maintenance ducts", () => {
@@ -43,6 +56,12 @@ describe("Level Five reactor platforms", () => {
     expect(start.worldState.darkRooms.EngCorridorOne).toBe(false);
     expect(lobby?.ambientLightLevel).toBe("dim");
     expect(corridor?.ambientLightLevel).toBe("very-dim");
+    expect(getRoomVisualLightLevel(start, "LevelFiveStairAccess")).toBe(
+      "dim",
+    );
+    expect(getRoomVisualLightLevel(start, "EngCorridorOne")).toBe(
+      "very-dim",
+    );
 
     const entered = await runCommand(start, "west");
     expect(entered.log.join("\n\n")).toContain(
@@ -60,62 +79,248 @@ describe("Level Five reactor platforms", () => {
     ).toHaveLength(1);
   });
 
-  it("drops each upper approach onto its corresponding lower platform", async () => {
-    const fromSupply = await runCommand(
+  it("removes the stairwell spill effects when lights or a flashlight are on", async () => {
+    const base = createTestState({ roomId: "LevelFiveStairAccess" });
+    const powered = {
+      ...base,
+      worldState: {
+        ...base.worldState,
+        powerRestoredSections: {
+          ...base.worldState.powerRestoredSections,
+          ["lights-level-five"]: true,
+        },
+      },
+    };
+
+    expect(getRoomVisualLightLevel(powered, "LevelFiveStairAccess")).toBe(
+      "normal",
+    );
+    expect(getRoomVisualLightLevel(powered, "EngCorridorOne")).toBe(
+      "normal",
+    );
+
+    const carryingFlashlight = setInventory(base, ["flashlight"]);
+    const flashlightOn = await runCommand(
+      carryingFlashlight,
+      "turn on flashlight",
+    );
+
+    expect(
+      getRoomVisualLightLevel(flashlightOn, "LevelFiveStairAccess"),
+    ).toBe("normal");
+    expect(getRoomVisualLightLevel(flashlightOn, "EngCorridorOne")).toBe(
+      "normal",
+    );
+  });
+
+  it("reveals the broken hydraulics and initializes the valve at C", async () => {
+    const start = createTestState({ roomId: "MaintenancePlatform" });
+
+    expect(getPlatformValvePosition(start)).toBe("C");
+
+    const hidden = await runCommand(start, "set valve to a");
+    expect(getLastLogEntry(hidden)).toContain("nothing to set");
+
+    const opened = await runCommand(hidden, "open panel");
+    expect(getLastLogEntry(opened)).toContain("pressure gauge");
+
+    const setToA = await runCommand(opened, "set valve to a");
+    expect(getPlatformValvePosition(setToA)).toBe("A");
+    expect(getLastLogEntry(setToA)).toContain("clunks and hisses");
+  });
+
+  it("keeps the platform level at C and permits an upper crossing", async () => {
+    const crossed = await runCommand(
       createTestState({ roomId: "SupplyPlatform" }),
       "south",
     );
 
+    expect(crossed.player.roomId).toBe("ObservationPlatform");
+    expect(getTiltingPlatformOrientation(crossed)).toBe("level");
+    expect(getLastLogEntry(crossed)).toContain("remains level");
+  });
+
+  it("uses A and B for directional player dumps, then springs level", async () => {
+    const fromSupply = await runCommand(
+      setPlatformValvePosition(
+        createTestState({ roomId: "SupplyPlatform" }),
+        "A",
+      ),
+      "south",
+    );
+
     expect(fromSupply.player.roomId).toBe("WasteProcessingPlatform");
-    expect(getTiltingPlatformOrientation(fromSupply)).toBe("supply-side");
+    expect(getTiltingPlatformOrientation(fromSupply)).toBe("level");
     expect(getLastLogEntry(fromSupply)).toContain("tumble onto the Waste");
+    expect(getLastLogEntry(fromSupply)).toContain("settles level again");
 
     const fromObservation = await runCommand(
-      setPlayerRoom(fromSupply, "ObservationPlatform"),
+      setPlatformValvePosition(
+        setPlayerRoom(fromSupply, "ObservationPlatform"),
+        "B",
+      ),
       "north",
     );
 
     expect(fromObservation.player.roomId).toBe(
       "HeatCoolantExchangePlatform",
     );
-    expect(getTiltingPlatformOrientation(fromObservation)).toBe(
-      "observation-side",
-    );
+    expect(getTiltingPlatformOrientation(fromObservation)).toBe("level");
     expect(getLastLogEntry(fromObservation)).toContain(
       "Heat/Coolant Exchange Platform",
     );
   });
 
-  it("blocks the raised or near-tilted lower edge and permits the downhill crossing", async () => {
+  it("warns that light cargo in the opposite cage is not enough", async () => {
+    let state = setPlatformValvePosition(
+      createTestState({ roomId: "ObservationPlatform" }),
+      "A",
+    );
+    state = await runCommand(state, "put left dumbbell in south cage");
+    state = setPlayerRoom(state, "SupplyPlatform");
+
+    const fallen = await runCommand(state, "south");
+
+    expect(fallen.player.roomId).toBe("WasteProcessingPlatform");
+    expect(getLastLogEntry(fallen)).toContain(
+      "items you put in the opposite cargo cage might slow the descent",
+    );
+  });
+
+  it("drops a heavy held Smartbell first and resets it before pickup", async () => {
+    const start = createTestState({ roomId: "MaintenancePlatform" });
+    expect(start.player.inventory.general).toEqual(
+      expect.arrayContaining([RIGHT_SMARTBELL_ID, LEFT_SMARTBELL_ID]),
+    );
+    const madeHeavy = await runCommand(start, "set right dumbbell to 86");
+
+    expect(madeHeavy.player.inventory.general).not.toContain(
+      RIGHT_SMARTBELL_ID,
+    );
+    expect(madeHeavy.itemState.itemRoomId[RIGHT_SMARTBELL_ID]).toBe(
+      "MaintenancePlatform",
+    );
+    expect(getSmartbellWeight(madeHeavy, RIGHT_SMARTBELL_ID)).toBe(86);
+    expect(getLastLogEntry(madeHeavy)).toContain("put the right Smartbell");
+
+    const pickedUp = await runCommand(madeHeavy, "take right dumbbell");
+    expect(pickedUp.player.inventory.general).toContain(RIGHT_SMARTBELL_ID);
+    expect(getSmartbellWeight(pickedUp, RIGHT_SMARTBELL_ID)).toBe(1);
+    expect(getLastLogEntry(pickedUp)).toContain(
+      "dial the weight down to 1 before picking it up",
+    );
+  });
+
+  it("lets 45 kilograms tilt the platform and blocks both upper approaches", async () => {
+    let state = setPlatformValvePosition(
+      createTestState({ roomId: "SupplyPlatform" }),
+      "A",
+    );
+    state = await runCommand(state, "put right dumbbell in north cage");
+    state = await runCommand(state, "set right dumbbell to 45");
+
+    expect(getTiltingPlatformOrientation(state)).toBe("north");
+    expect(state.itemState.itemRoomId[NORTH_CARGO_CAGE_ID]).toBe(
+      "WasteProcessingPlatform",
+    );
+
+    const adjustedFromBelow = await runCommand(
+      setPlayerRoom(state, "WasteProcessingPlatform"),
+      "set right dumbbell to 44",
+    );
+    expect(getSmartbellWeight(adjustedFromBelow, RIGHT_SMARTBELL_ID)).toBe(44);
+    expect(getTiltingPlatformOrientation(adjustedFromBelow)).toBe("level");
+
+    const blockedNorth = await runCommand(state, "south");
+    expect(blockedNorth.player.roomId).toBe("SupplyPlatform");
+    expect(getLastLogEntry(blockedNorth)).toContain("twenty feet below");
+
+    const blockedSouth = await runCommand(
+      setPlayerRoom(state, "ObservationPlatform"),
+      "north",
+    );
+    expect(blockedSouth.player.roomId).toBe("ObservationPlatform");
+    expect(getLastLogEntry(blockedSouth)).toContain("too high");
+  });
+
+  it("keeps equal heavy cages level but tips when one reaches twice the other", async () => {
+    let state = createTestState({ roomId: "ObservationPlatform" });
+    state = await runCommand(state, "put left dumbbell in south cage");
+    state = await runCommand(state, "set left dumbbell to 86");
+    state = setPlayerRoom(state, "SupplyPlatform");
+    state = await runCommand(state, "put right dumbbell in north cage");
+    state = await runCommand(state, "set right dumbbell to 86");
+    state = setPlatformValvePosition(state, "A");
+
+    expect(getTiltingPlatformOrientation(state)).toBe("level");
+
+    state = await runCommand(state, "set right dumbbell to 172");
+    expect(getTiltingPlatformOrientation(state)).toBe("north");
+  });
+
+  it("puts the lowered cargo cage in scope when the platform tilts toward a lower landing", async () => {
+    let state = setPlatformValvePosition(
+      createTestState({ roomId: "ObservationPlatform" }),
+      "B",
+    );
+    state = await runCommand(state, "put left dumbbell in south cage");
+    state = await runCommand(state, "set left dumbbell to 45");
+
+    expect(getTiltingPlatformOrientation(state)).toBe("south");
+    expect(state.itemState.itemRoomId[SOUTH_CARGO_CAGE_ID]).toBe(
+      "HeatCoolantExchangePlatform",
+    );
+
+    const adjustedFromBelow = await runCommand(
+      setPlayerRoom(state, "HeatCoolantExchangePlatform"),
+      "set left dumbbell to 44",
+    );
+    expect(getSmartbellWeight(adjustedFromBelow, LEFT_SMARTBELL_ID)).toBe(44);
+    expect(getTiltingPlatformOrientation(adjustedFromBelow)).toBe("level");
+  });
+
+  it("supports the staged counterweight solution and reaches the rafters", async () => {
+    let state = setPlatformValvePosition(
+      createTestState({ roomId: "ObservationPlatform" }),
+      "A",
+    );
+    const unreachable = await runCommand(state, "take test item");
+    expect(unreachable.player.inventory.general).not.toContain(
+      RAFTER_TEST_ITEM_ID,
+    );
+    expect(getLastLogEntry(unreachable)).toContain("far too high");
+
+    state = await runCommand(state, "put left dumbbell in south cage");
+    state = await runCommand(state, "set left dumbbell to 86");
+    state = setPlayerRoom(state, "SupplyPlatform");
+    state = await runCommand(state, "put right dumbbell in north cage");
+    state = await runCommand(state, "set right dumbbell to 86");
+
+    expect(getTiltingPlatformOrientation(state)).toBe("level");
+
+    state = setPlayerRoom(state, "ObservationPlatform");
+    const elevated = await runCommand(state, "set left dumbbell to 1");
+
+    expect(elevated.player.roomId).toBe(PLATFORM_PERCH_ROOM_ID);
+    expect(getTiltingPlatformOrientation(elevated)).toBe("north");
+    expect(getLastLogEntry(elevated)).toContain("ride it upward");
+
+    const withTestItem = await runCommand(elevated, "take dummy test item");
+    expect(withTestItem.player.inventory.general).toContain(
+      RAFTER_TEST_ITEM_ID,
+    );
+
+    const descended = await runCommand(withTestItem, "down");
+    expect(descended.player.roomId).toBe("WasteProcessingPlatform");
+    expect(getLastLogEntry(descended)).toContain("slide down");
+  });
+
+  it("keeps the lower shaft blocked while the platform is level", async () => {
     const raised = await runCommand(
       createTestState({ roomId: "WasteProcessingPlatform" }),
       "south",
     );
     expect(raised.player.roomId).toBe("WasteProcessingPlatform");
     expect(getLastLogEntry(raised)).toContain("still raised");
-
-    const tippedToSupply = await runCommand(
-      createTestState({ roomId: "SupplyPlatform" }),
-      "south",
-    );
-    const tooSteep = await runCommand(tippedToSupply, "south");
-    expect(tooSteep.player.roomId).toBe("WasteProcessingPlatform");
-    expect(getLastLogEntry(tooSteep)).toContain("too steep to climb");
-
-    const tippedToObservation = await runCommand(
-      setPlayerRoom(tippedToSupply, "ObservationPlatform"),
-      "north",
-    );
-    const crossed = await runCommand(
-      setPlayerRoom(tippedToObservation, "WasteProcessingPlatform"),
-      "south",
-    );
-    expect(crossed.player.roomId).toBe("HeatCoolantExchangePlatform");
-
-    const blockedReturn = await runCommand(crossed, "north");
-    expect(blockedReturn.player.roomId).toBe(
-      "HeatCoolantExchangePlatform",
-    );
-    expect(getLastLogEntry(blockedReturn)).toContain("too steep to climb");
   });
 });

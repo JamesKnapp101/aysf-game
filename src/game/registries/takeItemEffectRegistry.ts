@@ -8,6 +8,7 @@ import {
   AQUARIUM_GOAL_ITEM_ID,
   triggerAquariumReturnChoke,
 } from "src/world/Items/creatures/octopus";
+import { handleReactorSmartbellTaken } from "src/world/maps/levelFive/reactorPlatform";
 
 type TakeItemEffectContext = {
   fromRoomId: string;
@@ -26,6 +27,7 @@ type TakeItemEffectHandler = (
 ) => TakeItemEffectResult | undefined;
 
 const TAKE_ITEM_EFFECT_HANDLERS: TakeItemEffectHandler[] = [
+  (state, item) => handleReactorSmartbellTaken(state, item),
   (state, item) => {
     if (item.id !== AQUARIUM_GOAL_ITEM_ID) return undefined;
 

@@ -39,5 +39,9 @@ export function getRoomVisualLightLevel(
   }
 
   if (isDark) return "dark";
-  return room.ambientLightLevel ?? "normal";
+  return (
+    room.resolveAmbientLightLevel?.(state, room) ??
+    room.ambientLightLevel ??
+    "normal"
+  );
 }

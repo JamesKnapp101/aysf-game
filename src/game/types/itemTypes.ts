@@ -198,7 +198,9 @@ export type ItemSettings =
   | { kind: "game-whistle"; mode: PreserveActorId }
   | { angle: number; kind: "gym-treadmill"; speed: number }
   | { currentViewIndex: number; kind: "camera-gun-viewer" }
-  | { hasLink: boolean; isOn: boolean; kind: "comet-viewer" };
+  | { hasLink: boolean; isOn: boolean; kind: "comet-viewer" }
+  | { kind: "platform-valve"; position: "A" | "B" | "C" }
+  | { kind: "smartbell"; weightKg: number };
 
 export type PlayerClothes = {
   body: ItemId | undefined;

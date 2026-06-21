@@ -37,6 +37,10 @@ export interface Exit {
 
 export interface Room {
   ambientLightLevel?: AmbientRoomLightLevel;
+  resolveAmbientLightLevel?: (
+    state: GameState,
+    room: Room,
+  ) => AmbientRoomLightLevel;
   description: string;
   descriptionShort?: string;
   describe?: (state: GameState, room: Room, ctx: DescriptionContext) => string;

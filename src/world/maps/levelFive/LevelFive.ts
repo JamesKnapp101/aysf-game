@@ -2,11 +2,20 @@ import { engineeringOrganismItems } from "src/world/Items/creatures/engineeringO
 import type { WorldChunk } from "../../../game/types/gameTypes";
 import { levelFiveDoors } from "../../doors/levelFiveDoors";
 import { levelFiveItems } from "../../Items/levelFiveMisc";
-import { describeTiltingPlatform } from "./reactorPlatform";
+import {
+  describeTiltingPlatform,
+  PLATFORM_PERCH_ROOM_ID,
+  reactorPlatformItems,
+} from "./reactorPlatform";
 import { waterTreatmentRooms } from "./WaterTreatment";
+import { resolveLevelFiveSpillLight } from "./levelFiveLighting";
 
 export const LEVEL_FIVE: WorldChunk = {
-  items: [...levelFiveItems, ...engineeringOrganismItems],
+  items: [
+    ...levelFiveItems,
+    ...engineeringOrganismItems,
+    ...reactorPlatformItems,
+  ],
   doors: [...levelFiveDoors],
   teleportPads: [],
   rooms: [
@@ -78,6 +87,14 @@ export const LEVEL_FIVE: WorldChunk = {
       exits: [{ direction: "north", toRoomId: "LobeStoragePlatform" }],
     },
     {
+      id: PLATFORM_PERCH_ROOM_ID,
+      name: "Atop the Tilted Platform",
+      description:
+        "You are perched near the raised edge of the damaged hydraulic platform, level with the overhead scaffolding. The deck drops away at a severe angle beneath you, leaving down as the only safe route off.",
+      meta: { excludeFromTransmitterMap: true },
+      exits: [{ direction: "down", toRoomId: "WasteProcessingPlatform" }],
+    },
+    {
       id: "SupplyPlatform",
       name: "Supply Platform",
       description:
@@ -127,6 +144,8 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "EngCorridorOne",
       name: "Engineering Corridor One",
       ambientLightLevel: "very-dim",
+      resolveAmbientLightLevel: (state) =>
+        resolveLevelFiveSpillLight(state, "very-dim"),
       description:
         "This is the main corridor leading into the engineering section. It forms an 'L' here and bends south, and also heads back to the east. Only a faint wash of light reaches in from the stairwell.",
       exits: [
