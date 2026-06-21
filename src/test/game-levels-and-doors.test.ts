@@ -957,12 +957,11 @@ describe("Doors and level mechanics", () => {
       createTestState({
         roomId: "LivingQuartersThreeWest",
         visitedRooms: ["LivingQuartersThreeWest", "LevelThreeCorridorThree"],
-        rng: () => 1,
       }),
       [],
     );
 
-    const next = advanceTurn(start);
+    const next = await runCommand(start, "close front door");
 
     expect(next.player.roomId).not.toBe("LivingQuartersThreeWest");
     expect(next.worldState.playerDeaths.LivingQuartersThreeWest?.cause).toBe(

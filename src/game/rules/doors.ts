@@ -199,9 +199,19 @@ export function tryOpenDoor(
   nextState = upsertDoorState(nextState, nextDoorState);
 
   const openVerb = doorDef.openVerb ?? "opens";
+  const defaultMessage = `The ${doorDef.name.toLowerCase()} ${openVerb}.`;
+  const afterOpen = doorDef.afterOpen?.(nextState, nextDoorState);
+
+  if (afterOpen) {
+    return {
+      state: afterOpen.state,
+      message: afterOpen.message ?? defaultMessage,
+    };
+  }
+
   return {
     state: nextState,
-    message: `The ${doorDef.name.toLowerCase()} ${openVerb}.`,
+    message: defaultMessage,
   };
 }
 
@@ -214,12 +224,29 @@ export function tryCloseDoor(
     return { state, message: "It's already closed." };
   }
 
+  const beforeClose = doorDef.beforeClose?.(state, doorState);
+  if (beforeClose) {
+    return {
+      state: beforeClose.state,
+      message: beforeClose.message ?? "You leave the door open.",
+    };
+  }
+
   const nextDoorState: DoorState = { ...doorState, isOpen: false };
   const nextState = upsertDoorState(state, nextDoorState);
   const closeVerb = doorDef.closeVerb ?? "closes";
+  const defaultMessage = `The ${doorDef.name.toLowerCase()} ${closeVerb}.`;
+  const afterClose = doorDef.afterClose?.(nextState, nextDoorState);
+
+  if (afterClose) {
+    return {
+      state: afterClose.state,
+      message: afterClose.message ?? defaultMessage,
+    };
+  }
 
   return {
     state: nextState,
-    message: `The ${doorDef.name.toLowerCase()} ${closeVerb}.`,
+    message: defaultMessage,
   };
 }

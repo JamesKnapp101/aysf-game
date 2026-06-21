@@ -242,9 +242,9 @@ export const createInitialState = (world: World): GameState => {
       },
       doors,
       darkRooms: {
-        LivingQuartersThreeWest: true,
+        LivingQuartersThreeWest: false,
         ThreeWestBath: true,
-        ThreeWestBed: true,
+        ThreeWestBed: false,
         BarBasement: true,
         // Aviary rooms
         OuterRingNorth: true,

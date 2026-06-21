@@ -1,4 +1,15 @@
 import type { DoorDefinition } from "../../game/types/doorTypes";
+import {
+  afterThreeWestBedroomDoorClose,
+  afterThreeWestBedroomDoorOpen,
+  afterThreeWestFrontDoorClose,
+  afterThreeWestFrontDoorOpen,
+  beforeThreeWestBathroomClose,
+  describeThreeWestBathroomDoor,
+  describeThreeWestBathroomDoorway,
+  describeThreeWestBedroomDoorway,
+  THREE_WEST_BEDROOM_DOOR_ID,
+} from "../maps/levelThree/LivingQuarters/threeWestRevamp";
 
 export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
   // CUBBY 'DOOR'
@@ -167,20 +178,30 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
       "To the west is a door affixed with a neat black plastic label indicating '3CW'. A strip of yellow and black tape has been stretched across the western door.",
     descriptionFromB: "To the east is the unit's front door.",
     kind: "standard",
-    vocab: ["west door", "door 3cw"],
+    vocab: [
+      "door",
+      "front door",
+      "apartment door",
+      "living quarters door",
+      "west door",
+      "door 3cw",
+    ],
     connects: {
       roomAId: "LevelThreeCorridorThree",
       roomBId: "LivingQuartersThreeWest",
     },
     directions: { fromA: "west", fromB: "east" },
-    initiallyOpen: false,
+    initiallyOpen: true,
     initiallyLocked: false,
+    afterClose: afterThreeWestFrontDoorClose,
+    afterOpen: afterThreeWestFrontDoorOpen,
   },
   {
     id: "ThreeWestBDoor",
     name: "bathroom door",
-    descriptionFromA: "To the south is a wooden door.",
-    descriptionFromB: "The bathroom door is to the north.",
+    describe: describeThreeWestBathroomDoor,
+    describeFromA: describeThreeWestBathroomDoorway,
+    describeFromB: describeThreeWestBathroomDoorway,
     kind: "standard",
     vocab: ["bathroom door"],
     connects: {
@@ -188,8 +209,26 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
       roomBId: "ThreeWestBath",
     },
     directions: { fromA: "south", fromB: "north" },
-    initiallyOpen: false,
+    initiallyOpen: true,
     initiallyLocked: false,
+    beforeClose: beforeThreeWestBathroomClose,
+  },
+  {
+    id: THREE_WEST_BEDROOM_DOOR_ID,
+    name: "bedroom door",
+    describeFromA: describeThreeWestBedroomDoorway,
+    describeFromB: describeThreeWestBedroomDoorway,
+    kind: "standard",
+    vocab: ["bedroom door"],
+    connects: {
+      roomAId: "LivingQuartersThreeWest",
+      roomBId: "ThreeWestBed",
+    },
+    directions: { fromA: "west", fromB: "east" },
+    initiallyOpen: true,
+    initiallyLocked: false,
+    afterClose: afterThreeWestBedroomDoorClose,
+    afterOpen: afterThreeWestBedroomDoorOpen,
   },
   {
     id: "ThreeEastBDoor",

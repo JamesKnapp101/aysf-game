@@ -156,6 +156,29 @@ type HandleCommandOptions = {
   skipEcho?: boolean;
 };
 
+function getAppendedLogEntries(
+  previous: string[],
+  current: string[],
+): string[] {
+  const maxOverlap = Math.min(previous.length, current.length);
+
+  for (let overlap = maxOverlap; overlap >= 0; overlap -= 1) {
+    const previousStart = previous.length - overlap;
+    let matches = true;
+
+    for (let index = 0; index < overlap; index += 1) {
+      if (previous[previousStart + index] !== current[index]) {
+        matches = false;
+        break;
+      }
+    }
+
+    if (matches) return current.slice(overlap);
+  }
+
+  return current;
+}
+
 export async function handleCommand(
   state: GameState,
   cmd: ParsedCommand,
@@ -515,9 +538,33 @@ export async function handleCommand(
     };
   }
 
+  let immediateLogEntries = getAppendedLogEntries(state.log, nextState.log);
+  if (immediateLogEntries.length > 0) {
+    nextState = { ...nextState, log: state.log };
+  }
+
+  const immediateDeath = immediateLogEntries.some((entry) =>
+    entry.includes(DEATH_MARKER),
+  );
+  const trimmedActionMessage = message.trim();
+  if (
+    immediateDeath &&
+    trimmedActionMessage &&
+    immediateLogEntries.some((entry) =>
+      entry.trimStart().startsWith(trimmedActionMessage),
+    )
+  ) {
+    immediateLogEntries = immediateLogEntries.map((entry) => {
+      const trimmedEntry = entry.trimStart();
+      return trimmedEntry.startsWith(trimmedActionMessage)
+        ? trimmedEntry.slice(trimmedActionMessage.length).trimStart()
+        : entry;
+    });
+  }
+
   let tickLogEntries: string[] = [];
   let preRoomTickLogEntries: string[] = [];
-  let diedThisTurn = false;
+  let diedThisTurn = immediateDeath;
   const logBeforeLen = (nextState as any).log?.length ?? 0;
 
   if (consumesTurn) {
@@ -530,7 +577,9 @@ export async function handleCommand(
 
     const logAfter: string[] = (nextState as any).log ?? [];
     tickLogEntries = logAfter.slice(logBeforeLen);
-    diedThisTurn = tickLogEntries.some((entry) => entry.includes(DEATH_MARKER));
+    diedThisTurn ||= tickLogEntries.some((entry) =>
+      entry.includes(DEATH_MARKER),
+    );
     const experienceTickMovedRoom =
       activeExperienceBeforeTurn &&
       nextState.player.roomId !== roomIdBeforeTurn;
@@ -676,6 +725,12 @@ export async function handleCommand(
       nextState,
       finalLogText + (tickLogEntries.length === 0 ? "\n\n" : ""),
     );
+  }
+
+  for (const entry of immediateLogEntries) {
+    if (entry && entry.trim()) {
+      nextState = appendLog(nextState, entry + "\n\n");
+    }
   }
 
   {

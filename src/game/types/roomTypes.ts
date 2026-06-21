@@ -16,6 +16,8 @@ export type Direction =
   | "in"
   | "out";
 
+export type AmbientRoomLightLevel = "normal" | "dim" | "very-dim";
+
 export interface CompassProps {
   exits: Direction[];
 }
@@ -34,6 +36,7 @@ export interface Exit {
 }
 
 export interface Room {
+  ambientLightLevel?: AmbientRoomLightLevel;
   description: string;
   descriptionShort?: string;
   describe?: (state: GameState, room: Room, ctx: DescriptionContext) => string;

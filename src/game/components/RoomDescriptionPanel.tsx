@@ -11,6 +11,7 @@ import { getDisplayedFlashlightStatus } from "../helpers/flashlightHelpers";
 import { useUIEffectsStore } from "../store/store";
 import type { GameState, VisualEffectsMode } from "../types/gameTypes";
 import type { Direction } from "../types/roomTypes";
+import type { AmbientRoomLightLevel } from "../types/roomTypes";
 import { RoomStatusPanel } from "./RoomStatusPanel";
 import {
   buildOrganismDeathTokens,
@@ -34,6 +35,7 @@ type RoomDescriptionPanelProps = {
   activeEffects: string;
   roomIsDark: boolean;
   roomAmbientLight: boolean;
+  roomLightLevel?: AmbientRoomLightLevel | "dark";
   playerCanSee: boolean;
   playerLightMode: string;
   flashlightOn: string;
@@ -53,6 +55,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   activeEffects,
   roomIsDark,
   roomAmbientLight,
+  roomLightLevel = "normal",
   playerCanSee,
   playerLightMode,
   flashlightOn,
@@ -357,6 +360,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       data-status={activeEffects}
       data-room-is-dark={roomIsDark}
       data-room-ambient-light={roomAmbientLight}
+      data-room-light-level={roomLightLevel}
       data-player-can-see={playerCanSee}
       data-player-light-mode={playerLightMode}
       data-flashlight-on={flashlightOn}

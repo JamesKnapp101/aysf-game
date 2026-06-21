@@ -542,7 +542,7 @@ describe("General gameplay", () => {
 
   it("shows the dark-room fallback when the player cannot see", async () => {
     const state = setInventory(
-      createTestState({ roomId: "LivingQuartersThreeWest" }),
+      createTestState({ roomId: "ThreeWestBath" }),
       [],
     );
 

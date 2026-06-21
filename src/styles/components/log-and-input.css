@@ -12,6 +12,44 @@
     box-shadow: var(--crt-panel-shadow);
 }
 
+.game-root[data-room-light-level="dim"] .game-log-panel {
+    background:
+        linear-gradient(rgb(0 0 0 / 0.16), rgb(0 0 0 / 0.24)),
+        var(--crt-panel-surface);
+    color: color-mix(in srgb, var(--crt-color) 60%, black);
+    box-shadow:
+        inset 0 0 34px rgb(0 0 0 / 0.34),
+        var(--crt-panel-shadow);
+    animation: room-dim-light-flicker 8.4s steps(1, end) infinite;
+}
+
+.game-root[data-room-light-level="very-dim"] .game-log-panel {
+    background:
+        linear-gradient(rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.4)),
+        var(--crt-panel-surface);
+    color: color-mix(in srgb, var(--crt-color) 45%, black);
+    box-shadow:
+        inset 0 0 52px rgb(0 0 0 / 0.52),
+        var(--crt-panel-shadow);
+    animation: room-very-dim-light-flicker 6.8s steps(1, end) infinite;
+}
+
+.game-root[data-room-light-level="dim"] .game-log-panel .log-room-name {
+    opacity: 0.78;
+}
+
+.game-root[data-room-light-level="very-dim"] .game-log-panel .log-room-name {
+    opacity: 0.62;
+}
+
+.game-root:is(
+        [data-visual-effects="reduced"],
+        [data-visual-effects="off"]
+    )[data-room-light-level]:not([data-room-light-level="normal"])
+    .game-log-panel {
+    animation: none;
+}
+
 .game-log-inner {
     height: 100%;
     min-height: 0;

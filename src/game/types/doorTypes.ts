@@ -2,6 +2,16 @@ import type { GameState } from "@game/types/gameTypes";
 import type { DescriptionContext } from "@game/types/itemTypes";
 import type { Direction } from "./roomTypes";
 
+export type DoorInteractionResult = {
+  message?: string;
+  state: GameState;
+};
+
+export type DoorInteractionHook = (
+  state: GameState,
+  doorState: DoorState,
+) => DoorInteractionResult | undefined;
+
 export type DoorKind =
   | "blocked"
   | "standard"
@@ -11,7 +21,10 @@ export type DoorKind =
   | "scripted";
 
 export interface DoorDefinition {
+  afterClose?: DoorInteractionHook;
+  afterOpen?: DoorInteractionHook;
   badgeItemId?: string;
+  beforeClose?: DoorInteractionHook;
   blockMsg?: string;
   checkBadgeOnDir?: string;
   closeVerb?: string;

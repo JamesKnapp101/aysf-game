@@ -171,7 +171,7 @@ export const LEVEL_THREE: WorldChunk = {
         { direction: "north", toRoomId: "LevelThreeCorridorFour" },
         { direction: "south", toRoomId: "LevelThreeCorridorTwo" },
         { direction: "east", doorId: "DOOR3CE" },
-        { direction: "west", toRoomId: "LivingQuartersThreeWest" },
+        { direction: "west", doorId: "DOOR3CW" },
       ],
     },
     {

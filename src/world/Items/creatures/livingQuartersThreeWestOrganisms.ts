@@ -1,4 +1,5 @@
 import { flashlightOn } from "@game/helpers/gameHelpers";
+import { canPlayerSeeInRoom } from "@game/helpers/visibilityHelpers";
 import { TickContext } from "@game/types/context";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
@@ -24,14 +25,14 @@ export const livingQuartersThreeWestOrganismItems: Item[] = [
     initialDescription: `In one corner of the room sits a strange, glassy black sculpture that resembles a figure on its back, writhing in pain.`,
     describe: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
-      if (flashlightOn(state) && loc === state.player.roomId) {
+      if (loc === state.player.roomId && canPlayerSeeInRoom(state, loc)) {
         return `The limbs are gangly and the head is shriveled, but it definitely looks like a person writhing on their back. The surface of it is covered in fine ripples and grooves.`;
       }
       return `...you can't see it.`;
     },
     describeInitial: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
-      if (flashlightOn(state) && loc === state.player.roomId) {
+      if (loc === state.player.roomId && canPlayerSeeInRoom(state, loc)) {
         return `In one corner of the room sits a strange, glassy black sculpture that resembles a figure on its back, writhing in pain.`;
       }
       return `...you can't see it.`;
@@ -85,14 +86,14 @@ export const livingQuartersThreeWestOrganismItems: Item[] = [
     initialDescription: `Against one wall sits a mannequin made from something black and glassy. It's positioned as if it were seated, leaning back, its right hand curled like it was holding something.`,
     describe: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
-      if (flashlightOn(state) && loc === state.player.roomId) {
+      if (loc === state.player.roomId && canPlayerSeeInRoom(state, loc)) {
         return `It gives the impression of a misshapen figure seated at an invisible table, and the right hand is positioned like it was holding something that's since been removed. The surface of the figure is a network of very fine ridges and valleys.`;
       }
       return `...you can't see it.`;
     },
     describeInitial: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
-      if (flashlightOn(state) && loc === state.player.roomId) {
+      if (loc === state.player.roomId && canPlayerSeeInRoom(state, loc)) {
         return `Against one wall sits a mannequin made from something black and glassy. It's positioned as if it were seated, leaning back, its right hand curled like it was holding something.`;
       }
       return `...you can't see it.`;
@@ -146,14 +147,14 @@ export const livingQuartersThreeWestOrganismItems: Item[] = [
     initialDescription: `On the other side of the room stands a glossy black statue that resembles a pair of legs ending at the waist, leaning forward and running.`,
     describe: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
-      if (flashlightOn(state) && loc === state.player.roomId) {
+      if (loc === state.player.roomId && canPlayerSeeInRoom(state, loc)) {
         return `It looks like a statue that got broken, or was cut, in half. The legs are spindly, and covered in tiny, intricate ripples and folds.`;
       }
       return `...you can't see it.`;
     },
     describeInitial: (state, item) => {
       const loc = state.itemState.itemRoomId?.[item.id] ?? item.location;
-      if (flashlightOn(state) && loc === state.player.roomId) {
+      if (loc === state.player.roomId && canPlayerSeeInRoom(state, loc)) {
         return `On the other side of the room stands a glossy black statue that resembles a pair of legs ending at the waist, leaning forward and running.`;
       }
       return `...you can't see it.`;

@@ -217,7 +217,7 @@ export function triggerPlayerDeath(
     roomId,
   );
 
-  const rebootMessage = `${deathMessage}\n\n\n *** You have died *** \n\n\n...You feel a cold chill over your body as you drift in and out of sleep...why is it so cold? You grope for a blanket, but can't find it. You have a strange, nagging feeling that keeps picking at you, pulling you from the comfort of sleep...you try and remember...\n\nYou open your eyes suddenly and jerk awake, with one of those brief, panicky flashes where you can't remember where you are...you look slowly down at yourself; you're lying sprawled out on the floor, completely naked.  When you sit up, you feel a sharp pain in your neck that triggers a memory...\n\n"I know this...I've done this before," you whisper to yourself.\n\n...but what happened? The last thing you remember...is it possible you somehow survived it? Could you have crawled here? Did someone carry you here? You try and sort it out; this isn't the first time you've woken up like this, but...you can't remember anything before that...nothing at all...`;
+  const rebootMessage = `${deathMessage}\n\n\n *** You have died *** \n\n\n...What feels like an instant later you find yourself laying on your back, disoriented, and suck in a panicked breath. You check yourself frantically but whatever happened, you seem to be all in one piece again now. You stand up and look around.\n`;
 
   next = appendLog(next, rebootMessage);
 

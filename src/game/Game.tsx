@@ -261,6 +261,9 @@ export const Game: React.FC = () => {
 
   // Light and Dark
   const roomAmbientLight = !roomIsDark;
+  const roomLightLevel = roomIsDark
+    ? "dark"
+    : (currentRoom?.ambientLightLevel ?? "normal");
   const playerCanSee = !roomIsDark || nightVisionActive || flashlightOn;
   const playerLightMode =
     roomIsDark && nightVisionActive
@@ -326,6 +329,7 @@ export const Game: React.FC = () => {
             data-visual-effects={visualEffectsMode}
             data-drunkenness={isDrunk?.intensity ?? 0}
             data-room-ambient-light={roomAmbientLight ? "true" : "false"}
+            data-room-light-level={roomLightLevel}
             data-room-is-dark={roomIsDark ? "true" : "false"}
             data-player-can-see={playerCanSee ? "true" : "false"}
             data-player-light-mode={playerLightMode}
@@ -364,6 +368,7 @@ export const Game: React.FC = () => {
               activeEffects={activeEffects.join(" ")}
               roomIsDark={roomIsDark}
               roomAmbientLight={roomAmbientLight}
+              roomLightLevel={roomLightLevel}
               playerCanSee={playerCanSee}
               playerLightMode={playerLightMode}
               flashlightOn={flashlightOn ? "true" : "false"}

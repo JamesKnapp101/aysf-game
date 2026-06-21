@@ -6,24 +6,26 @@ export const threeWestRooms: Room[] = [
   {
     id: "LivingQuartersThreeWest",
     name: "Sanyi Residence: Living Area",
-    description: `This is a spacious living area that doubles as an entryway and den, where just inside the doorway is a rectangular gray mat, and against the wall next to it an area for guests to leave their shoes. The interior is carpeted in a warm mocha that looks to be vacuumed regularly, though maybe not recently, which extends into the den area.[[SCENERY]]`,
+    ambientLightLevel: "dim",
+    description: `This is a spacious living area that doubles as an entryway and den, where just inside the doorway is a rectangular gray mat, and against the wall next to it an area for guests to leave their shoes. The interior is carpeted in a warm mocha that looks to be vacuumed regularly, though maybe not recently, which extends into the den area. Dim light from the corridor spills through the open front door.[[SCENERY]]`,
     exits: [
-      { direction: "east", toRoomId: "LevelThreeCorridorThree" },
-      { direction: "south", toRoomId: "ThreeWestBath" },
-      { direction: "west", toRoomId: "ThreeWestBed" },
+      { direction: "east", doorId: "DOOR3CW" },
+      { direction: "south", doorId: "ThreeWestBDoor" },
+      { direction: "west", doorId: "ThreeWestBedroomDoor" },
     ],
   },
   {
     id: "ThreeWestBath",
     name: "Sanyi Residence: Bathroom",
     description: `The unit's bathroom is in disarray, its tiled floor spattered with what looks like a mixture of blood, and something else, something blackish-brown.[[SCENERY]]`,
-    exits: [{ direction: "north", toRoomId: "LivingQuartersThreeWest" }],
+    exits: [{ direction: "north", doorId: "ThreeWestBDoor" }],
   },
   {
     id: "ThreeWestBed",
     name: "Sanyi Residence: Bedroom",
-    description: `The bedroom is large enough to accommodate three twin beds, arranged in the corners of the room. [[SCENERY]]`,
-    exits: [{ direction: "east", toRoomId: "LivingQuartersThreeWest" }],
+    ambientLightLevel: "very-dim",
+    description: `The bedroom is large enough to accommodate three twin beds, arranged in the corners of the room. Only a faint wash of corridor light reaches it through the living area and open bedroom door. [[SCENERY]]`,
+    exits: [{ direction: "east", doorId: "ThreeWestBedroomDoor" }],
   },
 ];
 
