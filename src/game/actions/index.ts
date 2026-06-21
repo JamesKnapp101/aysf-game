@@ -5,6 +5,7 @@ import { doBlow } from "@game/actions/blow/blow";
 import { doBounce } from "@game/actions/bounce/bounce";
 import { doCall } from "@game/actions/call/call";
 import { doEat } from "@game/actions/eat/eat";
+import { doFix } from "@game/actions/fix/fix";
 import { doApply } from "@game/actions/apply/apply";
 import { doGive } from "@game/actions/give/give";
 import { doListen } from "@game/actions/listen/listen";
@@ -13,6 +14,7 @@ import { doPet } from "@game/actions/pet/pet";
 import { doPlay } from "@game/actions/play/play";
 import { doPush } from "@game/actions/push/push";
 import { doRide } from "@game/actions/ride/ride";
+import { doShake } from "@game/actions/shake/shake";
 import { doTell } from "@game/actions/tell/tell";
 import { doTouch } from "@game/actions/touch/touch";
 import { doThrow } from "@game/actions/throw/throw";
@@ -94,6 +96,8 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   throw: doThrow,
   blow: doBlow,
   bounce: doBounce,
+  shake: doShake,
+  fix: doFix,
   hit: doAttack,
   punch: doAttack,
   sit: doSit,

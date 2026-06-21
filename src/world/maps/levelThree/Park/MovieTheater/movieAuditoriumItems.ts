@@ -1,8 +1,4 @@
 import type { Item } from "@game/types/itemTypes";
-import {
-  describeLevelTwoBombTimer,
-  readLevelTwoBombTimer,
-} from "src/world/maps/levelTwo/levelTwoBomb";
 
 export const movieAuditoriumItems: Item[] = [
   {
@@ -88,62 +84,6 @@ export const movieAuditoriumItems: Item[] = [
     itemSize: 10,
     meta: {
       sceneryDescriptionOrder: 2,
-    },
-  },
-  {
-    id: "MovieTheaterBDeadMan",
-    name: "dead man",
-    description:
-      "The dead man sits in one of the seats, dressed in boxers, a t-shirt, and a plush blue robe. His unshaven face is tinted blue, and his greasy hair in tangles.",
-    sceneryDescription:
-      "[[newline]]Sitting in one of the seats is the body of a man dressed in boxers, a t-shirt, and a plush blue robe. His unshaven face is tinted blue, and his hair is greasy and unkempt.",
-    location: "MovieTheaterB",
-    vocab: ["body", "man", "dead man", "corpse", "robe", "blue robe"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 180,
-    itemSize: 5,
-    meta: {
-      sceneryDescriptionOrder: 3,
-    },
-  },
-  {
-    id: "MovieTheaterTimer",
-    name: "little timer",
-    description: "",
-    describe: (state) => describeLevelTwoBombTimer(state),
-    initialDescription:
-      "Clutched in one shriveled hand is some sort of little timer or stopwatch.",
-    location: "MovieTheaterB",
-    vocab: ["timer", "stopwatch", "little timer", "watch"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    isReadable: true,
-    itemWeight: 1,
-    itemSize: 1,
-    readableText: (state) => readLevelTwoBombTimer(state),
-    overrides: {
-      take: "You work the little timer free from the corpse's stiff fingers.",
-    },
-  },
-  {
-    id: "MovieTheaterCrinkledPaper",
-    name: "crinkled paper",
-    description:
-      "It is a crinkled piece of paper with something written on it in cramped, hurried strokes.",
-    initialDescription:
-      "In his lap rests a crinkled piece of paper with something written on it.",
-    location: "MovieTheaterB",
-    vocab: ["paper", "note", "crinkled paper", "writing"],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isReadable: true,
-    readableText:
-      "The writing is cramped enough that it will take a more careful pass to make sense of it.",
-    overrides: {
-      take: "You take the crinkled paper from the dead man's lap.",
     },
   },
   {

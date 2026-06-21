@@ -6,12 +6,14 @@ import type {
   StatusId,
   SyringeState,
 } from "./gameTypes";
+import type { ActionResult } from "./actionsTypes";
 import type {
   AnimalStatusEffect,
   PreserveActorId,
   PreserveSense,
 } from "@game/preserve/preserveTypes";
 import type { ItemId } from "./ids";
+import type { ParsedCommand } from "./parserTypes";
 
 export type ItemClass = "solid" | "liquid" | "gas";
 export type ItemCategory =
@@ -131,6 +133,8 @@ export type ItemOverrideVerb =
   | "get"
   | "blow"
   | "bounce"
+  | "shake"
+  | "fix"
   | "smell"
   | "taste"
   | "wear"
@@ -160,7 +164,22 @@ export type ItemOverrideVerb =
   | "move"
   | "examine";
 
-export type ItemOverrides = Partial<Record<ItemOverrideVerb, any>>;
+export type ItemCommandOverrideContext = {
+  cmd: Extract<ParsedCommand, { type: "action" }>;
+  item: Item;
+  state: GameState;
+};
+
+export type ItemCommandOverride =
+  | string
+  | ((
+      context: ItemCommandOverrideContext,
+    ) => ActionResult | string | undefined);
+
+export type ItemOverrides = Partial<
+  Record<Exclude<ItemOverrideVerb, "fix" | "shake">, any>
+> &
+  Partial<Record<"fix" | "shake", ItemCommandOverride>>;
 export type CoolerMode = "off" | "cool" | "cold" | "freeze";
 
 export type ItemSettings =

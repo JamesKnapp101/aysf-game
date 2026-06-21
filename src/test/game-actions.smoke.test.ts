@@ -61,6 +61,8 @@ const COVERED_ACTIONS = [
   "throw",
   "blow",
   "bounce",
+  "shake",
+  "fix",
   "lift",
   "move",
   "sit",
@@ -625,6 +627,42 @@ describe("Action smoke coverage", () => {
     );
 
     expectCommandEntry(next, "bounce ball", "rockets away");
+  });
+
+  it("covers shake fallbacks and item overrides", async () => {
+    const start = createTestState({ roomId: "ThreeWestBed" });
+    const fallback = await runCommand(start, "shake research notes");
+    expectCommandEntry(
+      fallback,
+      "shake research notes",
+      "That doesn't accomplish anything.",
+    );
+
+    const overridden = await runCommand(
+      createTestState({ roomId: "StairWellSeven" }),
+      "shake flashlight",
+    );
+    expectCommandEntry(
+      overridden,
+      "shake flashlight",
+      "vigorous shake",
+    );
+  });
+
+  it("covers fix fallbacks and item overrides", async () => {
+    const start = createTestState({ roomId: "ThreeWestBed" });
+    const fallback = await runCommand(start, "fix research notes");
+    expectCommandEntry(fallback, "fix research notes", "It isn't broken.");
+
+    const overridden = await runCommand(
+      createTestState({ roomId: "StairWellSeven" }),
+      "fix flashlight",
+    );
+    expectCommandEntry(
+      overridden,
+      "fix flashlight",
+      "don't think it's fixable",
+    );
   });
 
   it("covers lift", async () => {

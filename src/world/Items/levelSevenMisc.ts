@@ -4,11 +4,36 @@ import {
   getPlayerHuskNumberVocab,
   getPlayerHuskPlateDescription,
 } from "@game/helpers/playerHuskHelpers";
+import { updateItemLocation } from "@game/rules/items";
+import { addToInventory } from "@game/rules/state";
+import type { GameState } from "@game/types/gameTypes";
+import {
+  describeLevelTwoBombTimer,
+  readLevelTwoBombTimer,
+} from "src/world/maps/levelTwo/levelTwoBomb";
 import type { Item } from "../../game/types/itemTypes";
 import {
   removeDeepStorageSuit,
   wearDeepStorageSuit,
 } from "../maps/levelSeven/deepStorage";
+
+const BOMB_TIMER_ID = "BombTimer";
+const UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION =
+  "The dead man sits in the shadows beneath the stairwell, way back in the corner as if he were hiding.";
+
+function examineUnderStairwellDeadMan(state: GameState) {
+  if (state.itemState.pickedUpByPlayer[BOMB_TIMER_ID]) {
+    return { state, message: UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION };
+  }
+
+  let next = updateItemLocation(state, BOMB_TIMER_ID, "INVENTORY");
+  next = addToInventory(next, BOMB_TIMER_ID);
+
+  return {
+    state: next,
+    message: `${UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION} Clutched in one shriveled hand is some sort of little timer or stopwatch. You work it free from the corpse's stiff fingers and slip it into your inventory.`,
+  };
+}
 
 const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
   {
@@ -50,10 +75,94 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     isReadable: false,
     isContainer: false,
   },
+
+  {
+    id: "UnderTheStairwellDeadMan",
+    name: "a dead man",
+    description: UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION,
+    sceneryDescription:
+      "[[newline]]Curled up next to the boxes is the body of an older man dressed in boxers, a t-shirt, and a plush blue robe. His unshaven face is tinted blue, and his hair is greasy and unkempt.",
+    location: "StairWellSeven",
+    vocab: [
+      "body",
+      "old",
+      "older",
+      "man",
+      "dead man",
+      "corpse",
+      "robe",
+      "blue robe",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 180,
+    itemSize: 5,
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+    overrides: {
+      examine: ({ state }: { state: GameState }) =>
+        examineUnderStairwellDeadMan(state),
+    },
+  },
+  {
+    id: BOMB_TIMER_ID,
+    name: "little timer",
+    description: "",
+    describe: (state) => describeLevelTwoBombTimer(state),
+    initialDescription:
+      "Clutched in one shriveled hand is some sort of little timer or stopwatch.",
+    location: "seeded",
+    vocab: ["timer", "stopwatch", "little timer", "watch"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isReadable: true,
+    itemWeight: 1,
+    itemSize: 1,
+    readableText: (state) => readLevelTwoBombTimer(state),
+    overrides: {
+      take: "You work the little timer free from the corpse's stiff fingers.",
+    },
+  },
+
+  {
+    id: "brokenFlashlight",
+    name: "broken flashlight",
+    location: "StairWellSeven",
+    vocab: [
+      "flashlight",
+      "broken flashlight",
+      "damaged flashlight",
+      "broken",
+      "damaged",
+    ],
+    initialDescription:
+      "Near the wall, amidst scattered pieces of broken plastic, you see a flashlight with a cracked housing.",
+    description:
+      "It sustained a pretty hard impact, cracking the housing and the lens cover, and it doesn't work anymore. Too bad, I bet that thing really would have come in handy.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    overrides: {
+      switch: `You toggle it a few times but you don't see so much as a flicker.`,
+      shake: ({ state }) => ({
+        state,
+        message: `You give the flashlight a vigorous shake but it doesn't shake any extra juice out of the battery, it still won't turn on.`,
+      }),
+      fix: ({ state }) => ({
+        state,
+        message: `I don't think it's fixable, you'll need to find a replacement.`,
+      }),
+    },
+    itemWeight: 2,
+    itemSize: 2,
+    isSwitchable: true,
+    isOn: false,
+    providesLight: false,
+  },
   {
     id: "damagedFlashlight",
     name: "broken flashlight",
-    location: "StairWellSeven",
+    location: "seeded",
     vocab: [
       "flashlight",
       "broken flashlight",
@@ -116,8 +225,7 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     ],
     initialDescription:
       "There's some sort of large bug or spider on the floor near the body, laying on its back with its many legs curled inward.",
-    description:
-      `It’s a small metallic shell shaped vaguely like a spider, with segmented limbs arranged around a rounded abdomen. The abdomen has split open along a perfect seam, exposing an olive-sized cavity smeared with greasy residue. ${getPlayerHuskPlateDescription(8)}`,
+    description: `It’s a small metallic shell shaped vaguely like a spider, with segmented limbs arranged around a rounded abdomen. The abdomen has split open along a perfect seam, exposing an olive-sized cavity smeared with greasy residue. ${getPlayerHuskPlateDescription(8)}`,
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,
@@ -465,10 +573,14 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
   },
 ];
 
+function belongsToStairwellChunk(item: Item): boolean {
+  return item.location === "StairWellSeven" || item.id === BOMB_TIMER_ID;
+}
+
 export const stairwellBottomItems: Item[] = LEVEL_SEVEN_MISC_ITEMS.filter(
-  (item) => item.location === "StairWellSeven",
+  belongsToStairwellChunk,
 );
 
 export const levelSevenItems: Item[] = LEVEL_SEVEN_MISC_ITEMS.filter(
-  (item) => item.location !== "StairWellSeven",
+  (item) => !belongsToStairwellChunk(item),
 );
