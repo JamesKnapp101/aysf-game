@@ -2,13 +2,13 @@ import { engineeringOrganismItems } from "src/world/Items/creatures/engineeringO
 import type { WorldChunk } from "../../../game/types/gameTypes";
 import { levelFiveDoors } from "../../doors/levelFiveDoors";
 import { levelFiveItems } from "../../Items/levelFiveMisc";
+import { resolveLevelFiveSpillLight } from "./levelFiveLighting";
 import {
   describeTiltingPlatform,
   PLATFORM_PERCH_ROOM_ID,
   reactorPlatformItems,
 } from "./reactorPlatform";
 import { waterTreatmentRooms } from "./WaterTreatment";
-import { resolveLevelFiveSpillLight } from "./levelFiveLighting";
 
 export const LEVEL_FIVE: WorldChunk = {
   items: [
@@ -25,7 +25,7 @@ export const LEVEL_FIVE: WorldChunk = {
       description:
         "This is the Reactor Core where the player will interface with the Lobes and the virtual interface.",
       meta: { excludeFromTransmitterMap: true },
-      exits: [{ direction: "down", toRoomId: "ReactorControlRoom" }],
+      exits: [{ direction: "up", toRoomId: "ReactorControlRoom" }],
     },
     {
       id: "ReactorControlRoom",
@@ -34,7 +34,7 @@ export const LEVEL_FIVE: WorldChunk = {
         "Banks of monitors and heavy controls curve around the reactor control room. Most of the displays are dark or stuttering through error codes, while the damaged core bulkhead leaks an angry orange light across the deck.",
       meta: { excludeFromTransmitterMap: true },
       exits: [
-        { direction: "up", toRoomId: "ReactorCore" },
+        { direction: "down", toRoomId: "ReactorCore" },
         { direction: "east", toRoomId: "HeatCoolantExchangePlatform" },
       ],
     },

@@ -731,6 +731,8 @@ function applyRegisteredTurnTickPhase(
 }
 
 export function advanceTurn(state: GameState): GameState {
+  if (state.worldState.gameOver) return state;
+
   let next = state;
 
   if (next.worldState.activeExperience) {

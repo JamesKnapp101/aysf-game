@@ -22,6 +22,7 @@ import {
 import { useGameSession } from "./hooks/useGameSession";
 import { useLayoutPrefs } from "./hooks/useLayoutPrefs";
 import { useWorldChunkHydration } from "./hooks/useWorldChunkHydration";
+import { renderRegisteredRoomOverlays } from "./registries/roomOverlayRegistry";
 import {
   getActiveStatusEffectIds,
   getRadiationIntensity,
@@ -329,6 +330,8 @@ export const Game: React.FC = () => {
                 "--crt-color": crtColor,
                 "--rad": String(rad01),
                 "--drunk": String((isDrunk?.intensity ?? 0) / 100),
+                "--room-panel-height": roomPanelFlexBasis,
+                "--sidebar-width": `${layout.sidebarWidthRatio * 100}%`,
               } as React.CSSProperties
             }
             data-status={activeEffects.join(" ")}
@@ -384,6 +387,11 @@ export const Game: React.FC = () => {
               setBrainActivityLevel={setBrainActivityLevel}
               visualEffectsMode={visualEffectsMode}
             />
+
+            {renderRegisteredRoomOverlays(
+              gs,
+              currentRoom?.id ?? gs.player.roomId,
+            )}
 
             {/* horizontal resizer - between room and main row */}
             <div

@@ -187,6 +187,23 @@ export async function handleCommand(
   const { openOverlay } = useUIOverlayStore.getState();
   const DEATH_MARKER = "*** You have died ***";
 
+  if (
+    state.worldState.gameOver &&
+    cmd.type !== "restart" &&
+    cmd.type !== "restore"
+  ) {
+    const rawCommand =
+      cmd.type === "action" || cmd.type === "unknown"
+        ? cmd.raw
+        : cmd.type;
+    const echo = options.skipEcho ? "" : `> ${rawCommand}\n`;
+
+    return appendLog(
+      state,
+      `${echo}${state.worldState.gameOver.message}\n\n`,
+    );
+  }
+
   const room = getCurrentRoom(state);
 
   let nextState = state;

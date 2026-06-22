@@ -11,8 +11,9 @@ import {
   AQUARIUM_ELECTRIC_PROD_ITEM_ID,
   createInitialOctopusState,
 } from "src/world/Items/creatures/octopus";
-import { createInitialDeepStorageState } from "src/world/maps/levelSeven/deepStorage";
+import { createInitialReactorConsensusState } from "src/world/maps/levelFive/reactorConsensus";
 import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
+import { createInitialDeepStorageState } from "src/world/maps/levelSeven/deepStorage";
 import { BAR_BULL_ADHESIVE_TRIGGER } from "src/world/maps/levelThree/Park/Bar/barMechanicalBull";
 import { createInitialMovieTheaterState } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 import {
@@ -504,6 +505,7 @@ export const createInitialState = (world: World): GameState => {
       barJukebox: {},
       movieTheater: createInitialMovieTheaterState(),
       levelTwoBomb: createInitialLevelTwoBombState(),
+      reactorConsensus: createInitialReactorConsensusState(),
       bullEncounter: createInitialBullEncounterState(),
       gamePreserve: {
         completedDifficulties: {},

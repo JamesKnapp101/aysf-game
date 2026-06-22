@@ -236,6 +236,30 @@ export type LevelTwoBombState = Countdown & {
   detonated: boolean;
 };
 
+export type ReactorLobeStatus =
+  | "harmonic"
+  | "undecided"
+  | "dissonant"
+  | "missing";
+
+export type ReactorLobeState = {
+  id: string;
+  status: ReactorLobeStatus;
+};
+
+export type ReactorConsensusState = {
+  hasExploded: boolean;
+  lobes: ReactorLobeState[];
+  nextContainmentWarning: number;
+  turnsUntilTransition: number;
+};
+
+export type GameOverState = {
+  atMove: number;
+  cause: string;
+  message: string;
+};
+
 export type OctopusArmState = {
   id: string;
   path: string[];
@@ -464,6 +488,7 @@ export interface WorldState {
   deepStorage: DeepStorageState;
   doors: Record<string, DoorState>;
   gamePreserve: GamePreserveState;
+  gameOver?: GameOverState;
   hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;
   hydroponicsSpider: HydroponicsSpiderState;
   levelTwoBomb: LevelTwoBombState;
@@ -479,6 +504,7 @@ export interface WorldState {
   roomAirQuality: Record<string, RoomAirQuality>;
   roomAudioLevel: Record<string, number>;
   roomTemp: Record<string, RoomTemperature>;
+  reactorConsensus?: ReactorConsensusState;
   scoresTriggered: Record<PlayerScoreId, boolean>;
   scriptedEventsTripped: Record<string, boolean>;
   syndromeX?: SyndromeXState;
