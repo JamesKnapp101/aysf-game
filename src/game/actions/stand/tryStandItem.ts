@@ -2,16 +2,33 @@ import { anyIn, movePlayerToRoom } from "../../helpers/gameHelpers";
 import { useUIEffectsStore } from "../../store/store";
 import { GameState } from "../../types/gameTypes";
 import { Item } from "../../types/itemTypes";
+import type { ParsedCommand } from "../../types/parserTypes";
 
 export function tryStandItem(
   state: GameState,
   prep: string,
   item: Item,
+  cmd?: ParsedCommand,
 ): { state: GameState; message: string } {
   let next: GameState = state;
   if (prep === "on") {
     if (!item.isSurface) {
       return { state, message: "You can't stand on that." };
+    }
+    const standOverride = item.overrides?.stand;
+    if (typeof standOverride === "string") {
+      return { state, message: standOverride };
+    }
+    if (typeof standOverride === "function" && cmd?.type === "action") {
+      const out = standOverride({ state, item, cmd });
+      if (typeof out === "string") {
+        return { state, message: out };
+      }
+
+      return {
+        state: out?.state ?? state,
+        message: out?.message ?? "Nothing happens.",
+      };
     }
     if (item.meta?.teleport) {
       let teleportMsg = "";

@@ -1,14 +1,28 @@
 import { removeItemFromPlacementLists } from "@game/helpers/itemPlacement";
 import { updateItemLocation } from "@game/rules/items";
 import { triggerScoreOnce } from "@game/rules/score";
-import { addToInventory, inventoryHas } from "@game/rules/state";
+import {
+  addToInventory,
+  inventoryHas,
+  removeFromInventory,
+} from "@game/rules/state";
 import type { GameState, StatusId } from "@game/types/gameTypes";
-import type { Item } from "@game/types/itemTypes";
+import type { Item, ItemSettings } from "@game/types/itemTypes";
+import { ParsedCommand } from "@game/types/parserTypes";
+import {
+  NORTH_CARGO_CAGE_ID,
+  recalculateCargoDrivenPlatform,
+  SOUTH_CARGO_CAGE_ID,
+} from "src/world/maps/levelFive/reactorPlatform";
 import {
   GYM_WEIGHT_ROOM_ID,
   GYM_WEIGHTLIFTER_MOVED_TRIGGER,
   GYM_YELLOW_BADGE_ID,
 } from "./gymConstants";
+
+type SmartbellSettings = Extract<ItemSettings, { kind: "smartbell" }>;
+export const RIGHT_SMARTBELL_ID = "RightSmartbell";
+export const LEFT_SMARTBELL_ID = "LeftSmartbell";
 
 export function isGymWeightlifterPinningBadge(state: GameState): boolean {
   return (
@@ -79,7 +93,133 @@ export function liftGymWeightlifterBarbell(state: GameState): {
   };
 }
 
+function getSetValue(cmd: ParsedCommand): number | undefined {
+  if (cmd.type !== "action") return undefined;
+  const match = (cmd.indirect ?? "").match(/\d+/);
+  if (!match) return undefined;
+  const value = Number.parseInt(match[0], 10);
+  return Number.isInteger(value) ? value : undefined;
+}
+
+function setSmartbell({
+  cmd,
+  item,
+  state,
+}: {
+  cmd: ParsedCommand;
+  item: Item;
+  state: GameState;
+}) {
+  const value = getSetValue(cmd);
+  if (value == null) {
+    return { state, message: "Set the Smartbell to what weight?" };
+  }
+  if (value < 1 || value > 300) {
+    return {
+      state,
+      message: "The Smartbell dial only runs from 1 to 300 kilograms.",
+    };
+  }
+
+  const wasHeld = inventoryHas(state.player.inventory, item.id);
+  const previousLocation = state.itemState.itemRoomId[item.id] ?? item.location;
+  let next = state;
+  let message: string;
+
+  if (wasHeld && value > 5) {
+    next = removeFromInventory(next, item.id);
+    next = updateItemLocation(next, item.id, state.player.roomId);
+    message = `You put the ${item.name} down first, then turn its dial to ${value}. Its pastel shell settles against the deck with alarming weight.`;
+  } else if (wasHeld) {
+    message = `You turn the ${item.name}'s dial to ${value}. The weight in your hand increases immediately.`;
+  } else {
+    message = `You turn the ${item.name}'s dial to ${value}. The Smartbell gives a soft electronic chirp as its weight changes.`;
+  }
+
+  next = setSmartbellWeight(next, item.id, value);
+
+  if (
+    previousLocation === NORTH_CARGO_CAGE_ID ||
+    previousLocation === SOUTH_CARGO_CAGE_ID
+  ) {
+    const recalculated = recalculateCargoDrivenPlatform(next);
+    next = recalculated.state;
+    if (recalculated.message) {
+      message += `\n\n${recalculated.message}`;
+    }
+  }
+
+  return { state: next, message };
+}
+
+export function getSmartbellWeight(state: GameState, itemId: string): number {
+  const settings = state.itemState.itemSettings[itemId];
+  return settings?.kind === "smartbell" ? settings.weightKg : 1;
+}
+
+export function setSmartbellWeight(
+  state: GameState,
+  itemId: string,
+  weightKg: number,
+): GameState {
+  const settings: SmartbellSettings = { kind: "smartbell", weightKg };
+  return {
+    ...state,
+    itemState: {
+      ...state.itemState,
+      itemSettings: {
+        ...state.itemState.itemSettings,
+        [itemId]: settings,
+      },
+    },
+  };
+}
+
 export const gymWeightRoomItems: Item[] = [
+  {
+    id: RIGHT_SMARTBELL_ID,
+    name: "right Smartbell dumbbell",
+    description:
+      "A pastel exercise weight branded SMARTBELL has a digital dial on one end and a large letter R printed on its shell.",
+    describe: (state) =>
+      `The pastel right Smartbell has an R printed on it. Its dial is set to ${getSmartbellWeight(state, RIGHT_SMARTBELL_ID)} kilograms.`,
+    location: "INVENTORY",
+    vocab: [
+      "right",
+      "right dumbbell",
+      "right smartbell",
+      "right smartbell dumbbell",
+      "smartbell r",
+    ],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 3,
+    isSettable: true,
+    overrides: { set: setSmartbell },
+  },
+  {
+    id: LEFT_SMARTBELL_ID,
+    name: "left Smartbell dumbbell",
+    description:
+      "A pastel exercise weight branded SMARTBELL has a digital dial on one end and a large letter L printed on its shell.",
+    describe: (state) =>
+      `The pastel left Smartbell has an L printed on it. Its dial is set to ${getSmartbellWeight(state, LEFT_SMARTBELL_ID)} kilograms.`,
+    location: "INVENTORY",
+    vocab: [
+      "left",
+      "left dumbbell",
+      "left smartbell",
+      "left smartbell dumbbell",
+      "smartbell l",
+    ],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 3,
+    isSettable: true,
+    overrides: { set: setSmartbell },
+  },
   {
     id: "GymWeightRoomMachines",
     name: "weight machines",

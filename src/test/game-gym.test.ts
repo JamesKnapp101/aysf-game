@@ -103,6 +103,26 @@ describe("Gym interactions", () => {
     ).toContain("The surface slopes down 10 degrees.");
   });
 
+  it("weighs the player on the cardio center scale", async () => {
+    const state = createTestState({ roomId: "Gym" });
+
+    expect(
+      buildRoomDescription(state, "Gym", { mode: "panel", forceFull: true }),
+    ).toContain("large digital display above it is currently blank");
+
+    const examinedDisplay = await runCommand(state, "examine display");
+    expect(getLastLogEntry(examinedDisplay)).toContain("currently blank");
+
+    const weighed = await runCommand(state, "stand on scale");
+    const log = getLastLogEntry(weighed);
+
+    expect(weighed.player.roomId).toBe("Gym");
+    expect(log).toContain("electronic whoop");
+    expect(log).toContain("loud ding");
+    expect(log).toContain("86kg");
+    expect(log).toContain("display goes blank again");
+  });
+
   it("blocks the gym speed dial and password-gates the spin stage speed dial", async () => {
     const state = createTestState({ roomId: "Gym" });
 

@@ -148,6 +148,52 @@ export const gymItems: Item[] = [
       sceneryDescriptionOrder: 1,
     },
   },
+  {
+    id: "GymWeightScale",
+    name: "weight scale",
+    description:
+      "The scale is a wide, brushed-metal platform with rubber foot pads and a little sensor tower aimed at the digital display on the wall.",
+    sceneryDescription:
+      "A brushed-metal weight scale sits near a large digital display.",
+    location: "Gym",
+    vocab: ["scale", "weight scale", "digital scale", "platform"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 80,
+    itemSize: 6,
+    isSurface: true,
+    meta: {
+      sceneryDescriptionOrder: 5.5,
+    },
+    overrides: {
+      stand:
+        "You stand on the scale. An electronic whoop sounds, followed by a loud ding as your weight appears on the large digital display: 86kg. After a moment, the number fades and the display goes blank again.",
+    },
+  },
+  {
+    id: "GymWeightDisplay",
+    name: "large digital display",
+    description:
+      "The display is currently blank, its glossy black surface reflecting the cardio machines in dim, fractured streaks.",
+    sceneryDescription:
+      "The large digital display above it is currently blank.",
+    location: "Gym",
+    vocab: [
+      "display",
+      "digital display",
+      "large display",
+      "large digital display",
+      "screen",
+      "weight display",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 50,
+    itemSize: 5,
+    meta: {
+      sceneryDescriptionOrder: 5.6,
+    },
+  },
   ...gymTreadmillItems,
   ...gymExerciseBallItems,
   {

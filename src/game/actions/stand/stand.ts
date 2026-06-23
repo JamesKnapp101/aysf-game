@@ -22,5 +22,5 @@ export function doStand(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: `You can't stand ${prep} that.` };
   }
 
-  return tryStandItem(state, prep, item);
+  return tryStandItem(state, prep, item, cmd);
 }

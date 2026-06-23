@@ -1,22 +1,24 @@
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
 import { isItemOpen, setItemOpen } from "@game/rules/containers";
 import { updateItemLocation } from "@game/rules/items";
-import {
-  inventoryHas,
-  removeFromInventory,
-} from "@game/rules/state";
 import type { GameState } from "@game/types/gameTypes";
-import type {
-  Item,
-  ItemCommandOverrideContext,
-  ItemSettings,
-} from "@game/types/itemTypes";
+import type { Item, ItemCommandOverrideContext } from "@game/types/itemTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
+import {
+  getSmartbellWeight,
+  LEFT_SMARTBELL_ID,
+  RIGHT_SMARTBELL_ID,
+  setSmartbellWeight,
+} from "src/world/maps/levelThree/Park/Gym/gymWeightlifterPuzzle";
+
+export {
+  getSmartbellWeight,
+  LEFT_SMARTBELL_ID,
+  RIGHT_SMARTBELL_ID,
+} from "src/world/maps/levelThree/Park/Gym/gymWeightlifterPuzzle";
 
 export const NORTH_CARGO_CAGE_ID = "TiltingPlatformNorthCargoCage";
 export const SOUTH_CARGO_CAGE_ID = "TiltingPlatformSouthCargoCage";
-export const RIGHT_SMARTBELL_ID = "RightSmartbell";
-export const LEFT_SMARTBELL_ID = "LeftSmartbell";
 export const PLATFORM_PERCH_ROOM_ID = "TiltedPlatformPerch";
 export const RAFTER_TEST_ITEM_ID = "ReplacementReactorLobe";
 export const PLATFORM_HYDRAULICS_PANEL_ID = "TiltingPlatformHydraulicsPanel";
@@ -33,7 +35,6 @@ const MINIMUM_TILT_WEIGHT_KG = 45;
 
 export type TiltingPlatformOrientation = "level" | "north" | "south";
 export type PlatformValvePosition = "A" | "B" | "C";
-type SmartbellSettings = Extract<ItemSettings, { kind: "smartbell" }>;
 
 type MaintenanceLadderSpec = {
   bottomRoomId: string;
@@ -99,29 +100,6 @@ export function setPlatformValvePosition(
           kind: "platform-valve",
           position,
         },
-      },
-    },
-  };
-}
-
-export function getSmartbellWeight(state: GameState, itemId: string): number {
-  const settings = state.itemState.itemSettings[itemId];
-  return settings?.kind === "smartbell" ? settings.weightKg : 1;
-}
-
-function setSmartbellWeight(
-  state: GameState,
-  itemId: string,
-  weightKg: number,
-): GameState {
-  const settings: SmartbellSettings = { kind: "smartbell", weightKg };
-  return {
-    ...state,
-    itemState: {
-      ...state.itemState,
-      itemSettings: {
-        ...state.itemState.itemSettings,
-        [itemId]: settings,
       },
     },
   };
@@ -229,7 +207,7 @@ function describeOrientationChange(
     : "The platform groans and tilts south, its north edge climbing toward the rafters.";
 }
 
-function recalculateCargoDrivenPlatform(
+export function recalculateCargoDrivenPlatform(
   state: GameState,
   allowPlayerPerch = true,
 ): { message?: string; state: GameState } {
@@ -289,62 +267,6 @@ function recalculateCargoDrivenPlatform(
   return { state: next, message };
 }
 
-function getSetValue(cmd: ParsedCommand): number | undefined {
-  if (cmd.type !== "action") return undefined;
-  const match = (cmd.indirect ?? "").match(/\d+/);
-  if (!match) return undefined;
-  const value = Number.parseInt(match[0], 10);
-  return Number.isInteger(value) ? value : undefined;
-}
-
-function setSmartbell({
-  cmd,
-  item,
-  state,
-}: {
-  cmd: ParsedCommand;
-  item: Item;
-  state: GameState;
-}) {
-  const value = getSetValue(cmd);
-  if (value == null) {
-    return { state, message: "Set the Smartbell to what weight?" };
-  }
-  if (value < 1 || value > 300) {
-    return { state, message: "The Smartbell dial only runs from 1 to 300 kilograms." };
-  }
-
-  const wasHeld = inventoryHas(state.player.inventory, item.id);
-  const previousLocation = state.itemState.itemRoomId[item.id] ?? item.location;
-  let next = state;
-  let message: string;
-
-  if (wasHeld && value > 5) {
-    next = removeFromInventory(next, item.id);
-    next = updateItemLocation(next, item.id, state.player.roomId);
-    message = `You put the ${item.name} down first, then turn its dial to ${value}. Its pastel shell settles against the deck with alarming weight.`;
-  } else if (wasHeld) {
-    message = `You turn the ${item.name}'s dial to ${value}. The weight in your hand increases immediately.`;
-  } else {
-    message = `You turn the ${item.name}'s dial to ${value}. The Smartbell gives a soft electronic chirp as its weight changes.`;
-  }
-
-  next = setSmartbellWeight(next, item.id, value);
-
-  if (
-    previousLocation === NORTH_CARGO_CAGE_ID ||
-    previousLocation === SOUTH_CARGO_CAGE_ID
-  ) {
-    const recalculated = recalculateCargoDrivenPlatform(next);
-    next = recalculated.state;
-    if (recalculated.message) {
-      message += `\n\n${recalculated.message}`;
-    }
-  }
-
-  return { state: next, message };
-}
-
 function openHydraulicsPanel({ state }: { state: GameState }) {
   if (state.itemState.openItems[PLATFORM_HYDRAULICS_PANEL_ID]) {
     return { state, message: "The heavy maintenance panel is already open." };
@@ -375,7 +297,10 @@ function setPlatformValve({
   if (cmd.type !== "action") return { state, message: "Set the valve where?" };
   const requested = cmd.indirect?.trim().toUpperCase();
   if (requested !== "A" && requested !== "B" && requested !== "C") {
-    return { state, message: "The valve has only three positions: A, B, and C." };
+    return {
+      state,
+      message: "The valve has only three positions: A, B, and C.",
+    };
   }
 
   if (getPlatformValvePosition(state) === requested) {
@@ -407,9 +332,13 @@ export function handleReactorCargoPut(
     return undefined;
   }
 
-  const item = state.world.items.find((candidate) => candidate.id === ctx.itemId);
+  const item = state.world.items.find(
+    (candidate) => candidate.id === ctx.itemId,
+  );
   const cageName =
-    ctx.hostId === NORTH_CARGO_CAGE_ID ? "north cargo cage" : "south cargo cage";
+    ctx.hostId === NORTH_CARGO_CAGE_ID
+      ? "north cargo cage"
+      : "south cargo cage";
   const recalculated = recalculateCargoDrivenPlatform(state);
 
   return {
@@ -429,7 +358,8 @@ export function handleReactorSmartbellTaken(state: GameState, item: Item) {
   }
 
   const previousWeight = getSmartbellWeight(state, item.id);
-  let next = previousWeight === 1 ? state : setSmartbellWeight(state, item.id, 1);
+  let next =
+    previousWeight === 1 ? state : setSmartbellWeight(state, item.id, 1);
   const recalculated = recalculateCargoDrivenPlatform(next);
   next = recalculated.state;
 
@@ -496,7 +426,8 @@ function climbMaintenanceLadderFromBelow({
   if (!ladder) {
     return {
       state,
-      message: "The maintenance ladder does not lead anywhere useful from here.",
+      message:
+        "The maintenance ladder does not lead anywhere useful from here.",
     };
   }
 
@@ -517,10 +448,7 @@ export function resolveReactorPlatformMovement(
     fromRoomId: string;
   },
 ) {
-  if (
-    ctx.fromRoomId === PLATFORM_PERCH_ROOM_ID &&
-    ctx.direction === "down"
-  ) {
+  if (ctx.fromRoomId === PLATFORM_PERCH_ROOM_ID && ctx.direction === "down") {
     const orientation = getTiltingPlatformOrientation(state);
     return {
       kind: "redirect" as const,
@@ -817,8 +745,7 @@ export const reactorPlatformItems: Item[] = [
     name: "pressure gauge",
     description:
       "The pressure needle jitters deep in a red failure band. Something in the lift's balancing hydraulics is plainly broken.",
-    sceneryDescription:
-      "A pressure gauge trembles in its red failure band.",
+    sceneryDescription: "A pressure gauge trembles in its red failure band.",
     location: PLATFORM_HYDRAULICS_PANEL_ID,
     vocab: ["gauge", "pressure gauge", "needle"],
     itemClass: "solid",
@@ -878,50 +805,6 @@ export const reactorPlatformItems: Item[] = [
     isOpenable: false,
     capacity: 20,
     meta: { transparentContainer: true },
-  },
-  {
-    id: RIGHT_SMARTBELL_ID,
-    name: "right Smartbell dumbbell",
-    description:
-      "A pastel exercise weight branded SMARTBELL has a digital dial on one end and a large letter R printed on its shell.",
-    describe: (state) =>
-      `The pastel right Smartbell has an R printed on it. Its dial is set to ${getSmartbellWeight(state, RIGHT_SMARTBELL_ID)} kilograms.`,
-    location: "INVENTORY",
-    vocab: [
-      "right",
-      "right dumbbell",
-      "right smartbell",
-      "right smartbell dumbbell",
-      "smartbell r",
-    ],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 3,
-    isSettable: true,
-    overrides: { set: setSmartbell },
-  },
-  {
-    id: LEFT_SMARTBELL_ID,
-    name: "left Smartbell dumbbell",
-    description:
-      "A pastel exercise weight branded SMARTBELL has a digital dial on one end and a large letter L printed on its shell.",
-    describe: (state) =>
-      `The pastel left Smartbell has an L printed on it. Its dial is set to ${getSmartbellWeight(state, LEFT_SMARTBELL_ID)} kilograms.`,
-    location: "INVENTORY",
-    vocab: [
-      "left",
-      "left dumbbell",
-      "left smartbell",
-      "left smartbell dumbbell",
-      "smartbell l",
-    ],
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 3,
-    isSettable: true,
-    overrides: { set: setSmartbell },
   },
   {
     id: "ObservationRafterTestItemView",
