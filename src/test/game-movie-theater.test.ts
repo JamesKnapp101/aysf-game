@@ -72,12 +72,8 @@ describe("movie theater zone", () => {
     expect(lobby.indexOf("vacuum tracks")).toBeLessThan(
       lobby.indexOf("ticket counter"),
     );
-    expect(auditorium.indexOf("Rows of reclining")).toBeLessThan(
-      auditorium.indexOf("Sitting in one of the seats"),
-    );
-    expect(auditorium).toContain(
-      "Clutched in one shriveled hand is some sort of little timer or stopwatch.",
-    );
+    expect(auditorium).toContain("Rows of reclining");
+    expect(auditorium).not.toContain("little timer or stopwatch");
     expect(auditoriumD).toContain("Fused to the floor is a nude body");
 
     const theaterRoomIds = new Set([
@@ -146,9 +142,11 @@ describe("movie theater zone", () => {
     expect(reachedQuadrantC.player.roomId).toBe("MovieTheaterC");
   });
 
-  it("shows the live level two bomb countdown on the little timer", async () => {
+  it("shows the live level two bomb countdown on the stairwell timer", async () => {
     const start = setLevelTwoBombTurns(
-      createTestState({ roomId: "MovieTheaterB" }),
+      setInventory(createTestState({ roomId: "StairWellSeven" }), [
+        "BombTimer",
+      ]),
       5,
     );
 

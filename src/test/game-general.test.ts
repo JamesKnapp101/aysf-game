@@ -49,14 +49,15 @@ describe("General gameplay", () => {
     expect(itemIds).toEqual(
       expect.arrayContaining([
         "MysteriousNote",
-        "damagedFlashlight",
+        "UnderTheStairwellDeadMan",
+        "brokenFlashlight",
         "seed",
       ]),
     );
 
     const next = await runCommand(state, "take flashlight");
 
-    expect(expectInventoryToContain(next, "damagedFlashlight")).toBe(true);
+    expect(expectInventoryToContain(next, "brokenFlashlight")).toBe(true);
   });
 
   it("lets the player move from room to room", async () => {
