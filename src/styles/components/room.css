@@ -1,7 +1,7 @@
 .game-room-panel {
     --room-status-box-width: 148px;
     --room-compass-box-size: 148px;
-    --room-diagnostics-height: 128px;
+    --room-diagnostics-height: 188px;
     --room-status-meter-width: 134px;
     flex: 0 0 auto;
     /* basis may be set inline */
@@ -288,6 +288,100 @@
     box-shadow:
         inset 0 0 0 1px rgb(255 255 255 / 0.015),
         0 0 10px rgb(var(--crt-color-rgb) / 0.05);
+}
+
+.room-temp-reading {
+    --room-temp-accent: var(--crt-color);
+    margin-top: 2px;
+    color: var(--crt-color);
+}
+
+.room-temp-reading[data-zone="freezing"] {
+    --room-temp-accent: #68d7ff;
+}
+
+.room-temp-reading[data-zone="cool"] {
+    --room-temp-accent: #6ef4ff;
+}
+
+.room-temp-reading[data-zone="hot"] {
+    --room-temp-accent: #ff8a2a;
+}
+
+.room-temp-reading[data-zone="critical"] {
+    --room-temp-accent: #ff4a2a;
+}
+
+.room-temp-meter {
+    display: block;
+    width: var(--room-status-meter-width);
+    height: auto;
+    overflow: visible;
+}
+
+.room-temp-track {
+    fill: rgb(0 0 0 / 0.2);
+    stroke: currentColor;
+    stroke-width: 1.5;
+}
+
+.room-temp-cold-zone,
+.room-temp-hot-zone {
+    opacity: 0.16;
+    mix-blend-mode: screen;
+}
+
+.room-temp-cold-zone {
+    fill: #68d7ff;
+}
+
+.room-temp-hot-zone {
+    fill: #ff5c24;
+}
+
+.room-temp-tick {
+    stroke: currentColor;
+    stroke-width: 1.3;
+    opacity: 0.62;
+}
+
+.room-temp-scale,
+.room-temp-unit-label {
+    fill: currentColor;
+    font-family: inherit;
+    font-weight: 700;
+    opacity: 0.82;
+    text-anchor: middle;
+}
+
+.room-temp-scale {
+    font-size: 13px;
+}
+
+.room-temp-unit-label {
+    font-size: 22px;
+    text-anchor: start;
+}
+
+.room-temp-pointer {
+    fill: var(--room-temp-accent);
+    stroke: #020;
+    stroke-width: 1.4;
+    filter:
+        drop-shadow(0 0 4px color-mix(in srgb, var(--room-temp-accent) 42%, transparent))
+        drop-shadow(0 0 9px color-mix(in srgb, var(--room-temp-accent) 18%, transparent));
+}
+
+.room-temp-pointer-line {
+    stroke: var(--room-temp-accent);
+    stroke-width: 2;
+    opacity: 0.86;
+}
+
+.room-temp-pointer-screw {
+    fill: rgb(0 0 0 / 0.72);
+    stroke: var(--room-temp-accent);
+    stroke-width: 1.5;
 }
 
 .room-audio-bar {

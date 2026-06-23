@@ -4,6 +4,7 @@ import {
 } from "@game/helpers/gameHelpers";
 import { updateItemLocation } from "@game/rules/items";
 import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
+import { setExternalRoomTemperatureF } from "@game/selectors/roomTemperatureSelectors";
 import type { RuleResult } from "@game/rules/result";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
@@ -69,11 +70,11 @@ export function setCoolantValvePosition(
   };
 }
 
-export function getReactorCoreTemperatureF(state: GameState): 88 | 98 | 108 {
+export function getReactorCoreTemperatureF(state: GameState): 88 | 101 | 108 {
   const position = getCoolantValvePosition(state);
   if (position === -1) return 108;
   if (position === 1) return 88;
-  return 98;
+  return 101;
 }
 
 export function setCoolantValve(
@@ -97,8 +98,9 @@ export function setCoolantValve(
     };
   }
 
-  const state = setCoolantValvePosition(context.state, position);
+  let state = setCoolantValvePosition(context.state, position);
   const temperature = getReactorCoreTemperatureF(state);
+  state = setExternalRoomTemperatureF(state, "ReactorCore", temperature);
   const direction =
     position === -1
       ? "The blue side of the gauge falls as the red side climbs."
@@ -445,7 +447,7 @@ export function tickReactorSystems(state: GameState): {
 
   if (next.player.roomId === "ReactorCore") {
     const roomTemperature = getReactorCoreTemperatureF(next);
-    const increase = roomTemperature === 108 ? 0.45 : roomTemperature === 98 ? 0.18 : 0.06;
+    const increase = roomTemperature === 108 ? 0.45 : roomTemperature >= 100 ? 0.18 : 0.06;
     const temperature = Math.min(
       110,
       next.player.vitals.temperature + increase,

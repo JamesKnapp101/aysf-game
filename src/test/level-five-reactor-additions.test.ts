@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getExternalRoomTemperatureF } from "@game/selectors/roomTemperatureSelectors";
 import {
   getReactorConsensusState,
   getReactorLobeCounts,
@@ -79,9 +80,13 @@ describe("Level Five reactor additions", () => {
     let state = createTestState({ roomId: "HeatCoolantExchangePlatform" });
     state = await runCommand(state, "open coolant panel");
 
+    expect(getReactorCoreTemperatureF(state)).toBe(101);
+    expect(getExternalRoomTemperatureF(state, "ReactorCore")).toBe(101);
+
     state = await runCommand(state, "set coolant valve to -1");
     expect(getCoolantValvePosition(state)).toBe(-1);
     expect(getReactorCoreTemperatureF(state)).toBe(108);
+    expect(getExternalRoomTemperatureF(state, "ReactorCore")).toBe(108);
 
     const hotStart = setPlayerRoom(state, "ReactorCore");
     const hot = await runCommand(hotStart, "wait");
@@ -90,6 +95,7 @@ describe("Level Five reactor additions", () => {
     state = setPlayerRoom(state, "HeatCoolantExchangePlatform");
     state = await runCommand(state, "set coolant valve to 1");
     expect(getReactorCoreTemperatureF(state)).toBe(88);
+    expect(getExternalRoomTemperatureF(state, "ReactorCore")).toBe(88);
   });
 
   it("warns on every Reactor Core heat increase and kills the player near 106 F", async () => {

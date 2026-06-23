@@ -2,6 +2,11 @@ import {
   type FlashlightStatus,
   getChargeBarCount,
 } from "@game/helpers/flashlightHelpers";
+import {
+  MAX_EXTERNAL_ROOM_TEMPERATURE_F,
+  MIN_EXTERNAL_ROOM_TEMPERATURE_F,
+  clampExternalRoomTemperatureF,
+} from "@game/selectors/roomTemperatureSelectors";
 import React, { useEffect, useMemo, useState } from "react";
 import type { Direction } from "../types/roomTypes";
 import { RoomCompass } from "./Compass";
@@ -9,6 +14,7 @@ import { RoomCompass } from "./Compass";
 type RoomStatusPanelProps = {
   exits: Direction[];
   audioLevel: number;
+  externalTemperatureF: number;
   flashlightStatus: FlashlightStatus;
 };
 
@@ -22,6 +28,28 @@ function clamp(n: number, lo: number, hi: number) {
 function audioToUnit(raw: number) {
   if (!Number.isFinite(raw) || raw <= 0) return 0;
   return clamp(raw / 10, 0, 1);
+}
+
+function temperatureToUnit(raw: number) {
+  const temperature = clampExternalRoomTemperatureF(raw);
+  return (
+    (temperature - MIN_EXTERNAL_ROOM_TEMPERATURE_F) /
+    (MAX_EXTERNAL_ROOM_TEMPERATURE_F - MIN_EXTERNAL_ROOM_TEMPERATURE_F)
+  );
+}
+
+function getTemperatureZone(temperature: number) {
+  if (temperature <= 32) return "freezing";
+  if (temperature < 65) return "cool";
+  if (temperature < 90) return "temperate";
+  if (temperature < 103) return "hot";
+  return "critical";
+}
+
+function getTemperatureAriaLabel(temperature: number) {
+  return `External temperature reading: ${Math.round(
+    clampExternalRoomTemperatureF(temperature),
+  )} degrees Fahrenheit`;
 }
 
 function getFlashlightKindLabel(status: FlashlightStatus) {
@@ -45,8 +73,16 @@ function getFlashlightAriaLabel(status: FlashlightStatus) {
 export const RoomStatusPanel: React.FC<RoomStatusPanelProps> = ({
   exits,
   audioLevel,
+  externalTemperatureF,
   flashlightStatus,
 }) => {
+  const temperature = clampExternalRoomTemperatureF(externalTemperatureF);
+  const temperatureUnit = useMemo(
+    () => temperatureToUnit(temperature),
+    [temperature],
+  );
+  const temperatureZone = getTemperatureZone(temperature);
+  const temperaturePointerX = 34 + temperatureUnit * 174;
   const baseAudioUnit = useMemo(() => audioToUnit(audioLevel), [audioLevel]);
   const baseBars = useMemo(() => {
     return clamp(Math.round(baseAudioUnit * AUDIO_BARS), 0, AUDIO_BARS);
@@ -109,6 +145,96 @@ export const RoomStatusPanel: React.FC<RoomStatusPanelProps> = ({
       <RoomCompass exits={exits} />
 
       <div className="room-diagnostics" aria-label="Room diagnostics">
+        <div className="room-diag-block" data-kind="temperature">
+          <div className="room-diag-heading">
+            <div className="room-diag-title">TEMP</div>
+            <div className="room-diag-miniLabel">
+              {Math.round(temperature)}°F
+            </div>
+          </div>
+
+          <div
+            className="room-temp-reading"
+            aria-label={getTemperatureAriaLabel(temperature)}
+            data-zone={temperatureZone}
+            role="img"
+          >
+            <svg
+              className="room-temp-meter"
+              viewBox="0 0 220 58"
+              aria-hidden="true"
+            >
+              <text className="room-temp-unit-label" x="2" y="33">
+                °F
+              </text>
+              <rect
+                className="room-temp-track"
+                x="34"
+                y="25"
+                width="174"
+                height="12"
+                rx="3"
+              />
+              <rect
+                className="room-temp-cold-zone"
+                x="34"
+                y="25"
+                width="95"
+                height="12"
+                rx="3"
+              />
+              <rect
+                className="room-temp-hot-zone"
+                x="184"
+                y="25"
+                width="24"
+                height="12"
+                rx="3"
+              />
+              {[34, 129, 208].map((tickX) => (
+                <line
+                  key={tickX}
+                  className="room-temp-tick"
+                  x1={tickX}
+                  x2={tickX}
+                  y1="19"
+                  y2="43"
+                />
+              ))}
+              <text className="room-temp-scale" x="34" y="55">
+                -60
+              </text>
+              <text className="room-temp-scale" x="129" y="55">
+                32
+              </text>
+              <text className="room-temp-scale" x="208" y="55">
+                108
+              </text>
+              <path
+                className="room-temp-pointer"
+                d={`M ${temperaturePointerX} 4 L ${
+                  temperaturePointerX - 8
+                } 22 H ${temperaturePointerX + 8} Z`}
+              />
+              <line
+                className="room-temp-pointer-line"
+                x1={temperaturePointerX}
+                x2={temperaturePointerX}
+                y1="20"
+                y2="38"
+              />
+              <circle
+                className="room-temp-pointer-screw"
+                cx={temperaturePointerX}
+                cy="20"
+                r="3"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <div className="room-diag-divider" aria-hidden="true" />
+
         <div className="room-diag-block" data-kind="flashlight">
           <div className="room-diag-heading">
             <div className="room-diag-title">FLASHLIGHT</div>

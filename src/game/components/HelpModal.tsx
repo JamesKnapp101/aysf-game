@@ -44,8 +44,8 @@ const INTERFACE_SECTIONS: Record<HelpInterfaceSectionId, HelpInterfaceSection> =
       body: "This pinned panel keeps the current room description visible at the top of the screen. It updates as you move and is meant to reduce the need to scroll back through the transcript, or refresh by using the 'look' command. This description stays current with any items taken or dropped.",
     },
     status: {
-      title: "Compass / Flashlight / Audio Widget",
-      body: "The compass lights up to show available exits, with the corner icons representing up, down, in, and out. Below that is a flashlight indicator that will show whether you're carrying a flashlight, if it's lit, and how much charge it has. At the bottom is an audio indicator that will light up when something nearby is making noise.",
+      title: "Compass / Temp / Flashlight / Audio Widget",
+      body: "The compass lights up to show available exits, with the corner icons representing up, down, in, and out. Below that is an external temperature reading for the room, followed by a flashlight indicator that will show whether you're carrying a flashlight, if it's lit, and how much charge it has. At the bottom is an audio indicator that will light up when something nearby is making noise.",
     },
     log: {
       title: "Log Panel",
@@ -342,7 +342,7 @@ export function HelpModal({ conversationMode, onClose }: HelpModalProps) {
                 activeSection={activeSection}
                 className="help-diagram-panel--status"
                 id="status"
-                label="Compass / Flashlight / Audio"
+                label="Compass / Temp / Flashlight / Audio"
                 onSelect={setActiveSection}
                 subtitle="Exit compass and situational readout"
               />

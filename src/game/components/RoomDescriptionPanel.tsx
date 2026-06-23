@@ -8,6 +8,7 @@ import React, {
 import "../../styles/components/mind-gun-overlay.css";
 import "../../styles/organism-death-overlay.css";
 import { getDisplayedFlashlightStatus } from "../helpers/flashlightHelpers";
+import { getExternalRoomTemperatureF } from "../selectors/roomTemperatureSelectors";
 import { useUIEffectsStore } from "../store/store";
 import type { GameState, VisualEffectsMode } from "../types/gameTypes";
 import type { Direction } from "../types/roomTypes";
@@ -336,6 +337,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
 
   const roomAudioLevel = state.worldState.roomAudioLevel?.[roomId] ?? 0;
   const flashlightStatus = getDisplayedFlashlightStatus(state);
+  const externalTemperatureF = getExternalRoomTemperatureF(state, roomId);
 
   // =========================
   // Render helpers
@@ -373,6 +375,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
         <RoomStatusPanel
           exits={exits}
           audioLevel={Number.isFinite(roomAudioLevel) ? roomAudioLevel : 0}
+          externalTemperatureF={externalTemperatureF}
           flashlightStatus={flashlightStatus}
         />
 

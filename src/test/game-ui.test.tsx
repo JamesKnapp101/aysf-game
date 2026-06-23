@@ -8,6 +8,7 @@ import { LogTab } from "@game/components/LogTab";
 import { NotificationHost } from "@game/components/NotificationHost";
 import { RadioFrequencyModal } from "@game/components/RadioFrequencyModal";
 import { buildDamageNotification } from "@game/rules/notifications";
+import { RoomStatusPanel } from "@game/components/RoomStatusPanel";
 import { StatusTab } from "@game/components/StatusTab";
 import { SyndromeXSignalOverlay } from "@game/components/SyndromeXSignalOverlay";
 import { useUIEffectsStore } from "@game/store/store";
@@ -284,6 +285,28 @@ describe("UI panels", () => {
     expect(container.querySelectorAll(".compass-label--active")).toHaveLength(
       4,
     );
+  });
+
+  it("renders an external temperature reading in room diagnostics", () => {
+    render(
+      <RoomStatusPanel
+        audioLevel={0}
+        exits={["north"]}
+        externalTemperatureF={88}
+        flashlightStatus={{
+          hasFlashlight: false,
+          isActive: false,
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByLabelText(
+        "External temperature reading: 88 degrees Fahrenheit",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText("TEMP")).toBeInTheDocument();
+    expect(screen.getByText("88°F")).toBeInTheDocument();
   });
 
   it("renders queued notifications without touching the transcript", async () => {

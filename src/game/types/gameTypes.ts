@@ -466,14 +466,7 @@ type RoomAirQuality =
   | "smoke"
   | "thin"
   | "vaccum";
-type RoomTemperature =
-  | "freezing"
-  | "cold"
-  | "cool"
-  | "temperate"
-  | "warm"
-  | "hot"
-  | "scorching";
+type RoomTemperature = number;
 
 export interface WorldState {
   activeExperience?: ActiveExperience;
