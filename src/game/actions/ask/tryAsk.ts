@@ -4,6 +4,7 @@ import {
   isRadioTargetItem,
 } from "@game/helpers/conversationHelpers";
 import { normalizeTopic } from "@game/rules/scope";
+import { handleRegisteredAskAction } from "@game/registries/actionInteractionRegistry";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { ConversationTarget } from "@game/types/npcTypes";
 import { GameState } from "../../types/gameTypes";
@@ -14,6 +15,8 @@ export async function tryAsk(
   topicRaw: string,
 ): Promise<ActionResult> {
   const topic = normalizeTopic(topicRaw, target);
+  const registered = handleRegisteredAskAction(state, target, topic);
+  if (registered) return registered;
 
   if (target.kind === "npc") {
     return askNpc(state, target.npc, topic, target.via);

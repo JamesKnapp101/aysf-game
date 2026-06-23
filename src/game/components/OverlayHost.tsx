@@ -18,6 +18,11 @@ const LazyPowerStationTerminalModal = lazy(() =>
     default: mod.PowerStationTerminalModal,
   })),
 );
+const LazyReactorControlTerminalModal = lazy(() =>
+  import("./ReactorControlTerminalModal").then((mod) => ({
+    default: mod.ReactorControlTerminalModal,
+  })),
+);
 const LazyHydroponicsAdminTerminalModal = lazy(() =>
   import("./HydroponicsAdminTerminalModal").then((mod) => ({
     default: mod.HydroponicsAdminTerminalModal,
@@ -190,6 +195,22 @@ export function OverlayHost({
           }
         >
           <LazyPowerStationTerminalModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
+        </Suspense>
+      );
+    }
+
+    case "reactor-control-terminal": {
+      return (
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Reactor Terminal" />
+          }
+        >
+          <LazyReactorControlTerminalModal
             onClose={onClose}
             state={state}
             setGameState={setGameState}

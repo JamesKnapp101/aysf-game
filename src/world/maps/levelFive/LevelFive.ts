@@ -3,11 +3,18 @@ import type { WorldChunk } from "../../../game/types/gameTypes";
 import { levelFiveDoors } from "../../doors/levelFiveDoors";
 import { levelFiveItems } from "../../Items/levelFiveMisc";
 import { resolveLevelFiveSpillLight } from "./levelFiveLighting";
+import { reactorAdditionItems } from "./reactorItems";
 import {
+  describeTiltedPlatformPerch,
   describeTiltingPlatform,
   PLATFORM_PERCH_ROOM_ID,
   reactorPlatformItems,
 } from "./reactorPlatform";
+import {
+  getReactorCoreTemperatureF,
+  VIRTUAL_MANAGER_OFFICE_ROOM_ID,
+  VIRTUAL_OFFICE_ROOM_ID,
+} from "./reactorSystems";
 import { waterTreatmentRooms } from "./WaterTreatment";
 
 export const LEVEL_FIVE: WorldChunk = {
@@ -15,6 +22,7 @@ export const LEVEL_FIVE: WorldChunk = {
     ...levelFiveItems,
     ...engineeringOrganismItems,
     ...reactorPlatformItems,
+    ...reactorAdditionItems,
   ],
   doors: [...levelFiveDoors],
   teleportPads: [],
@@ -23,7 +31,9 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "ReactorCore",
       name: "Reactor Core",
       description:
-        "This is the Reactor Core where the player will interface with the Lobes and the virtual interface.",
+        "The Reactor Core is a dense chamber of heat-shielded machinery wrapped around a column of violent white energy. A reactor terminal and industrial key receptacle stand beside the little elevator, while wired virtual-reality goggles hang from the wall.",
+      describe: (state) =>
+        `The Reactor Core is a dense chamber of heat-shielded machinery wrapped around a column of violent white energy. The room is ${getReactorCoreTemperatureF(state)} degrees Fahrenheit, and even the metal seems to radiate heat. A reactor terminal and industrial key receptacle stand beside the little elevator, while wired virtual-reality goggles hang from the wall.`,
       meta: { excludeFromTransmitterMap: true },
       exits: [{ direction: "up", toRoomId: "ReactorControlRoom" }],
     },
@@ -31,7 +41,7 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "ReactorControlRoom",
       name: "Reactor Control Room",
       description:
-        "Banks of monitors and heavy controls curve around the reactor control room. Most of the displays are dark or stuttering through error codes, while the damaged core bulkhead leaks an angry orange light across the deck.",
+        "The control room is a warm 82 degrees Fahrenheit. Banks of monitors curve around a twenty-five-unit Reactor Lobe array, the giant Reactor Lobe Consensus board is visible beyond the control glass, and a little elevator waits to descend into the core.",
       meta: { excludeFromTransmitterMap: true },
       exits: [
         { direction: "down", toRoomId: "ReactorCore" },
@@ -42,10 +52,10 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "HeatCoolantExchangePlatform",
       name: "Heat/Coolant Exchange Platform",
       description:
-        "Thick insulated pipes crowd the walls around this lower platform, knocking and ticking as coolant and reactor heat fight through separate conduits. The reactor control room lies west, and the hydraulic shaft opens to the north.",
+        "Thick insulated pipes crowd the walls around this lower platform, knocking and ticking as coolant and reactor heat fight through separate conduits. A red-and-blue coolant control panel is mounted among them. The reactor control room lies west, and the hydraulic shaft opens to the north.",
       meta: { excludeFromTransmitterMap: true },
       describe: (state) =>
-        `Thick insulated pipes crowd the walls around this lower platform, knocking and ticking as coolant and reactor heat fight through separate conduits. The reactor control room lies west, and the hydraulic shaft opens to the north. ${describeTiltingPlatform(state)}`,
+        `Thick insulated pipes crowd the walls around this lower platform, knocking and ticking as coolant and reactor heat fight through separate conduits. A red-and-blue coolant control panel is mounted among them. The reactor control room lies west, and the hydraulic shaft opens to the north. ${describeTiltingPlatform(state)}`,
       exits: [
         { direction: "west", toRoomId: "ReactorControlRoom" },
         { direction: "north", toRoomId: "WasteProcessingPlatform" },
@@ -69,7 +79,7 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "LobeStoragePlatform",
       name: "Lobe Storage Platform",
       description:
-        "Reinforced storage cradles line this lower platform, each shaped to hold machinery with broad organic curves rather than clean industrial angles. Waste processing is west and the readings station is south.",
+        "A ruptured metal chamber dominates this lower platform. It once stored backup Reactor Lobes, but an internal explosion destroyed most and corrupted the rest. Impact scars point toward the Reactor Platform and the rafters above Observation. Waste processing is west and the readings station is south.",
       meta: { excludeFromTransmitterMap: true },
       exits: [
         { direction: "west", toRoomId: "WasteProcessingPlatform" },
@@ -91,6 +101,7 @@ export const LEVEL_FIVE: WorldChunk = {
       name: "Atop the Tilted Platform",
       description:
         "You are perched near the raised edge of the damaged hydraulic platform, level with the overhead scaffolding. The deck drops away at a severe angle beneath you, leaving down as the only safe route off.",
+      describe: (state) => describeTiltedPlatformPerch(state),
       meta: { excludeFromTransmitterMap: true },
       exits: [{ direction: "down", toRoomId: "WasteProcessingPlatform" }],
     },
@@ -98,9 +109,9 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "SupplyPlatform",
       name: "Supply Platform",
       description:
-        "Crates, hose reels, and secured tool cabinets crowd the upper supply deck. Maintenance lies east, a service route descends to waste processing, and the damaged hydraulic platform spans the gap south.",
+        "Crates, hose reels, secured tool cabinets, and a yellow radiation equipment locker crowd the upper supply deck. Maintenance lies east, a service route descends to waste processing, and the damaged hydraulic platform spans the gap south.",
       describe: (state) =>
-        `Crates, hose reels, and secured tool cabinets crowd the upper supply deck. Maintenance lies east, a service route descends to waste processing, and the damaged hydraulic platform spans the gap south. ${describeTiltingPlatform(state)}`,
+        `Crates, hose reels, secured tool cabinets, and a yellow radiation equipment locker crowd the upper supply deck. Maintenance lies east, a service route descends to waste processing, and the damaged hydraulic platform spans the gap south. ${describeTiltingPlatform(state)}`,
       exits: [
         { direction: "east", toRoomId: "MaintenancePlatform" },
         { direction: "south", toRoomId: "ObservationPlatform" },
@@ -133,12 +144,28 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "ReactorPlatform",
       name: "Reactor Platform",
       description:
-        "A broad upper platform is packed with machinery, mainframes, monitors, and interlaced pipes. Engineering Corridor Two continues east, the observation deck lies west, and maintenance equipment crowds the platform to the north.",
+        "A broad upper platform is packed with machinery, mainframes, monitors, and interlaced pipes. The giant Reactor Lobe Consensus board hangs above it, and a defunct lobe with a cracked housing lies where an explosion flung it from below. Engineering Corridor Two continues east, the observation deck lies west, and maintenance equipment crowds the platform to the north.",
       exits: [
         { direction: "north", toRoomId: "MaintenancePlatform" },
         { direction: "west", toRoomId: "ObservationPlatform" },
         { direction: "east", toRoomId: "EngCorridorTwo" },
       ],
+    },
+    {
+      id: VIRTUAL_OFFICE_ROOM_ID,
+      name: "Virtual Office: Lemster's Office",
+      description:
+        "Fluorescent panels bleach a cramped office buried under impossible stacks of virtual paperwork. This is the workspace of Lemster Krolmborg, Aeneas Virtual Employee 12,847,395,061. An open doorway leads east to his manager's office, whose desk has been positioned for uninterrupted glaring.",
+      meta: { excludeFromTransmitterMap: true },
+      exits: [{ direction: "east", toRoomId: VIRTUAL_MANAGER_OFFICE_ROOM_ID }],
+    },
+    {
+      id: VIRTUAL_MANAGER_OFFICE_ROOM_ID,
+      name: "Virtual Office: Manager's Office",
+      description:
+        "A severe glass-and-chrome office overlooks Lemster's workspace through the open doorway west. Motivational slogans crawl across every wall, all variations on teamwork, shared pain, and driving harder.",
+      meta: { excludeFromTransmitterMap: true },
+      exits: [{ direction: "west", toRoomId: VIRTUAL_OFFICE_ROOM_ID }],
     },
     {
       id: "EngCorridorOne",

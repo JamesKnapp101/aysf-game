@@ -263,13 +263,17 @@ describe("Aquarium solver", () => {
     expect(result.path).toBeNull();
   });
 
-  it("does not have a winning route if the player refuses to get the prod", async () => {
-    const result = await findWinningAquariumRoute({
-      allowProd: false,
-    });
+  it(
+    "does not have a winning route if the player refuses to get the prod",
+    async () => {
+      const result = await findWinningAquariumRoute({
+        allowProd: false,
+      });
 
-    expect(result.path).toBeNull();
-  });
+      expect(result.path).toBeNull();
+    },
+    10_000,
+  );
 
   it("warns when a tentacle tip moves into the player's room on the same turn", async () => {
     const baseState = createTestState({

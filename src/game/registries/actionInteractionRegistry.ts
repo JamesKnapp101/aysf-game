@@ -12,6 +12,7 @@ import {
 } from "src/world/maps/levelThree/Park/Bar/barDarts";
 import { orderBarDrink } from "src/world/maps/levelThree/Park/Bar/barDrinks";
 import { handleMovieTheaterUsherTell } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
+import { handleVirtualManagerConversation } from "src/world/maps/levelFive/reactorSystems";
 
 type AskForActionHandler = {
   handle: (
@@ -45,6 +46,8 @@ type TellActionHandler = (
   target: ConversationTarget,
   topic: string,
 ) => ActionResult | undefined;
+
+type AskActionHandler = TellActionHandler;
 
 const ASK_FOR_ACTION_HANDLERS: AskForActionHandler[] = [
   {
@@ -82,7 +85,24 @@ const TELL_REWARD_HANDLERS: TellRewardHandler[] = [
 
 const TELL_ACTION_HANDLERS: TellActionHandler[] = [
   handleMovieTheaterUsherTell,
+  handleVirtualManagerConversation,
 ];
+
+const ASK_ACTION_HANDLERS: AskActionHandler[] = [
+  handleVirtualManagerConversation,
+];
+
+export function handleRegisteredAskAction(
+  state: GameState,
+  target: ConversationTarget,
+  topic: string,
+): ActionResult | undefined {
+  for (const handler of ASK_ACTION_HANDLERS) {
+    const result = handler(state, target, topic);
+    if (result) return result;
+  }
+  return undefined;
+}
 
 export function hasRegisteredAskForTarget(
   target: ConversationTarget,

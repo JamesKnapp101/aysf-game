@@ -1,5 +1,5 @@
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
-import { setItemOpen } from "@game/rules/containers";
+import { isItemOpen, setItemOpen } from "@game/rules/containers";
 import { updateItemLocation } from "@game/rules/items";
 import {
   inventoryHas,
@@ -14,7 +14,7 @@ export const SOUTH_CARGO_CAGE_ID = "TiltingPlatformSouthCargoCage";
 export const RIGHT_SMARTBELL_ID = "RightSmartbell";
 export const LEFT_SMARTBELL_ID = "LeftSmartbell";
 export const PLATFORM_PERCH_ROOM_ID = "TiltedPlatformPerch";
-export const RAFTER_TEST_ITEM_ID = "ObservationRafterTestItem";
+export const RAFTER_TEST_ITEM_ID = "ReplacementReactorLobe";
 export const PLATFORM_HYDRAULICS_PANEL_ID = "TiltingPlatformHydraulicsPanel";
 export const PLATFORM_VALVE_ID = "TiltingPlatformValve";
 
@@ -165,10 +165,10 @@ function setTiltingPlatformOrientation(
       : orientation === "north"
         ? {
             [NORTH_CARGO_CAGE_ID]: "WasteProcessingPlatform",
-            [SOUTH_CARGO_CAGE_ID]: "UNPLACED",
+            [SOUTH_CARGO_CAGE_ID]: PLATFORM_PERCH_ROOM_ID,
           }
         : {
-            [NORTH_CARGO_CAGE_ID]: "UNPLACED",
+            [NORTH_CARGO_CAGE_ID]: PLATFORM_PERCH_ROOM_ID,
             [SOUTH_CARGO_CAGE_ID]: "HeatCoolantExchangePlatform",
           };
 
@@ -224,6 +224,26 @@ function recalculateCargoDrivenPlatform(
     message = [
       message,
       "The edge beside you starts rising. You scramble onto the canted deck before it climbs out of reach and ride it upward toward the scaffolding.",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+  }
+
+  if (
+    allowPlayerPerch &&
+    before !== "level" &&
+    after === "level" &&
+    state.player.roomId === PLATFORM_PERCH_ROOM_ID
+  ) {
+    const destinationRoomId =
+      before === "north" ? "ObservationPlatform" : "SupplyPlatform";
+    next = movePlayerToRoom(next, destinationRoomId, {
+      fromRoomId: state.player.roomId,
+      via: "lowering tilting platform",
+    });
+    message = [
+      message,
+      "The raised edge sinks back down. You ride the cage-side lip with considerably less grace than before, but it returns you safely to the upper deck.",
     ]
       .filter(Boolean)
       .join("\n\n");
@@ -298,6 +318,14 @@ function openHydraulicsPanel({ state }: { state: GameState }) {
     message:
       "You haul the heavy panel open. Behind it, pipes, ducts, and hydraulic lines crowd the compartment around a pressure gauge and a three-position valve marked A, B, and C.",
   };
+}
+
+function describeHydraulicsPanelScenery(state: GameState): string {
+  if (!isItemOpen(state, PLATFORM_HYDRAULICS_PANEL_ID)) {
+    return "A heavy maintenance panel with a recessed handle occupies one wall.";
+  }
+
+  return `The heavy maintenance panel hangs open, exposing pipes, ducts, hydraulic lines, a pressure gauge, and a three-position valve currently set to ${getPlatformValvePosition(state)}.`;
 }
 
 function setPlatformValve({
@@ -587,8 +615,20 @@ export function describeTiltingPlatform(state: GameState): string {
     return "The broad hydraulic platform between the upper decks is level, though its exposed pistons are bent and leaking fluid.";
   }
   return orientation === "north"
-    ? "The damaged hydraulic platform is tipped sharply north, its south edge raised toward the overhead scaffolding."
-    : "The damaged hydraulic platform is tipped sharply south, its north edge raised toward the overhead scaffolding.";
+    ? "The damaged hydraulic platform is tipped sharply north, its south edge raised toward the overhead scaffolding. The north cargo cage hangs from the lowered edge, while the south cargo cage rides high with the raised deck."
+    : "The damaged hydraulic platform is tipped sharply south, its north edge raised toward the overhead scaffolding. The south cargo cage hangs from the lowered edge, while the north cargo cage rides high with the raised deck.";
+}
+
+export function describeTiltedPlatformPerch(state: GameState): string {
+  const orientation = getTiltingPlatformOrientation(state);
+  const raisedCage =
+    orientation === "north"
+      ? "The south cargo cage is bolted beside this raised edge, close enough to reach."
+      : orientation === "south"
+        ? "The north cargo cage is bolted beside this raised edge, close enough to reach."
+        : "The hydraulic platform has settled level again below you, leaving this perch with the embarrassing logic of a ladder that forgot its rungs.";
+
+  return `You are perched near the raised edge of the damaged hydraulic platform, level with the overhead scaffolding. The deck drops away at a severe angle beneath you, leaving down as the only safe route off. ${raisedCage}`;
 }
 
 export const reactorPlatformItems: Item[] = [
@@ -597,6 +637,7 @@ export const reactorPlatformItems: Item[] = [
     name: "heavy maintenance panel",
     description:
       "A thick steel access panel is secured over part of the lift's hydraulic control system.",
+    describeScenery: (state) => describeHydraulicsPanelScenery(state),
     sceneryDescription:
       "A heavy maintenance panel with a recessed handle occupies one wall.",
     location: "MaintenancePlatform",
@@ -736,30 +777,30 @@ export const reactorPlatformItems: Item[] = [
   },
   {
     id: "ObservationRafterTestItemView",
-    name: "item lodged in the rafters",
+    name: "reactor lobe lodged in the rafters",
     description:
-      "A small test object is wedged high in the scaffolding above the platform, well beyond your reach from here.",
+      "An intact-looking spherical Reactor Lobe is wedged high in the scaffolding above the platform. The large connector on its back still has a full set of straight gold pins, but it is well beyond your reach from here.",
     sceneryDescription:
-      "High above, a small object is visibly lodged in the metal scaffolding.",
+      "High above, an intact Reactor Lobe is visibly lodged in the metal scaffolding.",
     location: "ObservationPlatform",
-    vocab: ["item", "test item", "object", "rafter item", "rafters"],
+    vocab: ["lobe", "reactor lobe", "replacement lobe", "rafters"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 1,
     itemSize: 1,
     overrides: {
-      take: "It's lodged far too high in the scaffolding to reach from the Observation Platform.",
+      take: "The Reactor Lobe is lodged far too high in the scaffolding to reach from the Observation Platform.",
     },
   },
   {
     id: RAFTER_TEST_ITEM_ID,
-    name: "dummy test item",
+    name: "intact reactor lobe",
     description:
-      "A deliberately unremarkable test object, now liberated from the rafters.",
+      "A spherical housing contains a dormant reactor-control AI. The broad connector on its back carries rows of straight, clean gold pins. Unlike the wreckage below, this lobe appears intact.",
     initialDescription:
-      "The dummy test item is wedged in the scaffolding within arm's reach.",
+      "The intact Reactor Lobe is wedged in the scaffolding within arm's reach.",
     location: PLATFORM_PERCH_ROOM_ID,
-    vocab: ["dummy", "dummy item", "test item", "dummy test item", "object"],
+    vocab: ["lobe", "reactor lobe", "replacement lobe", "intact lobe"],
     itemClass: "solid",
     itemCategory: "collectable",
     itemWeight: 1,

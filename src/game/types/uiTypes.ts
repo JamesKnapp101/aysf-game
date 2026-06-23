@@ -36,6 +36,7 @@ export type Overlay =
     } & OverlayPostClose)
   | ({ currentViewIndex: number; kind: "camera-gun-viewer" } & OverlayPostClose)
   | ({ isOn: boolean; kind: "power-station-terminal" } & OverlayPostClose)
+  | ({ kind: "reactor-control-terminal" } & OverlayPostClose)
   | ({ kind: "hydroponics-admin-terminal" } & OverlayPostClose)
   | ({ kind: "mens-lockers" } & OverlayPostClose)
   | ({ kind: "womens-lockers" } & OverlayPostClose)

@@ -279,6 +279,8 @@ export const createInitialState = (world: World): GameState => {
         MaintenancePlatform: true,
         ObservationPlatform: true,
         ReactorPlatform: true,
+        LemsterVirtualOffice: true,
+        VirtualManagerOffice: true,
         EngCorridorOne: false,
         EngCorridorTwo: true,
         ShuttleBay: true,
@@ -336,6 +338,8 @@ export const createInitialState = (world: World): GameState => {
         PowerGrid: 1,
       },
       roomTemp: {
+        ReactorControlRoom: "warm",
+        ReactorCore: "hot",
         StairWellSeven: "cool",
         WalkIn: "freezing",
       },
@@ -572,6 +576,10 @@ export const createInitialState = (world: World): GameState => {
         ],
       },
       itemSettings: {
+        ReactorCoolantValve: {
+          kind: "reactor-coolant-valve",
+          position: 0,
+        },
         Cooler: { kind: "cooler", mode: "off" },
         NVGoggles: { kind: "goggles", isOn: false },
         Comet: { kind: "comet-viewer", isOn: false, hasLink: false },

@@ -1,0 +1,92 @@
+.reactor-terminal {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    height: 100%;
+    padding: 22px;
+    color: var(--crt-color);
+    background:
+        repeating-linear-gradient(0deg, rgb(var(--crt-color-rgb) / 0.03) 0 1px, transparent 1px 4px),
+        #010401;
+    font-family: "Courier New", monospace;
+}
+
+.reactor-terminal header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid currentColor;
+}
+
+.reactor-terminal header strong {
+    font-size: 22px;
+    letter-spacing: 0.08em;
+}
+
+.reactor-terminal header span,
+.reactor-terminal__status span {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    opacity: 0.72;
+}
+
+.reactor-terminal__login,
+.reactor-terminal__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reactor-terminal input,
+.reactor-terminal button {
+    border: 1px solid currentColor;
+    background: #001100;
+    color: inherit;
+    font: inherit;
+    padding: 9px 12px;
+}
+
+.reactor-terminal button {
+    cursor: pointer;
+}
+
+.reactor-terminal button:hover,
+.reactor-terminal button:focus-visible {
+    color: #001100;
+    background: var(--crt-color);
+    outline: none;
+}
+
+.reactor-terminal__controls {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 18px;
+}
+
+.reactor-terminal__status {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 9px 14px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.45);
+    padding: 12px;
+}
+
+.reactor-terminal output {
+    min-height: 42px;
+    padding: 10px;
+    border-left: 3px solid currentColor;
+    background: rgb(var(--crt-color-rgb) / 0.06);
+}
+
+.reactor-terminal__online {
+    padding: 12px;
+    text-align: center;
+    text-shadow: 0 0 9px currentColor;
+}
+
+.reactor-terminal__close {
+    align-self: flex-end;
+    margin-top: auto;
+}

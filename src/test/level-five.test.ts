@@ -3,6 +3,7 @@ import { getRoomVisualLightLevel } from "@game/helpers/visibilityHelpers";
 import {
   createTestState,
   getLastLogEntry,
+  patchRoomDarkness,
   runCommand,
   setInventory,
   setPlayerRoom,
@@ -127,6 +128,12 @@ describe("Level Five reactor platforms", () => {
     const setToA = await runCommand(opened, "set valve to a");
     expect(getPlatformValvePosition(setToA)).toBe("A");
     expect(getLastLogEntry(setToA)).toContain("clunks and hisses");
+
+    const looked = await runCommand(
+      patchRoomDarkness(setToA, "MaintenancePlatform", false),
+      "look",
+    );
+    expect(getLastLogEntry(looked)).toContain("currently set to A");
   });
 
   it("keeps the platform level at C and permits an upper crossing", async () => {
@@ -271,6 +278,16 @@ describe("Level Five reactor platforms", () => {
       "HeatCoolantExchangePlatform",
     );
 
+    const describedFromBelow = await runCommand(
+      patchRoomDarkness(
+        setPlayerRoom(state, "HeatCoolantExchangePlatform"),
+        "HeatCoolantExchangePlatform",
+        false,
+      ),
+      "look",
+    );
+    expect(getLastLogEntry(describedFromBelow)).toContain("south cargo cage");
+
     const adjustedFromBelow = await runCommand(
       setPlayerRoom(state, "HeatCoolantExchangePlatform"),
       "set left dumbbell to 44",
@@ -284,7 +301,7 @@ describe("Level Five reactor platforms", () => {
       createTestState({ roomId: "ObservationPlatform" }),
       "A",
     );
-    const unreachable = await runCommand(state, "take test item");
+    const unreachable = await runCommand(state, "take reactor lobe");
     expect(unreachable.player.inventory.general).not.toContain(
       RAFTER_TEST_ITEM_ID,
     );
@@ -300,12 +317,20 @@ describe("Level Five reactor platforms", () => {
 
     state = setPlayerRoom(state, "ObservationPlatform");
     const elevated = await runCommand(state, "set left dumbbell to 1");
+    const litElevated = patchRoomDarkness(
+      elevated,
+      PLATFORM_PERCH_ROOM_ID,
+      false,
+    );
 
     expect(elevated.player.roomId).toBe(PLATFORM_PERCH_ROOM_ID);
     expect(getTiltingPlatformOrientation(elevated)).toBe("north");
     expect(getLastLogEntry(elevated)).toContain("ride it upward");
+    expect(
+      getLastLogEntry(await runCommand(litElevated, "look")),
+    ).toContain("south cargo cage");
 
-    const withTestItem = await runCommand(elevated, "take dummy test item");
+    const withTestItem = await runCommand(elevated, "take intact lobe");
     expect(withTestItem.player.inventory.general).toContain(
       RAFTER_TEST_ITEM_ID,
     );

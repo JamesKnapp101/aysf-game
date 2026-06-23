@@ -7,7 +7,21 @@ export const ENGINEERING_CORRIDOR_FIRST_ENTRY_EVENT_ID =
 export const ENGINEERING_CORRIDOR_FIRST_ENTRY_MESSAGE =
   "As you move into the weak wash of stairwell light, you sense something shifting in the deeper darkness both north and south. The sounds stop almost as soon as you notice them.";
 
+export const REACTOR_BIG_BOARD_FIRST_ENTRY_EVENT_ID =
+  "level_five_reactor_big_board_first_entry";
+export const REACTOR_BIG_BOARD_FIRST_ENTRY_MESSAGE =
+  "Hanging above the platform is a giant display labeled REACTOR LOBE CONSENSUS. Its twenty-five colored hexagons mirror the AI modules voting on whether to maintain the containment field; the window now visible in your interface is a live view of that Big Board.";
+
 export const levelFiveScriptedEvents: ScriptedEvent[] = [
+  {
+    id: REACTOR_BIG_BOARD_FIRST_ENTRY_EVENT_ID,
+    when: (state, ctx) =>
+      ctx.kind === "onEnterRoom" &&
+      ctx.roomId === "ReactorPlatform" &&
+      !state.worldState.visitedRooms.ReactorPlatform,
+    run: (state) =>
+      queueAfterRoomDescription(state, REACTOR_BIG_BOARD_FIRST_ENTRY_MESSAGE),
+  },
   {
     id: ENGINEERING_CORRIDOR_FIRST_ENTRY_EVENT_ID,
     when: (state, ctx) =>

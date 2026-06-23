@@ -249,8 +249,10 @@ export type ReactorLobeState = {
 
 export type ReactorConsensusState = {
   hasExploded: boolean;
+  isStable: boolean;
   lobes: ReactorLobeState[];
   nextContainmentWarning: number;
+  stabilizationTurnsRemaining?: number;
   turnsUntilTransition: number;
 };
 

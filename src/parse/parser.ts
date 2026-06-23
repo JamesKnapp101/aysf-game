@@ -56,6 +56,8 @@ const VERB_ALIASES: Record<string, string> = {
 
   take: "take",
   get: "take",
+  plug: "put",
+  insert: "put",
 
   drop: "drop",
   ["get on"]: "ride",

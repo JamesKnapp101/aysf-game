@@ -121,6 +121,18 @@ function buildPowerStationOverlay(ctx: ExamineItemContext): ActionResult {
   };
 }
 
+function buildReactorControlTerminalOverlay(
+  ctx: ExamineItemContext,
+): ActionResult {
+  return {
+    state: ctx.state,
+    overlay: withPostCloseNotifications(
+      { kind: "reactor-control-terminal" as const },
+      ctx.postCloseNotifications,
+    ),
+  };
+}
+
 function buildMatterTransmitterOverlay(ctx: ExamineItemContext): ActionResult {
   return {
     state: ctx.state,
@@ -248,6 +260,10 @@ const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
   {
     matches: (item) => item.meta?.kind === "power-station-terminal",
     handle: buildPowerStationOverlay,
+  },
+  {
+    matches: (item) => item.meta?.kind === "reactor-control-terminal",
+    handle: buildReactorControlTerminalOverlay,
   },
   {
     matches: (item) => item.meta?.kind === "matter-transmitter",

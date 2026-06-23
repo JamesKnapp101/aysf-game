@@ -200,6 +200,7 @@ export type ItemSettings =
   | { currentViewIndex: number; kind: "camera-gun-viewer" }
   | { hasLink: boolean; isOn: boolean; kind: "comet-viewer" }
   | { kind: "platform-valve"; position: "A" | "B" | "C" }
+  | { kind: "reactor-coolant-valve"; position: -1 | 0 | 1 }
   | { kind: "smartbell"; weightKg: number };
 
 export type PlayerClothes = {

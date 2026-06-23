@@ -1,4 +1,6 @@
 export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
+  ReactorSupplyLocker: ["LevelFiveRadiationSuit"],
+  ReactorCoolantPanel: ["ReactorCoolantValve", "ReactorCoolantGauge"],
   ThreeWestGimOneEndTable: ["GimOneJournal", "MensLockerKey2"],
   ThreeWestGimTwoEndTable: ["GimTwoJournal", "MensLockerKey9"],
   ThreeWestGimThreeEndTable: ["GimThreeJournal", "MensLockerKey11", "ParkPass"],

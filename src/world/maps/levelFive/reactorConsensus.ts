@@ -9,11 +9,15 @@ import { PLATFORM_PERCH_ROOM_ID } from "./reactorPlatform";
 
 export const REACTOR_LOBE_COUNT = 25;
 export const REACTOR_LOBE_TRANSITION_TURNS = 100;
+export const REACTOR_STABILIZATION_TURNS = 20;
+export const CORRUPTED_REACTOR_LOBE_ID = "reactor-lobe-13";
+export const RADIATION_SUIT_ITEM_ID = "LevelFiveRadiationSuit";
 export const REACTOR_GAME_OVER_CAUSE = "reactor containment collapse";
 export const REACTOR_GAME_OVER_MESSAGE =
   "The reactor containment field has collapsed. The ship is gone. Type RESTART to begin again, or RESTORE to return to a saved game.";
 
 export const REACTOR_BIG_BOARD_ROOM_IDS = new Set([
+  "ReactorControlRoom",
   "SupplyPlatform",
   "MaintenancePlatform",
   "ObservationPlatform",
@@ -36,13 +40,15 @@ function createLobe(index: number, status: ReactorLobeStatus): ReactorLobeState 
 
 export function createInitialReactorConsensusState(): ReactorConsensusState {
   const lobes = Array.from({ length: REACTOR_LOBE_COUNT }, (_, index) => {
-    if (index < 19) return createLobe(index, "harmonic");
+    if (index === 12) return createLobe(index, "dissonant");
+    if (index < 19 || index === 20) return createLobe(index, "harmonic");
     if (index === 19) return createLobe(index, "undecided");
     return createLobe(index, "dissonant");
   });
 
   return {
     hasExploded: false,
+    isStable: false,
     lobes,
     nextContainmentWarning: 80,
     turnsUntilTransition: REACTOR_LOBE_TRANSITION_TURNS,
@@ -125,8 +131,56 @@ export function setReactorLobeStatus(
   };
 }
 
+export function removeCorruptedReactorLobe(state: GameState): GameState {
+  return setReactorLobeStatus(state, CORRUPTED_REACTOR_LOBE_ID, "missing");
+}
+
+export function installReplacementReactorLobe(state: GameState): GameState {
+  const current = getReactorConsensusState(state);
+  const lobes = current.lobes.map((lobe) => {
+    if (lobe.id === CORRUPTED_REACTOR_LOBE_ID) {
+      return { ...lobe, status: "harmonic" as const };
+    }
+    if (lobe.status === "dissonant") {
+      return { ...lobe, status: "undecided" as const };
+    }
+    return lobe;
+  });
+
+  return {
+    ...state,
+    worldState: {
+      ...state.worldState,
+      reactorConsensus: {
+        ...current,
+        hasExploded: false,
+        isStable: false,
+        lobes,
+        stabilizationTurnsRemaining: REACTOR_STABILIZATION_TURNS,
+      },
+    },
+  };
+}
+
 function refreshReactorRadiationExposure(state: GameState): GameState {
-  if (!isReactorBigBoardVisible(state.player.roomId)) return state;
+  const isRadiationArea =
+    isReactorBigBoardVisible(state.player.roomId) ||
+    state.player.roomId === "ReactorCore";
+  if (state.itemState.wornByPlayer.body === RADIATION_SUIT_ITEM_ID) {
+    const statusEffects = state.player.statusEffects.filter(
+      (effect) =>
+        !(effect.id === "radiation" && effect.source === "reactor-lobes"),
+    );
+    return statusEffects.length === state.player.statusEffects.length
+      ? state
+      : {
+          ...state,
+          player: { ...state.player, statusEffects },
+        };
+  }
+  if (!isRadiationArea) {
+    return state;
+  }
 
   const intensity = getReactorRadiationLevel(getReactorConsensusState(state));
   const existingIndex = state.player.statusEffects.findIndex(
@@ -222,6 +276,54 @@ export function tickReactorConsensus(state: GameState): {
 
   if (current.hasExploded || state.worldState.gameOver) {
     return { state: stateWithConsensus, messages: [] };
+  }
+
+  if (current.isStable) {
+    return {
+      state: refreshReactorRadiationExposure(stateWithConsensus),
+      messages: [],
+    };
+  }
+
+  if (current.stabilizationTurnsRemaining !== undefined) {
+    if (current.stabilizationTurnsRemaining > 1) {
+      const next = {
+        ...stateWithConsensus,
+        worldState: {
+          ...stateWithConsensus.worldState,
+          reactorConsensus: {
+            ...current,
+            stabilizationTurnsRemaining:
+              current.stabilizationTurnsRemaining - 1,
+          },
+        },
+      };
+      return { state: refreshReactorRadiationExposure(next), messages: [] };
+    }
+
+    const stableConsensus: ReactorConsensusState = {
+      ...current,
+      isStable: true,
+      lobes: current.lobes.map((lobe) =>
+        lobe.status === "undecided"
+          ? { ...lobe, status: "harmonic" as const }
+          : lobe,
+      ),
+      stabilizationTurnsRemaining: undefined,
+    };
+    const next = {
+      ...stateWithConsensus,
+      worldState: {
+        ...stateWithConsensus.worldState,
+        reactorConsensus: stableConsensus,
+      },
+    };
+    return {
+      state: refreshReactorRadiationExposure(next),
+      messages: [
+        "Across the ship, the reactor consensus display resolves to green. Containment is stable.",
+      ],
+    };
   }
 
   if (current.turnsUntilTransition > 1) {

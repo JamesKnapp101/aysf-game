@@ -131,6 +131,24 @@ export const NPCS: Record<string, ConversationNpc> = {
     aiEnabled: true,
     characterProfileId: "mox_movie_theater",
   },
+  Corey: {
+    id: "Corey",
+    name: "Corey",
+    vocab: ["corey", "core", "robot", "engineering robot"],
+    aiEnabled: false,
+  },
+  LemsterKrolmborg: {
+    id: "LemsterKrolmborg",
+    name: "Lemster Krolmborg",
+    vocab: ["lemster", "krolmborg", "employee", "man"],
+    aiEnabled: false,
+  },
+  VirtualManager: {
+    id: "VirtualManager",
+    name: "The robot manager",
+    vocab: ["manager", "robot manager", "robot", "boss"],
+    aiEnabled: false,
+  },
 };
 
 export function getNpcById(npcId?: string): ConversationNpc | undefined {

@@ -23,6 +23,7 @@ import { useGameSession } from "./hooks/useGameSession";
 import { useLayoutPrefs } from "./hooks/useLayoutPrefs";
 import { useWorldChunkHydration } from "./hooks/useWorldChunkHydration";
 import { renderRegisteredRoomOverlays } from "./registries/roomOverlayRegistry";
+import { getRegisteredRoomVisualTone } from "./registries/roomVisualRegistry";
 import {
   getActiveStatusEffectIds,
   getRadiationIntensity,
@@ -339,6 +340,10 @@ export const Game: React.FC = () => {
             data-drunkenness={isDrunk?.intensity ?? 0}
             data-room-ambient-light={roomAmbientLight ? "true" : "false"}
             data-room-light-level={roomLightLevel}
+            data-room-visual-tone={getRegisteredRoomVisualTone(
+              gs,
+              currentRoom?.id ?? gs.player.roomId,
+            )}
             data-room-is-dark={roomIsDark ? "true" : "false"}
             data-player-can-see={playerCanSee ? "true" : "false"}
             data-player-light-mode={playerLightMode}

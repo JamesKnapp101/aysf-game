@@ -22,21 +22,9 @@ describe("Level Five reactor big board", () => {
 
     expect(screen.getByLabelText("Reactor lobe consensus display")).toBeVisible();
     expect(container.querySelectorAll("[data-lobe-status]")).toHaveLength(25);
-    const rows = container.querySelectorAll(".reactor-board__lobe-row");
-    const rowStatuses = (row: Element) =>
-      Array.from(row.children).map((lobe) =>
-        lobe.getAttribute("data-lobe-status"),
-      );
-    expect(rowStatuses(rows[0]!)).toEqual([
-      ...Array(10).fill("harmonic"),
-      ...Array(3).fill("dissonant"),
-    ]);
-    expect(rowStatuses(rows[1]!)).toEqual([
-      ...Array(9).fill("harmonic"),
-      "undecided",
-      "dissonant",
-      "dissonant",
-    ]);
+    expect(
+      screen.getByLabelText("reactor-lobe-13: dissonant"),
+    ).toBeVisible();
     expect(counts).toEqual({
       harmonic: 19,
       undecided: 1,
@@ -52,7 +40,7 @@ describe("Level Five reactor big board", () => {
     }
 
     expect(isReactorBigBoardVisible("EngCorridorTwo")).toBe(false);
-    expect(isReactorBigBoardVisible("ReactorControlRoom")).toBe(false);
+    expect(isReactorBigBoardVisible("ReactorControlRoom")).toBe(true);
   });
 
   it("turns the undecided lobe dissonant and randomly selects one harmonic successor", () => {

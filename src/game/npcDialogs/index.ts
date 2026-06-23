@@ -17,6 +17,8 @@ import { disembodiedHeadBarBathroomDialog } from "./disembodied_head_bar_bathroo
 import { disembodiedHeadBarBasementDialog } from "./disembodied_head_bar_basement";
 import { masterOfDrinkDialog } from "./master_of_drink";
 import { moxMovieTheaterDialog } from "./mox_movie_theater";
+import { coreyDialog } from "./corey";
+import { lemsterDialog, virtualManagerDialog } from "./virtual_office";
 
 export const NPC_DIALOG: NpcDialog = {
   [YOU_FIRST_CONTACT_ID]: youFirstContactDialog,
@@ -36,4 +38,7 @@ export const NPC_DIALOG: NpcDialog = {
   DisembodiedHeadBarBasement: disembodiedHeadBarBasementDialog,
   MasterOfDrink: masterOfDrinkDialog,
   MoxTheater: moxMovieTheaterDialog,
+  Corey: coreyDialog,
+  LemsterKrolmborg: lemsterDialog,
+  VirtualManager: virtualManagerDialog,
 };

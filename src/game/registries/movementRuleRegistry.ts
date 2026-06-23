@@ -7,6 +7,7 @@ import { resolveGymTreadmillMovement } from "src/world/maps/levelThree/Park/Gym/
 import { resolveMovieTheaterMovement } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 import { resolveDeepStorageMovement } from "src/world/maps/levelSeven/deepStorage";
 import { resolveReactorPlatformMovement } from "src/world/maps/levelFive/reactorPlatform";
+import { resolveReactorCoreAccess } from "src/world/maps/levelFive/reactorSystems";
 
 export type MovementRuleContext = {
   destinationRoomId: string;
@@ -67,6 +68,7 @@ const MOVEMENT_RULES: MovementRule[] = [
   resolveMovieTheaterMovementRule,
   resolveDeepStorageMovementRule,
   resolveReactorPlatformMovementRule,
+  (state, ctx) => resolveReactorCoreAccess(state, ctx),
 ];
 
 export function resolveRegisteredMovementRule(
