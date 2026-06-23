@@ -6,7 +6,11 @@ import {
   removeFromInventory,
 } from "@game/rules/state";
 import type { GameState } from "@game/types/gameTypes";
-import type { Item, ItemSettings } from "@game/types/itemTypes";
+import type {
+  Item,
+  ItemCommandOverrideContext,
+  ItemSettings,
+} from "@game/types/itemTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
 
 export const NORTH_CARGO_CAGE_ID = "TiltingPlatformNorthCargoCage";
@@ -17,6 +21,10 @@ export const PLATFORM_PERCH_ROOM_ID = "TiltedPlatformPerch";
 export const RAFTER_TEST_ITEM_ID = "ReplacementReactorLobe";
 export const PLATFORM_HYDRAULICS_PANEL_ID = "TiltingPlatformHydraulicsPanel";
 export const PLATFORM_VALVE_ID = "TiltingPlatformValve";
+export const MAINTENANCE_LADDER_ASCENT_MESSAGE =
+  "You climb the maintenance ladder. As you reach the top, the lid opens like a sphincter to let you through. Once through, it constricts tightly closed again.";
+export const MAINTENANCE_LADDER_TOP_BLOCK_MESSAGE =
+  "The maintenance ladder's lid is sealed tight from this side. It looks like it requires some kind of tool to open from the top.";
 
 const TILTED_NORTH_TRIGGER = "LevelFivePlatformTiltedToSupply";
 const TILTED_SOUTH_TRIGGER = "LevelFivePlatformTiltedToObservation";
@@ -26,6 +34,35 @@ const MINIMUM_TILT_WEIGHT_KG = 45;
 export type TiltingPlatformOrientation = "level" | "north" | "south";
 export type PlatformValvePosition = "A" | "B" | "C";
 type SmartbellSettings = Extract<ItemSettings, { kind: "smartbell" }>;
+
+type MaintenanceLadderSpec = {
+  bottomRoomId: string;
+  bottomScenery: string;
+  idPrefix: string;
+  topRoomId: string;
+  topScenery: string;
+};
+
+const MAINTENANCE_LADDERS: MaintenanceLadderSpec[] = [
+  {
+    idPrefix: "SupplyWaste",
+    topRoomId: "SupplyPlatform",
+    bottomRoomId: "WasteProcessingPlatform",
+    topScenery:
+      "A sealed lid covers the top of a maintenance ladder in the deck.",
+    bottomScenery:
+      "A maintenance ladder climbs up toward the Supply Platform above.",
+  },
+  {
+    idPrefix: "ObservationHeatCoolant",
+    topRoomId: "ObservationPlatform",
+    bottomRoomId: "HeatCoolantExchangePlatform",
+    topScenery:
+      "A sealed lid covers the top of a maintenance ladder near the warped guardrail.",
+    bottomScenery:
+      "A maintenance ladder climbs up toward the Observation Platform above.",
+  },
+];
 
 export function getTiltingPlatformOrientation(
   state: GameState,
@@ -439,6 +476,39 @@ function resetAfterPlayerFall(state: GameState): GameState {
   return recalculateCargoDrivenPlatform(state, false).state;
 }
 
+function getMaintenanceLadderByBottomRoom(
+  roomId: string,
+): MaintenanceLadderSpec | undefined {
+  return MAINTENANCE_LADDERS.find((ladder) => ladder.bottomRoomId === roomId);
+}
+
+function blockMaintenanceLadderTop({ state }: ItemCommandOverrideContext) {
+  return {
+    state,
+    message: MAINTENANCE_LADDER_TOP_BLOCK_MESSAGE,
+  };
+}
+
+function climbMaintenanceLadderFromBelow({
+  state,
+}: ItemCommandOverrideContext) {
+  const ladder = getMaintenanceLadderByBottomRoom(state.player.roomId);
+  if (!ladder) {
+    return {
+      state,
+      message: "The maintenance ladder does not lead anywhere useful from here.",
+    };
+  }
+
+  return {
+    state: movePlayerToRoom(state, ladder.topRoomId, {
+      fromRoomId: state.player.roomId,
+      via: "maintenance ladder",
+    }),
+    message: MAINTENANCE_LADDER_ASCENT_MESSAGE,
+  };
+}
+
 export function resolveReactorPlatformMovement(
   state: GameState,
   ctx: {
@@ -461,6 +531,34 @@ export function resolveReactorPlatformMovement(
       state,
       message:
         "You lower yourself onto the steep deck and slide down the tilted platform to the opposite side.",
+    };
+  }
+
+  const topBlockedMaintenanceLadder = MAINTENANCE_LADDERS.find(
+    (ladder) =>
+      ctx.fromRoomId === ladder.topRoomId &&
+      ctx.destinationRoomId === ladder.bottomRoomId &&
+      ctx.direction === "down",
+  );
+  if (topBlockedMaintenanceLadder) {
+    return {
+      kind: "block" as const,
+      state,
+      message: MAINTENANCE_LADDER_TOP_BLOCK_MESSAGE,
+    };
+  }
+
+  const upwardMaintenanceLadder = MAINTENANCE_LADDERS.find(
+    (ladder) =>
+      ctx.fromRoomId === ladder.bottomRoomId &&
+      ctx.destinationRoomId === ladder.topRoomId &&
+      ctx.direction === "up",
+  );
+  if (upwardMaintenanceLadder) {
+    return {
+      kind: "allow" as const,
+      state,
+      message: MAINTENANCE_LADDER_ASCENT_MESSAGE,
     };
   }
 
@@ -631,7 +729,57 @@ export function describeTiltedPlatformPerch(state: GameState): string {
   return `You are perched near the raised edge of the damaged hydraulic platform, level with the overhead scaffolding. The deck drops away at a severe angle beneath you, leaving down as the only safe route off. ${raisedCage}`;
 }
 
+function createMaintenanceLadderItems(): Item[] {
+  return MAINTENANCE_LADDERS.flatMap((ladder) => [
+    {
+      id: `${ladder.idPrefix}MaintenanceLadderLid`,
+      name: "maintenance ladder lid",
+      description:
+        "A thick iris-like lid seals the top of the maintenance ladder. It has no handwheel, handle, or obvious release on this side; opening it from here requires some kind of tool.",
+      sceneryDescription: ladder.topScenery,
+      location: ladder.topRoomId,
+      vocab: [
+        "lid",
+        "ladder lid",
+        "maintenance ladder lid",
+        "maintenance lid",
+        "maintenance ladder",
+        "ladder",
+        "hatch",
+        "cover",
+      ],
+      itemClass: "solid" as const,
+      itemCategory: "scenery" as const,
+      itemWeight: 200,
+      itemSize: 5,
+      isUseable: true,
+      overrides: {
+        open: blockMaintenanceLadderTop,
+        use: blockMaintenanceLadderTop,
+      },
+    },
+    {
+      id: `${ladder.idPrefix}MaintenanceLadder`,
+      name: "maintenance ladder",
+      description:
+        "A narrow ladder is bolted into the wall, its worn rungs climbing to a circular lid overhead. The mechanism is clearly designed to admit someone coming from below.",
+      sceneryDescription: ladder.bottomScenery,
+      location: ladder.bottomRoomId,
+      vocab: ["ladder", "maintenance ladder", "service ladder", "rungs"],
+      itemClass: "solid" as const,
+      itemCategory: "scenery" as const,
+      itemWeight: 120,
+      itemSize: 8,
+      isUseable: true,
+      overrides: {
+        use: climbMaintenanceLadderFromBelow,
+      },
+    },
+  ]);
+}
+
 export const reactorPlatformItems: Item[] = [
+  ...createMaintenanceLadderItems(),
   {
     id: PLATFORM_HYDRAULICS_PANEL_ID,
     name: "heavy maintenance panel",

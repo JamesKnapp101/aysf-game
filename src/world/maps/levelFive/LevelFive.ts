@@ -52,23 +52,24 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "HeatCoolantExchangePlatform",
       name: "Heat/Coolant Exchange Platform",
       description:
-        "Thick insulated pipes crowd the walls around this lower platform, knocking and ticking as coolant and reactor heat fight through separate conduits. A red-and-blue coolant control panel is mounted among them. The reactor control room lies west, and the hydraulic shaft opens to the north.",
+        "Thick insulated pipes crowd the walls around this lower platform, knocking and ticking as coolant and reactor heat fight through separate conduits. A red-and-blue coolant control panel is mounted among them. The reactor control room lies west, a maintenance ladder climbs toward observation, and the hydraulic shaft opens to the north.",
       meta: { excludeFromTransmitterMap: true },
       describe: (state) =>
-        `Thick insulated pipes crowd the walls around this lower platform, knocking and ticking as coolant and reactor heat fight through separate conduits. A red-and-blue coolant control panel is mounted among them. The reactor control room lies west, and the hydraulic shaft opens to the north. ${describeTiltingPlatform(state)}`,
+        `Thick insulated pipes crowd the walls around this lower platform, knocking and ticking as coolant and reactor heat fight through separate conduits. A red-and-blue coolant control panel is mounted among them. The reactor control room lies west, a maintenance ladder climbs toward observation, and the hydraulic shaft opens to the north. ${describeTiltingPlatform(state)}`,
       exits: [
         { direction: "west", toRoomId: "ReactorControlRoom" },
         { direction: "north", toRoomId: "WasteProcessingPlatform" },
+        { direction: "up", toRoomId: "ObservationPlatform" },
       ],
     },
     {
       id: "WasteProcessingPlatform",
       name: "Waste Processing Platform",
       description:
-        "This lower platform is hemmed in by dented separation tanks and residue-streaked pipes. Lobe storage is to the east, a service route climbs to the supply deck, and the hydraulic shaft opens south.",
+        "This lower platform is hemmed in by dented separation tanks and residue-streaked pipes. Lobe storage is to the east, a maintenance ladder climbs to the supply deck, and the hydraulic shaft opens south.",
       meta: { excludeFromTransmitterMap: true },
       describe: (state) =>
-        `This lower platform is hemmed in by dented separation tanks and residue-streaked pipes. Lobe storage is to the east, a service route climbs to the supply deck, and the hydraulic shaft opens south. ${describeTiltingPlatform(state)}`,
+        `This lower platform is hemmed in by dented separation tanks and residue-streaked pipes. Lobe storage is to the east, a maintenance ladder climbs to the supply deck, and the hydraulic shaft opens south. ${describeTiltingPlatform(state)}`,
       exits: [
         { direction: "south", toRoomId: "HeatCoolantExchangePlatform" },
         { direction: "east", toRoomId: "LobeStoragePlatform" },
@@ -109,9 +110,9 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "SupplyPlatform",
       name: "Supply Platform",
       description:
-        "Crates, hose reels, secured tool cabinets, and a yellow radiation equipment locker crowd the upper supply deck. Maintenance lies east, a service route descends to waste processing, and the damaged hydraulic platform spans the gap south.",
+        "Crates, hose reels, secured tool cabinets, and a yellow radiation equipment locker crowd the upper supply deck. Maintenance lies east, a sealed maintenance-ladder lid sits in the deck, and the damaged hydraulic platform spans the gap south.",
       describe: (state) =>
-        `Crates, hose reels, secured tool cabinets, and a yellow radiation equipment locker crowd the upper supply deck. Maintenance lies east, a service route descends to waste processing, and the damaged hydraulic platform spans the gap south. ${describeTiltingPlatform(state)}`,
+        `Crates, hose reels, secured tool cabinets, and a yellow radiation equipment locker crowd the upper supply deck. Maintenance lies east, a sealed maintenance-ladder lid sits in the deck, and the damaged hydraulic platform spans the gap south. ${describeTiltingPlatform(state)}`,
       exits: [
         { direction: "east", toRoomId: "MaintenancePlatform" },
         { direction: "south", toRoomId: "ObservationPlatform" },
@@ -132,12 +133,13 @@ export const LEVEL_FIVE: WorldChunk = {
       id: "ObservationPlatform",
       name: "Observation Platform",
       description:
-        "This upper platform overlooks the lower machinery through a guardrail warped by some tremendous impact. The main reactor platform is east and the damaged hydraulic platform spans the gap north.",
+        "This upper platform overlooks the lower machinery through a guardrail warped by some tremendous impact. The main reactor platform is east, a sealed maintenance-ladder lid sits near the guardrail, and the damaged hydraulic platform spans the gap north.",
       describe: (state) =>
-        `This upper platform overlooks the lower machinery through a guardrail warped by some tremendous impact. The main reactor platform is east and the damaged hydraulic platform spans the gap north. ${describeTiltingPlatform(state)}`,
+        `This upper platform overlooks the lower machinery through a guardrail warped by some tremendous impact. The main reactor platform is east, a sealed maintenance-ladder lid sits near the guardrail, and the damaged hydraulic platform spans the gap north. ${describeTiltingPlatform(state)}`,
       exits: [
         { direction: "north", toRoomId: "SupplyPlatform" },
         { direction: "east", toRoomId: "ReactorPlatform" },
+        { direction: "down", toRoomId: "HeatCoolantExchangePlatform" },
       ],
     },
     {

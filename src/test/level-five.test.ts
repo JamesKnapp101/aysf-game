@@ -15,6 +15,8 @@ import {
   getSmartbellWeight,
   getTiltingPlatformOrientation,
   LEFT_SMARTBELL_ID,
+  MAINTENANCE_LADDER_ASCENT_MESSAGE,
+  MAINTENANCE_LADDER_TOP_BLOCK_MESSAGE,
   NORTH_CARGO_CAGE_ID,
   PLATFORM_PERCH_ROOM_ID,
   RAFTER_TEST_ITEM_ID,
@@ -145,6 +147,86 @@ describe("Level Five reactor platforms", () => {
     expect(crossed.player.roomId).toBe("ObservationPlatform");
     expect(getTiltingPlatformOrientation(crossed)).toBe("level");
     expect(getLastLogEntry(crossed)).toContain("remains level");
+  });
+
+  it("blocks maintenance ladders from the top and describes the sealed lids", async () => {
+    const blockedSupply = await runCommand(
+      createTestState({ roomId: "SupplyPlatform" }),
+      "down",
+    );
+    expect(blockedSupply.player.roomId).toBe("SupplyPlatform");
+    expect(getLastLogEntry(blockedSupply)).toContain(
+      MAINTENANCE_LADDER_TOP_BLOCK_MESSAGE,
+    );
+
+    const examinedSupplyLid = await runCommand(
+      createTestState({ roomId: "SupplyPlatform" }),
+      "examine lid",
+    );
+    expect(getLastLogEntry(examinedSupplyLid)).toContain(
+      "requires some kind of tool",
+    );
+
+    const blockedObservation = await runCommand(
+      createTestState({ roomId: "ObservationPlatform" }),
+      "down",
+    );
+    expect(blockedObservation.player.roomId).toBe("ObservationPlatform");
+    expect(getLastLogEntry(blockedObservation)).toContain(
+      MAINTENANCE_LADDER_TOP_BLOCK_MESSAGE,
+    );
+
+    const examinedObservationLid = await runCommand(
+      createTestState({ roomId: "ObservationPlatform" }),
+      "examine maintenance ladder",
+    );
+    expect(getLastLogEntry(examinedObservationLid)).toContain(
+      "requires some kind of tool",
+    );
+  });
+
+  it("lets lower maintenance ladders return to the upper platforms", async () => {
+    const fromWaste = await runCommand(
+      createTestState({
+        roomId: "WasteProcessingPlatform",
+        visitedRooms: ["WasteProcessingPlatform", "SupplyPlatform"],
+      }),
+      "up",
+    );
+    expect(fromWaste.player.roomId).toBe("SupplyPlatform");
+    expect(getLastLogEntry(fromWaste)).toContain(
+      MAINTENANCE_LADDER_ASCENT_MESSAGE,
+    );
+
+    const fromHeatCoolant = await runCommand(
+      createTestState({
+        roomId: "HeatCoolantExchangePlatform",
+        visitedRooms: [
+          "HeatCoolantExchangePlatform",
+          "ObservationPlatform",
+        ],
+      }),
+      "up",
+    );
+    expect(fromHeatCoolant.player.roomId).toBe("ObservationPlatform");
+    expect(getLastLogEntry(fromHeatCoolant)).toContain(
+      "opens like a sphincter",
+    );
+    expect(getLastLogEntry(fromHeatCoolant)).toContain(
+      "constricts tightly closed",
+    );
+
+    const usedLadder = await runCommand(
+      createTestState({
+        roomId: "WasteProcessingPlatform",
+        visitedRooms: ["WasteProcessingPlatform", "SupplyPlatform"],
+      }),
+      "use ladder",
+    );
+    expect(usedLadder.player.roomId).toBe("SupplyPlatform");
+    expect(getLastLogEntry(usedLadder)).toContain(
+      MAINTENANCE_LADDER_ASCENT_MESSAGE,
+    );
   });
 
   it("uses A and B for directional player dumps, then springs level", async () => {
