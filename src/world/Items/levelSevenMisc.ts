@@ -515,11 +515,11 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
   },
 
   // ---------------------------------------------------------------------------
-  // SPACESUIT (CRYONIC SUIT)
+  // COLDSUIT (CRYONIC SUIT)
   // ---------------------------------------------------------------------------
 
   {
-    id: "SpaceSuit",
+    id: "ColdSuit",
     name: "cryonic suit",
     description:
       "A silvery cold suit lies crumpled on the floor, its skin a dull reflective sheen that drinks in the room’s pale light. The gloves and helmet are integrated, forming a single airtight shell from head to toe. The feet end in flexible, form-fitting booties designed to seal perfectly against the rest of the suit.\nMounted on the back is a self-contained oxygen unit, its casing scuffed but intact. A thin black tube snakes down one arm, ending at a wrist-mounted gauge with a tiny, stubborn-looking readout.",

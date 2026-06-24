@@ -12,7 +12,7 @@ import type { ParsedCommand } from "@game/types/parserTypes";
 import type { Direction } from "@game/types/roomTypes";
 
 export const DEEP_STORAGE_GRID_ROOM_ID = "DeepStorageGrid";
-export const DEEP_STORAGE_SUIT_ITEM_ID = "SpaceSuit";
+export const DEEP_STORAGE_SUIT_ITEM_ID = "ColdSuit";
 export const DEEP_STORAGE_GRID_SIZE = 26;
 export const DEEP_STORAGE_HYPOTHERMIA_CAUSE = "deep storage hypothermia";
 export const DEEP_STORAGE_FATAL_TEMPERATURE = 70;
@@ -167,7 +167,7 @@ function isSuitNoun(noun: string | undefined): boolean {
     "cryonic suit",
     "cold suit",
     "space suit",
-    "spacesuit",
+    "coldsuit",
   ].includes(normalized);
 }
 
