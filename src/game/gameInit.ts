@@ -12,8 +12,12 @@ import {
   createInitialOctopusState,
 } from "src/world/Items/creatures/octopus";
 import { createInitialReactorConsensusState } from "src/world/maps/levelFive/reactorConsensus";
-import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
 import { createInitialDeepStorageState } from "src/world/maps/levelSeven/deepStorage";
+import {
+  LEVEL_SIX_INITIAL_VACUUM_ROOM_IDS,
+  LEVEL_SIX_SPACE_SUIT_ID,
+} from "src/world/maps/levelSix/airlockAndStorageConstants";
+import { createInitialHydroponicsSpiderState } from "src/world/maps/levelSix/hydroponicsEncounterState";
 import { BAR_BULL_ADHESIVE_TRIGGER } from "src/world/maps/levelThree/Park/Bar/barMechanicalBull";
 import { createInitialMovieTheaterState } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 import {
@@ -333,6 +337,12 @@ export const createInitialState = (world: World): GameState => {
       },
       roomAirQuality: {
         StairWellSeven: "thin",
+        ...Object.fromEntries(
+          LEVEL_SIX_INITIAL_VACUUM_ROOM_IDS.map((roomId) => [
+            roomId,
+            "vacuum" as const,
+          ]),
+        ),
       },
       roomAudioLevel: {
         PowerGrid: 1,
@@ -416,6 +426,7 @@ export const createInitialState = (world: World): GameState => {
         completed_bar_bull_ride: false,
         returned_red_dart: false,
         found_secret_lab: false,
+        sealed_level_six_breach: false,
       },
       mensLockerContents: {
         menLocker1: ["UndergroundZinePage"],
@@ -590,6 +601,10 @@ export const createInitialState = (world: World): GameState => {
         NVGoggles: { kind: "goggles", isOn: false },
         Comet: { kind: "comet-viewer", isOn: false, hasLink: false },
         GameWhistle: { kind: "game-whistle", mode: "bull" },
+        [LEVEL_SIX_SPACE_SUIT_ID]: {
+          kind: "level-six-space-suit",
+          oxygenGraceTurns: 0,
+        },
         flashlight: getFlashlightDefaults("flashlight"),
         damagedFlashlight: getFlashlightDefaults("damagedFlashlight"),
       },

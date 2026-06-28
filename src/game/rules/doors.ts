@@ -47,6 +47,15 @@ export function canMoveThroughExit(
         };
       }
     }
+    if (doorDef.id === "OuterDoor") {
+      if (state.worldState.doors["InnerDoor"]?.isOpen === true) {
+        return {
+          allowed: false,
+          message:
+            "The outer door refuses to open while the inner airlock door is open.",
+        };
+      }
+    }
   }
 
   if (kind === "badgeScanner") {
@@ -127,14 +136,21 @@ export function tryOpenDoor(
   if (doorState.isOpen) {
     return { state, message: "The door is already open." };
   }
-  if (doorDef.id === "InnerDoor") {
-    if (
-      !state.worldState.doors["OuterDoor"] ||
-      state.worldState.doors["OuterDoor"].isOpen === true
-    ) {
-      return { state, message: `You pull at the handle, but it won't budge.` };
-    }
+  const beforeOpen = doorDef.beforeOpen?.(state, doorState);
+  if (beforeOpen) {
+    return {
+      state: beforeOpen.state,
+      message: beforeOpen.message ?? "It won't open.",
+    };
   }
+  // if (doorDef.id === "InnerDoor") {
+  //   if (
+  //     !state.worldState.doors["OuterDoor"] ||
+  //     state.worldState.doors["OuterDoor"].isOpen === true
+  //   ) {
+  //     return { state, message: `You pull at the handle, but it won't budge.` };
+  //   }
+  // }
   if (doorDef.badgeItemId) {
     if (!playerHasBadge(state, doorDef.badgeItemId)) {
       return {

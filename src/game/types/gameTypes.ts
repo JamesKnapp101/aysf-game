@@ -465,7 +465,7 @@ type RoomAirQuality =
   | "foreign particles"
   | "smoke"
   | "thin"
-  | "vaccum";
+  | "vacuum";
 type RoomTemperature = number;
 
 export interface WorldState {

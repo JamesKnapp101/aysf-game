@@ -6,11 +6,17 @@ import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand, Preposition } from "../../types/parserTypes";
 
-type PutPrep = Extract<Preposition, "in" | "into" | "on">;
+type PutPrep = Extract<Preposition, "in" | "into" | "on" | "over" | "with">;
+type StandardPutPrep = Extract<PutPrep, "in" | "into" | "on">;
 
 function normalizePutPrep(p?: Preposition): PutPrep | null {
   if (p === "in" || p === "into" || p === "on") return p;
+  if (p === "over" || p === "with") return p;
   return null;
+}
+
+function isStandardPutPrep(prep: PutPrep): prep is StandardPutPrep {
+  return prep === "in" || prep === "into" || prep === "on";
 }
 
 export function doPut(state: GameState, cmd: ParsedCommand): ActionResult {
@@ -58,6 +64,13 @@ export function doPut(state: GameState, cmd: ParsedCommand): ActionResult {
   const host = resolveItemByNoun(state, indirect);
   if (!host) {
     return { state, message: "You don't see that here." };
+  }
+
+  if (!isStandardPutPrep(prep)) {
+    return {
+      state,
+      message: "Try: put X in Y, put X into Y, or put X on Y.",
+    };
   }
 
   return tryPutItem(state, {

@@ -12,11 +12,12 @@ import {
   REACTOR_LOBE_ARRAY_ID,
   REPLACEMENT_REACTOR_LOBE_ITEM_ID,
 } from "src/world/maps/levelFive/reactorSystems";
+import { handleLevelSixBreachPatchCommand } from "src/world/maps/levelSix/airlockAndStorage";
 
 type RegisteredPutCommand = {
   direct: string;
   indirect: string;
-  preposition: Extract<Preposition, "in" | "into" | "on">;
+  preposition: Extract<Preposition, "in" | "into" | "on" | "over" | "with">;
 };
 
 type PutCommandHandler = (
@@ -37,6 +38,7 @@ function isEmptyHandNoun(value: string): boolean {
 }
 
 const PUT_COMMAND_HANDLERS: PutCommandHandler[] = [
+  (state, command) => handleLevelSixBreachPatchCommand(state, command),
   (state, command) => {
     if (command.preposition !== "in" && command.preposition !== "into") {
       return undefined;

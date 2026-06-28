@@ -202,6 +202,7 @@ export type ItemSettings =
   | { hasLink: boolean; isOn: boolean; kind: "comet-viewer" }
   | { kind: "platform-valve"; position: "A" | "B" | "C" }
   | { kind: "reactor-coolant-valve"; position: -1 | 0 | 1 }
+  | { kind: "level-six-space-suit"; oxygenGraceTurns: number }
   | { kind: "smartbell"; weightKg: number };
 
 export type PlayerClothes = {

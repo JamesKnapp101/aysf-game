@@ -38,7 +38,7 @@ export const LEVEL_SIX: WorldChunk = {
       id: "LevelSixCorridor",
       name: "Level Six Corridor",
       description:
-        "This is a stretch of wide corridor extending north and south. The floor is well worn, and the width of the corridor suggests it might be used for moving large objects or pallets of objects. There is a large, heavy-looking steel door to the north which is hanging open to reveal a bend in the corridor beyond. To the south, another heavy-looking steel door is closed. Above the door to the south is a panel which is lit up red.",
+        "This is a short, heavy-walled airlock chamber extending north and south. The inner steel door to the north is closed, while the outer steel door to the south hangs open onto the storage quad. A flat status panel over the northern door glows red.",
       exits: [
         { direction: "north", doorId: "InnerDoor" },
         { direction: "south", doorId: "OuterDoor" },
@@ -48,9 +48,9 @@ export const LEVEL_SIX: WorldChunk = {
     // Lower Level
     {
       id: "StorageQuadOne",
-      name: "Storage Northwest Quadrant",
+      name: "Storage: Quadrant A",
       description:
-        "This is the northwestern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. Curiously, it doesn't look like the smallest of these containers would fit through the door to the north. The stacks of containers are quite high, making it difficult to take in the entire area at once, but it looks like you could make progress to the east, south and southeast.",
+        "This is the northwestern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows, though in the airless zero gravity many of the stacks have loosened into slow drifting masses. Curiously, it doesn't look like the smallest of these containers would fit through the door to the north. The only clear route through the storage maze leads south.",
       exits: [
         { direction: "north", doorId: "OuterDoor" },
         { direction: "south", toRoomId: "StorageQuadThree" },
@@ -61,9 +61,9 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadTwo",
-      name: "Storage Northeast Quadrant",
+      name: "Storage: Quadrant B",
       description:
-        "This is the northeastern quadrant of a large storage area. Pallets stacked high with large plastic-covered containers are arranged to form rows. The stacks of containers are quite high, making it difficult to take in the entire area at once, but it looks like you could make progress to the west, south, and southwest.",
+        "This is the northeastern quadrant of a large storage area. Pallets stacked high with large plastic-covered containers are arranged to form rows, but without gravity the loosened containers drift together in slow, obstructive rafts. The clearest paths lead southwest and up.",
       exits: [
         { direction: "south", toRoomId: "StorageQuadFour" },
         { direction: "west", toRoomId: "StorageQuadOne" },
@@ -73,9 +73,9 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadThree",
-      name: "Storage Southwest Quadrant",
+      name: "Storage: Quadrant C",
       description:
-        "This is the southwestern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. The southern wall is dominated by a huge metal door which is currently closed. There are two yellow emergency lights flanking the door which are currently off. A large, rectangular area in front of the door is painted off in yellow and black outline and the words 'STAND CLEAR WHEN LOADING AND UNLOADING' are stencilled on the floor within it.",
+        "This is the southwestern quadrant of a large storage area, now airless and weightless. Pallets stacked high with large, plastic-covered containers are arranged to form rows, with some of the cargo floating just far enough out of place to block easy shortcuts. The southern wall is dominated by a huge metal door which is currently closed. There are two yellow emergency lights flanking the door which are currently off. A large, rectangular area in front of the door is painted off in yellow and black outline and the words 'STAND CLEAR WHEN LOADING AND UNLOADING' are stencilled on the floor within it. The clearest paths lead north and northeast.",
       exits: [
         { direction: "north", toRoomId: "StorageQuadOne" },
         { direction: "east", toRoomId: "StorageQuadFour" },
@@ -85,22 +85,22 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadFour",
-      name: "Storage Southeast Quadrant",
+      name: "Storage: Quadrant D",
       description:
-        "This is the southeastern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. Looking toward the southeastern corner of this quadrant, you see a good number of the pallets have been disrupted; some of the plastic is torn and a number of boxes have spilled out and are lying end over end all over the deck. The deck itself in that direction is cracked in several places as if something struck it with extreme force. The emergency lights in the southeastern corner of this area are out, and that whole section is completely dark.",
+        "This is the southeastern quadrant of a large storage area, open to hard vacuum and stripped of gravity. Pallets stacked high with large, plastic-covered containers are arranged to form rows. Looking toward the southeastern corner of this quadrant, you see a good number of the pallets have been disrupted; some of the plastic is torn and a number of boxes have spilled out and are drifting end over end above the deck. The deck itself in that direction is cracked in several places as if something struck it with extreme force. The emergency lights in the southeastern corner of this area are out, and that whole section is completely dark. The only clear route leads up.",
       exits: [
         { direction: "north", toRoomId: "StorageQuadTwo" },
         { direction: "west", toRoomId: "StorageQuadThree" },
         { direction: "northwest", toRoomId: "StorageQuadOne" },
-        { direction: "up", toRoomId: "StorageQuadFour" },
+        { direction: "up", toRoomId: "StorageQuadFourMid" },
       ],
     },
     // Mid Level
     {
       id: "StorageQuadOneMid",
-      name: "Storage Northwest Quadrant",
+      name: "Storage: Above Quadrant A",
       description:
-        "This is the northwestern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. Curiously, it doesn't look like the smallest of these containers would fit through the door to the north. The stacks of containers are quite high, making it difficult to take in the entire area at once, but it looks like you could make progress to the east, south and southeast.",
+        "This is the middle tier of the northwestern quadrant of the storage area. Pallets and plastic-covered containers hang in stacked rows, many of them floating slightly out of alignment in the airless zero gravity. The clearest paths lead east, south, and up.",
       exits: [
         { direction: "south", toRoomId: "StorageQuadThreeMid" },
         { direction: "east", toRoomId: "StorageQuadTwoMid" },
@@ -111,9 +111,9 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadTwoMid",
-      name: "Storage Northeast Quadrant",
+      name: "Storage: Above Quadrant B",
       description:
-        "This is the northeastern quadrant of a large storage area. Pallets stacked high with large plastic-covered containers are arranged to form rows. The stacks of containers are quite high, making it difficult to take in the entire area at once, but it looks like you could make progress to the west, south, and southwest.",
+        "This is the middle tier of the northeastern quadrant of the storage area. Pallets stacked high with plastic-covered containers drift in slow, stubborn clusters, leaving only a few reliable lanes through the vacuum. The clearest paths lead west and down.",
       exits: [
         { direction: "south", toRoomId: "StorageQuadFourMid" },
         { direction: "west", toRoomId: "StorageQuadOneMid" },
@@ -124,9 +124,9 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadThreeMid",
-      name: "Storage Southwest Quadrant",
+      name: "Storage: Above Quadrant C",
       description:
-        "This is the southwestern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. The southern wall is dominated by a huge metal door which is currently closed. There are two yellow emergency lights flanking the door which are currently off. A large, rectangular area in front of the door is painted off in yellow and black outline and the words 'STAND CLEAR WHEN LOADING AND UNLOADING' are stencilled on the floor within it.",
+        "This is the middle tier of the southwestern quadrant of the storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows, though several loads float loose enough to turn most gaps into dead ends. The clearest paths lead north and up.",
       exits: [
         { direction: "north", toRoomId: "StorageQuadOneMid" },
         { direction: "east", toRoomId: "StorageQuadFourMid" },
@@ -137,9 +137,9 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadFourMid",
-      name: "Storage Southeast Quadrant",
+      name: "Storage: Above Quadrant D",
       description:
-        "This is the southeastern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. Looking toward the southeastern corner of this quadrant, you see a good number of the pallets have been disrupted; some of the plastic is torn and a number of boxes have spilled out and are lying end over end all over the deck. The deck itself in that direction is cracked in several places as if something struck it with extreme force. The emergency lights in the southeastern corner of this area are out, and that whole section is completely dark.",
+        "This is the middle tier of the southeastern quadrant of the storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows, while loose boxes drift lazily through the vacuum. Looking toward the southeastern corner, the damage below continues upward in cracked supports and torn plastic. The clearest paths lead up and down.",
       exits: [
         { direction: "north", toRoomId: "StorageQuadTwoMid" },
         { direction: "west", toRoomId: "StorageQuadThreeMid" },
@@ -151,9 +151,9 @@ export const LEVEL_SIX: WorldChunk = {
     // Top Level
     {
       id: "StorageQuadOneTop",
-      name: "Storage Northwest Quadrant",
+      name: "Storage: High Above Quadrant A",
       description:
-        "This is the northwestern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. Curiously, it doesn't look like the smallest of these containers would fit through the door to the north. The stacks of containers are quite high, making it difficult to take in the entire area at once, but it looks like you could make progress to the east, south and southeast.",
+        "This is the top tier of the northwestern quadrant of the storage area. The upper edges of the pallet stacks loom around you, their plastic-wrapped cargo drifting in the vacuum like badly organized debris. The clearest paths lead south, southeast, and down.",
       exits: [
         { direction: "south", toRoomId: "StorageQuadThreeTop" },
         { direction: "east", toRoomId: "StorageQuadTwoTop" },
@@ -163,9 +163,9 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadTwoTop",
-      name: "Storage Northeast Quadrant",
+      name: "Storage: High Above Quadrant B",
       description:
-        "This is the northeastern quadrant of a large storage area. Pallets stacked high with large plastic-covered containers are arranged to form rows. The stacks of containers are quite high, making it difficult to take in the entire area at once, but it looks like you could make progress to the west, south, and southwest.",
+        "This is the top tier of the northeastern quadrant of the storage area. The pallet stacks crowd close on all sides, and the absence of gravity has let several containers drift into awkward, lane-blocking positions. Every visible lane is choked off by drifting cargo.",
       exits: [
         { direction: "south", toRoomId: "StorageQuadFourTop" },
         { direction: "west", toRoomId: "StorageQuadOneTop" },
@@ -175,9 +175,9 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadThreeTop",
-      name: "Storage Southwest Quadrant",
+      name: "Storage: High Above Quadrant C",
       description:
-        "This is the southwestern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. The southern wall is dominated by a huge metal door which is currently closed. There are two yellow emergency lights flanking the door which are currently off. A large, rectangular area in front of the door is painted off in yellow and black outline and the words 'STAND CLEAR WHEN LOADING AND UNLOADING' are stencilled on the floor within it.",
+        "This is the top tier of the southwestern quadrant of the storage area. Pallet stacks and plastic-covered containers form a weightless maze of blocked angles and narrow lanes. The clearest paths lead north and down.",
       exits: [
         { direction: "north", toRoomId: "StorageQuadOneTop" },
         { direction: "east", toRoomId: "StorageQuadFourTop" },
@@ -187,18 +187,24 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "StorageQuadFourTop",
-      name: "Storage Southeast Quadrant",
+      name: "Storage: High Above Quadrant D",
       description:
-        "This is the southeastern quadrant of a large storage area. Pallets stacked high with large, plastic-covered containers are arranged to form rows. Looking toward the southeastern corner of this quadrant, you see a good number of the pallets have been disrupted; some of the plastic is torn and a number of boxes have spilled out and are lying end over end all over the deck. The deck itself in that direction is cracked in several places as if something struck it with extreme force. The emergency lights in the southeastern corner of this area are out, and that whole section is completely dark.",
+        "This is the top tier of the southeastern quadrant of the storage area. Vacuum silence presses in around the drifting cargo, and the damage toward the southeastern corner is severe enough that the deck seems to have peeled away from the hull. The clearest paths lead east, northwest, and down. A ragged route also leads southeast toward the breach.",
       exits: [
         { direction: "north", toRoomId: "StorageQuadTwoTop" },
         { direction: "west", toRoomId: "StorageQuadThreeTop" },
         { direction: "northwest", toRoomId: "StorageQuadOneTop" },
+        { direction: "south", toRoomId: "3DPrintingFacility" },
         { direction: "southeast", toRoomId: "RIFT" },
         { direction: "down", toRoomId: "StorageQuadFourMid" },
       ],
     },
-
+    {
+      id: "3DPrintingFacility",
+      name: "3D Printing Facility",
+      description: "This is the 3D Printing Facility.",
+      exits: [{ direction: "north", toRoomId: "StorageQuadFourTop" }],
+    },
     {
       id: "RIFT",
       name: "Rift",

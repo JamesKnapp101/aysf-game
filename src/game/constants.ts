@@ -110,6 +110,7 @@ export const playerScoreMap = {
   answered_bar_trivia: { value: 1 },
   completed_bar_bull_ride: { value: 3 },
   returned_red_dart: { value: 1 },
+  sealed_level_six_breach: { value: 8 },
 } as const;
 
 export const playerMemoryMap = {

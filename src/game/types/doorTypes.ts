@@ -25,6 +25,7 @@ export interface DoorDefinition {
   afterOpen?: DoorInteractionHook;
   badgeItemId?: string;
   beforeClose?: DoorInteractionHook;
+  beforeOpen?: DoorInteractionHook;
   blockMsg?: string;
   checkBadgeOnDir?: string;
   closeVerb?: string;

@@ -16,7 +16,7 @@ import { getTeleportPadsInCurrentRoom } from "../selectors/teleportationSelector
 import type { DoorDefinition, DoorState } from "../types/doorTypes";
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
-import type { Exit } from "../types/roomTypes";
+import type { Direction, Exit, Room } from "../types/roomTypes";
 import type { TeleportPadDefinition } from "../types/tpadTypes";
 
 /**
@@ -170,9 +170,22 @@ export function resolveItemByNoun(
     }
   }
 
+  const wornItemIds = new Set(
+    Object.values(state.itemState.wornByPlayer ?? {}).filter(Boolean),
+  );
+
+  const scopeRank = (item: Item): number => {
+    const loc = liveLocById(item.id);
+    if (loc === room.id) return 0;
+    if (wornItemIds.has(item.id)) return 1;
+    if (inventoryHas(state.player.inventory, item.id)) return 2;
+    return 1;
+  };
+
   const itemsInScope = [...inScopeIds]
     .map((id) => itemsById.get(id))
-    .filter((x): x is Item => Boolean(x));
+    .filter((x): x is Item => Boolean(x))
+    .sort((a, b) => scopeRank(a) - scopeRank(b));
 
   const exactId = itemsInScope.find(
     (it) => normalize(it.id) === normalizedNoun,
@@ -221,6 +234,50 @@ export function resolveItemByNoun(
   return undefined;
 }
 
+const DIRECTION_ADJECTIVES: Partial<Record<Direction, string>> = {
+  north: "northern",
+  south: "southern",
+  east: "eastern",
+  west: "western",
+  northeast: "northeastern",
+  northwest: "northwestern",
+  southeast: "southeastern",
+  southwest: "southwestern",
+  up: "upper",
+  down: "lower",
+};
+
+function getDoorExitInRoom(room: Room, doorId: string): Exit | undefined {
+  return room.exits.find((exit) => exit.doorId === doorId);
+}
+
+function getDoorAliasesInRoom(
+  door: DoorDefinition,
+  exit: Exit | undefined,
+): string[] {
+  const aliases = [door.id, door.name, ...(door.vocab ?? [])];
+  if (!exit) return aliases;
+
+  const direction = exit.direction;
+  const adjective = DIRECTION_ADJECTIVES[direction];
+  aliases.push(direction, `${direction} door`, `${direction} ${door.name}`);
+
+  if (adjective) {
+    aliases.push(adjective, `${adjective} door`, `${adjective} ${door.name}`);
+  }
+
+  return aliases;
+}
+
+function doorAliasTokenMatch(aliases: string[], tokens: string[]): boolean {
+  if (tokens.length <= 1) return false;
+
+  return aliases.some((alias) => {
+    const aliasTokens = new Set(tokenize(alias));
+    return tokens.every((token) => aliasTokens.has(token));
+  });
+}
+
 /**
  * Resolve a door from a noun like "door" / "hatch" / "airlock"
  * scoped to the exits of the *current* room.
@@ -230,7 +287,8 @@ export function resolveDoorByNoun(
   noun: string,
 ): { def: DoorDefinition; doorState: DoorState } | null {
   const room = getCurrentRoom(state);
-  const lower = noun.toLowerCase();
+  const normalizedNoun = normalize(noun);
+  const tokens = tokenize(noun);
 
   const doorIds = room.exits
     .map((e: Exit) => e.doorId)
@@ -242,10 +300,10 @@ export function resolveDoorByNoun(
 
     if (!def || !doorState) continue;
 
+    const aliases = getDoorAliasesInRoom(def, getDoorExitInRoom(room, doorId));
     const matches =
-      def.name.toLowerCase() === lower ||
-      (Array.isArray(def.vocab) &&
-        def.vocab.some((v: string) => v.toLowerCase() === lower));
+      aliases.some((alias) => normalize(alias) === normalizedNoun) ||
+      doorAliasTokenMatch(aliases, tokens);
 
     if (matches) {
       return { def, doorState };

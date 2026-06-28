@@ -19,8 +19,14 @@ export function isPlayerUnderwater(state: GameState): boolean {
   return isAquariumUnderwaterRoom(state.player.roomId);
 }
 
+export function isPlayerInVacuum(state: GameState): boolean {
+  return state.worldState.roomAirQuality[state.player.roomId] === "vacuum";
+}
+
 export function refreshPlayerOxygenForEnvironment(state: GameState): GameState {
-  const shouldRefillOxygen = !isPlayerUnderwater(state) || playerHasBreather(state);
+  const shouldRefillOxygen =
+    (!isPlayerUnderwater(state) && !isPlayerInVacuum(state)) ||
+    playerHasBreather(state);
   if (!shouldRefillOxygen || state.player.vitals.oxygen === 100) {
     return state;
   }

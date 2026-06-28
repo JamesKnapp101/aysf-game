@@ -11,6 +11,7 @@ import { tickMovieTheaterUsher } from "src/world/maps/levelThree/Park/MovieTheat
 import { tickLevelTwoBomb } from "src/world/maps/levelTwo/levelTwoBomb";
 import { tickReactorConsensus } from "src/world/maps/levelFive/reactorConsensus";
 import { tickReactorSystems } from "src/world/maps/levelFive/reactorSystems";
+import { tickLevelSixStorageVacuum } from "src/world/maps/levelSix/airlockAndStorage";
 import { tickDeepStorageExposure } from "src/world/maps/levelSeven/deepStorage";
 
 export type TurnTickPhase =
@@ -64,6 +65,7 @@ const TURN_TICK_HANDLERS: RegisteredTurnTickHandler[] = [
   { phase: "environment", tick: tickHydroponicsTurn },
   { phase: "environment", tick: tickLevelTwoBomb },
   { phase: "environment", tick: tickReactorConsensus },
+  { phase: "environment", tick: tickLevelSixStorageVacuum },
   { phase: "environment", tick: tickDeepStorageExposure },
   { phase: "environment", tick: tickMovieTheaterProjectionLighting },
   { phase: "simulation", tick: tickGamePreserveTurn },

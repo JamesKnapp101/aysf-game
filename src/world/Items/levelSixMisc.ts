@@ -1,6 +1,21 @@
 import type { GameState } from "@game/types/gameTypes";
+import type { ParsedCommand } from "@game/types/parserTypes";
 import type { Item } from "../../game/types/itemTypes";
+import {
+  describeAirlockOverridePanel,
+  setAirlockOverridePanel,
+  turnAirlockOverridePanel,
+  wearLevelSixSpaceSuit,
+} from "../maps/levelSix/airlockAndStorage";
+import {
+  LEVEL_SIX_BREACH_ITEM_ID,
+  LEVEL_SIX_BREACH_SEALED_TRIGGER,
+  LEVEL_SIX_FLEX_PLUG_ID,
+  LEVEL_SIX_SPACE_SUIT_ID,
+} from "../maps/levelSix/airlockAndStorageConstants";
 import { lookThroughSpiderGap } from "./creatures/giantSpider";
+
+type ActionCommand = Extract<ParsedCommand, { type: "action" }>;
 
 export const levelSixItems: Item[] = [
   {
@@ -99,6 +114,40 @@ export const levelSixItems: Item[] = [
     },
   },
   {
+    id: "OuterDoorOverridePanel",
+    name: "Outer Door Override",
+    description:
+      'A compact wall panel sits beside the inner airlock door. The label reads "Outer Door Override," and a heavy lever can be set to OPEN or CLOSE.',
+    sceneryDescription:
+      'Beside the inner airlock door is a wall panel labeled "Outer Door Override."',
+    location: "LevelSixCorridorBend",
+    vocab: [
+      "outer door override",
+      "outer override",
+      "override panel",
+      "wall panel",
+      "panel",
+      "lever",
+      "outer lever",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 10,
+    itemSize: 10,
+    isSettable: true,
+    isTurnable: true,
+    describeScenery: (state) =>
+      describeAirlockOverridePanel(state, "OuterDoor", "Outer Door Override"),
+    describe: (state) =>
+      describeAirlockOverridePanel(state, "OuterDoor", "Outer Door Override"),
+    overrides: {
+      set: ({ state, cmd }: { cmd: ActionCommand; state: GameState }) =>
+        setAirlockOverridePanel(state, "OuterDoor", cmd.indirect ?? cmd.direct),
+      turn: ({ state }: { state: GameState }) =>
+        turnAirlockOverridePanel(state, "OuterDoor"),
+    },
+  },
+  {
     id: "AirlockPanel",
     name: "airlock panel",
     description:
@@ -120,6 +169,81 @@ export const levelSixItems: Item[] = [
       push: "You press your palm against the panel. It’s warm, but unmoved.",
       use: "The panel offers no obvious interface. It simply glows, like a warning light that thinks it’s smarter than you.",
     },
+  },
+  {
+    id: "InnerDoorOverridePanel",
+    name: "Inner Door Override",
+    description:
+      'A rugged wall panel is mounted next to the outer airlock door. Its label reads "Inner Door Override," and its single lever moves between OPEN and CLOSE.',
+    sceneryDescription:
+      'A wall panel labeled "Inner Door Override" waits beside the outer airlock door.',
+    location: "StorageQuadOne",
+    vocab: [
+      "inner door override",
+      "inner override",
+      "override panel",
+      "wall panel",
+      "panel",
+      "lever",
+      "inner lever",
+    ],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 10,
+    itemSize: 10,
+    isSettable: true,
+    isTurnable: true,
+    describeScenery: (state) =>
+      describeAirlockOverridePanel(state, "InnerDoor", "Inner Door Override"),
+    describe: (state) =>
+      describeAirlockOverridePanel(state, "InnerDoor", "Inner Door Override"),
+    overrides: {
+      set: ({ state, cmd }: { cmd: ActionCommand; state: GameState }) =>
+        setAirlockOverridePanel(state, "InnerDoor", cmd.indirect ?? cmd.direct),
+      turn: ({ state }: { state: GameState }) =>
+        turnAirlockOverridePanel(state, "InnerDoor"),
+    },
+  },
+  {
+    id: LEVEL_SIX_SPACE_SUIT_ID,
+    name: "space suit",
+    description:
+      "The suit is a single bulky garment with integrated gloves, boots, and a clear helmet folded into the collar. A compact oxygen tank is built into the back, with a wrist gauge marked from 0 to 100.",
+    initialDescription:
+      "A complete space suit lies folded here, its clear helmet tucked against the collar.",
+    location: "INVENTORY",
+    vocab: ["space suit", "spacesuit", "suit", "helmet", "oxygen tank", "tank"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 8,
+    itemSize: 8,
+    isWearable: true,
+    clothingSlot: "body",
+    overrides: {
+      wear: wearLevelSixSpaceSuit,
+    },
+  },
+  {
+    id: LEVEL_SIX_FLEX_PLUG_ID,
+    name: "black strip of Flex-Plug",
+    description:
+      "The Flex-Plug is a wide black adhesive strip rolled around a peel-away backing. The package copy promises instant vacuum-rated hull repair, which feels like a very specific thing to be carrying around.",
+    initialDescription:
+      "A black adhesive strip of Flex-Plug is coiled here in its backing.",
+    location: "INVENTORY",
+    vocab: [
+      "flex-plug",
+      "flex plug",
+      "adhesive",
+      "black adhesive",
+      "adhesive strip",
+      "strip",
+      "patch",
+    ],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
   },
   {
     id: "SPACEEnv",
@@ -189,48 +313,35 @@ export const levelSixItems: Item[] = [
     },
   },
   {
-    id: "TinyGlintingObject_SQ3",
-    name: "tiny glinting object",
+    id: LEVEL_SIX_BREACH_ITEM_ID,
+    name: "hull breach",
     description:
-      "Far above, almost swallowed by the shadows near the ceiling, something small catches the light every few seconds. You can’t tell what it is—metal, glass, maybe just a polished corner of some forgotten component—but each flash feels like an eye half-opening and then closing again.",
+      "The breach is a long, ragged split in the hull plating, its edges bent inward and glittering with frozen residue. Beyond it is open space.",
     sceneryDescription:
-      "High overhead, a tiny object flashes intermittently as light glances off its surface, maddeningly out of reach.",
-    location: "StorageQuadThree",
-    vocab: ["tiny", "light", "glinting", "object"],
+      "The torn hull gapes open here, exposing the storage quad to vacuum.",
+    location: "RIFT",
+    vocab: [
+      "breach",
+      "hull breach",
+      "rift",
+      "tear",
+      "split",
+      "hole",
+      "hull",
+      "opening",
+    ],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    providesLight: false,
-
-    overrides: {
-      take: "You stretch upward, but it’s far, far above you—easily sixty feet in the air. All you can do is watch it flash.",
-    },
-  },
-  {
-    id: "TinyGlintingObject_Q3Stack",
-    name: "tiny glinting object",
-    description:
-      "From the top of the stack you’re closer, but the object still hangs high above, suspended in a pocket of still air. Each faint flash of reflected light is a reminder that sometimes “almost reachable” is still another forty feet away.",
-    sceneryDescription:
-      "Even from up here, the tiny glinting object remains a distant, taunting point of light.",
-    location: "QuadThreeStack",
-    vocab: ["tiny", "light", "glinting", "object"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    providesLight: false,
-
-    overrides: {
-      take: "You edge toward the very limit of safety and reach, but it’s still a good forty feet out of reach. Physics is not on your side.",
-    },
+    itemSize: 100,
+    describe: (state) =>
+      state.worldState.conditionalTriggers[LEVEL_SIX_BREACH_SEALED_TRIGGER]
+        ? "The breach is covered by a black Flex-Plug patch, sealed flat and glossy against the torn hull."
+        : "The breach is a long, ragged split in the hull plating, its edges bent inward and glittering with frozen residue. Beyond it is open space.",
+    describeScenery: (state) =>
+      state.worldState.conditionalTriggers[LEVEL_SIX_BREACH_SEALED_TRIGGER]
+        ? "A black Flex-Plug patch seals the torn hull breach."
+        : "The torn hull gapes open here, exposing the storage quad to vacuum.",
   },
   {
     id: "QuadThreeDoor",
@@ -417,5 +528,22 @@ export const levelSixItems: Item[] = [
       search:
         "You extend a hand into the shadows and feel only cold air and the creeping sense that something could be watching from just beyond your reach.",
     },
+  },
+  {
+    id: "3DPrinter",
+    name: "3D Printer",
+    description:
+      "The apparatus takes up a good chunk of the room, with a large display window that looks in on the object being printed, and a touchscreen with a menu system.",
+    sceneryDescription:
+      "Dominating the western half of the room is a huge 3D printing apparatus that goes floor to ceiling and has a large display window that looks in on the object being printed. It appears to have been heavily used, the menu touchscreen covered in smeared prints..",
+    location: "3DPrintingFacility",
+    vocab: ["printer", "3d", "machine"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 0,
+    itemSize: 2,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
   },
 ];

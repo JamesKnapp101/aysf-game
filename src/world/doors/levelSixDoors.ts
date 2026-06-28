@@ -1,4 +1,11 @@
 import type { DoorDefinition } from "../../game/types/doorTypes";
+import {
+  blockInnerDoorOpenIfOuterOpen,
+  blockOuterDoorOpenIfInnerOpen,
+  handleInnerDoorClosed,
+  handleOuterDoorOpened,
+  markAirlockPressurizedAfterOuterDoorCloses,
+} from "../maps/levelSix/airlockAndStorage";
 
 export const levelSixDoors: DoorDefinition[] = [
   {
@@ -8,7 +15,7 @@ export const levelSixDoors: DoorDefinition[] = [
       "The door to the south is made polished steel and has a large, cumbersome metal handle.",
     descriptionFromB: "To the north is a a heavy steel door.",
     kind: "airlock",
-    vocab: ["door", "inner door", "inner steel door", "steel door"],
+    vocab: ["door", "inner", "steel", "steel door"],
     connects: {
       roomAId: "LevelSixCorridorBend",
       roomBId: "LevelSixCorridor",
@@ -17,6 +24,8 @@ export const levelSixDoors: DoorDefinition[] = [
     initiallyOpen: false,
     initiallyLocked: false,
     blockMsg: `You grab the door's handle and pull, but it won't budge.`,
+    beforeOpen: blockInnerDoorOpenIfOuterOpen,
+    afterClose: handleInnerDoorClosed,
   },
   {
     id: "OuterDoor",
@@ -25,7 +34,7 @@ export const levelSixDoors: DoorDefinition[] = [
       "To the south is a a heavy steel door with a large, cumbersome metal handle which seems to seal it shut when closed.",
     descriptionFromB: "To the north is a a heavy steel door.",
     kind: "airlock",
-    vocab: ["door", "outer door", "outer steel door", "steel door"],
+    vocab: ["door", "outer", "steel door", "steel door"],
     connects: {
       roomAId: "LevelSixCorridor",
       roomBId: "StorageQuadOne",
@@ -33,6 +42,9 @@ export const levelSixDoors: DoorDefinition[] = [
     directions: { fromA: "south", fromB: "north" },
     initiallyOpen: true,
     initiallyLocked: false,
+    beforeOpen: blockOuterDoorOpenIfInnerOpen,
+    afterOpen: handleOuterDoorOpened,
+    afterClose: markAirlockPressurizedAfterOuterDoorCloses,
   },
   {
     id: "HydroponicsDoor",

@@ -6,6 +6,7 @@ import {
 import { resolveGymTreadmillMovement } from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
 import { resolveMovieTheaterMovement } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 import { resolveDeepStorageMovement } from "src/world/maps/levelSeven/deepStorage";
+import { resolveLevelSixStorageMovement } from "src/world/maps/levelSix/airlockAndStorage";
 import { resolveReactorPlatformMovement } from "src/world/maps/levelFive/reactorPlatform";
 import { resolveReactorCoreAccess } from "src/world/maps/levelFive/reactorSystems";
 
@@ -59,6 +60,9 @@ const resolveMovieTheaterMovementRule: MovementRule = (state, ctx) =>
 const resolveDeepStorageMovementRule: MovementRule = (state, ctx) =>
   resolveDeepStorageMovement(state, ctx);
 
+const resolveLevelSixStorageMovementRule: MovementRule = (state, ctx) =>
+  resolveLevelSixStorageMovement(state, ctx);
+
 const resolveReactorPlatformMovementRule: MovementRule = (state, ctx) =>
   resolveReactorPlatformMovement(state, ctx);
 
@@ -66,6 +70,7 @@ const MOVEMENT_RULES: MovementRule[] = [
   blockLeavingBarWithDrink,
   resolveGymTreadmillMovementRule,
   resolveMovieTheaterMovementRule,
+  resolveLevelSixStorageMovementRule,
   resolveDeepStorageMovementRule,
   resolveReactorPlatformMovementRule,
   (state, ctx) => resolveReactorCoreAccess(state, ctx),
