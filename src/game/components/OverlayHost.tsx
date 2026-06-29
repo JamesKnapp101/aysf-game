@@ -53,6 +53,11 @@ const LazyTeleportationTerminalModal = lazy(() =>
     default: mod.TeleportationTerminalModal,
   })),
 );
+const LazyThreeDPrinterModal = lazy(() =>
+  import("@game/components/ThreeDPrinterModal").then((mod) => ({
+    default: mod.ThreeDPrinterModal,
+  })),
+);
 const LazyGamePreserveTerminalModal = lazy(() =>
   import("@game/components/GamePreserveTerminalModal").then((mod) => ({
     default: mod.GamePreserveTerminalModal,
@@ -322,6 +327,22 @@ export function OverlayHost({
           }
         >
           <LazyTeleportationTerminalModal
+            onClose={onClose}
+            state={state}
+            setGameState={setGameState}
+          />
+        </Suspense>
+      );
+    }
+
+    case "3d-printer": {
+      return (
+        <Suspense
+          fallback={
+            <OverlayLoadingModal onClose={onClose} title="Loading Printer" />
+          }
+        >
+          <LazyThreeDPrinterModal
             onClose={onClose}
             state={state}
             setGameState={setGameState}

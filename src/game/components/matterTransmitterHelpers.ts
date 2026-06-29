@@ -79,7 +79,7 @@ export function getItemDisplayName(
   itemId: string,
 ): string {
   const item = getItemById(world, itemId);
-  return item?.named?.(state) ?? item?.name ?? itemId;
+  return item?.named?.(state, item) ?? item?.name ?? itemId;
 }
 
 export function getPlateItemIds(state: GameState): string[] {

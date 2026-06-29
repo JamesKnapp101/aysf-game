@@ -5,18 +5,22 @@ type CrtModalProps = {
   title: string;
   onClose: () => void;
   children: React.ReactNode;
+  className?: string;
   width?: number;
   height?: number;
   showHeader?: boolean;
+  style?: React.CSSProperties;
 };
 
 export function CrtModal({
   title,
   onClose,
   children,
+  className,
   width = 720,
   height,
   showHeader = true,
+  style,
 }: CrtModalProps) {
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -42,8 +46,8 @@ export function CrtModal({
   return (
     <div className="crt-modal-backdrop" onMouseDown={onClose}>
       <div
-        className="crt-modal"
-        style={{ width, ...(height ? { height } : {}) }}
+        className={["crt-modal", className].filter(Boolean).join(" ")}
+        style={{ width, ...(height ? { height } : {}), ...style }}
         onMouseDown={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"

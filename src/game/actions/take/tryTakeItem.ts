@@ -57,7 +57,7 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
   const nounMatchesItem = (item: ReturnType<typeof getItemById>): boolean => {
     if (!item) return false;
 
-    const named = (item.named?.(state) ?? item.name).toLowerCase();
+    const named = (item.named?.(state, item) ?? item.name).toLowerCase();
     if (named === lower) return true;
     if (item.vocab.some((entry) => entry.toLowerCase() === lower)) return true;
 

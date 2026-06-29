@@ -44,7 +44,8 @@ export const FINAL_PLAYER_START_ROOM_ID = "StairWellSeven";
 
 // Set this to a room id while testing another area. Leave undefined for the
 // normal game start at FINAL_PLAYER_START_ROOM_ID.
-export const DEV_PLAYER_START_ROOM_ID: string | undefined = undefined;
+export const DEV_PLAYER_START_ROOM_ID: string | undefined =
+  "3DPrintingFacility"; //undefined;
 
 export const INITIAL_PLAYER_ROOM_ID =
   DEV_PLAYER_START_ROOM_ID ?? FINAL_PLAYER_START_ROOM_ID;

@@ -42,6 +42,7 @@ export type Overlay =
   | ({ kind: "womens-lockers" } & OverlayPostClose)
   | ({ isOn: boolean; kind: "matter-transmitter" } & OverlayPostClose)
   | ({ kind: "teleportation-terminal" } & OverlayPostClose)
+  | ({ kind: "3d-printer" } & OverlayPostClose)
   | ({ kind: "game-preserve-terminal" } & OverlayPostClose)
   | ({ kind: "bar-jukebox" } & OverlayPostClose)
   | ({ kind: "radio-frequency" } & OverlayPostClose)

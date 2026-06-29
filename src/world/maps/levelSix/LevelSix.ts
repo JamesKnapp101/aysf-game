@@ -194,7 +194,7 @@ export const LEVEL_SIX: WorldChunk = {
         { direction: "north", toRoomId: "StorageQuadTwoTop" },
         { direction: "west", toRoomId: "StorageQuadThreeTop" },
         { direction: "northwest", toRoomId: "StorageQuadOneTop" },
-        { direction: "south", toRoomId: "3DPrintingFacility" },
+        { direction: "east", toRoomId: "3DPrintingFacility" },
         { direction: "southeast", toRoomId: "RIFT" },
         { direction: "down", toRoomId: "StorageQuadFourMid" },
       ],
@@ -202,8 +202,9 @@ export const LEVEL_SIX: WorldChunk = {
     {
       id: "3DPrintingFacility",
       name: "3D Printing Facility",
-      description: "This is the 3D Printing Facility.",
-      exits: [{ direction: "north", toRoomId: "StorageQuadFourTop" }],
+      description:
+        "This compact fabrication room is built around a floor-to-ceiling 3D printer, with storage lockers, feed tubes, and resin-stained maintenance panels packed tight around it. The air is gone, but the printer's touchscreen still glows a steady CRT green.",
+      exits: [{ direction: "west", toRoomId: "StorageQuadFourTop" }],
     },
     {
       id: "RIFT",

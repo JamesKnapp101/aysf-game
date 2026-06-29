@@ -50,9 +50,11 @@ function getItemSearchTerms(
   texts: string[];
 } {
   const roomItems = getItemsInRoom(state, roomId);
-  const itemNames = roomItems.map((item) => item.named?.(state) ?? item.name);
+  const itemNames = roomItems.map(
+    (item) => item.named?.(state, item) ?? item.name,
+  );
   const texts = roomItems.flatMap((item) => [
-    item.named?.(state) ?? item.name,
+    item.named?.(state, item) ?? item.name,
     ...item.vocab,
   ]);
 

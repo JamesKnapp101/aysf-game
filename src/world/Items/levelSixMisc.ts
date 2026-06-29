@@ -13,6 +13,15 @@ import {
   LEVEL_SIX_FLEX_PLUG_ID,
   LEVEL_SIX_SPACE_SUIT_ID,
 } from "../maps/levelSix/airlockAndStorageConstants";
+import {
+  ATUM_CARTRIDGE_ITEM_ID,
+  getAtumCartridgeDisplayName,
+  PRINTED_GLUE_GUN_ITEM_ID,
+  PRINTED_WRENCH_ITEM_ID,
+  takeAtumCartridge,
+  THREE_D_PRINTER_ITEM_ID,
+  THREE_D_PRINTER_TRAY_ITEM_ID,
+} from "../maps/levelSix/threeDPrinter";
 import { lookThroughSpiderGap } from "./creatures/giantSpider";
 
 type ActionCommand = Extract<ParsedCommand, { type: "action" }>;
@@ -530,14 +539,85 @@ export const levelSixItems: Item[] = [
     },
   },
   {
-    id: "3DPrinter",
-    name: "3D Printer",
+    id: ATUM_CARTRIDGE_ITEM_ID,
+    name: "cartridge of atums",
+    named: getAtumCartridgeDisplayName,
     description:
-      "The apparatus takes up a good chunk of the room, with a large display window that looks in on the object being printed, and a touchscreen with a menu system.",
+      "A slim printer cartridge loaded with dense black atum capsules, less like money than printer toner with delusions of grandeur.",
+    location: "INVENTORY",
+    vocab: [
+      "atum",
+      "atums",
+      "cartridge",
+      "atum cartridge",
+      "cartridge of atums",
+      "capsule",
+      "capsules",
+      "black capsule",
+    ],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 0,
+    itemSize: 1,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    meta: {
+      kind: "atum-cartridge",
+      atumCount: 3,
+    },
+    overrides: {
+      take: takeAtumCartridge,
+    },
+  },
+  {
+    id: PRINTED_WRENCH_ITEM_ID,
+    name: "printed wrench",
+    description:
+      "A compact wrench printed from matte black atum composite. It has the faint layer lines and too-clean edges of something born from a file instead of a toolbox.",
+    initialDescription: "A freshly printed wrench rests on the tray.",
+    location: "seeded",
+    vocab: ["wrench", "printed wrench", "tool"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 2,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+  },
+  {
+    id: PRINTED_GLUE_GUN_ITEM_ID,
+    name: "printed glue gun",
+    description:
+      "A compact glue gun printed from matte black atum composite. It has a blocky handle, a short nozzle, and all the too-crisp edges of a tool that came out of a machine instead of a drawer.",
+    initialDescription: "A freshly printed glue gun rests on the tray.",
+    location: "seeded",
+    vocab: [
+      "glue gun",
+      "glue-gun",
+      "printed glue gun",
+      "adhesive gun",
+      "gun",
+      "tool",
+    ],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 2,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+  },
+  {
+    id: THREE_D_PRINTER_TRAY_ITEM_ID,
+    name: "printer tray",
+    description:
+      "A shallow output tray extends from the printer, its scuffed surface dusted with black residue from old atum prints.",
     sceneryDescription:
-      "Dominating the western half of the room is a huge 3D printing apparatus that goes floor to ceiling and has a large display window that looks in on the object being printed. It appears to have been heavily used, the menu touchscreen covered in smeared prints..",
+      "A shallow output tray juts from the printer, waiting beneath the display window.",
     location: "3DPrintingFacility",
-    vocab: ["printer", "3d", "machine"],
+    vocab: ["tray", "printer tray", "output tray", "print tray"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 0,
@@ -545,5 +625,30 @@ export const levelSixItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: false,
+    isSurface: true,
+    meta: {
+      sceneryDescriptionOrder: 2,
+    },
+  },
+  {
+    id: THREE_D_PRINTER_ITEM_ID,
+    name: "3D Printer",
+    description:
+      "The apparatus takes up a good chunk of the room, with a large display window that looks in on the object being printed, and a touchscreen with a menu system.",
+    sceneryDescription:
+      "Dominating the western half of the room is a huge 3D printing apparatus that goes floor to ceiling and has a large display window looking in on the print chamber. It appears to have been heavily used, the menu touchscreen covered in smeared prints.",
+    location: "3DPrintingFacility",
+    vocab: ["printer", "3d", "3d printer", "machine", "touchscreen"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 0,
+    itemSize: 2,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    meta: {
+      kind: "3d-printer",
+      sceneryDescriptionOrder: 1,
+    },
   },
 ];

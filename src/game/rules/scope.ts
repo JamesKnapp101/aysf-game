@@ -50,7 +50,7 @@ export function resolveItemInScopeByNoun(
 
   for (const item of candidates) {
     if (
-      (item.named?.(state).toLowerCase() === lower ||
+      (item.named?.(state, item).toLowerCase() === lower ||
         item.name.toLowerCase()) === lower ||
       item.vocab.some((v: string) => v.toLowerCase() === lower)
     ) {

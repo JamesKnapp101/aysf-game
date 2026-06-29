@@ -66,7 +66,7 @@ export function InventoryTree({
 
   const getSortName = (id: string) => {
     const it = getItemById(state, id);
-    return (it?.named?.(state) ?? it?.name ?? id).trim().toLowerCase();
+    return (it?.named?.(state, it) ?? it?.name ?? id).trim().toLowerCase();
   };
 
   const isContainerId = (id: string) =>
@@ -99,7 +99,7 @@ export function InventoryTree({
   const getItemLabel = (id: string) => {
     const it = getItemById(state, id);
     const baseName = withIndefiniteArticle(
-      it?.named?.(state) ?? it?.name ?? id,
+      it?.named?.(state, it) ?? it?.name ?? id,
     );
     let annotation = "";
 

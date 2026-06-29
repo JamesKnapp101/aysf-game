@@ -92,7 +92,7 @@ export interface Item {
   lookThroughDescription?: string;
   meta?: Record<string, any>;
   name: string;
-  named?: (state: GameState) => string;
+  named?: (state: GameState, item?: Item) => string;
   overrides?: ItemOverrides;
   providesLight?: boolean;
   readableText?: string | ((state: GameState, item: Item) => string);
@@ -203,7 +203,8 @@ export type ItemSettings =
   | { kind: "platform-valve"; position: "A" | "B" | "C" }
   | { kind: "reactor-coolant-valve"; position: -1 | 0 | 1 }
   | { kind: "level-six-space-suit"; oxygenGraceTurns: number }
-  | { kind: "smartbell"; weightKg: number };
+  | { kind: "smartbell"; weightKg: number }
+  | { count: number; kind: "atum-cartridge" };
 
 export type PlayerClothes = {
   body: ItemId | undefined;

@@ -19,12 +19,19 @@ export function QuantumTotePanel({
   >("general");
 
   const activeIds = state.player.inventory[activeTab] ?? EMPTY_ITEM_IDS;
+  const itemsById = React.useMemo(
+    () => new Map(state.world.items.map((it) => [it.id, it] as const)),
+    [state.world.items],
+  );
+  const getItemsForIds = React.useCallback(
+    (ids: readonly string[]): Item[] =>
+      ids.map((id) => itemsById.get(id)).filter(Boolean) as Item[],
+    [itemsById],
+  );
+
   const activeItems: Item[] = React.useMemo(() => {
-    const itemsById = new Map(
-      state.world.items.map((it) => [it.id, it] as const),
-    );
-    return activeIds.map((id) => itemsById.get(id)).filter(Boolean) as Item[];
-  }, [state.world.items, activeIds]);
+    return getItemsForIds(activeIds);
+  }, [activeIds, getItemsForIds]);
 
   const counts = {
     general: state.player.inventory.general.length,

@@ -71,11 +71,12 @@ export function buildRoomItemsDescription(
   );
 
   if (listItems.length > 0) {
-    if (listItems.length === 1) {
-      parts.push(`There is ${listItems[0].name} here.`);
+    const names = listItems.map((it) => it.named?.(state, it) ?? it.name);
+
+    if (names.length === 1) {
+      parts.push(`There is ${names[0]} here.`);
     } else {
-      const names = formatNameList(listItems.map((it) => it.name));
-      parts.push(`There are ${names} here.`);
+      parts.push(`There are ${formatNameList(names)} here.`);
     }
   }
 
@@ -89,7 +90,7 @@ export function buildRoomItemsDescription(
     const contents = getContainerContentsItems(state, container);
     if (contents.length === 0) continue;
 
-    const names = contents.map((c) => c.name);
+    const names = contents.map((c) => c.named?.(state, c) ?? c.name);
     const list = formatNameList(names);
     containerLines.push(
       `Inside the ${container.name.toLowerCase()} you can see ${list}.`,
@@ -106,7 +107,7 @@ export function buildRoomItemsDescription(
     const contents = getSurfaceItems(state, surface);
     if (contents.length === 0) continue;
 
-    const names = contents.map((c) => c.name);
+    const names = contents.map((c) => c.named?.(state, c) ?? c.name);
     const list = formatNameList(names);
     surfaceLines.push(
       `On the ${surface.name.toLowerCase()} you can see ${list}.`,

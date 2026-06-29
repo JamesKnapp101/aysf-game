@@ -75,7 +75,7 @@ export function describeRoomWithItems(state: GameState): string {
   const room = getCurrentRoom(state);
   const itemsHere = getItemsInCurrentRoom(state);
 
-  const itemNames = itemsHere.map((i) => i.named?.(state) || i.name);
+  const itemNames = itemsHere.map((i) => i.named?.(state, i) || i.name);
   const itemsText = itemNames.length
     ? `\n\nYou can see ${itemNames.join(", ")} here.`
     : "";

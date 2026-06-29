@@ -1,0 +1,325 @@
+.three-d-printer-modal {
+    --crt-color: #75ff3f;
+}
+
+.three-d-printer {
+    --printer-crt: #75ff3f;
+    --printer-crt-rgb: 117 255 63;
+    --printer-bg: #030704;
+    --printer-line: rgb(var(--printer-crt-rgb) / 0.72);
+    --printer-soft-line: rgb(var(--printer-crt-rgb) / 0.42);
+    --printer-dim: color-mix(in srgb, var(--printer-crt) 58%, black 20%);
+
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 14px;
+    color: var(--printer-crt);
+    background:
+        repeating-linear-gradient(0deg,
+            rgb(var(--printer-crt-rgb) / 0.035) 0,
+            rgb(var(--printer-crt-rgb) / 0.035) 1px,
+            transparent 1px,
+            transparent 7px),
+        var(--printer-bg);
+    border: 1px solid var(--printer-line);
+    border-radius: 8px;
+    box-shadow:
+        0 0 0 1px rgb(0 0 0 / 0.82) inset,
+        0 0 0 2px rgb(var(--printer-crt-rgb) / 0.12),
+        0 0 28px rgb(var(--printer-crt-rgb) / 0.11) inset;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+    text-transform: uppercase;
+    font-family: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas,
+        "Liberation Mono", monospace;
+    letter-spacing: 0;
+}
+
+.three-d-printer,
+.three-d-printer * {
+    box-sizing: border-box;
+}
+
+.three-d-printer-header {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 14px;
+    min-height: 67px;
+}
+
+.three-d-printer-brand {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    line-height: 1;
+    overflow: hidden;
+}
+
+.three-d-printer-brand-omni {
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+        Arial, sans-serif;
+    font-size: 50px;
+    font-weight: 900;
+    line-height: 0.86;
+    color: var(--printer-crt);
+    white-space: nowrap;
+}
+
+.three-d-printer-brand-print {
+    font-size: 30px;
+    line-height: 1;
+    color: var(--printer-crt);
+    white-space: nowrap;
+}
+
+.three-d-printer-title {
+    min-width: 0;
+    max-width: 260px;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+        Arial, sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--printer-crt);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.three-d-printer-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 194px minmax(0, 1fr);
+    gap: 12px;
+}
+
+.three-d-printer-wallet {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto 60px minmax(0, 1fr) 61px;
+    gap: 8px;
+}
+
+.three-d-printer-wallet-label {
+    min-width: 0;
+    font-size: 20px;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+}
+
+.three-d-printer-wallet-value,
+.three-d-printer-print,
+.three-d-printer-menu {
+    border: 1px solid var(--printer-line);
+    border-radius: 8px;
+    background: rgb(0 0 0 / 0.72);
+}
+
+.three-d-printer-wallet-value {
+    min-width: 0;
+    min-height: 0;
+    padding: 8px 16px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    font-size: 27px;
+    line-height: 1;
+}
+
+.three-d-printer-wallet-value>span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+}
+
+.three-d-printer-atum-symbol {
+    display: inline-block;
+    width: 1.08em;
+    height: 0.92em;
+    flex: 0 0 auto;
+    color: var(--printer-dim);
+    overflow: visible;
+    vertical-align: -0.08em;
+}
+
+.three-d-printer-atum-leg,
+.three-d-printer-atum-crossbar,
+.three-d-printer-atum-strike {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.three-d-printer-atum-leg {
+    stroke-width: 13;
+}
+
+.three-d-printer-atum-crossbar {
+    stroke-width: 8;
+}
+
+.three-d-printer-atum-strike {
+    stroke-width: 9;
+}
+
+.three-d-printer-print {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 10px 12px;
+    color: var(--printer-crt);
+    font: inherit;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    text-align: center;
+    transition:
+        background 120ms ease,
+        box-shadow 120ms ease,
+        opacity 120ms ease,
+        transform 120ms ease;
+}
+
+.three-d-printer-print:not(:disabled):hover,
+.three-d-printer-print:not(:disabled):focus-visible {
+    background: color-mix(in srgb, var(--printer-crt) 12%, black);
+    box-shadow: 0 0 18px rgb(var(--printer-crt-rgb) / 0.24);
+    outline: none;
+}
+
+.three-d-printer-print:not(:disabled):active {
+    transform: translateY(1px);
+}
+
+.three-d-printer-print:disabled {
+    opacity: 0.46;
+    cursor: not-allowed;
+}
+
+.three-d-printer-menu {
+    min-width: 0;
+    min-height: 0;
+    padding: 9px 10px;
+    overflow: hidden;
+}
+
+.three-d-printer-recipe-list {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 2px;
+    scrollbar-color: var(--printer-crt) rgba(0, 0, 0, 0.35);
+}
+
+.three-d-printer-recipe {
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    border: 0;
+    border-radius: 4px;
+    padding: 6px 8px 6px 2px;
+    color: var(--printer-crt);
+    background: transparent;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(74px, auto);
+    align-items: center;
+    gap: 12px;
+    font: inherit;
+    font-size: 18px;
+    line-height: 1.08;
+    text-align: left;
+    cursor: pointer;
+}
+
+.three-d-printer-recipe:hover,
+.three-d-printer-recipe:focus-visible,
+.three-d-printer-recipe.is-selected {
+    background: rgb(var(--printer-crt-rgb) / 0.12);
+    outline: none;
+}
+
+.three-d-printer-recipe.is-selected {
+    box-shadow: 0 0 0 1px rgb(var(--printer-crt-rgb) / 0.5) inset;
+}
+
+.three-d-printer-recipe-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.three-d-printer-recipe-cost {
+    min-width: 0;
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    align-items: baseline;
+    justify-content: end;
+    gap: 8px;
+    color: var(--printer-dim);
+    white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+    .three-d-printer {
+        padding: 10px;
+    }
+
+    .three-d-printer-header {
+        min-height: 58px;
+    }
+
+    .three-d-printer-brand-omni {
+        font-size: 34px;
+    }
+
+    .three-d-printer-brand-print {
+        font-size: 22px;
+    }
+
+    .three-d-printer-title {
+        max-width: 170px;
+        font-size: 22px;
+    }
+
+    .three-d-printer-body {
+        grid-template-columns: 150px minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .three-d-printer-wallet-label {
+        font-size: 16px;
+    }
+
+    .three-d-printer-wallet-value {
+        font-size: 22px;
+    }
+
+    .three-d-printer-print {
+        font-size: 22px;
+    }
+
+    .three-d-printer-recipe {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 4px;
+        font-size: 18px;
+    }
+
+    .three-d-printer-recipe-cost {
+        justify-content: start;
+    }
+}

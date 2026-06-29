@@ -184,6 +184,18 @@ function buildTeleportationTerminalOverlay(
   };
 }
 
+function buildThreeDPrinterOverlay(ctx: ExamineItemContext): ActionResult {
+  return {
+    state: ctx.state,
+    overlay: withPostCloseNotifications(
+      {
+        kind: "3d-printer" as const,
+      },
+      ctx.postCloseNotifications,
+    ),
+  };
+}
+
 function buildGamePreserveTerminalOverlay(
   ctx: ExamineItemContext,
 ): ActionResult {
@@ -232,6 +244,10 @@ const SPECIAL_EXAMINE_HANDLERS: SpecialExamineHandler[] = [
       item.id === "TelepadTerminal" ||
       item.meta?.kind === "teleportation-terminal",
     handle: buildTeleportationTerminalOverlay,
+  },
+  {
+    matches: (item) => item.meta?.kind === "3d-printer",
+    handle: buildThreeDPrinterOverlay,
   },
   {
     matches: (item) => item.meta?.kind === "game-preserve-terminal",
