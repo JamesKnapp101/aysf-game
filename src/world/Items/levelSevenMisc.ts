@@ -1,4 +1,3 @@
-import { getFlashlightSettings } from "@game/helpers/flashlightHelpers";
 import {
   createPlayerHuskMeta,
   getPlayerHuskNumberVocab,
@@ -158,58 +157,6 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     isSwitchable: true,
     isOn: false,
     providesLight: false,
-  },
-  {
-    id: "damagedFlashlight",
-    name: "broken flashlight",
-    location: "seeded",
-    vocab: [
-      "flashlight",
-      "broken flashlight",
-      "damaged flashlight",
-      "broken",
-      "damaged",
-    ],
-    initialDescription:
-      "Near the wall, amidst scattered pieces of broken plastic, you see a flashlight with a cracked housing.",
-    description:
-      "It sustained a pretty hard impact, cracking the housing and the lens cover, but the lens seems to be intact.",
-    describe: (state) => {
-      const damagedFlashlightState = getFlashlightSettings(
-        state,
-        "damagedFlashlight",
-      );
-      const chargeText =
-        damagedFlashlightState &&
-        Number.isInteger(damagedFlashlightState.currentCharge)
-          ? String(damagedFlashlightState.currentCharge)
-          : (damagedFlashlightState?.currentCharge.toFixed(2) ?? "0");
-
-      let desc = `It sustained a pretty hard impact, cracking the housing and the lens cover, but the lens seems to be intact. The battery is damaged, though, and seems only capable of holding a tiny fraction of its charge, with a little charge meter on one side that reads 'Battery: ${chargeText}%' The flashlight is currently ${damagedFlashlightState?.isOn ? "on, " : "off."}`;
-      if (damagedFlashlightState?.isOn) {
-        if (damagedFlashlightState.currentCharge >= 3) {
-          desc += `and casting a reasonably bright beam.`;
-        }
-        if (damagedFlashlightState.currentCharge === 2) {
-          desc += `and casting a sallow beam of light.`;
-        }
-        if (damagedFlashlightState.currentCharge === 1) {
-          desc += `but it's flickering, and doesn't look like it's going to be on much longer.`;
-        }
-        if (damagedFlashlightState.currentCharge < 1) {
-          desc += `but it isn't casting any light.`;
-        }
-      }
-
-      return desc;
-    },
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 2,
-    itemSize: 2,
-    isSwitchable: true,
-    isOn: false,
-    providesLight: true,
   },
   {
     id: "seed",

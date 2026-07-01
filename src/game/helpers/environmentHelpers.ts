@@ -1,22 +1,19 @@
 import { applyPlayerDamage } from "@game/rules/damage";
-import type { GameState } from "@game/types/gameTypes";
 import {
-  AQUARIUM_BREATHER_ITEM_ID,
-  isAquariumUnderwaterRoom,
-} from "src/world/Items/creatures/octopus";
+  isPlayerInRegisteredOxygenHazard,
+  playerHasRegisteredBreathingSupport,
+} from "@game/registries/environmentStateRegistry";
+import type { GameState } from "@game/types/gameTypes";
 
 export const AQUARIUM_OXYGEN_LOSS_PER_TURN = 15;
 export const AQUARIUM_DROWNING_DAMAGE_PER_TURN = 20;
 
 export function playerHasBreather(state: GameState): boolean {
-  return (
-    state.itemState.wornByPlayer.face === AQUARIUM_BREATHER_ITEM_ID ||
-    state.itemState.wornByPlayer.head === AQUARIUM_BREATHER_ITEM_ID
-  );
+  return playerHasRegisteredBreathingSupport(state);
 }
 
 export function isPlayerUnderwater(state: GameState): boolean {
-  return isAquariumUnderwaterRoom(state.player.roomId);
+  return isPlayerInRegisteredOxygenHazard(state);
 }
 
 export function isPlayerInVacuum(state: GameState): boolean {

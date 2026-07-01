@@ -1,5 +1,4 @@
-import { isRoomSpotlitByAviary } from "@game/engine/ticks/aviaryTick";
-import { getAviaryNextSpotlitRoomId } from "src/world/Items/creatures/aviaryOrganisms";
+import { isRoomLitByRegisteredSource } from "@game/registries/roomLightRegistry";
 import { isAnyFlashlightOn } from "./flashlightHelpers";
 import type { GameState } from "../types/gameTypes";
 import type { AmbientRoomLightLevel } from "../types/roomTypes";
@@ -20,8 +19,7 @@ export function canPlayerSeeInRoom(state: GameState, roomId: string): boolean {
     !isDark ||
     nightVisionActive ||
     flashlightOn ||
-    isRoomSpotlitByAviary(state, roomId) ||
-    getAviaryNextSpotlitRoomId(state) === roomId
+    isRoomLitByRegisteredSource(state, roomId)
   );
 }
 

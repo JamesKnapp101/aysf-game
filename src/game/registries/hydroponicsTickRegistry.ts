@@ -1,6 +1,8 @@
 import type { GameState } from "@game/types/gameTypes";
-import { tickHydroponicsSpiderThreat } from "src/world/Items/creatures/giantSpider";
-import { tickHydroponicsCocoonPuzzle } from "src/world/maps/levelSix/hydroponicsPuzzle";
+import {
+  tickHydroponicsCocoonPuzzle,
+  tickHydroponicsSpiderThreat,
+} from "src/world/zoneRegistrations";
 
 export function tickRegisteredHydroponicsSpiderThreat(state: GameState): {
   deathCause?: string;

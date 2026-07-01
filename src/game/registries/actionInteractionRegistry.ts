@@ -3,16 +3,14 @@ import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import type { ConversationTarget } from "@game/types/npcTypes";
 import {
+  giveDartToBarBartender,
+  handleMovieTheaterUsherTell,
+  handleVirtualManagerConversation,
   maybeAwardBarMemoryBox,
   maybeAwardBarTriviaPrize,
-} from "src/world/maps/levelThree/Park/Bar/barBartenderRewards";
-import {
-  giveDartToBarBartender,
   throwDartAtBarDartboard,
-} from "src/world/maps/levelThree/Park/Bar/barDarts";
-import { orderBarDrink } from "src/world/maps/levelThree/Park/Bar/barDrinks";
-import { handleMovieTheaterUsherTell } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
-import { handleVirtualManagerConversation } from "src/world/maps/levelFive/reactorSystems";
+  orderBarDrink,
+} from "src/world/zoneRegistrations";
 
 type AskForActionHandler = {
   handle: (

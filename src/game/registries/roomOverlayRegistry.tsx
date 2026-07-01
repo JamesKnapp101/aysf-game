@@ -1,7 +1,9 @@
 import type { GameState } from "@game/types/gameTypes";
 import { Fragment, type ReactNode } from "react";
-import { ReactorBigBoard } from "src/world/maps/levelFive/ReactorBigBoard";
-import { isReactorBigBoardVisible } from "src/world/maps/levelFive/reactorConsensus";
+import {
+  isReactorBigBoardVisible,
+  ReactorBigBoard,
+} from "src/world/zoneRegistrations";
 
 type RoomOverlayRegistration = {
   id: string;

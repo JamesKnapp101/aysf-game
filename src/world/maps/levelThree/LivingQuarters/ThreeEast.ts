@@ -29,6 +29,9 @@ function turnEeglerWallFixture({ state }: { state: GameState }): {
   };
 }
 
+const EEGLER_GUITAR_PLAY_MESSAGE =
+  "Your fingers seem to find the positions on their own, muscle memory, maybe. You're not sure that you were a good guitar player, but you know, or part of you knows, how to play the guitar.";
+
 export const threeEastRooms: Room[] = [
   // LIVING QUARTERS THREE EAST
   {
@@ -210,6 +213,7 @@ export const threeEastItems: Item[] = [
       "Sitting on the workstation desk is some kind of hand-held scanning device with visible electronics and wires clustered near the base where the grip to hold it is.",
     location: "SecretLab",
     meta: {
+      shootBehavior: "mind-gun",
       onLoad: "It doesn't seem to take any ammo, nor does it have a barrel.",
       onLink:
         "The strangest feeling washes over you and you feel a wave of intense dizziness which passes almost instantly. In your head, a soft voice which is not your own says 'Link established...', and before you can even wonder what that means you suddenly sense a flood of thoughts pouring into your mind...thoughts which are not yours...",
@@ -678,5 +682,8 @@ export const threeEastItems: Item[] = [
     itemCategory: "collectable",
     itemWeight: 2,
     itemSize: 3,
+    overrides: {
+      play: EEGLER_GUITAR_PLAY_MESSAGE,
+    },
   },
 ];

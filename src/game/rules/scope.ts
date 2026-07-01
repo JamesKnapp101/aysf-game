@@ -1,16 +1,7 @@
 import { inventoryHas } from "@game/rules/state";
 import { getNpcById, getNpcForItem } from "@game/npcRegistry";
+import { resolveRegisteredScopeItem } from "@game/registries/scopeResolverRegistry";
 import type { ConversationNpc, ConversationTarget } from "@game/types/npcTypes";
-import {
-  HYDROPONICS_SPIDER_ITEM_ID,
-  isHydroponicsSpiderNoun,
-  isHydroponicsSpiderRoom,
-  isHydroponicsSpiderVisibleFromRoom,
-} from "src/world/Items/creatures/giantSpider";
-import {
-  isAquariumRoom,
-  matchesAquariumThreatNoun,
-} from "src/world/Items/creatures/octopus";
 import { getCurrentRoom } from "../selectors/roomSelectors";
 import { getTeleportPadsInCurrentRoom } from "../selectors/teleportationSelectors";
 import type { DoorDefinition, DoorState } from "../types/doorTypes";
@@ -215,21 +206,8 @@ export function resolveItemByNoun(
   });
   if (byVocab) return byVocab;
 
-  if (
-    isHydroponicsSpiderRoom(room.id) &&
-    isHydroponicsSpiderVisibleFromRoom(room.id)
-  ) {
-    const spider = state.world.items.find(
-      (it) => it.id === HYDROPONICS_SPIDER_ITEM_ID,
-    );
-    if (spider && isHydroponicsSpiderNoun(spider, noun)) {
-      return spider;
-    }
-  }
-
-  if (isAquariumRoom(room.id) && matchesAquariumThreatNoun(noun)) {
-    return state.world.items.find((it) => it.id === "octopus");
-  }
+  const registeredScopeItem = resolveRegisteredScopeItem({ state, room, noun });
+  if (registeredScopeItem) return registeredScopeItem;
 
   return undefined;
 }

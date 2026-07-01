@@ -383,13 +383,6 @@ export interface WorldChunk {
   teleportPads: TeleportPadDefinition[];
 }
 
-export interface DamagedFlashlightState {
-  chargeRate: number;
-  currentCharge: number;
-  isOn: boolean;
-  maxCharge: number;
-}
-
 export interface SyringeState {
   loadedCartridgeId?: string;
 }
@@ -478,7 +471,6 @@ export interface WorldState {
   catState: CatState;
   conditionalExits: Record<RoomId, ConditionalExit>;
   conditionalTriggers: Record<string, boolean>;
-  damagedFlashlight?: DamagedFlashlightState;
   darkRooms: Record<string, boolean>;
   deepStorage: DeepStorageState;
   doors: Record<string, DoorState>;

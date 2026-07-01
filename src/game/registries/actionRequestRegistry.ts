@@ -1,11 +1,11 @@
 import type { ActionRequest, ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
-import { playBarJukeboxTrack } from "src/world/maps/levelThree/Park/Bar/barJukebox";
 import {
+  playBarJukeboxTrack,
+  returnDeepStorageSuitHome,
   setGymTreadmillSpeed,
   SPIN_STAGE_SPEED_DIAL_PASSWORD,
-} from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
-import { returnDeepStorageSuitHome } from "src/world/maps/levelSeven/deepStorage";
+} from "src/world/zoneRegistrations";
 
 type ActionRequestHandler = (
   state: GameState,

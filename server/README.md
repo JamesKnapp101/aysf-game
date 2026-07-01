@@ -163,10 +163,11 @@ Example response:
 
 - `pnpm run dev` starts the server with `tsx watch`
 - `pnpm run build` compiles TypeScript to `dist/`
+- `pnpm test` runs the Node security regression tests
 - `pnpm start` runs the compiled server from `dist/index.js`
 
 ## Notes
 
 - Cache and rate-limit state are stored in memory, so they reset on restart.
 - `POST /api/conversation/clear-cache` is available only outside production.
-- This service currently has no standalone test or lint script in `server/package.json`.
+- The server currently has no standalone lint script in `server/package.json`.

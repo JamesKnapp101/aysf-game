@@ -8,11 +8,11 @@ import type { GameState } from "@game/types/gameTypes";
 import type { Preposition } from "@game/types/parserTypes";
 import { inventoryHas } from "@game/rules/state";
 import {
+  handleLevelSixBreachPatchCommand,
   installReplacementLobe,
   REACTOR_LOBE_ARRAY_ID,
   REPLACEMENT_REACTOR_LOBE_ITEM_ID,
-} from "src/world/maps/levelFive/reactorSystems";
-import { handleLevelSixBreachPatchCommand } from "src/world/maps/levelSix/airlockAndStorage";
+} from "src/world/zoneRegistrations";
 
 type RegisteredPutCommand = {
   direct: string;

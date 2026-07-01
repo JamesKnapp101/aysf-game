@@ -2,7 +2,7 @@ import type { RuleResult } from "@game/rules/result";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
-import { applyMovieTheaterVapeUseEffect } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
+import { applyMovieTheaterVapeUseEffect } from "src/world/zoneRegistrations";
 
 type UseItemEffectContext = {
   baseMessage: string;

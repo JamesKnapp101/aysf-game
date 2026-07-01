@@ -1,8 +1,8 @@
 import { inventoryHas } from "@game/rules/state";
-import type { DamagedFlashlightState, GameState } from "../types/gameTypes";
+import type { GameState } from "../types/gameTypes";
 import type { ItemId } from "../types/ids";
 
-export type FlashlightItemId = "flashlight" | "damagedFlashlight";
+export type FlashlightItemId = "flashlight";
 
 export interface FlashlightSettings {
   kind: "flashlight";
@@ -33,10 +33,7 @@ type LegacyFlashlightSettings = Partial<FlashlightSettings> & {
   kind?: string;
 };
 
-export const FLASHLIGHT_ITEM_IDS: FlashlightItemId[] = [
-  "flashlight",
-  "damagedFlashlight",
-];
+export const FLASHLIGHT_ITEM_IDS: FlashlightItemId[] = ["flashlight"];
 
 const FLASHLIGHT_DEFAULTS: Record<FlashlightItemId, FlashlightDefaults> = {
   flashlight: {
@@ -45,18 +42,9 @@ const FLASHLIGHT_DEFAULTS: Record<FlashlightItemId, FlashlightDefaults> = {
     drainRate: 0.05,
     rechargeRate: 10,
   },
-  damagedFlashlight: {
-    maxCharge: 30,
-    initialCharge: 30,
-    drainRate: 1,
-    rechargeRate: 5,
-  },
 };
 
-const FLASHLIGHT_DISPLAY_PRIORITY: FlashlightItemId[] = [
-  "flashlight",
-  "damagedFlashlight",
-];
+const FLASHLIGHT_DISPLAY_PRIORITY: FlashlightItemId[] = ["flashlight"];
 
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
@@ -94,22 +82,17 @@ export function getFlashlightDefaults(
 function normalizeFlashlightSettings(
   itemId: FlashlightItemId,
   rawSettings: unknown,
-  legacyDamagedFlashlight?: DamagedFlashlightState,
 ): FlashlightSettings {
   const defaults = getFlashlightDefaults(itemId);
   const legacySettings = isLegacyFlashlightSettings(rawSettings)
     ? rawSettings
     : undefined;
-  const legacyWorldState =
-    itemId === "damagedFlashlight" ? legacyDamagedFlashlight : undefined;
 
   const maxCharge = clamp(
     roundCharge(
       Number.isFinite(legacySettings?.maxCharge)
         ? Number(legacySettings?.maxCharge)
-        : Number.isFinite(legacyWorldState?.maxCharge)
-          ? Number(legacyWorldState?.maxCharge)
-          : defaults.maxCharge,
+        : defaults.maxCharge,
     ),
     0,
     Number.MAX_SAFE_INTEGER,
@@ -119,9 +102,7 @@ function normalizeFlashlightSettings(
     roundCharge(
       Number.isFinite(legacySettings?.currentCharge)
         ? Number(legacySettings?.currentCharge)
-        : Number.isFinite(legacyWorldState?.currentCharge)
-          ? Number(legacyWorldState?.currentCharge)
-          : defaults.currentCharge,
+        : defaults.currentCharge,
     ),
     0,
     maxCharge,
@@ -143,9 +124,7 @@ function normalizeFlashlightSettings(
         ? Number(legacySettings?.rechargeRate)
         : Number.isFinite(legacySettings?.chargeRate)
           ? Number(legacySettings?.chargeRate)
-          : Number.isFinite(legacyWorldState?.chargeRate)
-            ? Number(legacyWorldState?.chargeRate)
-            : defaults.rechargeRate,
+          : defaults.rechargeRate,
     ),
     0,
     Number.MAX_SAFE_INTEGER,
@@ -156,9 +135,7 @@ function normalizeFlashlightSettings(
     isOn:
       typeof legacySettings?.isOn === "boolean"
         ? legacySettings.isOn
-        : typeof legacyWorldState?.isOn === "boolean"
-          ? legacyWorldState.isOn
-          : defaults.isOn,
+        : defaults.isOn,
     currentCharge,
     maxCharge,
     drainRate,
@@ -183,11 +160,7 @@ export function getFlashlightSettings(
 ): FlashlightSettings | undefined {
   if (!isFlashlightItemId(itemId)) return undefined;
 
-  return normalizeFlashlightSettings(
-    itemId,
-    state.itemState.itemSettings[itemId],
-    state.worldState.damagedFlashlight,
-  );
+  return normalizeFlashlightSettings(itemId, state.itemState.itemSettings[itemId]);
 }
 
 export function hasFlashlight(

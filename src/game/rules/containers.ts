@@ -1,6 +1,5 @@
 import { updateItemLocation } from "@game/rules/items";
 import { removeFromAllBuckets } from "@game/rules/state";
-import { isSerumCartridge } from "../selectors/containerSelectors";
 import { getItemById } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 
@@ -63,30 +62,16 @@ export function tryPutItemInContainer(
     return "You can't put things in that.";
   }
 
-  // --- special case: syringe -----------------------------------------
-  if (container.id === "Syringe") {
-    if (!isSerumCartridge(item)) {
-      return "The syringe clamp is designed for standardized drug cartridges, not that.";
-    }
-
-    if (state.itemState.syringe.loadedCartridgeId) {
-      return "The syringe is already loaded.";
-    }
-
-    return {
-      ...state,
-      player: {
-        ...state.player,
-        inventory: removeFromAllBuckets(state.player.inventory, item.id),
-      },
-      itemState: {
-        ...state.itemState,
-        syringe: {
-          ...state.itemState.syringe,
-          loadedCartridgeId: item.id,
-        },
-      },
-    };
+  const insertOverride = container.overrides?.insert;
+  if (typeof insertOverride === "function") {
+    const out = insertOverride({
+      state,
+      item: container,
+      insertedItem: item,
+    });
+    if (typeof out === "string") return out;
+    if (out?.message) return out.message;
+    if (out?.state) return out.state;
   }
 
   // --- normal container path -----------------------------------------

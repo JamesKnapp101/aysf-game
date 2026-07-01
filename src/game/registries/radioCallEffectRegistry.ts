@@ -1,5 +1,5 @@
 import type { GameState } from "@game/types/gameTypes";
-import { handleGreenhouseRadioCall } from "src/world/maps/levelFour/Greenhouse";
+import { handleGreenhouseRadioCall } from "src/world/zoneRegistrations";
 
 export type RadioCallEffectContext = {
   frequency: number;

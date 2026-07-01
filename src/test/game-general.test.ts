@@ -1,6 +1,9 @@
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
 import { advanceTurn } from "@game/engine/turn";
-import { createInitialState } from "@game/gameInit";
+import {
+  createInitialState,
+  FINAL_PLAYER_START_ROOM_ID,
+} from "@game/gameInit";
 import {
   AQUARIUM_DROWNING_DAMAGE_PER_TURN,
   AQUARIUM_OXYGEN_LOSS_PER_TURN,
@@ -46,6 +49,7 @@ describe("General gameplay", () => {
     const state = createInitialState(INITIAL_WORLD);
     const itemIds = getItemsInRoom(state, "StairWellSeven").map((item) => item.id);
 
+    expect(state.player.roomId).toBe(FINAL_PLAYER_START_ROOM_ID);
     expect(itemIds).toEqual(
       expect.arrayContaining([
         "MysteriousNote",

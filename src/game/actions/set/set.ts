@@ -18,19 +18,6 @@ export function doSet(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "There's nothing to set." };
   }
 
-  if (item.id === "Cooler") {
-    const coolerSetting = state.itemState.itemSettings["Cooler"];
-    const mode =
-      coolerSetting && coolerSetting.kind === "cooler"
-        ? coolerSetting.mode
-        : "off";
-
-    return {
-      state,
-      overlay: { kind: "cooler", mode },
-    };
-  }
-
   const setOverride = item.overrides?.set;
   if (typeof setOverride === "function") {
     const out = setOverride({ state, item, cmd });

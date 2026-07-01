@@ -60,6 +60,19 @@ function openRadioFrequencyDisplay({ state }: { state: GameState }) {
   };
 }
 
+function openCoolerPanel({ state }: { state: GameState }) {
+  const coolerSetting = state.itemState.itemSettings.Cooler;
+  const mode =
+    coolerSetting && coolerSetting.kind === "cooler"
+      ? coolerSetting.mode
+      : "off";
+
+  return {
+    state,
+    overlay: { kind: "cooler" as const, mode },
+  };
+}
+
 export const specialItems: Item[] = [
   // 1. Flashlight ------------------------------------------------------------
   {
@@ -168,6 +181,10 @@ export const specialItems: Item[] = [
           text: "You set the cooler to 'freeze' and it emits a high-pitched electronic tone.",
         },
       },
+    },
+    overrides: {
+      examine: openCoolerPanel,
+      set: openCoolerPanel,
     },
   },
 

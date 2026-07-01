@@ -6,9 +6,9 @@ import {
 } from "@game/preserve/preserveTrophies";
 import {
   AQUARIUM_GOAL_ITEM_ID,
+  handleReactorSmartbellTaken,
   triggerAquariumReturnChoke,
-} from "src/world/Items/creatures/octopus";
-import { handleReactorSmartbellTaken } from "src/world/maps/levelFive/reactorPlatform";
+} from "src/world/zoneRegistrations";
 
 type TakeItemEffectContext = {
   fromRoomId: string;

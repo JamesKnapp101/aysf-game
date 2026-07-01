@@ -43,6 +43,12 @@ function getRequestKey(npcId: string, type: string, topic: string): string {
   return `${npcId}:${type}:${topic.toLowerCase().trim()}`;
 }
 
+function logClaudeDebug(message: string): void {
+  if (import.meta.env.DEV && import.meta.env.MODE !== "test") {
+    console.debug(message);
+  }
+}
+
 /**
  * Get a Claude-generated response for an NPC conversation
  * Returns null if the API fails (signals to use static fallback)
@@ -60,7 +66,7 @@ export async function getClaudeResponse(
 
   const existingRequest = pendingRequests.get(requestKey);
   if (existingRequest) {
-    console.log(`Reusing pending Claude request for ${npcId}`);
+    logClaudeDebug(`Reusing pending Claude request for ${npcId}`);
     return existingRequest;
   }
 
@@ -97,7 +103,7 @@ export async function getClaudeResponse(
       }
 
       if (data.cached) {
-        console.log(`Using cached response for ${npcId}`);
+        logClaudeDebug(`Using cached response for ${npcId}`);
       }
 
       return data.response;

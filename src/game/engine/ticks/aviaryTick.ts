@@ -296,10 +296,6 @@ export function tickAviarySpotlight(state: GameState): GameState {
               next,
               `Something skitters away as the light approaches.`,
             );
-          } else {
-            console.log(
-              `Aviary spotlight tick: organism ${org.id} in ${roomBecomingLit} has no dark escape route!`,
-            );
           }
         }
       }

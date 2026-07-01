@@ -1,4 +1,40 @@
+import { removeFromAllBuckets } from "@game/rules/state";
+import { isSerumCartridge } from "@game/selectors/containerSelectors";
+import type { GameState } from "../../game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
+
+function loadSyringeCartridge({
+  insertedItem,
+  state,
+}: {
+  insertedItem: Item;
+  state: GameState;
+}) {
+  if (!isSerumCartridge(insertedItem)) {
+    return "The syringe clamp is designed for standardized drug cartridges, not that.";
+  }
+
+  if (state.itemState.syringe.loadedCartridgeId) {
+    return "The syringe is already loaded.";
+  }
+
+  return {
+    state: {
+      ...state,
+      player: {
+        ...state.player,
+        inventory: removeFromAllBuckets(state.player.inventory, insertedItem.id),
+      },
+      itemState: {
+        ...state.itemState,
+        syringe: {
+          ...state.itemState.syringe,
+          loadedCartridgeId: insertedItem.id,
+        },
+      },
+    },
+  };
+}
 
 export const drugItems: Item[] = [
   {
@@ -29,6 +65,9 @@ export const drugItems: Item[] = [
       "SleepyCart",
       "PainKillerCart",
     ],
+    overrides: {
+      insert: loadSyringeCartridge,
+    },
   },
   {
     id: "GroovyCart",

@@ -29,30 +29,12 @@ function updateFlashlightState(
   };
 }
 
-function getStartEmptyMessage(itemId: FlashlightItemId): string {
-  return itemId === "damagedFlashlight"
-    ? "The damaged flashlight sputters and goes out."
-    : "The LED flashlight flickers weakly, then stays dark.";
+function getStartEmptyMessage(): string {
+  return "The LED flashlight flickers weakly, then stays dark.";
 }
 
-function getDrainedMessage(itemId: FlashlightItemId): string {
-  return itemId === "damagedFlashlight"
-    ? "The damaged flashlight dies with a soft click."
-    : "The LED flashlight dims and goes dark.";
-}
-
-function getLowPowerWarning(
-  itemId: FlashlightItemId,
-  currentCharge: number,
-): string | undefined {
-  if (itemId !== "damagedFlashlight") return undefined;
-  if (currentCharge === 2) {
-    return "The damaged flashlight starts to fade. It won't last much longer.";
-  }
-  if (currentCharge === 1) {
-    return "The flashlight is barely holding on; one more turn at best.";
-  }
-  return undefined;
+function getDrainedMessage(): string {
+  return "The LED flashlight dims and goes dark.";
 }
 
 export function tickFlashlights(state: GameState): GameState {
@@ -64,7 +46,7 @@ export function tickFlashlights(state: GameState): GameState {
 
     if (settings.isOn) {
       if (settings.currentCharge <= 0) {
-        next = appendLog(next, getStartEmptyMessage(itemId));
+        next = appendLog(next, getStartEmptyMessage());
         next = updateFlashlightState(
           next,
           itemId,
@@ -86,17 +68,17 @@ export function tickFlashlights(state: GameState): GameState {
 
       next = updateFlashlightState(next, itemId, nextSettings);
 
-      const lowPowerWarning = getLowPowerWarning(itemId, currentCharge);
-      if (lowPowerWarning) {
-        next = appendLog(next, lowPowerWarning);
-      } else if (currentCharge === 0) {
-        next = appendLog(next, getDrainedMessage(itemId));
+      if (currentCharge === 0) {
+        next = appendLog(next, getDrainedMessage());
       }
 
       continue;
     }
 
-    if (settings.currentCharge >= settings.maxCharge || settings.rechargeRate <= 0) {
+    if (
+      settings.currentCharge >= settings.maxCharge ||
+      settings.rechargeRate <= 0
+    ) {
       next = updateFlashlightState(next, itemId, settings);
       continue;
     }
@@ -106,7 +88,10 @@ export function tickFlashlights(state: GameState): GameState {
       itemId,
       buildFlashlightSettings(itemId, settings, {
         currentCharge: roundCharge(
-          Math.min(settings.maxCharge, settings.currentCharge + settings.rechargeRate),
+          Math.min(
+            settings.maxCharge,
+            settings.currentCharge + settings.rechargeRate,
+          ),
         ),
       }),
     );

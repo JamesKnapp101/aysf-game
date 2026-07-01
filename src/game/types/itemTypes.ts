@@ -144,6 +144,7 @@ export type ItemOverrideVerb =
   | "light"
   | "siton"
   | "enter"
+  | "play"
   | "use"
   | "kiss"
   | "push"

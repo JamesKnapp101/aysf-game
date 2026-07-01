@@ -11,6 +11,7 @@ export const weaponItems: Item[] = [
     location: "seeded",
     meta: {
       kind: "camera-gun-viewer",
+      shootBehavior: "gel-camera",
       onLoad: "You load the soft little projectile into the gas-powered gun.",
       onShoot:
         "You take careful aim and pull the trigger. With very little recoil the pressurized gun fires a sticky little projectile.",

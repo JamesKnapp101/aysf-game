@@ -54,7 +54,6 @@ function getTemperatureAriaLabel(temperature: number) {
 
 function getFlashlightKindLabel(status: FlashlightStatus) {
   if (status.itemId === "flashlight") return "LED";
-  if (status.itemId === "damagedFlashlight") return "\u03df ERR";
   return "NONE";
 }
 
@@ -63,8 +62,7 @@ function getFlashlightAriaLabel(status: FlashlightStatus) {
     return "Flashlight indicator: no flashlight";
   }
 
-  const label =
-    status.itemId === "flashlight" ? "LED flashlight" : "damaged flashlight";
+  const label = "LED flashlight";
   const state = status.isActive ? "on" : "off";
 
   return `Flashlight indicator: ${label}, ${state}, ${status.settings.currentCharge}% charge`;

@@ -1,14 +1,14 @@
 import type { GameState } from "@game/types/gameTypes";
 import {
   BAR_DRINK_EXIT_BLOCK_MESSAGE,
+  resolveDeepStorageMovement,
+  resolveGymTreadmillMovement,
+  resolveLevelSixStorageMovement,
+  resolveMovieTheaterMovement,
+  resolveReactorCoreAccess,
+  resolveReactorPlatformMovement,
   shouldBlockLeavingBarWithDrink,
-} from "src/world/maps/levelThree/Park/Bar/barDrinks";
-import { resolveGymTreadmillMovement } from "src/world/maps/levelThree/Park/Gym/gymTreadmill";
-import { resolveMovieTheaterMovement } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
-import { resolveDeepStorageMovement } from "src/world/maps/levelSeven/deepStorage";
-import { resolveLevelSixStorageMovement } from "src/world/maps/levelSix/airlockAndStorage";
-import { resolveReactorPlatformMovement } from "src/world/maps/levelFive/reactorPlatform";
-import { resolveReactorCoreAccess } from "src/world/maps/levelFive/reactorSystems";
+} from "src/world/zoneRegistrations";
 
 export type MovementRuleContext = {
   destinationRoomId: string;

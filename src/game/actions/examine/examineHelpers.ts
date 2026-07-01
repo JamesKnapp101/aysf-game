@@ -141,24 +141,21 @@ export function buildGenericExamineResult(
     };
   }
 
+  if (!out) {
+    return {
+      state: ctx.withImmediateGossip(ctx.state),
+      message: itemDesc,
+    };
+  }
+
   const nextState = out.state ?? ctx.state;
-
-  if (ctx.item.id === "Cooler") {
-    const coolerSetting = nextState.itemState.itemSettings["Cooler"];
-    const mode =
-      coolerSetting && coolerSetting.kind === "cooler"
-        ? coolerSetting.mode
-        : "off";
-
+  if (out.overlay) {
     return {
       state: nextState,
       overlay: withPostCloseNotifications(
-        {
-          kind: "cooler" as const,
-          mode,
-        },
+        out.overlay as unknown as Record<string, unknown>,
         ctx.postCloseNotifications,
-      ),
+      ) as ActionResult["overlay"],
     };
   }
 

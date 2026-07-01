@@ -3,6 +3,12 @@ import {
   getItemSceneryDescription,
 } from "@game/helpers/descriptionHelpers";
 import { canPlayerSeeInRoom } from "../helpers/visibilityHelpers";
+import {
+  arrangeRegisteredSceneryText,
+  getRegisteredAdditionalRoomItems,
+  getRegisteredAttachedRoomDescription,
+  getRegisteredRoomDescriptionAdditions,
+} from "@game/registries/roomDescriptionRegistry";
 import { generateTerminalTpadDescription } from "../helpers/gameHelpers";
 import { isItemOpen } from "../rules/containers";
 import { formatNameList } from "../rules/items";
@@ -16,13 +22,6 @@ import {
 } from "../selectors/doorSelectors";
 import { getItemsInRoom } from "../selectors/roomSelectors";
 import type { GameState } from "../types/gameTypes";
-import {
-  getVisibleHydroponicsSpider,
-  HYDROPONICS_SPIDER_ITEM_ID,
-} from "src/world/Items/creatures/giantSpider";
-import { getVisiblePreserveAnimalDescription } from "@game/preserve/preserveAwareness";
-import { GAME_PRESERVE_ANIMAL_PROFILES } from "src/world/maps/levelFour/gamePreserveRules";
-import { isHydroponicsCocoonRoom } from "src/world/maps/levelSix/hydroponicsPuzzle";
 
 type RoomDescriptionMode = "log" | "panel";
 
@@ -44,15 +43,11 @@ export function buildRoomDescription(
   const room = state.world.rooms.find((room) => room.id === roomId);
   if (!room) return "You are nowhere. (Bug: room not found.)";
 
-  if (
-    roomId === state.player.roomId &&
-    state.itemState.attachedTo.badger === "PLAYER"
-  ) {
-    return (
-      GAME_PRESERVE_ANIMAL_PROFILES.badger.attachmentAttack
-        ?.attachedRoomDescription ?? "All you can see is angry, snapping badger!"
-    );
-  }
+  const attachedRoomDescription = getRegisteredAttachedRoomDescription(
+    state,
+    roomId,
+  );
+  if (attachedRoomDescription) return attachedRoomDescription;
 
   const canSee = canPlayerSeeInRoom(state, roomId);
 
@@ -69,10 +64,13 @@ export function buildRoomDescription(
   const baseItemsHere = Array.from(
     new Map(rawItemsHere.map((it) => [it.id, it])).values(),
   );
-  const visibleSpider = getVisibleHydroponicsSpider(state, roomId);
+  const registeredAdditionalItems = getRegisteredAdditionalRoomItems(
+    state,
+    roomId,
+  );
   const itemsHere = Array.from(
     new Map(
-      [...baseItemsHere, ...(visibleSpider ? [visibleSpider] : [])].map((it) => [
+      [...baseItemsHere, ...registeredAdditionalItems].map((it) => [
         it.id,
         it,
       ]),
@@ -123,19 +121,11 @@ export function buildRoomDescription(
 
   let sceneryText = sceneryEntries.map((entry) => entry.text).join(" ");
 
-  if (isHydroponicsCocoonRoom(roomId)) {
-    const cocoonText = sceneryEntries
-      .filter((entry) => entry.item.id !== HYDROPONICS_SPIDER_ITEM_ID)
-      .map((entry) => entry.text)
-      .join(" ");
-    const spiderText =
-      sceneryEntries.find((entry) => entry.item.id === HYDROPONICS_SPIDER_ITEM_ID)
-        ?.text ?? "";
-
-    if (cocoonText && spiderText) {
-      sceneryText = `${cocoonText}\n\n${spiderText}`;
-    }
-  }
+  sceneryText = arrangeRegisteredSceneryText(
+    roomId,
+    sceneryEntries,
+    sceneryText,
+  );
 
   sceneryText = sceneryText.replaceAll("[[newline]]", `\n\n`);
 
@@ -152,7 +142,7 @@ export function buildRoomDescription(
       })
     : ((useShortBase && room.descriptionShort
         ? room.descriptionShort
-        : room.description) ?? "wtf");
+        : room.description) ?? "You see nothing notable here.");
   base = base.trim();
 
   if (includeScenery) {
@@ -172,7 +162,7 @@ export function buildRoomDescription(
       .map((door) => getDoorDescriptionForRoom(state, door, roomId))
       .filter((t): t is string => Boolean(t && t.trim()))
       .join("");
-  if (doorText) parts.push(doorText);
+    if (doorText) parts.push(doorText);
   }
 
   // Certain scenery props can be powered up
@@ -275,13 +265,7 @@ export function buildRoomDescription(
     parts.push(surfaceLines.join(" "));
   }
 
-  const visiblePreserveAnimal = getVisiblePreserveAnimalDescription(
-    state,
-    roomId,
-  );
-  if (visiblePreserveAnimal) {
-    parts.push(visiblePreserveAnimal);
-  }
+  parts.push(...getRegisteredRoomDescriptionAdditions(state, roomId));
 
   return parts.join("\n\n");
 }

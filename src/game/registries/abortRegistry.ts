@@ -1,6 +1,6 @@
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
-import { abortVirtualOffice } from "src/world/maps/levelFive/reactorSystems";
+import { abortVirtualOffice } from "src/world/zoneRegistrations";
 
 type AbortHandler = (state: GameState) => ActionResult | undefined;
 

@@ -5,14 +5,16 @@ import { tickRadioConversation } from "@game/helpers/conversationHelpers";
 import { tickGamePreserveAnimals } from "@game/preserve/preserveAnimals";
 import { tickGamePreserveFeedback } from "@game/preserve/preserveFeedback";
 import { tickGamePreserveRun } from "@game/preserve/preserveState";
-import { tickBarJukebox } from "src/world/maps/levelThree/Park/Bar/barJukebox";
-import { tickMovieTheaterProjectionLighting } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterMovie";
-import { tickMovieTheaterUsher } from "src/world/maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
-import { tickLevelTwoBomb } from "src/world/maps/levelTwo/levelTwoBomb";
-import { tickReactorConsensus } from "src/world/maps/levelFive/reactorConsensus";
-import { tickReactorSystems } from "src/world/maps/levelFive/reactorSystems";
-import { tickLevelSixStorageVacuum } from "src/world/maps/levelSix/airlockAndStorage";
-import { tickDeepStorageExposure } from "src/world/maps/levelSeven/deepStorage";
+import {
+  tickBarJukebox,
+  tickDeepStorageExposure,
+  tickLevelSixStorageVacuum,
+  tickLevelTwoBomb,
+  tickMovieTheaterProjectionLighting,
+  tickMovieTheaterUsher,
+  tickReactorConsensus,
+  tickReactorSystems,
+} from "src/world/zoneRegistrations";
 
 export type TurnTickPhase =
   | "conversation"

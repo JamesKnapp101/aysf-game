@@ -1,7 +1,7 @@
 import { handleGamePreserveTrophySubmission } from "@game/preserve/preserveTrophies";
 import type { RuleResult } from "@game/rules/result";
 import type { GameState } from "@game/types/gameTypes";
-import { handleReactorCargoPut } from "src/world/maps/levelFive/reactorPlatform";
+import { handleReactorCargoPut } from "src/world/zoneRegistrations";
 
 type PutItemEffectContext = {
   hostId: string;
