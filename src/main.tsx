@@ -8,6 +8,7 @@ import "./styles/crt-theme.css";
 import "./styles/scrollbars.css";
 import "./styles/components/header.css";
 import "./styles/components/room.css";
+import "./styles/components/ship-map.css";
 import "./styles/components/reactor-big-board.css";
 import "./styles/components/reactor-core.css";
 import "./styles/components/log-and-input.css";

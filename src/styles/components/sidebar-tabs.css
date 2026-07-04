@@ -4,6 +4,17 @@
     border-radius: var(--crt-window-radius);
     background: var(--crt-panel-surface);
     box-shadow: var(--crt-panel-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.game-sidebar-tabsArea {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
     overflow: hidden;
 }
 

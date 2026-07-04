@@ -1067,6 +1067,23 @@ describe("Doors and level mechanics", () => {
     expect(enteredLobby.player.roomId).toBe("LevelTwoStairAccess");
   });
 
+  it("routes the level two medical lab door through the door system", async () => {
+    const start = createTestState({ roomId: "MedicalCorridorOne" });
+    const blocked = await runCommand(start, "south");
+
+    expect(blocked.player.roomId).toBe("MedicalCorridorOne");
+    expect(getLastLogEntry(blocked)).toContain("badge scanner");
+
+    const withBadge = setInventory(start, ["bluebadge"]);
+    const enteredLab = await runCommand(withBadge, "south");
+
+    expect(enteredLab.player.roomId).toBe("Lab");
+
+    const returned = await runCommand(enteredLab, "north");
+
+    expect(returned.player.roomId).toBe("MedicalCorridorOne");
+  });
+
   it("activates the Power Grid by inserting the key, turning it, and pushing the button", async () => {
     const start = setInventory(createTestState({ roomId: "PowerGrid" }), [
       "PowerStationKey",

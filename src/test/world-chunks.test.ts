@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { deriveRoomCoordMaps } from "../game/helpers/coordHelpers";
 import { createInitialState, mergeWorldChunkIntoState } from "../game/gameInit";
 import { STAIRWELL } from "../world/maps/Stairwell";
+import { LEVEL_TWO } from "../world/maps/levelTwo/LevelTwo";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
   INITIAL_WORLD_CHUNK_IDS,
@@ -61,5 +62,18 @@ describe("world chunk loading", () => {
       y: 0,
       z: 0,
     });
+  });
+
+  it("keeps the level two medical lab connected through LabDoors", () => {
+    const roomIds = new Set(["MedicalCorridorOne", "Lab"]);
+    const rooms = LEVEL_TWO.rooms.filter((room) => roomIds.has(room.id));
+    const doors = STAIRWELL.doors.filter((door) => door.id === "LabDoors");
+
+    const maps = deriveRoomCoordMaps(rooms, doors, "MedicalCorridorOne", {
+      allowAnchorFallback: false,
+    });
+
+    expect(maps.coordByRoomId.Lab).toEqual({ x: 0, y: -1, z: 0 });
+    expect(maps.coordByRoomId.LabDoors).toBeUndefined();
   });
 });

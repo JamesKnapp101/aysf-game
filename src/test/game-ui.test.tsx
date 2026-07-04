@@ -3,20 +3,23 @@ import { RoomCompass } from "@game/components/Compass";
 import { DNASampleTab } from "@game/components/DNASampleTab";
 import { GamePreserveTerminalModal } from "@game/components/GamePreserveTerminalModal";
 import { HydroponicsAdminTerminalModal } from "@game/components/HydroponicsAdminTerminalModal";
-import { LogPanel } from "@game/components/LogPanel";
 import { LogTab } from "@game/components/LogTab";
 import { NotificationHost } from "@game/components/NotificationHost";
 import { RadioFrequencyModal } from "@game/components/RadioFrequencyModal";
 import { buildDamageNotification } from "@game/rules/notifications";
 import { RoomStatusPanel } from "@game/components/RoomStatusPanel";
+import { SidebarPanel } from "@game/components/SidebarPanel";
 import { StatusTab } from "@game/components/StatusTab";
 import { SyndromeXSignalOverlay } from "@game/components/SyndromeXSignalOverlay";
+import { TeleportationTerminalModal } from "@game/components/TeleportationTerminalModal";
+import { createInitialState } from "@game/gameInit";
 import { useUIEffectsStore } from "@game/store/store";
 import type { GameState } from "@game/types/gameTypes";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it } from "vitest";
+import { INITIAL_WORLD } from "../world/World";
 import {
   createTestState,
   runCommands,
@@ -27,26 +30,15 @@ import {
 } from "src/world/maps/levelFour/Apiary";
 import { DEACTIVATED_BEE_ITEM_ID } from "src/world/maps/levelFour/Greenhouse";
 
-const layout = {
-  roomHeightRatio: 0.33,
-  sidebarWidthRatio: 0.3,
-};
-
-function renderLogPanel(
+function renderSidebarPanel(
   state: GameState,
   activeTab: "inventory" | "log" | "dna" | "status" = "inventory",
 ) {
   return render(
-    <LogPanel
+    <SidebarPanel
       state={state}
-      onCommand={() => undefined}
-      layout={layout}
-      setLayout={() => undefined}
       crtColor="#00ff00"
       setCrtColor={() => undefined}
-      roomPanelFlexBasis="33%"
-      inputRef={{ current: null }}
-      rootRef={{ current: null }}
       activeTab={activeTab}
       setActiveTab={() => undefined}
     />,
@@ -57,7 +49,7 @@ describe("UI panels", () => {
   it("shows picked-up items in the Inventory tab", async () => {
     const state = await runCommandInInventoryRoom();
 
-    renderLogPanel(state);
+    renderSidebarPanel(state);
 
     expect(screen.getByText(/^a research notes$/i)).toBeInTheDocument();
   });
@@ -70,7 +62,7 @@ describe("UI panels", () => {
       "ShedCellarKey",
     ]);
 
-    renderLogPanel(state);
+    renderSidebarPanel(state);
 
     expect(screen.getByText("a laminated pass")).toBeInTheDocument();
     expect(screen.queryByText("a blue plastic badge")).not.toBeInTheDocument();
@@ -259,6 +251,45 @@ describe("UI panels", () => {
     expect(screen.getByText(/completed/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /moderate/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /begin/i })).toBeDisabled();
+  });
+
+  it("loads destination chunks before terminal teleport arrival text", async () => {
+    const user = userEvent.setup();
+    const initialState = createInitialState(INITIAL_WORLD);
+    let state: GameState = {
+      ...initialState,
+      player: {
+        ...initialState.player,
+        roomId: "TPADTerminal",
+      },
+    };
+    const setGameState: React.Dispatch<React.SetStateAction<GameState>> = (
+      updater,
+    ) => {
+      state = typeof updater === "function" ? updater(state) : updater;
+    };
+
+    expect(state.world.rooms.some((room) => room.id === "Lab")).toBe(false);
+
+    render(
+      <TeleportationTerminalModal
+        state={state}
+        setGameState={setGameState}
+        onClose={() => undefined}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /medical lab/i }));
+
+    await waitFor(() => {
+      expect(state.player.roomId).toBe("Lab");
+    });
+
+    const transcript = state.log.join("\n");
+    expect(state.world.rooms.some((room) => room.id === "Lab")).toBe(true);
+    expect(transcript).toContain("Lab");
+    expect(transcript).not.toContain("undefined");
+    expect(transcript).not.toContain("You are nowhere");
   });
 
   it("lights the compass needles and labels for every available exit", async () => {

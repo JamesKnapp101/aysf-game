@@ -111,7 +111,7 @@ export const LEVEL_TWO: WorldChunk = {
     },
     {
       id: "Storage",
-      name: "Storage",
+      name: "Storage L2",
       description: `Welcome to the Storage Room.`,
       exits: [{ direction: "east", toRoomId: "LevelTwoCorridorOne" }],
     },

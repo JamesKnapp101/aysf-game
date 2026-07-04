@@ -7,13 +7,9 @@ import React, {
 } from "react";
 import "../../styles/components/mind-gun-overlay.css";
 import "../../styles/organism-death-overlay.css";
-import { getDisplayedFlashlightStatus } from "../helpers/flashlightHelpers";
-import { getExternalRoomTemperatureF } from "../selectors/roomTemperatureSelectors";
 import { useUIEffectsStore } from "../store/store";
 import type { GameState, VisualEffectsMode } from "../types/gameTypes";
-import type { Direction } from "../types/roomTypes";
-import type { AmbientRoomLightLevel } from "../types/roomTypes";
-import { RoomStatusPanel } from "./RoomStatusPanel";
+import type { AmbientRoomLightLevel, Direction } from "../types/roomTypes";
 import {
   buildOrganismDeathTokens,
   computeLingerMs,
@@ -29,8 +25,8 @@ import {
 
 type RoomDescriptionPanelProps = {
   desc: string;
-  exits: Direction[];
-  roomPanelFlexBasis: number | string;
+  exits?: readonly Direction[];
+  roomPanelFlexBasis?: number | string;
   inputRef: React.RefObject<HTMLInputElement | null>;
   restorePromptFocus?: () => void;
   activeEffects: string;
@@ -41,7 +37,7 @@ type RoomDescriptionPanelProps = {
   playerLightMode: string;
   flashlightOn: string;
   isUnderwater: boolean;
-  roomId: string;
+  roomId?: string;
   state: GameState;
   setBrainActivityLevel?: (val: number) => void;
   visualEffectsMode?: VisualEffectsMode;
@@ -49,8 +45,6 @@ type RoomDescriptionPanelProps = {
 
 export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   desc,
-  exits,
-  roomPanelFlexBasis,
   inputRef,
   restorePromptFocus,
   activeEffects,
@@ -61,7 +55,6 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   playerLightMode,
   flashlightOn,
   isUnderwater,
-  roomId,
   state,
   setBrainActivityLevel,
   visualEffectsMode,
@@ -159,7 +152,7 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       el.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", update);
     };
-  }, [desc, roomPanelFlexBasis]);
+  }, [desc]);
 
   // =========================
   // Mind flash sequence
@@ -335,10 +328,6 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
     };
   }, [clearOrganismDeath, odRunKey, organismDeath, setBrainActivityLevel]);
 
-  const roomAudioLevel = state.worldState.roomAudioLevel?.[roomId] ?? 0;
-  const flashlightStatus = getDisplayedFlashlightStatus(state);
-  const externalTemperatureF = getExternalRoomTemperatureF(state, roomId);
-
   // =========================
   // Render helpers
   // =========================
@@ -349,7 +338,6 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
   return (
     <section
       className="game-room-panel"
-      style={{ flex: `0 0 ${roomPanelFlexBasis}`, minHeight: 0 }}
       onClick={(event) => {
         event.stopPropagation();
         if (restorePromptFocus) {
@@ -372,13 +360,6 @@ export const RoomDescriptionPanel: React.FC<RoomDescriptionPanelProps> = ({
       data-organismdeath={showOdLayer ? "true" : "false"}
     >
       <div className="game-room-inner">
-        <RoomStatusPanel
-          exits={exits}
-          audioLevel={Number.isFinite(roomAudioLevel) ? roomAudioLevel : 0}
-          externalTemperatureF={externalTemperatureF}
-          flashlightStatus={flashlightStatus}
-        />
-
         <div className="game-room-textWrap">
           <div ref={scrollRef} className="game-room-text">
             <div className="game-room-desc-clip">

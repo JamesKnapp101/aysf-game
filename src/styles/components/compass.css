@@ -1,18 +1,18 @@
 .room-compass {
     width: var(--room-status-box-width, 144px);
     height: var(--room-compass-box-size, 144px);
-    border: 1px solid rgb(var(--crt-color-rgb) / 0.5);
-    border-radius: calc(var(--crt-window-radius, 16px) - 3px);
-    background:
+    /* border: 1px solid rgb(var(--crt-color-rgb) / 0.5);
+    border-radius: calc(var(--crt-window-radius, 16px) - 3px); */
+    /* background:
         linear-gradient(180deg,
             rgb(var(--crt-color-rgb) / 0.07),
             rgb(0 0 0 / 0.2) 18%,
-            rgb(0 0 0 / 0.42) 100%);
+            rgb(0 0 0 / 0.42) 100%); */
     position: relative;
     padding: 4px;
-    box-shadow:
+    /* box-shadow:
         0 0 0 1px rgb(var(--crt-color-rgb) / 0.08) inset,
-        0 0 12px rgb(var(--crt-color-rgb) / 0.06);
+        0 0 12px rgb(var(--crt-color-rgb) / 0.06); */
 }
 
 .room-compass-svg {

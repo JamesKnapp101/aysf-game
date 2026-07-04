@@ -12,6 +12,8 @@ import { DeepStorageSuitOverlay } from "./components/DeepStorageSuitOverlay";
 import { NotificationHost } from "./components/NotificationHost";
 import { OverlayHost } from "./components/OverlayHost";
 import { RoomDescriptionPanel } from "./components/RoomDescriptionPanel";
+import { RoomTelemetryPanel } from "./components/RoomTelemetryPanel";
+import { SidebarPanel } from "./components/SidebarPanel";
 import { SyndromeXSignalOverlay } from "./components/SyndromeXSignalOverlay";
 import { isPlayerUnderwater } from "./helpers/environmentHelpers";
 import { isAnyFlashlightOn } from "./helpers/flashlightHelpers";
@@ -94,6 +96,7 @@ export const Game: React.FC = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const cometInputRef = useRef<HTMLInputElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const quadrantGridRef = useRef<HTMLDivElement | null>(null);
   const hasObservedSyndromeXSignalRef = useRef(false);
   const lastSyndromeXSignalRef = useRef<string | null>(null);
 
@@ -194,16 +197,16 @@ export const Game: React.FC = () => {
     });
   }, [gs.moves, gs.player.log, playSyndromeXSignal]);
 
-  // -------- horizontal resize: room vs main row -----------------------------
+  // -------- horizontal resize: top vs bottom quadrants ----------------------
   const handleStartResizeHorizontal = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.preventDefault();
       e.stopPropagation();
 
-      const rootEl = rootRef.current;
-      if (!rootEl) return;
+      const gridEl = quadrantGridRef.current;
+      if (!gridEl) return;
 
-      const rect = rootEl.getBoundingClientRect();
+      const rect = gridEl.getBoundingClientRect();
       const startY = e.clientY;
       const startRatio = layout.roomHeightRatio;
 
@@ -225,6 +228,40 @@ export const Game: React.FC = () => {
       window.addEventListener("mouseup", onMouseUp);
     },
     [layout.roomHeightRatio, setLayout],
+  );
+
+  // -------- vertical resize: left vs right quadrants ------------------------
+  const handleStartResizeVertical = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const gridEl = quadrantGridRef.current;
+      if (!gridEl) return;
+
+      const rect = gridEl.getBoundingClientRect();
+      const startX = e.clientX;
+      const startSidebarRatio = layout.sidebarWidthRatio;
+
+      const onMouseMove = (moveEvent: MouseEvent) => {
+        const deltaX = moveEvent.clientX - startX;
+        const startSidebarWidth = startSidebarRatio * rect.width;
+        const newSidebarWidth = startSidebarWidth - deltaX;
+        let newRatio = newSidebarWidth / rect.width;
+        newRatio = Math.max(0.18, Math.min(0.5, newRatio));
+
+        setLayout((prev) => ({ ...prev, sidebarWidthRatio: newRatio }));
+      };
+
+      const onMouseUp = () => {
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+      };
+
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+    },
+    [layout.sidebarWidthRatio, setLayout],
   );
 
   const roomPanelFlexBasis = `${layout.roomHeightRatio * 100}%`;
@@ -372,59 +409,62 @@ export const Game: React.FC = () => {
               </div>
             </div>
 
-            {/* ROOM DESCRIPTION */}
-            <RoomDescriptionPanel
-              desc={desc}
-              exits={exits}
-              roomPanelFlexBasis={roomPanelFlexBasis}
-              inputRef={inputRef}
-              restorePromptFocus={focusGamePrompt}
-              activeEffects={activeEffects.join(" ")}
-              roomIsDark={roomIsDark}
-              roomAmbientLight={roomAmbientLight}
-              roomLightLevel={roomLightLevel}
-              playerCanSee={playerCanSee}
-              playerLightMode={playerLightMode}
-              flashlightOn={flashlightOn ? "true" : "false"}
-              isUnderwater={playerIsUnderwater}
-              roomId={currentRoom?.id ?? gs.player.roomId}
-              state={gs}
-              setBrainActivityLevel={setBrainActivityLevel}
-              visualEffectsMode={visualEffectsMode}
-            />
+            <div className="game-quadrant-grid" ref={quadrantGridRef}>
+              <RoomDescriptionPanel
+                desc={desc}
+                inputRef={inputRef}
+                restorePromptFocus={focusGamePrompt}
+                activeEffects={activeEffects.join(" ")}
+                roomIsDark={roomIsDark}
+                roomAmbientLight={roomAmbientLight}
+                roomLightLevel={roomLightLevel}
+                playerCanSee={playerCanSee}
+                playerLightMode={playerLightMode}
+                flashlightOn={flashlightOn ? "true" : "false"}
+                isUnderwater={playerIsUnderwater}
+                state={gs}
+                setBrainActivityLevel={setBrainActivityLevel}
+                visualEffectsMode={visualEffectsMode}
+              />
+
+              <div
+                className="game-resizer-vertical"
+                onMouseDown={handleStartResizeVertical}
+              />
+
+              <RoomTelemetryPanel exits={exits} state={gs} />
+
+              <div
+                className="game-resizer-horizontal"
+                onMouseDown={handleStartResizeHorizontal}
+              />
+
+              <LogPanel
+                state={gs}
+                onCommand={enqueueCommand}
+                inputRef={inputRef}
+                inputDisabled={deepStorageSuitOverlayActive}
+                onGamePromptFocus={handleGamePromptFocus}
+                onLogPanelClick={focusGamePrompt}
+              />
+
+              <SidebarPanel
+                activeTab={activeTab}
+                cometInputRef={cometInputRef}
+                crtColor={crtColor}
+                isCometFocusOwner={lastFocusedPrompt === "comet"}
+                onCometPromptFocus={handleCometPromptFocus}
+                setActiveTab={setActiveTab}
+                setCrtColor={setCrtColor}
+                setGameState={setGameState}
+                state={gs}
+              />
+            </div>
 
             {renderRegisteredRoomOverlays(
               gs,
               currentRoom?.id ?? gs.player.roomId,
             )}
-
-            {/* horizontal resizer - between room and main row */}
-            <div
-              className="game-resizer-horizontal"
-              onMouseDown={handleStartResizeHorizontal}
-            />
-
-            {/* MAIN ROW: log + sidebar */}
-            <LogPanel
-              state={gs}
-              setGameState={setGameState}
-              onCommand={enqueueCommand}
-              layout={layout}
-              setLayout={setLayout}
-              crtColor={crtColor}
-              setCrtColor={setCrtColor}
-              roomPanelFlexBasis={roomPanelFlexBasis}
-              inputRef={inputRef}
-              cometInputRef={cometInputRef}
-              rootRef={rootRef}
-              activeTab={activeTab}
-              inputDisabled={deepStorageSuitOverlayActive}
-              isCometFocusOwner={lastFocusedPrompt === "comet"}
-              onCometPromptFocus={handleCometPromptFocus}
-              onGamePromptFocus={handleGamePromptFocus}
-              onLogPanelClick={focusGamePrompt}
-              setActiveTab={(tab: SidebarTab) => setActiveTab(tab)}
-            />
           </div>
         </>
       )}

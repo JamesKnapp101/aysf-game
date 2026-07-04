@@ -1,6 +1,7 @@
 
 .game-room-inner:hover,
 .game-log-panel:hover,
+.game-telemetry-panel:hover,
 .game-sidebar:hover {
     box-shadow:
         0 0 0 1px rgb(var(--crt-color-rgb) / 0.12) inset,

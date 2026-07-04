@@ -57,19 +57,20 @@ export const badgeScannerDoors: DoorDefinition[] = [
       return description;
     },
     descriptionFromA:
-      "To the west is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a blue horizontal stripe across it at eye level. Stenciled across the banner is the word 'LAB'.",
-    descriptionFromB: "To the east is a security door leading back to Medical.",
+      "To the south is a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a blue horizontal stripe across it at eye level. Stenciled across the banner is the word 'LAB'.",
+    descriptionFromB:
+      "To the north is a security door leading back to Medical.",
     kind: "badgeScanner",
     vocab: ["door", "lab door", "security door"],
     connects: {
       roomAId: "MedicalCorridorOne",
       roomBId: "Lab",
     },
-    directions: { fromA: "west", fromB: "east" },
+    directions: { fromA: "south", fromB: "north" },
     initiallyOpen: false,
     initiallyLocked: true,
     badgeItemId: "bluebadge",
-    checkBadgeOnDir: "west",
+    checkBadgeOnDir: "south",
   },
   // POWER GRID
   {

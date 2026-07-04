@@ -5,7 +5,11 @@ import { Room } from "@game/types/roomTypes";
 import { hasLevelTwoBombDetonated } from "src/world/maps/levelTwo/levelTwoBomb";
 
 function rideWarehouseConveyor(toRoomId: string) {
-  return ({ state }: { state: GameState }): {
+  return ({
+    state,
+  }: {
+    state: GameState;
+  }): {
     message: string;
     state: GameState;
   } => {
@@ -67,7 +71,7 @@ function dislodgeConveyorScrap(state: GameState): string {
 export const warehouseRooms: Room[] = [
   {
     id: "L3Warehouse",
-    name: "Warehouse",
+    name: "Storage L3",
     description: `This is a large storage space with a high ceiling and towering metal racks on either side. The racks are largely populated with stacks of crates held together with metal bands, their exteriors stamped with scannable codes. Except for a faint buzz coming from one of the overhead lights high above the room is very quiet, and the air is still, here.[[SCENERY]] `,
     exits: [
       { direction: "east", toRoomId: "RobotRefuge" },
@@ -156,8 +160,7 @@ export const warehouseItems: Item[] = [
       move: ({ state }: { state: GameState }) => dislodgeConveyorScrap(state),
       pull: ({ state }: { state: GameState }) => dislodgeConveyorScrap(state),
       push: ({ state }: { state: GameState }) => dislodgeConveyorScrap(state),
-      take:
-        "You can barely shift it with both hands. Carrying it around is out of the question.",
+      take: "You can barely shift it with both hands. Carrying it around is out of the question.",
     },
     itemWeight: 80,
     itemSize: 6,

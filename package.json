@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "preview": "vite preview",
     "start:prod": "node server/dist/index.js",
+    "map:generate": "node scripts/generate-game-map-data.mjs",
     "drift:check": "node scripts/drift-check.mjs"
   },
   "dependencies": {

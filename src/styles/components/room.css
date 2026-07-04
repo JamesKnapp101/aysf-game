@@ -1,33 +1,114 @@
-.game-room-panel {
+.game-room-panel,
+.game-sidebar {
     --room-status-box-width: 148px;
     --room-compass-box-size: 148px;
     --room-diagnostics-height: 188px;
     --room-status-meter-width: 134px;
+}
+
+.game-room-panel {
     flex: 0 0 auto;
     /* basis may be set inline */
     min-height: 0;
-    margin-bottom: 6px;
+    margin: 0;
     overflow: visible;
     /* classic behavior */
 }
 
 .game-room-textWrap {
     position: relative;
+    flex: 1 1 auto;
     height: 100%;
     min-height: 0;
+    min-width: 0;
     overflow-x: hidden;
+    z-index: 1;
 }
 
 .game-room-inner {
     border: 1px solid var(--crt-panel-border);
     border-radius: var(--crt-window-radius);
     padding: 8px 12px 8px 10px;
-    min-height: 250px;
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
     width: 100%;
     overflow: hidden;
     background: var(--crt-panel-surface);
     position: relative;
     box-shadow: var(--crt-panel-shadow);
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.game-telemetry-panel {
+    align-items: stretch;
+    background: var(--crt-panel-surface);
+    border: 1px solid var(--crt-panel-border);
+    border-radius: var(--crt-window-radius);
+    box-shadow: var(--crt-panel-shadow);
+    box-sizing: border-box;
+    display: flex;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    padding: 10px;
+    position: relative;
+}
+
+.game-telemetry-panel .ship-map-panel {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.game-map-compassOverlay {
+    --room-map-compass-size: 126px;
+    isolation: isolate;
+    left: 472px;
+    pointer-events: none;
+    position: absolute;
+    top: 42px;
+    z-index: 3;
+}
+
+.game-map-compassOverlay::before {
+    background:
+        linear-gradient(180deg,
+            rgb(0 0 0 / 0.9),
+            rgb(0 0 0 / 0.82)),
+        radial-gradient(circle at center,
+            rgb(0 0 0 / 0.34) 0%,
+            rgb(0 0 0 / 0.22) 62%,
+            transparent 100%);
+    /* border: 1px solid rgb(var(--crt-color-rgb) / 0.18);
+    border-radius: 14px; */
+    box-shadow:
+        0 0 0 1px rgb(0 0 0 / 0.5) inset,
+        0 0 14px rgb(0 0 0 / 0.48);
+    content: "";
+    inset: -3px;
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+}
+
+.game-map-compassOverlay .room-compass {
+    /* background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.1),
+            rgb(0 0 0 / 0.48) 34%,
+            rgb(0 0 0 / 0.72) 100%),
+        repeating-linear-gradient(to bottom,
+            rgb(var(--crt-color-rgb) / 0.035) 0,
+            rgb(var(--crt-color-rgb) / 0.035) 1px,
+            transparent 2px,
+            transparent 4px); */
+    box-sizing: border-box;
+    height: var(--room-map-compass-size);
+    position: relative;
+    width: var(--room-map-compass-size);
+    z-index: 1;
 }
 
 .game-room-panel[data-room-is-dark="false"][data-room-light-level="dim"] .game-room-inner {
@@ -181,11 +262,10 @@
 }
 
 .room-compass-float {
-    float: right;
+    flex: 0 0 var(--room-status-box-width);
+    float: none;
     width: var(--room-status-box-width);
-    margin-left: 10px;
-    margin-right: 3px;
-    margin-bottom: 2px;
+    margin: 0 3px 0 0;
 }
 
 /* Only show the bottom fade if overflowing */

@@ -7,6 +7,7 @@ import { useUIEffectsStore } from "@game/store/store";
 import { buildTranscriptRoomDescription } from "@game/text/roomDescription";
 import { GameState } from "@game/types/gameTypes";
 import React, { useMemo } from "react";
+import type { WorldChunkId } from "../../world/World";
 import "../../styles/teleport-terminal.css";
 
 type TeleportationTerminalProps = {
@@ -113,6 +114,50 @@ const destinationLabelMap = {
 const MARQUEE_MESSAGE =
   "PLEASE SELECT YOUR TRAVEL DESTINATION! SOME DESTINATIONS MAY REQUIRE AUTHORIZATION.";
 
+const DESTINATION_CHUNK_BY_ROOM_ID: Partial<Record<string, WorldChunkId>> = {
+  BotanicalOne: "level-four",
+  Bridge: "level-one",
+  CryoLab: "level-seven",
+  Lab: "level-two",
+  OuterRingSouth: "level-four",
+  ParkCenter: "level-three",
+  PowerGrid: "level-four",
+  ReactorPlatform: "level-five",
+  RemoteMedicalOne: "level-two",
+  RemotePowerStation: "level-four",
+  VeterinaryCenter: "level-four",
+  XenobiologyLab: "level-two",
+};
+
+function isWorldChunkAlreadyLoaded(
+  state: GameState,
+  chunkId: WorldChunkId,
+): boolean {
+  return Array.isArray(state.world.meta?.loadedChunkIds)
+    ? state.world.meta.loadedChunkIds.includes(chunkId)
+    : false;
+}
+
+async function loadDestinationChunkIfNeeded(
+  state: GameState,
+  roomId: string,
+) {
+  if (getRoomById(state, roomId)) return undefined;
+
+  const chunkId = DESTINATION_CHUNK_BY_ROOM_ID[roomId];
+  if (!chunkId || isWorldChunkAlreadyLoaded(state, chunkId)) return undefined;
+
+  const [{ loadWorldChunk }, { mergeWorldChunkIntoState }] = await Promise.all([
+    import("../../world/World"),
+    import("@game/gameInit"),
+  ]);
+  const chunk = await loadWorldChunk(chunkId);
+  return {
+    apply: (nextState: GameState) =>
+      mergeWorldChunkIntoState(nextState, chunkId, chunk),
+  };
+}
+
 function ScrollingBannerMessage() {
   const repeats = Array.from({ length: 3 }, (_, index) => index);
 
@@ -157,12 +202,33 @@ export function TeleportationTerminalModal({
     return map;
   }, [state]);
 
-  const teleportTo = (roomId: string) => {
+  const teleportTo = async (roomId: string) => {
+    const loadedDestinationChunk = await loadDestinationChunkIfNeeded(
+      state,
+      roomId,
+    );
+    const preparedState = loadedDestinationChunk
+      ? loadedDestinationChunk.apply(state)
+      : state;
+    const canTeleport = Boolean(getRoomById(preparedState, roomId));
+
     setGameState((prev) => {
+      const workingState = loadedDestinationChunk
+        ? loadedDestinationChunk.apply(prev)
+        : prev;
+      const destinationRoom = getRoomById(workingState, roomId);
+
+      if (!destinationRoom) {
+        return appendLog(
+          workingState,
+          "The terminal chirps, then clears its destination readout. That endpoint is not responding.\n",
+        );
+      }
+
       const wasVisitedBeforeTeleport = Boolean(
-        (prev.worldState.visitedRooms ?? {})[roomId],
+        (workingState.worldState.visitedRooms ?? {})[roomId],
       );
-      let next = movePlayerToRoom(prev, roomId);
+      let next = movePlayerToRoom(workingState, roomId);
       next = {
         ...next,
         worldState: {
@@ -178,9 +244,7 @@ export function TeleportationTerminalModal({
         next,
         "You feel a tingling in your belly a beat before the world warps around you, blurring together and then snapping back into focus an instant later to reveal someplace entirely different.\n",
       );
-      const roomName = `${ROOM_NAME_TOKEN_START}${
-        getRoomById(next, next.player.roomId)?.name
-      }${ROOM_NAME_TOKEN_END}`;
+      const roomName = `${ROOM_NAME_TOKEN_START}${destinationRoom.name}${ROOM_NAME_TOKEN_END}`;
       const roomTranscriptDesc = buildTranscriptRoomDescription(next, roomId, {
         isFirstVisit: !wasVisitedBeforeTeleport,
       });
@@ -190,8 +254,11 @@ export function TeleportationTerminalModal({
       );
       return next;
     });
-    useUIEffectsStore.getState().triggerTeleportFlash();
-    onClose();
+
+    if (canTeleport) {
+      useUIEffectsStore.getState().triggerTeleportFlash();
+      onClose();
+    }
   };
 
   return (
@@ -276,7 +343,9 @@ export function TeleportationTerminalModal({
                             online ? "isOnline" : "isOffline",
                           ].join(" ")}
                           disabled={!online}
-                          onClick={() => teleportTo(dest)}
+                          onClick={() => {
+                            void teleportTo(dest);
+                          }}
                         >
                           <span className="tterm2-stepText">
                             {

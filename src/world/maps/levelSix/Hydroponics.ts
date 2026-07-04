@@ -83,7 +83,7 @@ export const hydroponicsRooms: Room[] = [
     exits: [
       { direction: "west", toRoomId: "UnderWebThree" },
       { direction: "northwest", toRoomId: "HydroponicsPlatformBottom" },
-      { direction: "north", toRoomId: "UnderWebThree" },
+      { direction: "north", toRoomId: "UnderWebTwo" },
     ],
   },
 ];

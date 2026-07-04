@@ -312,6 +312,21 @@
     overflow: hidden;
 }
 
+.game-quadrant-grid {
+    display: grid;
+    flex: 1 1 0;
+    grid-template-columns:
+        minmax(320px, 1fr)
+        10px
+        minmax(280px, var(--sidebar-width, 30%));
+    grid-template-rows:
+        minmax(210px, var(--room-panel-height, 36%))
+        10px
+        minmax(0, 1fr);
+    min-height: 0;
+    overflow: hidden;
+}
+
 /* Left and right columns */
 .game-left,
 .game-sidebar {
@@ -323,6 +338,8 @@
 /* LEFT: log + input */
 .game-left {
     flex-direction: column;
+    grid-column: 1;
+    grid-row: 3;
     min-height: 0;
     width: 100%;
 }
@@ -330,6 +347,29 @@
 /* RIGHT: sidebar */
 .game-sidebar {
     flex: 1;
+    grid-column: 3;
+    grid-row: 3;
+}
+
+.game-room-panel {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.game-telemetry-panel {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.game-quadrant-grid>.game-resizer-vertical {
+    grid-column: 2;
+    grid-row: 1 / 4;
+}
+
+.game-quadrant-grid>.game-resizer-horizontal {
+    grid-column: 1 / 4;
+    grid-row: 2;
+    z-index: 2;
 }
 
 .game-resizer-vertical {

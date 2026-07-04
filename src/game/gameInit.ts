@@ -316,7 +316,7 @@ export const createInitialState = (world: World): GameState => {
         "library-power": true,
         "park-security": true,
         "teleport-pads-green": false,
-        "teleport-pads-blue": false,
+        "teleport-pads-blue": true,
         "teleport-pads-yellow": false,
         "teleport-pads-violet": false,
         "teleport-pads-orange": false,
