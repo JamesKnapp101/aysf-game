@@ -229,6 +229,93 @@ describe("ship map UI", () => {
     expect(labelLines).toEqual(["Park", "Gate"]);
   });
 
+  it("renders teleport disk markers in visited room corners", () => {
+    const labNode = getPrimaryShipMapNodeForRoom("Lab");
+
+    render(<ShipMapPanel state={createTestState({ roomId: "Lab" })} />);
+
+    const minimap = screen.getByRole("button", { name: /open ship map/i });
+    const blueDisk = minimap.querySelector<SVGCircleElement>(
+      '.ship-map-node[data-status="current"] .ship-map-teleport-disk[data-color="blue"]',
+    );
+
+    expect(labNode).toBeDefined();
+    expect(blueDisk).toBeInTheDocument();
+    expect(blueDisk).toHaveAttribute("data-powered", "active");
+    expect(Number(blueDisk?.getAttribute("cx"))).toBe(labNode!.x + 17);
+    expect(Number(blueDisk?.getAttribute("cy"))).toBe(labNode!.y + 17);
+  });
+
+  it("renders the TPAD terminal disks in a row along the top edge", () => {
+    const terminalNode = getPrimaryShipMapNodeForRoom("TPADTerminal");
+    const baseState = createTestState({ roomId: "TPADTerminal" });
+    const state = {
+      ...baseState,
+      worldState: {
+        ...baseState.worldState,
+        powerRestoredSections: {
+          ...baseState.worldState.powerRestoredSections,
+          "teleport-pads-blue": true,
+          "teleport-pads-green": false,
+          "teleport-pads-maroon": false,
+          "teleport-pads-orange": false,
+          "teleport-pads-violet": false,
+          "teleport-pads-white": false,
+          "teleport-pads-yellow": false,
+        },
+      },
+    };
+
+    render(<ShipMapPanel state={state} />);
+
+    const minimap = screen.getByRole("button", { name: /open ship map/i });
+    const disks = Array.from(
+      minimap.querySelectorAll<SVGCircleElement>(
+        '.ship-map-node[data-status="current"] .ship-map-teleport-disk',
+      ),
+    );
+    const colors = disks.map((disk) => disk.getAttribute("data-color"));
+    const xs = disks.map((disk) => Number(disk.getAttribute("cx")));
+
+    expect(terminalNode).toBeDefined();
+    expect(colors).toEqual([
+      "green",
+      "blue",
+      "maroon",
+      "yellow",
+      "violet",
+      "orange",
+      "white",
+    ]);
+    expect(disks.map((disk) => disk.getAttribute("data-powered"))).toEqual([
+      "inactive",
+      "active",
+      "inactive",
+      "inactive",
+      "inactive",
+      "inactive",
+      "inactive",
+    ]);
+    expect(disks.every((disk) => Number(disk.getAttribute("cy")) === terminalNode!.y + 17)).toBe(true);
+    expect(xs.every((x, index) => index === 0 || x > xs[index - 1])).toBe(true);
+    expect(xs[0]).toBeGreaterThan(terminalNode!.x);
+    expect(xs[xs.length - 1]).toBeLessThan(
+      terminalNode!.x + terminalNode!.width,
+    );
+  });
+
+  it("does not reveal teleport disk markers in unknown rooms", () => {
+    render(<ShipMapPanel state={createTestState({ roomId: "ParkCenter" })} />);
+
+    const minimap = screen.getByRole("button", { name: /open ship map/i });
+    const disks = Array.from(
+      minimap.querySelectorAll<SVGCircleElement>(".ship-map-teleport-disk"),
+    );
+
+    expect(disks).toHaveLength(1);
+    expect(disks[0]).toHaveAttribute("data-color", "green");
+  });
+
   it("keeps circular map sections gray until their rooms are visited", () => {
     const { rerender } = render(
       <ShipMapPanel state={createTestState({ roomId: "ParkCenter" })} />,

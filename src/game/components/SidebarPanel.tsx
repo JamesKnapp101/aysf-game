@@ -1,5 +1,4 @@
 import { CometTerminal } from "@game/components/CometTerminal";
-import { DNASampleTab } from "@game/components/DNASampleTab";
 import { LogTab } from "@game/components/LogTab";
 import { QuantumTotePanel } from "@game/components/QuantumTotePanel";
 import { SettingsTab } from "@game/components/SettingsTab";
@@ -20,7 +19,6 @@ export type SidebarPanelTab =
   | "inventory"
   | "status"
   | "log"
-  | "dna"
   | "hints"
   | "settings";
 
@@ -171,15 +169,6 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
           <button
             type="button"
             className={
-              "game-tab" + (activeTab === "dna" ? " game-tab-active" : "")
-            }
-            onClick={() => setActiveTab("dna")}
-          >
-            DNA
-          </button>
-          <button
-            type="button"
-            className={
               "game-tab" + (activeTab === "settings" ? " game-tab-active" : "")
             }
             onClick={() => setActiveTab("settings")}
@@ -213,7 +202,6 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
 
           {activeTab === "status" && <StatusTab gameState={state} />}
           {activeTab === "log" && <LogTab gameState={state} />}
-          {activeTab === "dna" && <DNASampleTab gameState={state} />}
 
           {activeTab === "settings" && (
             <SettingsTab

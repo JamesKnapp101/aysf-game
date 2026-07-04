@@ -4,7 +4,9 @@
     padding: 10px 10px 4px 12px;
     display: flex;
     flex-direction: column;
-    height: 96%;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
     overflow: hidden;
     background:
         linear-gradient(180deg,

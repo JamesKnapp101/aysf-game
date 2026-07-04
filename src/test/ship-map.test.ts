@@ -103,6 +103,11 @@ describe("ship map layout", () => {
     );
     const expectedLabels: Array<[string, string]> = [
       ["LevelTwoCorridorFive", "L2 C5"],
+      ["SpecimenOne", "Specimen\nOne"],
+      ["SpecimenTwo", "Specimen\nTwo"],
+      ["SpecimenThree", "Specimen\nThree"],
+      ["SpecimenFour", "Specimen\nFour"],
+      ["XenobiologyLab", "Xenobiology\nLab"],
       ["TPADTerminal", "Teleportation Station"],
       ["MovieTheaterLobby", "Lobby"],
       ["ParkEntrance", "Park\nGate"],
@@ -148,6 +153,9 @@ describe("ship map layout", () => {
     const engCorridorOne = SHIP_MAP_LAYOUT.nodes.find(
       (node) => node.roomId === "EngCorridorOne",
     );
+    const levelFiveStairAccess = SHIP_MAP_LAYOUT.nodes.find(
+      (node) => node.roomId === "LevelFiveStairAccess",
+    );
 
     expect(shuttleOutline).toEqual(
       expect.objectContaining({
@@ -161,6 +169,7 @@ describe("ship map layout", () => {
     expect(shuttleCockpit).toBeDefined();
     expect(shuttleBay).toBeDefined();
     expect(engCorridorOne).toBeDefined();
+    expect(levelFiveStairAccess).toBeDefined();
 
     if (
       !shuttleOutline ||
@@ -168,7 +177,8 @@ describe("ship map layout", () => {
       !insideShuttle ||
       !shuttleCockpit ||
       !shuttleBay ||
-      !engCorridorOne
+      !engCorridorOne ||
+      !levelFiveStairAccess
     ) {
       throw new Error("Expected shuttle outline and rooms to be generated");
     }
@@ -186,7 +196,9 @@ describe("ship map layout", () => {
     );
     expect(Math.min(...pointYs)).toBeLessThan(insideShuttle.y - 100);
     expect(Math.max(...pointYs)).toBeGreaterThan(shuttleCockpit.y + shuttleCockpit.height + 100);
-    expect(Math.max(...pointYs)).toBeLessThan(engCorridorOne.y);
+    expect(Math.max(...pointYs)).toBeLessThan(
+      Math.min(engCorridorOne.y, levelFiveStairAccess.y) - 40,
+    );
   });
 
   it("adds the bottom of the stairwell below level seven", () => {

@@ -14,7 +14,7 @@ export const DEFAULT_COMET_HELP_ENTRIES: CometEntry[] = [
       "how is the screen laid out",
       "i dont understand the game layout",
     ],
-    body: "The main interface is split into a few core areas.^^The Room Description panel sits at the top and continuously shows the current room description. The Compass sits to the right of that panel. The Log panel sits beneath the Room Description panel on the left and records commands plus game feedback. The Command Bar sits at the bottom and is where you type commands. To the right of the Log is a tabbed panel that includes Comet, Inventory, Status, Log, DNA, and Settings.",
+    body: "The main interface is split into a few core areas.^^The Room Description panel sits at the top and continuously shows the current room description. The Compass sits to the right of that panel. The Log panel sits beneath the Room Description panel on the left and records commands plus game feedback. The Command Bar sits at the bottom and is where you type commands. To the right of the Log is a tabbed panel that includes Comet, Inventory, Status, Log, and Settings.",
   },
   {
     id: "room_description_panel",
@@ -104,7 +104,7 @@ export const DEFAULT_COMET_HELP_ENTRIES: CometEntry[] = [
       "what are the tabs",
       "what do the tabs do",
     ],
-    body: "The tabbed panel to the right of the main Log contains several sections: Comet, Inventory, Status, Log, DNA, and Settings. Each tab holds a different category of information or tools.",
+    body: "The tabbed panel to the right of the main Log contains several sections: Comet, Inventory, Status, Log, and Settings. Each tab holds a different category of information or tools.",
   },
   {
     id: "inventory_tab",
@@ -149,7 +149,7 @@ export const DEFAULT_COMET_HELP_ENTRIES: CometEntry[] = [
       "read notes log",
       "where do read notes go",
     ],
-    body: "The Log tab contains two subtabs: Log Entries and Gossip.^^Log Entries store the contents of notes, books, and other readable material after you read them, and the original item is discarded so it does not clutter inventory.^^Gossip stores juicy information you learn about crew members and other figures. Each gossip item has an ID, and once learned it can sometimes be shared with NPCs.",
+    body: "The Log tab contains three subtabs: Log Entries, Gossip, and DNA.^^Log Entries store the contents of notes, books, and other readable material after you read them, and the original item is discarded so it does not clutter inventory.^^Gossip stores juicy information you learn about crew members and other figures. Each gossip item has an ID, and once learned it can sometimes be shared with NPCs.^^DNA stores samples collected with the DNA Sampler.",
   },
   {
     id: "dna_tab",
@@ -162,7 +162,7 @@ export const DEFAULT_COMET_HELP_ENTRIES: CometEntry[] = [
       "using the dna sampler",
       "touch human remains",
     ],
-    body: "Once you find the DNA Sampler, you can use it on human remains. It identifies the corpse and stores known information about that person in the DNA tab for later reference.",
+    body: "Once you find the DNA Sampler, you can use it on human remains. It identifies the corpse and stores known information about that person in the DNA section of the Log tab for later reference.",
   },
   {
     id: "settings_tab",

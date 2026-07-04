@@ -1,3 +1,4 @@
+import { DNASampleTab } from "@game/components/DNASampleTab";
 import { useUIOverlayStore } from "@game/store/store";
 import type {
   GameState,
@@ -7,7 +8,7 @@ import type {
 import * as React from "react";
 import "../../styles/log-tab.css";
 
-type LogSubview = "entries" | "gossip";
+type LogSubview = "entries" | "gossip" | "dna";
 
 function previewText(body: string, maxChars = 80): string {
   const s = (body ?? "").replace(/\s+/g, " ").trim();
@@ -115,6 +116,7 @@ export function LogTab({ gameState }: { gameState: GameState }) {
 
   const entries = gameState.player.log ?? [];
   const gossipTopics = gameState.player.spiltTea ?? [];
+  const dnaSamples = gameState.player.dnaBank ?? [];
 
   const openEntry = React.useCallback(
     (entry: PlayerLogEntry) => {
@@ -131,6 +133,7 @@ export function LogTab({ gameState }: { gameState: GameState }) {
   const tabs: Array<{ id: LogSubview; label: string; count: number }> = [
     { id: "entries", label: "Log Entries", count: entries.length },
     { id: "gossip", label: "Gossip", count: gossipTopics.length },
+    { id: "dna", label: "DNA", count: dnaSamples.length },
   ];
 
   return (
@@ -155,23 +158,29 @@ export function LogTab({ gameState }: { gameState: GameState }) {
         })}
       </div>
 
-      <div
-        className="logtab-list"
-        role="list"
-        aria-label={activeView === "entries" ? "Log entries" : "Gossip topics"}
-      >
-        {activeView === "entries" ? (
-          entries.length === 0 ? (
-            <div className="logtab-empty">No log entries yet.</div>
+      {activeView === "dna" ? (
+        <DNASampleTab gameState={gameState} />
+      ) : (
+        <div
+          className="logtab-list"
+          role="list"
+          aria-label={
+            activeView === "entries" ? "Log entries" : "Gossip topics"
+          }
+        >
+          {activeView === "entries" ? (
+            entries.length === 0 ? (
+              <div className="logtab-empty">No log entries yet.</div>
+            ) : (
+              entries.map((entry, idx) => renderLogEntry(entry, idx, openEntry))
+            )
+          ) : gossipTopics.length === 0 ? (
+            <div className="logtab-empty">No gossip collected yet.</div>
           ) : (
-            entries.map((entry, idx) => renderLogEntry(entry, idx, openEntry))
-          )
-        ) : gossipTopics.length === 0 ? (
-          <div className="logtab-empty">No gossip collected yet.</div>
-        ) : (
-          gossipTopics.map((topic, idx) => renderGossipTopic(topic, idx))
-        )}
-      </div>
+            gossipTopics.map((topic, idx) => renderGossipTopic(topic, idx))
+          )}
+        </div>
+      )}
     </div>
   );
 }

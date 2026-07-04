@@ -152,7 +152,7 @@ describe("gossip system", () => {
     });
   });
 
-  it("splits log entries and gossip into separate subtabs", async () => {
+  it("splits log entries, gossip, and DNA into separate subtabs", async () => {
     const user = userEvent.setup();
     const baseState = createTestState();
     const logEntry: PlayerLogEntry = {
@@ -172,6 +172,11 @@ describe("gossip system", () => {
 
     render(<LogTab gameState={state} />);
 
+    expect(
+      screen
+        .getAllByRole("tab")
+        .map((tab) => tab.textContent?.replace(/\s+/g, " ").trim()),
+    ).toEqual(["Log Entries 1", "Gossip 1", "DNA 0"]);
     expect(screen.getByRole("tab", { name: /log entries/i })).toHaveAttribute(
       "aria-selected",
       "true",

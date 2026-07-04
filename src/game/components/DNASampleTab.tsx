@@ -22,10 +22,8 @@ export function DNASampleTab({ gameState }: { gameState: GameState }) {
   );
 
   return (
-    <div className="dna-tab" style={{ height: "96%" }}>
-      <div className="dna-tab-header">
-        BANKED DNA SAMPLES
-      </div>
+    <div className="dna-tab">
+      <div className="dna-tab-header">BANKED DNA SAMPLES</div>
 
       <div className="dna-tab-list" role="list" aria-label="DNA sample entries">
         {entries.length === 0 ? (

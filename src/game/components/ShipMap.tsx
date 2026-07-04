@@ -12,10 +12,12 @@ import {
   getShipMapNodeStatus,
   getShipMapNodesForLevel,
   getShipMapShapesForLevel,
+  getShipMapTeleportDiskMarkers,
   shouldRevealShipMapNodeLabel,
   type ShipMapBounds,
   type ShipMapEdge,
   type ShipMapNodeStatus,
+  type ShipMapTeleportDiskMarker,
 } from "../map/shipMapModel";
 import type {
   ShipMapLevelId,
@@ -56,6 +58,8 @@ const MINI_MAP_TOP_HEADROOM_BY_LEVEL: Partial<Record<ShipMapLevelId, number>> = 
   "level-six": 520,
   "level-seven": 520,
 };
+const TELEPORT_DISK_MARKER_PADDING = 17;
+const TELEPORT_DISK_MARKER_RADIUS = 12;
 
 function toSvgViewBox(viewBox: ShipMapBounds): string {
   return `${viewBox.minX} ${viewBox.minY} ${viewBox.width} ${viewBox.height}`;
@@ -344,6 +348,39 @@ function getArrowHeadPath(points: ShipMapEdge["points"]): string | undefined {
   return `M ${left.x} ${left.y} L ${end.x} ${end.y} L ${right.x} ${right.y}`;
 }
 
+function groupTeleportDiskMarkersByNodeId(
+  markers: readonly ShipMapTeleportDiskMarker[],
+): Map<string, readonly ShipMapTeleportDiskMarker[]> {
+  return markers.reduce<Map<string, ShipMapTeleportDiskMarker[]>>(
+    (acc, marker) => {
+      const current = acc.get(marker.nodeId) ?? [];
+      current.push(marker);
+      acc.set(marker.nodeId, current);
+      return acc;
+    },
+    new Map(),
+  );
+}
+
+function getTeleportDiskMarkerCenter(
+  node: ShipMapNode,
+  marker: ShipMapTeleportDiskMarker,
+): { x: number; y: number } {
+  if (marker.placement === "terminal-row") {
+    const total = marker.terminalTotal ?? 1;
+    const index = marker.terminalIndex ?? 0;
+    return {
+      x: node.x + (node.width * (index + 1)) / (total + 1),
+      y: node.y + TELEPORT_DISK_MARKER_PADDING,
+    };
+  }
+
+  return {
+    x: node.x + TELEPORT_DISK_MARKER_PADDING,
+    y: node.y + TELEPORT_DISK_MARKER_PADDING,
+  };
+}
+
 const ShipMapSvg: React.FC<ShipMapSvgProps> = ({
   edges,
   nodes,
@@ -355,6 +392,13 @@ const ShipMapSvg: React.FC<ShipMapSvgProps> = ({
   const nodesById = useMemo(
     () => new Map(nodes.map((node) => [node.nodeId, node])),
     [nodes],
+  );
+  const teleportDiskMarkersByNodeId = useMemo(
+    () =>
+      groupTeleportDiskMarkersByNodeId(
+        getShipMapTeleportDiskMarkers(state, nodes),
+      ),
+    [nodes, state],
   );
 
   return (
@@ -491,6 +535,8 @@ const ShipMapSvg: React.FC<ShipMapSvgProps> = ({
             : node.y + node.height / 2;
           const labelStartY =
             labelAnchorY - ((labelLines.length - 1) * lineHeight) / 2;
+          const teleportDiskMarkers =
+            teleportDiskMarkersByNodeId.get(node.nodeId) ?? [];
 
           return (
             <g
@@ -509,6 +555,26 @@ const ShipMapSvg: React.FC<ShipMapSvgProps> = ({
                   ry="6"
                 />
               )}
+              {teleportDiskMarkers.map((marker) => {
+                const markerCenter = getTeleportDiskMarkerCenter(node, marker);
+
+                return (
+                  <circle
+                    key={marker.id}
+                    className="ship-map-teleport-disk"
+                    data-color={marker.colorName}
+                    data-powered={marker.isActive ? "active" : "inactive"}
+                    cx={markerCenter.x}
+                    cy={markerCenter.y}
+                    r={TELEPORT_DISK_MARKER_RADIUS}
+                    style={
+                      {
+                        "--ship-map-teleport-disk-color": marker.color,
+                      } as React.CSSProperties
+                    }
+                  />
+                );
+              })}
               {labelLines.length > 0 && (
                 <text
                   className="ship-map-node-label"

@@ -31,9 +31,85 @@ export type ShipMapEdge = {
 
 export type ShipMapNodeStatus = "current" | "unknown" | "visited";
 
+export type ShipMapTeleportDiskColor =
+  | "blue"
+  | "green"
+  | "maroon"
+  | "orange"
+  | "violet"
+  | "white"
+  | "yellow";
+
+export type ShipMapTeleportDiskMarker = {
+  color: string;
+  colorName: ShipMapTeleportDiskColor;
+  id: string;
+  isActive: boolean;
+  nodeId: string;
+  placement: "corner" | "terminal-row";
+  roomId: string;
+  terminalIndex?: number;
+  terminalTotal?: number;
+};
+
 const NODES = SHIP_MAP_LAYOUT.nodes as readonly ShipMapNode[];
 const CONNECTORS = SHIP_MAP_LAYOUT.connectors as readonly ShipMapConnector[];
 const SHAPES = SHIP_MAP_LAYOUT.shapes as readonly ShipMapShape[];
+
+const TELEPORT_DISK_NETWORKS = [
+  {
+    color: "#24ff68",
+    colorName: "green",
+    rooms: ["TPADTerminal", "ParkCenter", "HydroponicsOne", "BotanicalOne"],
+    section: "teleport-pads-green",
+  },
+  {
+    color: "#38a7ff",
+    colorName: "blue",
+    rooms: ["TPADTerminal", "Lab", "RemoteMedicalOne"],
+    section: "teleport-pads-blue",
+  },
+  {
+    color: "#ff3d45",
+    colorName: "maroon",
+    rooms: ["TPADTerminal", "Bridge"],
+    section: "teleport-pads-maroon",
+  },
+  {
+    color: "#ffdf38",
+    colorName: "yellow",
+    rooms: ["TPADTerminal", "PowerGrid", "RemotePowerStation"],
+    section: "teleport-pads-yellow",
+  },
+  {
+    color: "#b15cff",
+    colorName: "violet",
+    rooms: ["TPADTerminal", "ReactorPlatform"],
+    section: "teleport-pads-violet",
+  },
+  {
+    color: "#ff982f",
+    colorName: "orange",
+    rooms: ["TPADTerminal", "VeterinaryCenter", "OuterRingSouth", "XenobiologyLab"],
+    section: "teleport-pads-orange",
+  },
+  {
+    color: "#f4f7ff",
+    colorName: "white",
+    rooms: ["TPADTerminal", "CryoLab", "GridC3"],
+    section: "teleport-pads-white",
+  },
+] as const satisfies ReadonlyArray<{
+  color: string;
+  colorName: ShipMapTeleportDiskColor;
+  rooms: readonly string[];
+  section: string;
+}>;
+
+const TELEPORT_DISK_MAP_ROOM_ALIASES: Record<string, string> = {
+  GridC3: "DeepStorageGrid",
+  HydroponicsOne: "UnderWebOne",
+};
 
 const ROOM_NODES = NODES.reduce<
   Map<string, readonly ShipMapNode[]>
@@ -142,6 +218,53 @@ export function shouldRevealShipMapNodeLabel(
   node: ShipMapNode,
 ): boolean {
   return getShipMapNodeStatus(state, node) !== "unknown";
+}
+
+function getTeleportDiskMapNode(roomId: string): ShipMapNode | undefined {
+  return getPrimaryShipMapNodeForRoom(
+    TELEPORT_DISK_MAP_ROOM_ALIASES[roomId] ?? roomId,
+  );
+}
+
+function isTeleportDiskNetworkActive(state: GameState, section: string): boolean {
+  const sections = state.worldState.powerRestoredSections as Record<
+    string,
+    boolean
+  >;
+  return Boolean(sections[section]);
+}
+
+export function getShipMapTeleportDiskMarkers(
+  state: GameState,
+  nodes: readonly ShipMapNode[],
+): ShipMapTeleportDiskMarker[] {
+  const nodeIds = new Set(nodes.map((node) => node.nodeId));
+  const terminalTotal = TELEPORT_DISK_NETWORKS.length;
+  const markers: ShipMapTeleportDiskMarker[] = [];
+
+  for (const [networkIndex, network] of TELEPORT_DISK_NETWORKS.entries()) {
+    const isActive = isTeleportDiskNetworkActive(state, network.section);
+
+    for (const roomId of network.rooms) {
+      const node = getTeleportDiskMapNode(roomId);
+      if (!node || !nodeIds.has(node.nodeId)) continue;
+      if (getShipMapNodeStatus(state, node) === "unknown") continue;
+
+      markers.push({
+        color: network.color,
+        colorName: network.colorName,
+        id: `${network.colorName}-${roomId}`,
+        isActive,
+        nodeId: node.nodeId,
+        placement: roomId === "TPADTerminal" ? "terminal-row" : "corner",
+        roomId,
+        terminalIndex: roomId === "TPADTerminal" ? networkIndex : undefined,
+        terminalTotal: roomId === "TPADTerminal" ? terminalTotal : undefined,
+      });
+    }
+  }
+
+  return markers;
 }
 
 export function getShipMapBounds(

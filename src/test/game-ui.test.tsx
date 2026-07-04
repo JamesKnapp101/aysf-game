@@ -1,6 +1,5 @@
 import { ApiaryTerminalModal } from "@game/components/ApiaryTerminalModal";
 import { RoomCompass } from "@game/components/Compass";
-import { DNASampleTab } from "@game/components/DNASampleTab";
 import { GamePreserveTerminalModal } from "@game/components/GamePreserveTerminalModal";
 import { HydroponicsAdminTerminalModal } from "@game/components/HydroponicsAdminTerminalModal";
 import { LogTab } from "@game/components/LogTab";
@@ -32,7 +31,7 @@ import { DEACTIVATED_BEE_ITEM_ID } from "src/world/maps/levelFour/Greenhouse";
 
 function renderSidebarPanel(
   state: GameState,
-  activeTab: "inventory" | "log" | "dna" | "status" = "inventory",
+  activeTab: "inventory" | "log" | "status" = "inventory",
 ) {
   return render(
     <SidebarPanel
@@ -126,13 +125,16 @@ describe("UI panels", () => {
     ).toHaveLength(1);
   });
 
-  it("renders banked DNA samples in the DNA tab", async () => {
+  it("renders banked DNA samples in the Log DNA subtab", async () => {
+    const user = userEvent.setup();
     const state = await runCommands(
       setInventory(createTestState({ roomId: "StairSix" }), ["DNAReader"]),
       ["touch dead soldier with dna sampler"],
     );
 
-    render(<DNASampleTab gameState={state} />);
+    render(<LogTab gameState={state} />);
+
+    await user.click(screen.getByRole("tab", { name: /dna/i }));
 
     expect(screen.getByText("Joelson Dend")).toBeInTheDocument();
     expect(

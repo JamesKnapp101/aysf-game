@@ -42,8 +42,7 @@ export type SidebarTab =
   | "status"
   | "log"
   | "hints"
-  | "settings"
-  | "dna";
+  | "settings";
 
 type PromptFocusOwner = "game" | "comet";
 

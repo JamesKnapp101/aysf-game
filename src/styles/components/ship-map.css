@@ -198,6 +198,23 @@
     filter: drop-shadow(0 0 7px rgb(var(--ship-map-current) / 0.32));
 }
 
+.ship-map-teleport-disk {
+    fill: var(--ship-map-teleport-disk-color);
+    opacity: 0.38;
+    pointer-events: none;
+    stroke: rgb(0 0 0 / 0.78);
+    stroke-width: 1.6;
+    vector-effect: non-scaling-stroke;
+}
+
+.ship-map-teleport-disk[data-powered="active"] {
+    filter:
+        drop-shadow(0 0 4px var(--ship-map-teleport-disk-color))
+        drop-shadow(0 0 10px var(--ship-map-teleport-disk-color));
+    opacity: 0.98;
+    stroke: rgb(255 255 255 / 0.74);
+}
+
 .ship-map-node-label {
     fill: rgb(var(--ship-map-ink) / 0.86);
     /* font-family: "Segoe Print", "Comic Sans MS", "Bradley Hand", cursive; */
