@@ -1,8 +1,10 @@
 import { CometTerminal } from "@game/components/CometTerminal";
 import { LogTab } from "@game/components/LogTab";
+import { ObjectivesTab } from "@game/components/ObjectivesTab";
 import { QuantumTotePanel } from "@game/components/QuantumTotePanel";
 import { SettingsTab } from "@game/components/SettingsTab";
 import { getConversationAssistantNameForMode } from "../helpers/conversationModeHelpers";
+import type { SidebarTabNotificationMap } from "../helpers/sidebarTabNotifications";
 import { getItemsInInventory } from "../selectors/itemSelectors";
 import type {
   CometPersonalityMode,
@@ -18,6 +20,7 @@ export type SidebarPanelTab =
   | "comet"
   | "inventory"
   | "status"
+  | "objectives"
   | "log"
   | "hints"
   | "settings";
@@ -32,6 +35,7 @@ type SidebarPanelProps = {
   setCrtColor: React.Dispatch<React.SetStateAction<string>>;
   setGameState?: (updater: (prev: GameState) => GameState) => void;
   state: GameState;
+  tabNotifications?: SidebarTabNotificationMap;
 };
 
 function applyCRTColor(colorHex: string) {
@@ -55,6 +59,7 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
   setCrtColor,
   setGameState = () => undefined,
   state,
+  tabNotifications = {},
 }) => {
   const inventoryItems = getItemsInInventory(state);
   const internalCometInputRef = useRef<HTMLInputElement | null>(null);
@@ -119,16 +124,48 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
     }));
   };
 
+  const getTabClassName = (
+    tab: SidebarPanelTab,
+    extraClassName = "",
+  ): string => {
+    const isActive = activeTab === tab;
+    const hasNotification =
+      !isActive &&
+      (tab === "inventory" ||
+        tab === "status" ||
+        tab === "objectives" ||
+        tab === "log") &&
+      tabNotifications[tab] === true;
+
+    return [
+      "game-tab",
+      extraClassName,
+      isActive ? "game-tab-active" : "",
+      hasNotification ? "game-tab-notified" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+  };
+
+  const getTabAriaLabel = (tab: SidebarPanelTab, label: string): string => {
+    const hasNotification =
+      activeTab !== tab &&
+      (tab === "inventory" ||
+        tab === "status" ||
+        tab === "objectives" ||
+        tab === "log") &&
+      tabNotifications[tab] === true;
+
+    return hasNotification ? `${label} updated` : label;
+  };
+
   return (
     <aside className="game-sidebar">
       <div className="game-sidebar-tabsArea">
         <div className="game-tabs">
           <button
             type="button"
-            className={
-              "game-tab game-tab-comet" +
-              (activeTab === "comet" ? " game-tab-active" : "")
-            }
+            className={getTabClassName("comet", "game-tab-comet")}
             onClick={() => setActiveTab("comet")}
           >
             <span className="game-tab-cometText">
@@ -141,8 +178,12 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
           </button>
           <button
             type="button"
-            className={
-              "game-tab" + (activeTab === "inventory" ? " game-tab-active" : "")
+            aria-label={getTabAriaLabel("inventory", "Inventory")}
+            className={getTabClassName("inventory")}
+            data-notification={
+              activeTab !== "inventory" && tabNotifications.inventory
+                ? "true"
+                : undefined
             }
             onClick={() => setActiveTab("inventory")}
           >
@@ -150,8 +191,12 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
           </button>
           <button
             type="button"
-            className={
-              "game-tab" + (activeTab === "status" ? " game-tab-active" : "")
+            aria-label={getTabAriaLabel("status", "Status")}
+            className={getTabClassName("status")}
+            data-notification={
+              activeTab !== "status" && tabNotifications.status
+                ? "true"
+                : undefined
             }
             onClick={() => setActiveTab("status")}
           >
@@ -159,8 +204,23 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
           </button>
           <button
             type="button"
-            className={
-              "game-tab" + (activeTab === "log" ? " game-tab-active" : "")
+            aria-label={getTabAriaLabel("objectives", "Objectives")}
+            className={getTabClassName("objectives")}
+            data-notification={
+              activeTab !== "objectives" && tabNotifications.objectives
+                ? "true"
+                : undefined
+            }
+            onClick={() => setActiveTab("objectives")}
+          >
+            Objectives
+          </button>
+          <button
+            type="button"
+            aria-label={getTabAriaLabel("log", "Log")}
+            className={getTabClassName("log")}
+            data-notification={
+              activeTab !== "log" && tabNotifications.log ? "true" : undefined
             }
             onClick={() => setActiveTab("log")}
           >
@@ -168,9 +228,7 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
           </button>
           <button
             type="button"
-            className={
-              "game-tab" + (activeTab === "settings" ? " game-tab-active" : "")
-            }
+            className={getTabClassName("settings")}
             onClick={() => setActiveTab("settings")}
           >
             Settings
@@ -201,6 +259,7 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
           )}
 
           {activeTab === "status" && <StatusTab gameState={state} />}
+          {activeTab === "objectives" && <ObjectivesTab gameState={state} />}
           {activeTab === "log" && <LogTab gameState={state} />}
 
           {activeTab === "settings" && (

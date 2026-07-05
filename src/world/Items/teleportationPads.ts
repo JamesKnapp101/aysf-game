@@ -89,7 +89,7 @@ export const teleportationPadItems: Item[] = [
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     sceneryDescription:
       "In the grass near the hatch you see a four foot by four foot stepping stone, upon which is mounted a slightly raised green disk, made of a hard, glossy material.",
-    location: "HydroponicsOne",
+    location: "UnderWebOne",
     vocab: ["green", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -103,6 +103,102 @@ export const teleportationPadItems: Item[] = [
         ring: "green",
         order: 3,
         requires: ["greenbadge", "maroonbadge", "ultravioletbadge"],
+      },
+    },
+  },
+  // ORANGE TELEPORT RING
+  {
+    id: "OrangeTPADTerminal",
+    name: "glossy orange disk",
+    description:
+      "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
+    location: "TPADTerminal",
+    vocab: ["orange disk", "orange", "disk", "pad"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    isSurface: true,
+    meta: {
+      onPowered: `Each of the disks emits a soft, serene glow.`,
+      teleport: {
+        section: "teleport-pads-orange",
+        ring: "orange",
+        order: 1,
+        requires: ["orangebadge", "maroonbadge", "ultravioletbadge"],
+      },
+    },
+  },
+  {
+    id: "OrangeTPADVeterinaryCenter",
+    name: "glossy orange disk",
+    description:
+      "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
+    sceneryDescription:
+      "Against the far wall is a slightly raised orange disk ringed by a shiny metal band.",
+    location: "VeterinaryCenter",
+    vocab: ["orange", "disk", "pad"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    isSurface: true,
+    meta: {
+      sceneryDescriptionOrder: 6,
+      onPowered: `The disk emits a soft, serene glow.`,
+      teleport: {
+        section: "teleport-pads-orange",
+        ring: "orange",
+        order: 2,
+        requires: ["orangebadge", "maroonbadge", "ultravioletbadge"],
+      },
+    },
+  },
+  {
+    id: "OrangeTPADAviary",
+    name: "glossy orange disk",
+    description:
+      "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
+    sceneryDescription:
+      "In the grass you see a four foot by four foot stepping stone, upon which is mounted a slightly raised orange disk, made of a hard, glossy material.",
+    location: "OuterRingSouth",
+    vocab: ["orange", "disk", "pad"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    isSurface: true,
+    meta: {
+      onPowered: `The disk emits a soft, serene glow.`,
+      teleport: {
+        section: "teleport-pads-orange",
+        ring: "orange",
+        order: 3,
+        requires: ["orangebadge", "maroonbadge", "ultravioletbadge"],
+      },
+    },
+  },
+  {
+    id: "OrangeTPADXeno",
+    name: "glossy orange disk",
+    description:
+      "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
+    sceneryDescription:
+      "In the corner is a slightly raised orange disk, made of a hard, glossy material.",
+    location: "XenobiologyLab",
+    vocab: ["orange", "disk", "pad"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 1,
+    itemSize: 1,
+    isSurface: true,
+    meta: {
+      onPowered: `The disk emits a soft, serene glow.`,
+      teleport: {
+        section: "teleport-pads-orange",
+        ring: "orange",
+        order: 4,
+        requires: ["orangebadge", "maroonbadge", "ultravioletbadge"],
       },
     },
   },
@@ -349,7 +445,7 @@ export const teleportationPadItems: Item[] = [
       "It's a flat, smooth disk, ringed with a shiny metallic band. It looks sturdy enough to stand on.",
     sceneryDescription:
       "In the corner you see a slightly raised white disk, made of a hard, glossy material.",
-    location: "GridC3",
+    location: "DeepStorageGrid",
     vocab: ["white", "disk", "pad"],
     itemClass: "solid",
     itemCategory: "scenery",

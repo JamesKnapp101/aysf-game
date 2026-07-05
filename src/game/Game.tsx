@@ -18,6 +18,13 @@ import { SyndromeXSignalOverlay } from "./components/SyndromeXSignalOverlay";
 import { isPlayerUnderwater } from "./helpers/environmentHelpers";
 import { isAnyFlashlightOn } from "./helpers/flashlightHelpers";
 import {
+  clearSidebarTabNotification,
+  getSidebarTabSignatures,
+  mergeSidebarTabNotifications,
+  type SidebarTabNotificationMap,
+  type SidebarTabSignatureMap,
+} from "./helpers/sidebarTabNotifications";
+import {
   canPlayerSeeInRoom,
   getRoomVisualLightLevel,
 } from "./helpers/visibilityHelpers";
@@ -40,6 +47,7 @@ export type SidebarTab =
   | "comet"
   | "inventory"
   | "status"
+  | "objectives"
   | "log"
   | "hints"
   | "settings";
@@ -98,6 +106,9 @@ export const Game: React.FC = () => {
   const quadrantGridRef = useRef<HTMLDivElement | null>(null);
   const hasObservedSyndromeXSignalRef = useRef(false);
   const lastSyndromeXSignalRef = useRef<string | null>(null);
+  const sidebarTabSignaturesRef = useRef<SidebarTabSignatureMap | null>(null);
+  const [sidebarTabNotifications, setSidebarTabNotifications] =
+    useState<SidebarTabNotificationMap>({});
 
   const restorePromptFocus = useCallback(() => {
     if (
@@ -195,6 +206,29 @@ export const Game: React.FC = () => {
       text: latestSignalEntry.body,
     });
   }, [gs.moves, gs.player.log, playSyndromeXSignal]);
+
+  useEffect(() => {
+    const nextSignatures = getSidebarTabSignatures(gs);
+    const previousSignatures = sidebarTabSignaturesRef.current;
+    sidebarTabSignaturesRef.current = nextSignatures;
+
+    if (!previousSignatures) return;
+
+    setSidebarTabNotifications((current) =>
+      mergeSidebarTabNotifications({
+        activeTab,
+        current,
+        nextSignatures,
+        previousSignatures,
+      }),
+    );
+  }, [activeTab, gs]);
+
+  useEffect(() => {
+    setSidebarTabNotifications((current) =>
+      clearSidebarTabNotification(current, activeTab),
+    );
+  }, [activeTab]);
 
   // -------- horizontal resize: top vs bottom quadrants ----------------------
   const handleStartResizeHorizontal = useCallback(
@@ -457,6 +491,7 @@ export const Game: React.FC = () => {
                 setCrtColor={setCrtColor}
                 setGameState={setGameState}
                 state={gs}
+                tabNotifications={sidebarTabNotifications}
               />
             </div>
 

@@ -3,11 +3,11 @@ import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
 import { appendLog } from "@game/engine/log";
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
 import { getRoomById } from "@game/helpers/itemHelpers";
+import { prepareRoomForTravel } from "@game/helpers/roomChunkTravel";
 import { useUIEffectsStore } from "@game/store/store";
 import { buildTranscriptRoomDescription } from "@game/text/roomDescription";
 import { GameState } from "@game/types/gameTypes";
 import React, { useMemo } from "react";
-import type { WorldChunkId } from "../../world/World";
 import "../../styles/teleport-terminal.css";
 
 type TeleportationTerminalProps = {
@@ -35,6 +35,7 @@ type RingId =
   | "zoological";
 
 type RingConfig = {
+  fallbackRequiredBadgeIds: string[];
   id: RingId;
   label: string;
   sectionKey: RingKey;
@@ -44,13 +45,15 @@ type RingConfig = {
 
 const RINGS: RingConfig[] = [
   {
+    fallbackRequiredBadgeIds: ["greenbadge", "maroonbadge", "ultravioletbadge"],
     id: "botanical",
     label: "BOTANICAL",
     sectionKey: "teleport-pads-green",
     ringColor: "#24ff68",
-    destinations: ["ParkCenter", "HydroponicsOne", "BotanicalOne"],
+    destinations: ["ParkCenter", "UnderWebOne", "BotanicalOne"],
   },
   {
+    fallbackRequiredBadgeIds: ["bluebadge", "maroonbadge", "ultravioletbadge"],
     id: "medical",
     label: "MEDICAL",
     sectionKey: "teleport-pads-blue",
@@ -58,6 +61,7 @@ const RINGS: RingConfig[] = [
     destinations: ["Lab", "RemoteMedicalOne"],
   },
   {
+    fallbackRequiredBadgeIds: ["maroonbadge", "ultravioletbadge"],
     id: "operations",
     label: "OPERATIONS",
     sectionKey: "teleport-pads-maroon",
@@ -65,6 +69,7 @@ const RINGS: RingConfig[] = [
     destinations: ["Bridge"],
   },
   {
+    fallbackRequiredBadgeIds: ["yellowbadge", "maroonbadge", "ultravioletbadge"],
     id: "powerGrid",
     label: "POWER GRID",
     sectionKey: "teleport-pads-yellow",
@@ -72,6 +77,7 @@ const RINGS: RingConfig[] = [
     destinations: ["PowerGrid", "RemotePowerStation"],
   },
   {
+    fallbackRequiredBadgeIds: ["violetbadge", "maroonbadge", "ultravioletbadge"],
     id: "utilities",
     label: "UTILITIES",
     sectionKey: "teleport-pads-violet",
@@ -79,6 +85,7 @@ const RINGS: RingConfig[] = [
     destinations: ["ReactorPlatform"],
   },
   {
+    fallbackRequiredBadgeIds: ["orangebadge", "maroonbadge", "ultravioletbadge"],
     id: "zoological",
     label: "ZOOLOGICAL",
     sectionKey: "teleport-pads-orange",
@@ -86,11 +93,12 @@ const RINGS: RingConfig[] = [
     destinations: ["VeterinaryCenter", "OuterRingSouth", "XenobiologyLab"],
   },
   {
+    fallbackRequiredBadgeIds: ["whitebadge", "maroonbadge", "ultravioletbadge"],
     id: "deepStorage",
     label: "DEEP STORAGE",
     sectionKey: "teleport-pads-white",
     ringColor: "#f4f7ff",
-    destinations: ["CryoLab", "GridC3"],
+    destinations: ["CryoLab", "DeepStorageGrid"],
   },
 ];
 
@@ -107,56 +115,16 @@ const destinationLabelMap = {
   VeterinaryCenter: "Veterinary Center",
   OuterRingSouth: "Aviary",
   CryoLab: "Deep Lab",
+  DeepStorageGrid: "Grid",
   GridC3: "Grid",
+  UnderWebOne: "Hydroponics",
   XenobiologyLab: "Xenobiology Lab",
 };
 
 const MARQUEE_MESSAGE =
   "PLEASE SELECT YOUR TRAVEL DESTINATION! SOME DESTINATIONS MAY REQUIRE AUTHORIZATION.";
-
-const DESTINATION_CHUNK_BY_ROOM_ID: Partial<Record<string, WorldChunkId>> = {
-  BotanicalOne: "level-four",
-  Bridge: "level-one",
-  CryoLab: "level-seven",
-  Lab: "level-two",
-  OuterRingSouth: "level-four",
-  ParkCenter: "level-three",
-  PowerGrid: "level-four",
-  ReactorPlatform: "level-five",
-  RemoteMedicalOne: "level-two",
-  RemotePowerStation: "level-four",
-  VeterinaryCenter: "level-four",
-  XenobiologyLab: "level-two",
-};
-
-function isWorldChunkAlreadyLoaded(
-  state: GameState,
-  chunkId: WorldChunkId,
-): boolean {
-  return Array.isArray(state.world.meta?.loadedChunkIds)
-    ? state.world.meta.loadedChunkIds.includes(chunkId)
-    : false;
-}
-
-async function loadDestinationChunkIfNeeded(
-  state: GameState,
-  roomId: string,
-) {
-  if (getRoomById(state, roomId)) return undefined;
-
-  const chunkId = DESTINATION_CHUNK_BY_ROOM_ID[roomId];
-  if (!chunkId || isWorldChunkAlreadyLoaded(state, chunkId)) return undefined;
-
-  const [{ loadWorldChunk }, { mergeWorldChunkIntoState }] = await Promise.all([
-    import("../../world/World"),
-    import("@game/gameInit"),
-  ]);
-  const chunk = await loadWorldChunk(chunkId);
-  return {
-    apply: (nextState: GameState) =>
-      mergeWorldChunkIntoState(nextState, chunkId, chunk),
-  };
-}
+const UNAUTHORIZED_MESSAGE =
+  `The terminal flashes a destination preview, then a harsh buzzer snaps across the platform.\n\n"Unauthorized."`;
 
 function ScrollingBannerMessage() {
   const repeats = Array.from({ length: 3 }, (_, index) => index);
@@ -182,6 +150,36 @@ function isRingOnline(state: GameState, key: RingKey): boolean {
   return Boolean((state.worldState.powerRestoredSections as any)?.[key]);
 }
 
+function getInventoryItemIds(state: GameState): string[] {
+  return [
+    ...state.player.inventory.general,
+    ...state.player.inventory.badges,
+    ...state.player.inventory.keys,
+  ];
+}
+
+function getRequiredBadgeIds(state: GameState, ring: RingConfig): string[] {
+  const terminalPad = state.world.items.find(
+    (item) =>
+      item.location === "TPADTerminal" &&
+      item.meta?.teleport?.section === ring.sectionKey &&
+      item.meta?.teleport?.order === 1,
+  );
+  const requires = terminalPad?.meta?.teleport?.requires;
+
+  return Array.isArray(requires)
+    ? requires.map((badgeId) => String(badgeId))
+    : ring.fallbackRequiredBadgeIds;
+}
+
+function hasRingAuthorization(state: GameState, ring: RingConfig): boolean {
+  const requiredBadgeIds = getRequiredBadgeIds(state, ring);
+  if (requiredBadgeIds.length === 0) return true;
+
+  const inventoryItemIds = new Set(getInventoryItemIds(state));
+  return requiredBadgeIds.some((badgeId) => inventoryItemIds.has(badgeId));
+}
+
 export function TeleportationTerminalModal({
   onClose,
   state,
@@ -202,21 +200,22 @@ export function TeleportationTerminalModal({
     return map;
   }, [state]);
 
-  const teleportTo = async (roomId: string) => {
-    const loadedDestinationChunk = await loadDestinationChunkIfNeeded(
-      state,
-      roomId,
-    );
-    const preparedState = loadedDestinationChunk
-      ? loadedDestinationChunk.apply(state)
-      : state;
-    const canTeleport = Boolean(getRoomById(preparedState, roomId));
+  const teleportTo = async (ring: RingConfig, roomId: string) => {
+    if (!hasRingAuthorization(state, ring)) {
+      setGameState((prev) => appendLog(prev, `${UNAUTHORIZED_MESSAGE}\n`));
+      return;
+    }
+
+    const destination = await prepareRoomForTravel(state, roomId);
+    const canTeleport = destination.roomExists;
 
     setGameState((prev) => {
-      const workingState = loadedDestinationChunk
-        ? loadedDestinationChunk.apply(prev)
-        : prev;
-      const destinationRoom = getRoomById(workingState, roomId);
+      const workingState = destination.applyTo(prev);
+      if (!hasRingAuthorization(workingState, ring)) {
+        return appendLog(workingState, `${UNAUTHORIZED_MESSAGE}\n`);
+      }
+
+      const destinationRoom = getRoomById(workingState, destination.roomId);
 
       if (!destinationRoom) {
         return appendLog(
@@ -226,16 +225,16 @@ export function TeleportationTerminalModal({
       }
 
       const wasVisitedBeforeTeleport = Boolean(
-        (workingState.worldState.visitedRooms ?? {})[roomId],
+        (workingState.worldState.visitedRooms ?? {})[destination.roomId],
       );
-      let next = movePlayerToRoom(workingState, roomId);
+      let next = movePlayerToRoom(workingState, destination.roomId);
       next = {
         ...next,
         worldState: {
           ...next.worldState,
           visitedRooms: {
             ...next.worldState.visitedRooms,
-            [roomId]: true,
+            [destination.roomId]: true,
           },
         },
       };
@@ -245,9 +244,13 @@ export function TeleportationTerminalModal({
         "You feel a tingling in your belly a beat before the world warps around you, blurring together and then snapping back into focus an instant later to reveal someplace entirely different.\n",
       );
       const roomName = `${ROOM_NAME_TOKEN_START}${destinationRoom.name}${ROOM_NAME_TOKEN_END}`;
-      const roomTranscriptDesc = buildTranscriptRoomDescription(next, roomId, {
-        isFirstVisit: !wasVisitedBeforeTeleport,
-      });
+      const roomTranscriptDesc = buildTranscriptRoomDescription(
+        next,
+        destination.roomId,
+        {
+          isFirstVisit: !wasVisitedBeforeTeleport,
+        },
+      );
       next = appendLog(
         next,
         [roomName, roomTranscriptDesc].filter(Boolean).join("\n"),
@@ -344,7 +347,7 @@ export function TeleportationTerminalModal({
                           ].join(" ")}
                           disabled={!online}
                           onClick={() => {
-                            void teleportTo(dest);
+                            void teleportTo(ring, dest);
                           }}
                         >
                           <span className="tterm2-stepText">

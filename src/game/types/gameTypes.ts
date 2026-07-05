@@ -205,6 +205,17 @@ export type PlayerLogEntry = {
   title: string;
 };
 
+export type PlayerObjectiveStatus = "active" | "completed";
+
+export type PlayerObjective = {
+  activatedAtTurn: number;
+  completedAtTurn?: number;
+  id: string;
+  optional?: boolean;
+  status: PlayerObjectiveStatus;
+  title: string;
+};
+
 export type PlayerInventory = {
   badges: string[];
   general: string[];
@@ -216,6 +227,7 @@ export interface PlayerState {
   inventory: PlayerInventory;
   log: PlayerLogEntry[];
   memoriesTriggered: Record<PlayerMemoryId, boolean>;
+  objectives?: PlayerObjective[];
   prevRoomId?: string;
   recentDrinkItemIds: string[];
   recentMoves?: PlayerMoveEvent[];

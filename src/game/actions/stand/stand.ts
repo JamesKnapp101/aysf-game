@@ -4,7 +4,10 @@ import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
 import { tryStandItem } from "./tryStandItem";
 
-export function doStand(state: GameState, cmd: ParsedCommand): ActionResult {
+export async function doStand(
+  state: GameState,
+  cmd: ParsedCommand,
+): Promise<ActionResult> {
   if (cmd.type !== "action" || cmd.verb !== "stand") {
     return { state, message: "You can't do that." };
   }

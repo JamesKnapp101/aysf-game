@@ -23,6 +23,14 @@ function describeStairTwo(state: GameState): string {
   return "This is the stair landing for Level Two, where a set of emergency lights cast the stairwell in a dim glow. The stairs, flanked by a metal railing, also continue up.";
 }
 
+function openTeleportationTerminal({ state }: { state: GameState }) {
+  return {
+    state,
+    message: "You open the translocation terminal.",
+    overlay: { kind: "teleportation-terminal" as const },
+  };
+}
+
 export const STAIRWELL: WorldChunk = {
   items: [
     ...creatureItems,
@@ -343,6 +351,10 @@ export const stairwellItems: Item[] = [
     itemCategory: "scenery",
     itemWeight: 1,
     itemSize: 1,
+    isUseable: true,
+    overrides: {
+      use: openTeleportationTerminal,
+    },
     meta: {
       kind: "teleportation-terminal",
     },

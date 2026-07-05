@@ -20,6 +20,7 @@
 
 .game-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
     padding: 6px 6px 0;
     border-bottom: 1px solid rgb(var(--crt-color-rgb) / 0.16);
@@ -31,7 +32,9 @@
 }
 
 .game-tab {
-    flex: 1;
+    position: relative;
+    flex: 1 1 68px;
+    min-width: 0;
     padding: 6px 7px;
     background:
         linear-gradient(180deg,
@@ -43,8 +46,9 @@
     border-radius: 12px 12px 0 0;
     cursor: pointer;
     text-align: center;
+    overflow-wrap: anywhere;
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     box-shadow:
         inset 0 1px 0 rgb(255 255 255 / 0.015),
         inset 0 0 0 1px rgb(0 0 0 / 0.08);
@@ -52,6 +56,60 @@
         border-color 0.14s ease,
         background 0.14s ease,
         box-shadow 0.14s ease;
+}
+
+.game-tab-notified {
+    border-color: rgb(var(--crt-color-rgb) / 0.66);
+    background:
+        linear-gradient(180deg,
+            rgb(var(--crt-color-rgb) / 0.13),
+            rgb(0 0 0 / 0.32) 100%);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.025),
+        inset 0 0 0 1px rgb(var(--crt-color-rgb) / 0.15),
+        0 0 12px rgb(var(--crt-color-rgb) / 0.22);
+    animation: game-tab-notify-pulse 1.9s ease-in-out infinite;
+}
+
+.game-tab-notified::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid rgb(var(--crt-color-rgb) / 0.9);
+    border-radius: 999px;
+    background: var(--crt-color);
+    box-shadow:
+        0 0 7px rgb(var(--crt-color-rgb) / 0.82),
+        0 0 13px rgb(var(--crt-color-rgb) / 0.35),
+        inset 0 0 3px rgb(255 255 255 / 0.45);
+}
+
+@keyframes game-tab-notify-pulse {
+    0%,
+    100% {
+        border-color: rgb(var(--crt-color-rgb) / 0.42);
+        box-shadow:
+            inset 0 1px 0 rgb(255 255 255 / 0.018),
+            inset 0 0 0 1px rgb(var(--crt-color-rgb) / 0.09),
+            0 0 8px rgb(var(--crt-color-rgb) / 0.14);
+    }
+
+    50% {
+        border-color: rgb(var(--crt-color-rgb) / 0.86);
+        box-shadow:
+            inset 0 1px 0 rgb(255 255 255 / 0.03),
+            inset 0 0 0 1px rgb(var(--crt-color-rgb) / 0.19),
+            0 0 16px rgb(var(--crt-color-rgb) / 0.34);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .game-tab-notified {
+        animation: none;
+    }
 }
 
 .game-tab-active {
@@ -77,6 +135,7 @@
 }
 
 .game-tab-comet {
+    flex-basis: 82px;
     display: flex;
     align-items: center;
     justify-content: space-between;

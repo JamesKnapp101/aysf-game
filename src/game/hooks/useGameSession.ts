@@ -25,6 +25,7 @@ import {
   trackGameplayEvent,
   type GameplayEventPayload,
 } from "../services/gameplayEvents";
+import { reconcileObjectives } from "../rules/objectives";
 import { useUIEffectsStore, useUIOverlayStore } from "../store/store";
 import type { ActionRequest, ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
@@ -296,15 +297,19 @@ export function useGameSession({
   const openOverlay = useUIOverlayStore.getState().openOverlay;
 
   const replaceState = useCallback((next: GameState) => {
-    stateRef.current = next;
-    setGs(next);
+    const reconciled = reconcileObjectives(stateRef.current, next, {
+      fromRoomId: stateRef.current.player.roomId,
+      toRoomId: next.player.roomId,
+    });
+    stateRef.current = reconciled;
+    setGs(reconciled);
+    return reconciled;
   }, []);
 
   const updateState = useCallback(
     (updater: (prev: GameState) => GameState): GameState => {
       const next = updater(stateRef.current);
-      replaceState(next);
-      return next;
+      return replaceState(next);
     },
     [replaceState],
   );

@@ -1,4 +1,5 @@
 import { updateItemLocation } from "@game/rules/items";
+import { reconcileObjectives } from "@game/rules/objectives";
 import { addToInventory, inventoryHas } from "@game/rules/state";
 import {
   createPlayerHuskMeta,
@@ -101,10 +102,24 @@ function migrateLegacyPlayerHusks(state: GameState): GameState {
   };
 }
 
+const LEGACY_TELEPORT_PAD_LOCATIONS: Record<string, string> = {
+  GreenTPADHydroponicsOne: "UnderWebOne",
+  WhiteTPADGridC3: "DeepStorageGrid",
+};
+
+function migrateLegacyTeleportPadLocations(state: GameState): GameState {
+  return Object.entries(LEGACY_TELEPORT_PAD_LOCATIONS).reduce(
+    (next, [itemId, location]) => updateItemLocation(next, itemId, location),
+    state,
+  );
+}
+
 const SNAPSHOT_MIGRATIONS: SnapshotMigration[] = [
   normalizeInventoryItemLocations,
   preserveLegacyBadgeSwapProgress,
   migrateLegacyPlayerHusks,
+  migrateLegacyTeleportPadLocations,
+  (state) => reconcileObjectives(state, state),
 ];
 
 export function applySnapshotMigrations(state: GameState): GameState {

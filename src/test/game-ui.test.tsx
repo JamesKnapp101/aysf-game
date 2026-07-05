@@ -258,13 +258,16 @@ describe("UI panels", () => {
   it("loads destination chunks before terminal teleport arrival text", async () => {
     const user = userEvent.setup();
     const initialState = createInitialState(INITIAL_WORLD);
-    let state: GameState = {
-      ...initialState,
-      player: {
-        ...initialState.player,
-        roomId: "TPADTerminal",
+    let state: GameState = setInventory(
+      {
+        ...initialState,
+        player: {
+          ...initialState.player,
+          roomId: "TPADTerminal",
+        },
       },
-    };
+      ["bluebadge"],
+    );
     const setGameState: React.Dispatch<React.SetStateAction<GameState>> = (
       updater,
     ) => {

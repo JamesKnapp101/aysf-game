@@ -23,6 +23,10 @@ import {
 } from "@game/persistence/resumeStorage";
 import { applyPreserveRoomEntryEffects } from "@game/preserve/preserveEffects";
 import { updateItemLocation } from "@game/rules/items";
+import {
+  reconcileObjectives,
+  type ObjectiveCommandContext,
+} from "@game/rules/objectives";
 import { addToInventory, inventoryHasAll } from "@game/rules/state";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
@@ -210,16 +214,28 @@ export async function handleCommand(
   let message = "I don't understand that.";
   let consumesTurn = false;
   let forceRoomDescription = false;
+  let attemptedDestinationRoomId: string | undefined;
+  let attemptedMoveDirection: string | undefined;
 
   switch (cmd.type) {
     case "move": {
       consumesTurn = true;
+      attemptedMoveDirection = cmd.direction;
 
       const exit = room.exits.find((e) => e.direction === cmd.direction);
       if (!exit) {
         message = "You can't go that way.";
         break;
       }
+      if (exit.toRoomId) {
+        attemptedDestinationRoomId = exit.toRoomId;
+      } else if (exit.doorId) {
+        const doorDef = getDoorById(state, exit.doorId);
+        attemptedDestinationRoomId = doorDef
+          ? resolveDoorDestination(doorDef, room.id)
+          : undefined;
+      }
+
       let moveMessage = "";
 
       if (state.worldState.conditionalExits[state.player.roomId]) {
@@ -793,5 +809,27 @@ export async function handleCommand(
     );
   }
 
-  return nextState;
+  const objectiveContext: ObjectiveCommandContext = {
+    attemptedDestinationRoomId,
+    commandDirect:
+      cmd.type === "action" ? cmd.direct?.trim().toLowerCase() : undefined,
+    commandText:
+      cmd.type === "action" || cmd.type === "unknown"
+        ? cmd.raw?.trim().toLowerCase()
+        : cmd.type,
+    commandType: cmd.type,
+    commandVerb: cmd.type === "action" ? cmd.verb : undefined,
+    direction: attemptedMoveDirection,
+    fromRoomId: state.player.roomId,
+    message: [
+      finalLogText,
+      ...immediateLogEntries,
+      ...tickLogEntries,
+    ]
+      .filter((entry) => entry && entry.trim())
+      .join("\n\n"),
+    toRoomId: nextState.player.roomId,
+  };
+
+  return reconcileObjectives(state, nextState, objectiveContext);
 }

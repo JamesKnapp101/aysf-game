@@ -1,15 +1,18 @@
 import { anyIn, movePlayerToRoom } from "../../helpers/gameHelpers";
+import { prepareRoomForTravel } from "../../helpers/roomChunkTravel";
+import { updateItemLocation } from "../../rules/items";
 import { useUIEffectsStore } from "../../store/store";
+import type { ActionResult } from "../../types/actionsTypes";
 import { GameState } from "../../types/gameTypes";
 import { Item } from "../../types/itemTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
 
-export function tryStandItem(
+export async function tryStandItem(
   state: GameState,
   prep: string,
   item: Item,
   cmd?: ParsedCommand,
-): { state: GameState; message: string } {
+): Promise<ActionResult> {
   let next: GameState = state;
   if (prep === "on") {
     if (!item.isSurface) {
@@ -66,12 +69,30 @@ export function tryStandItem(
       }
 
       if (nextDisk?.location) {
+        const destination = await prepareRoomForTravel(next, nextDisk.location);
+        if (!destination.roomExists) {
+          return {
+            state,
+            message: "You stand on the disk, but nothing happens.",
+          };
+        }
+
+        next = destination.state;
+        if (destination.roomId !== nextDisk.location) {
+          next = updateItemLocation(next, nextDisk.id, destination.roomId);
+        }
+
         teleportMsg += `You stand on the disk and feel a tingle of energy at your scalp, which then travels down the length of your body before your vision warps. For just a second everything seems to turn inside out and then snaps back, only you are no longer standing where you used to be.`;
-        next = movePlayerToRoom(next, nextDisk.location);
+        next = movePlayerToRoom(next, destination.roomId);
         useUIEffectsStore.getState().triggerTeleportFlash();
 
         return { state: next, message: teleportMsg };
       }
+
+      return {
+        state,
+        message: "You stand on the disk, but nothing happens.",
+      };
     }
   }
 
