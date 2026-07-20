@@ -248,6 +248,20 @@ export type LevelTwoBombState = Countdown & {
   detonated: boolean;
 };
 
+export type AbominationPhase =
+  | "trapped"
+  | "collecting"
+  | "growing"
+  | "empowered";
+
+export type AbominationState = {
+  attachedLimbIds: string[];
+  containmentFieldOn: boolean;
+  growthTurnsRemaining: number;
+  phase: AbominationPhase;
+  storageDoorBroken: boolean;
+};
+
 export type ReactorLobeStatus =
   | "harmonic"
   | "undecided"
@@ -474,6 +488,7 @@ type RoomAirQuality =
 type RoomTemperature = number;
 
 export interface WorldState {
+  abomination: AbominationState;
   activeExperience?: ActiveExperience;
   aviarySpotlight: AviarySpotlightState;
   barBot: BarBotState;

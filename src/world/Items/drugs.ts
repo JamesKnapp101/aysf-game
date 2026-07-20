@@ -23,7 +23,10 @@ function loadSyringeCartridge({
       ...state,
       player: {
         ...state.player,
-        inventory: removeFromAllBuckets(state.player.inventory, insertedItem.id),
+        inventory: removeFromAllBuckets(
+          state.player.inventory,
+          insertedItem.id,
+        ),
       },
       itemState: {
         ...state.itemState,
@@ -167,7 +170,7 @@ export const drugItems: Item[] = [
     description:
       "A translucent cartridge filled with yellow serum, labeled ‘XANTOPHOL’.",
     initialDescription: "A small yellow-serum cartridge rests on a shelf.",
-    location: "Lab",
+    location: "seeded",
     vocab: ["yellow", "serum", "cartridge", "xantophol"],
     itemClass: "liquid",
     itemCategory: "fluid",

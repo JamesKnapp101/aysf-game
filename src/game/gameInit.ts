@@ -4,6 +4,7 @@ import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
 import { getFlashlightDefaults } from "@game/helpers/flashlightHelpers";
 import { bucketForItem, inventoryHas } from "@game/rules/state";
 import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
+import { createInitialAbominationState } from "src/world/Items/creatures/abomination";
 import {
   AQUARIUM_BREATHER_CORPSE_ITEM_ID,
   AQUARIUM_BREATHER_ITEM_ID,
@@ -241,6 +242,27 @@ export const createInitialState = (world: World): GameState => {
           direction: "west",
           blockMsg: `The Level Two stairwell door refuses to cycle. A warning panel beside it flashes: ACTIVE INVESTIGATION AREA - KEEP OUT.`,
           passMsg: `The damaged stairwell door grinds open far enough for you to squeeze through.`,
+        },
+        LevelTwoBurnedQuartersFour: {
+          roomId: "LevelTwoBurnedQuartersFour",
+          unlockTriggers: ["unobtainium"],
+          direction: "west",
+          blockMsg: `The ceiling has collapsed, choking off that entire side of the room.`,
+          passMsg: `[no pass condition]`,
+        },
+        LevelTwoBurnedBedFour: {
+          roomId: "LevelTwoBurnedBedFour",
+          unlockTriggers: ["unobtainium"],
+          direction: "east",
+          blockMsg: `Beyond the doorway the ceiling has collapsed, completely cutting you off.`,
+          passMsg: `[no pass condition]`,
+        },
+        LevelTwoBurnedQuartersTwo: {
+          roomId: "LevelTwoBurnedQuartersTwo",
+          unlockTriggers: ["unobtainium"],
+          direction: "east",
+          blockMsg: `The door has buckled in its frame, blocking your way.`,
+          passMsg: `[no pass condition]`,
         },
       },
       scriptedEventsTripped: {
@@ -525,6 +547,7 @@ export const createInitialState = (world: World): GameState => {
       },
       barJukebox: {},
       movieTheater: createInitialMovieTheaterState(),
+      abomination: createInitialAbominationState(),
       levelTwoBomb: createInitialLevelTwoBombState(),
       reactorConsensus: createInitialReactorConsensusState(),
       bullEncounter: createInitialBullEncounterState(),

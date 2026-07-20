@@ -153,7 +153,7 @@ export const medicalWingRooms: Room[] = [
   {
     id: "Lab",
     name: "Lab",
-    description: `This is some kind of laboritory. There are rows of workstations here, scattered with test equipment, chemicals, test tubes, flasks, and the like. The computers are currently all dark. Taking center stage at the moment is a large glass cylinder filled with fluid which, strangely, seems to be lit inside with a blacklight. Inside the jar is a large chunk or organic tissue. Leaning up against the far wall from a sitting position is the body of an older man in a lab coat...there seems to be some sort of strange, electronic head-dress draped over his head, slightly askew. Positioned in one corner is a slightly raised blue disk, four feet in diameter.`,
+    description: `This is some kind of laboratory. There are rows of workstations here, scattered with test equipment, chemicals, test tubes, flasks, and the like. The computers are currently all dark. Taking center stage at the moment is a large glass cylinder filled with fluid which, strangely, seems to be lit inside with a blacklight. Inside the jar is a large chunk or organic tissue. Leaning up against the far wall from a sitting position is the body of an older man in a lab coat...there seems to be some sort of strange, electronic head-dress draped over his head, slightly askew. Positioned in one corner is a slightly raised blue disk, four feet in diameter.`,
     exits: [{ direction: "north", doorId: "LabDoors" }],
   },
 ];

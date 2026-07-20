@@ -1,4 +1,5 @@
 import { getCameraFeedDescription } from "@game/components/cameraGunViewerHelpers";
+import { buildRoomItemsDescription } from "@game/helpers/descriptionHelpers";
 import { getItemsInRoom } from "@game/selectors/roomSelectors";
 import { describe, expect, it } from "vitest";
 import {
@@ -23,6 +24,22 @@ describe("cat interactions", () => {
     expect(getLastLogEntry(state)).toMatch(/cat pads into view/i);
     expect(getItemsInRoom(state, "LevelThreeCorridorSeven").map((item) => item.id))
       .not.toContain("IggyCollar");
+  });
+
+  it("uses custom NPC prose when listing the cat in a room", async () => {
+    let state = createTestState({ roomId: "LevelThreeCorridorSeven" });
+
+    state = await runCommand(state, "call cat");
+
+    const description = buildRoomItemsDescription(
+      state,
+      "LevelThreeCorridorSeven",
+    );
+
+    expect(description).toContain(
+      "A black and white cat watches from a cautious distance",
+    );
+    expect(description).not.toContain("There is black and white cat here.");
   });
 
   it("introduces the cat before listing it after the first corridor encounter", async () => {

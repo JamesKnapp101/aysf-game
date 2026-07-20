@@ -27,6 +27,15 @@ export function getItemSceneryDescription(
   return item.sceneryDescription ?? "";
 }
 
+export function getItemNpcDescription(
+  state: GameState,
+  item: Item,
+  ctx: DescriptionContext,
+): string {
+  if (item.npcDescribe) return item.npcDescribe(state, item, ctx);
+  return item.npcDescription ?? "";
+}
+
 export function getItemInitialDescription(
   state: GameState,
   item: Item,
@@ -34,6 +43,65 @@ export function getItemInitialDescription(
 ): string {
   if (item.describeInitial) return item.describeInitial(state, item, ctx);
   return item.initialDescription ?? "";
+}
+
+export function buildLooseRoomItemsDescription(
+  state: GameState,
+  nonSceneryItems: Item[],
+  ctx: Extract<DescriptionContext, { kind: "npc" }>,
+): string {
+  const parts: string[] = [];
+
+  // Fresh initial descriptions (non-scenery)
+  const seen = state.itemState.pickedUpByPlayer ?? {};
+  const freshItems = nonSceneryItems.filter(
+    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id],
+  );
+
+  if (freshItems.length > 0) {
+    parts.push(
+      freshItems.map((it) => it.initialDescription!.trim()).join("\n\n"),
+    );
+  }
+
+  // Basic listing, with richer prose for animate NPCs when provided.
+  const listItems = nonSceneryItems.filter(
+    (it) => !freshItems.some((f) => f.id === it.id),
+  );
+  const describedNpcIds = new Set<string>();
+  const npcDescriptions: string[] = [];
+
+  for (const item of listItems) {
+    if (item.itemCategory !== "animate") continue;
+
+    const description = getItemNpcDescription(state, item, ctx).trim();
+    if (!description) continue;
+
+    describedNpcIds.add(item.id);
+    npcDescriptions.push(description);
+  }
+
+  if (npcDescriptions.length > 0) {
+    parts.push(npcDescriptions.join("\n\n"));
+  }
+
+  const genericListItems = listItems.filter(
+    (item) => !describedNpcIds.has(item.id),
+  );
+
+  if (genericListItems.length > 0) {
+    const names = genericListItems.map(
+      (it) => it.named?.(state, it) ?? it.name,
+    );
+
+    if (names.length === 1) {
+      parts.push(`There is ${names[0]} here.`);
+    } else {
+      parts.push(`There are ${formatNameList(names)} here.`);
+    }
+  }
+
+  return parts.join("\n\n");
 }
 
 export function buildRoomItemsDescription(
@@ -53,31 +121,18 @@ export function buildRoomItemsDescription(
 
   const parts: string[] = [];
 
-  // Fresh initial descriptions (non-scenery)
-  const seen = state.itemState.pickedUpByPlayer ?? {};
-  const freshItems = nonSceneryItems.filter(
-    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id],
+  const looseItemText = buildLooseRoomItemsDescription(
+    state,
+    nonSceneryItems,
+    {
+      kind: "npc",
+      mode: "log",
+      roomId,
+    },
   );
 
-  if (freshItems.length > 0) {
-    parts.push(
-      freshItems.map((it) => it.initialDescription!.trim()).join("\n\n"),
-    );
-  }
-
-  // Basic listing
-  const listItems = nonSceneryItems.filter(
-    (it) => !freshItems.some((f) => f.id === it.id),
-  );
-
-  if (listItems.length > 0) {
-    const names = listItems.map((it) => it.named?.(state, it) ?? it.name);
-
-    if (names.length === 1) {
-      parts.push(`There is ${names[0]} here.`);
-    } else {
-      parts.push(`There are ${formatNameList(names)} here.`);
-    }
+  if (looseItemText) {
+    parts.push(looseItemText);
   }
 
   // Things in other things

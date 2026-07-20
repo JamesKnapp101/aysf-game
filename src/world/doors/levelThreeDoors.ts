@@ -504,20 +504,4 @@ export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
     initiallyOpen: true,
     initiallyLocked: false,
   },
-  {
-    id: "MedStorageDoor",
-    name: "a sturdy-looking wooden door",
-    descriptionFromA:
-      "To the south is a sturdy wooden door, with a plastic plaque on it that says 'MEDICAL SUPPLY STORAGE' in block letters.",
-    descriptionFromB: "To the north is a door leading back to Medical.",
-    kind: "keyed",
-    vocab: ["door", "wooden door", "sturdy door", "storage door"],
-    connects: {
-      roomAId: "MedicalCorridorThree",
-      roomBId: "MedicalStorage",
-    },
-    directions: { fromA: "south", fromB: "north" },
-    initiallyOpen: false,
-    initiallyLocked: true,
-  },
 ];

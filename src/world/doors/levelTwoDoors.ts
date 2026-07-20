@@ -1,5 +1,19 @@
 import type { DoorDefinition } from "../../game/types/doorTypes";
 
+const describeMedicalStorageDoorFromCorridor: NonNullable<
+  DoorDefinition["describeFromA"]
+> = (state) =>
+  state.worldState.abomination.storageDoorBroken
+    ? "To the south, the medical storage door has been torn off its hinges. Splintered wood and twisted hardware frame the open passage."
+    : "To the south is a sturdy wooden door, with a plastic plaque on it that says 'MEDICAL SUPPLY STORAGE' in block letters.";
+
+const describeMedicalStorageDoorFromStorage: NonNullable<
+  DoorDefinition["describeFromB"]
+> = (state) =>
+  state.worldState.abomination.storageDoorBroken
+    ? "The ruined remains of the door lie scattered beneath the permanently open passage north."
+    : "To the north is a door leading back to Medical.";
+
 export const levelTwoDoors: DoorDefinition[] = [
   {
     id: "DOOR2AE",
@@ -33,5 +47,28 @@ export const levelTwoDoors: DoorDefinition[] = [
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
     initiallyLocked: false,
+  },
+  {
+    id: "MedStorageDoor",
+    name: "sturdy wooden door",
+    describeFromA: describeMedicalStorageDoorFromCorridor,
+    describeFromB: describeMedicalStorageDoorFromStorage,
+    beforeClose: (state) =>
+      state.worldState.abomination.storageDoorBroken
+        ? {
+            state,
+            message:
+              "There is no longer enough door left to close; the passage stays open.",
+          }
+        : undefined,
+    kind: "keyed",
+    vocab: ["door", "wooden door", "sturdy door", "storage door"],
+    connects: {
+      roomAId: "MedicalCorridorThree",
+      roomBId: "MedicalStorage",
+    },
+    directions: { fromA: "south", fromB: "north" },
+    initiallyOpen: false,
+    initiallyLocked: true,
   },
 ];

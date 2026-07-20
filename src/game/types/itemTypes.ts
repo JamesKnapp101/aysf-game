@@ -93,6 +93,12 @@ export interface Item {
   meta?: Record<string, any>;
   name: string;
   named?: (state: GameState, item?: Item) => string;
+  npcDescribe?: (
+    state: GameState,
+    item: Item,
+    ctx: DescriptionContext,
+  ) => string;
+  npcDescription?: string;
   overrides?: ItemOverrides;
   providesLight?: boolean;
   readableText?: string | ((state: GameState, item: Item) => string);
@@ -117,6 +123,7 @@ export type LivingMeta = {
 export type DescriptionContext =
   | { kind: "roomBase"; mode: "log" | "panel"; roomId: string }
   | { kind: "scenery"; roomId: string }
+  | { kind: "npc"; mode: "log" | "panel"; roomId: string }
   | { kind: "examine"; roomId: string }
   | { kind: "lookThrough"; roomId: string }
   | { doorId: string; kind: "door"; roomId: string; side?: "a" | "b" };

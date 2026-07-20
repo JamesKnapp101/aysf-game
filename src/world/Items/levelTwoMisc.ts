@@ -1,11 +1,158 @@
-import {
-  createPlayerHuskMeta,
-  getPlayerHuskNumberVocab,
-  getPlayerHuskPlateDescription,
-} from "@game/helpers/playerHuskHelpers";
 import type { Item } from "../../game/types/itemTypes";
+import { pushContainmentFieldButton } from "./creatures/abomination";
+
+export const levelTwoBodyParts: Item[] = [
+  {
+    id: "manLegOne",
+    name: "damaged male leg",
+    location: "LevelTwoBurnedQuartersThree",
+    vocab: ["male", "damaged", "leg", "male leg"],
+    description:
+      "The foot, calf, knee, and most of the thigh are all remarkably intact but its a ragged mess where it was blown off at the hip.",
+    initialDescription:
+      "Laying amidst the debris is the bare, bloodied leg of a man.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 50,
+    itemSize: 6,
+    isContagious: true,
+    meta: { abominationLimb: true },
+  },
+  {
+    id: "womanLegOne",
+    name: "damaged female leg",
+    location: "LevelTwoBurnedQuartersThree",
+    vocab: ["female", "leg", "damaged", "female leg"],
+    description:
+      "It's really more of a foot, calf, and knee than it is a total leg.",
+    initialDescription:
+      "A bloodied woman's leg, torn loose above the knee lay on the floor.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 50,
+    itemSize: 6,
+    isContagious: true,
+    meta: { abominationLimb: true },
+  },
+  {
+    id: "womanArmOne",
+    name: "mutilated female arm",
+    location: "LevelTwoBurnedQuartersThree",
+    vocab: ["female", "arm", "mutilated", "female arm"],
+    description: "It got sheared off at the shoulder.",
+    initialDescription:
+      "A pale woman's arm, ripped off at the shoulder sits propped in one corner.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 50,
+    itemSize: 6,
+    isContagious: true,
+    meta: { abominationLimb: true },
+  },
+  {
+    id: "manLegTwo",
+    name: "mangled male leg",
+    location: "LevelTwoBurnedQuartersFour",
+    vocab: ["male", "mangled", "leg", "male leg"],
+    description:
+      "The leg has most of its parts, but all of them are severely damaged.",
+    initialDescription:
+      "On the floor just inside the exploded wall is a man's mangled leg with a ragged stump.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 50,
+    itemSize: 6,
+    isContagious: true,
+    meta: { abominationLimb: true },
+  },
+  {
+    id: "womanArmTwo",
+    name: "broken female arm",
+    location: "LevelTwoBurnedBedThree",
+    vocab: ["female", "broken", "arm", "female arm"],
+    description:
+      "The multiple breaks in the amputated arm give is a zig-zag appearance.",
+    initialDescription:
+      "A woman's arm lay on the carpet, visibly broken in several places.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 50,
+    itemSize: 6,
+    isContagious: true,
+    meta: { abominationLimb: true },
+  },
+  {
+    id: "manArmTwo",
+    name: "tattooed male arm",
+    location: "LevelTwoBurnedQuartersTwo",
+    vocab: ["male", "tattooed", "arm", "male arm"],
+    description:
+      "A tattoo of some sort is cut short by ragged, burned flesh, but you can't tell what it was.",
+    initialDescription:
+      "A man's arm lay in the middle of the floor, displaying part of a colorful tattoo.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 50,
+    itemSize: 6,
+    isContagious: true,
+    meta: { abominationLimb: true },
+  },
+];
+
+export const labItems: Item[] = [
+  {
+    id: "containmentField",
+    name: "containment field",
+    location: "Lab",
+    vocab: ["containment", "field", "rig", "rigging", "metal"],
+    description:
+      "The circular platform is ringed with powerful emitters, all aimed at a singular spot above its surface.",
+    sceneryDescription:
+      "A large, circular metal platform occupies most of one corner of the lab, a globe of crackling energy hovering just above it.",
+    describeScenery(state) {
+      return state.worldState.abomination.containmentFieldOn
+        ? "A large, circular metal platform occupies one corner of the lab, its surrounding emitters holding a globe of crackling energy just above the surface."
+        : "A large, circular metal platform occupies one corner of the lab. Its surrounding emitters are dark and the air above it is empty.";
+    },
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 50,
+    itemSize: 6,
+  },
+  {
+    id: "containmentFieldButton",
+    name: "containment field button",
+    location: "Lab",
+    vocab: ["containment", "field", "button", "red", "panel"],
+    description:
+      "It's a flat, circular red button with the word 'FIELD' on it.",
+    describe(state) {
+      return state.worldState.abomination.containmentFieldOn
+        ? "It's a flat, circular red button labeled 'FIELD'. It glows steadily."
+        : "It's a flat, circular red button labeled 'FIELD'. It is currently dark.";
+    },
+    sceneryDescription:
+      "A thick cable trails from the metal platform, across the room to a panel on the wall that has a single, flat, circular red button labeled 'FIELD'.",
+    describeScenery(state) {
+      const light = state.worldState.abomination.containmentFieldOn
+        ? "glowing red"
+        : "dark";
+      return `A thick cable trails from the platform to a wall panel with a single ${light} button labeled 'FIELD'.`;
+    },
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 50,
+    itemSize: 6,
+    isPushable: true,
+    overrides: {
+      push: pushContainmentFieldButton,
+    },
+  },
+];
 
 export const levelTwoItems: Item[] = [
+  ...levelTwoBodyParts,
+  ...labItems,
   {
     id: "iWantMyBurnedTV",
     name: "burned television set",
@@ -221,7 +368,7 @@ export const levelTwoItems: Item[] = [
   {
     id: "levelTwoSafe",
     name: "fireproof safe",
-    location: "LevelTwoBurnedBedThree",
+    location: "LevelTwoBurnedBedFour",
     vocab: ["safe", "fireproof"],
     initialDescription:
       "Lying on its side, as if knocked over by some brutal shockwave, is a heavy-looking fireproof safe.",
@@ -337,234 +484,6 @@ export const levelTwoItems: Item[] = [
     isRadioactive: false,
   },
   {
-    id: "edsNecklace",
-    name: "thin necklace",
-    location: "seeded",
-    vocab: ["thin", "necklace"],
-    description:
-      "A delicate-looking silver necklace that clearly isn’t just silver. The chain survived the flames without even warping, ending in a pendant shaped like a star cradling two intertwined hearts.",
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: true,
-    clothingSlot: "neck",
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    overrides: {
-      examine:
-        "The metal catches the light with an almost stubborn brightness, star and twin hearts etched in crisp detail. Whatever alloy this is, it was built to outlive the people wearing it.",
-    },
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "ashPhrase",
-    name: "phrase traced in ash",
-    location: "LevelTwoBurnedQuartersOne",
-    vocab: ["phrase", "words", "tracing"],
-    description:
-      "Someone knelt here in the ash and carefully traced a short message with their fingertip, right where the footprints stop.",
-    sceneryDescription:
-      "The ash has been disturbed in deliberate strokes, forming words that sit ghostlike on the floor. The nearby footprints come to a halt here, as if whoever wrote the message paused for a long time before moving on.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: true,
-    readableText:
-      "Looking closer, you see the footsteps from the south stop here and it looks like someone kneeled down to trace this message in the ash. What does it mean?",
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "yourFootprints",
-    name: "footprints",
-    location: "LevelTwoBurnedQuartersOne",
-    vocab: ["foot", "prints", "footprints"],
-    description:
-      "A set of footprints, roughly your size, cross the ash from the southern doorway to the center of the room, pause at the traced phrase, then continue west.",
-    sceneryDescription:
-      "The prints are deep where the ash is thick and almost invisible where fire swept cleaner. They pace straight from the southern door to the phrase on the floor, then veer off toward the western exit with grim efficiency.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "yourFootprintsToo",
-    name: "footprints (bathroom)",
-    location: "LevelTwoBurnedBathOne",
-    vocab: ["foot", "prints", "footprints"],
-    description:
-      "A single track of footprints leads out of the room to the north. There’s no matching set coming in.",
-    sceneryDescription:
-      "The footprints start near the center of the bathroom and head straight north, fading as the ash thins. There’s no sign of anyone entering the room, just someone leaving in a hurry.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "emptyRoomWashlet",
-    name: "washlet",
-    location: "LevelTwoBurnedBathOne",
-    vocab: ["toilet", "washlet", "shitter", "can", "head"],
-    description:
-      "A standard washlet, ceramic and stubbornly mundane even after the fire. A fine layer of ash softens all its edges.",
-    sceneryDescription:
-      "The bowl and tank are filmed with gray, as if someone dusted the whole thing in fireplace residue. It looks functional, but you probably have bigger problems than indoor plumbing right now.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 40,
-    itemSize: 4,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "emptyRoomSink",
-    name: "sink",
-    location: "LevelTwoBurnedBathOne",
-    vocab: ["sink"],
-    description:
-      "A white porcelain sink, its surface dulled by a thin, even coat of ash.",
-    sceneryDescription:
-      "The porcelain has gone from clean clinical white to a muted, chalky gray. Ash has gathered along the drain and around the faucet handles in smudged crescents.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 30,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "emptyRoomShower",
-    name: "shower",
-    location: "LevelTwoBurnedBathOne",
-    vocab: ["shower"],
-    description:
-      "A bare shower stall with no curtain, just tiled walls and a spray head dusted in gray.",
-    sceneryDescription:
-      "The stall feels strangely exposed—no curtain, no glass, nowhere to hide from the room behind you. A thin film of ash coats the floor and clings in streaks where water once ran.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 60,
-    itemSize: 4,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "emptyRoomMirror",
-    name: "mirror",
-    location: "LevelTwoBurnedBathOne",
-    vocab: ["mirror"],
-    description:
-      "A wall-mounted mirror with its surface fogged by ash and soot, turning any reflection into a haunted blur.",
-    sceneryDescription:
-      "The mirror holds a dim, smeared version of the room, as if reality itself is trying not to look too closely. Someone’s wiped it at least once, leaving streaks through the gray that only made things worse.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 10,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "seedTwo",
-    name: "burned spider-like shell",
-    location: "LevelTwoBurnedBathOne",
-    vocab: [
-      "spider",
-      "shell",
-      "spider-like",
-      "husk",
-      "burned",
-      ...getPlayerHuskNumberVocab(7),
-    ],
-    initialDescription:
-      "There seems to be some kind of small burned husk or something just to the side of the toilet.",
-    description:
-      `It’s a small metallic shell shaped vaguely like a spider or beetle, all segmented limbs and a rounded abdomen. The back has split open, exposing an olive-sized cavity smeared with greasy, burned residue. ${getPlayerHuskPlateDescription(7)}`,
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    meta: {
-      playerHusk: createPlayerHuskMeta(7),
-    },
-    overrides: {
-      smell:
-        "It gives off a faint musty scent under the overwhelming burn-smell, like old machine oil and overheated wiring.",
-      taste:
-        "You dab a fingertip in the greasy soot and taste it because of course you do. It’s salty, bitter, and aggressively wrong—like licking the inside of a burned-out engine.",
-    },
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
     id: "roomAsh",
     name: "ash and soot",
     location: "LevelTwoBurnedQuartersFour",
@@ -588,190 +507,8 @@ export const levelTwoItems: Item[] = [
     isRadioactive: false,
   },
 
-  // SECONDARY CORRIDOR / ARMORY / CONFERENCE
+  // SECONDARY CORRIDOR / CONFERENCE
 
-  {
-    id: "whatIsThatFlashing",
-    name: "flashing red light",
-    location: "LevelTwoSecondaryCorridorTwo",
-    vocab: ["flashing", "red", "light"],
-    description:
-      "Far up the corridor, a red light pulses on and off, painting the haze in nervous beats of color.",
-    sceneryDescription:
-      "The source is too far away to make out, but the effect is unmistakable: a stuttering blood-red blink that pushes through the smoke and ash, insisting that something up ahead is still very much alive and unhappy.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: true,
-    providesLight: true,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "armorySign",
-    name: "metal sign",
-    location: "ARMORY",
-    vocab: ["metal", "sign"],
-    description: "A heavy metal warning sign bolted to the wall.",
-    sceneryDescription:
-      "The sign is scorched around the edges but the stenciled lettering is still sharp. Someone wanted there to be no ambiguity about what happens if you don’t follow the rules in here.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 5,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: true,
-    readableText:
-      "WARNING\nUNAUTHORIZED ACCESS PROHIBITED\nANOXIFLOURINE HAZARD",
-    isContainer: false,
-    doses: 0,
-    overrides: {
-      examine:
-        "The sign reads:^  WARNING^  UNAUTHORIZED ACCESS PROHIBITED^  ANOXIFLOURINE HAZARD.",
-    },
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "cages",
-    name: "metal cages",
-    location: "ARMORY",
-    vocab: ["metal", "wire", "cage", "cages"],
-    description:
-      "A row of metal security cages line the wall, their wire doors hanging open on squealing hinges.",
-    sceneryDescription:
-      "The cages look like they were meant to hold serious hardware—reinforced frames, lock housings, and bolted plates for extra security. Now all the doors hang open, swinging slightly as if they haven’t quite decided whether to close again.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 200,
-    itemSize: 10,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    capacity: 50,
-    doses: 0,
-    overrides: {
-      get: "You decide against messing with the cages. If there’s a security system still awake in here, this is exactly how you’d trip it.",
-    },
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "amberGas",
-    name: "faint amber gas",
-    location: "ARMORY",
-    vocab: ["faint", "amber", "gas", "anoxiflourine"],
-    initialDescription:
-      "A faint amber gas lingers in the air throughout the room.",
-    description:
-      "A thin amber haze hangs in the air, so faint it’s almost easy to pretend it’s just the lighting.",
-    sceneryDescription:
-      "The gas gives everything a soft golden tint, turning hard metal edges into blurred silhouettes. It smells like nothing at all, which is exactly the problem.",
-    itemClass: "gas",
-    itemCategory: "scenery",
-    itemWeight: 0,
-    itemSize: 0,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    overrides: {
-      smell:
-        "You take the tiniest experimental breath. It’s utterly odorless, which is usually a bad sign when the word ‘hazard’ is involved.",
-    },
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: true,
-    isRadioactive: false,
-  },
-  {
-    id: "gunRack",
-    name: "gun rack",
-    location: "ARMORY",
-    vocab: ["rack", "racks", "gun"],
-    description:
-      "An empty gun rack stands bolted to the wall, brackets and slots waiting for weapons that have already left the building.",
-    sceneryDescription:
-      "Scratches on the metal and faint outlines in the dust show where rifles and carbines used to rest. Whatever happened here, the weapons got claimed in a hurry.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 80,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    overrides: {
-      get: "You rest your hand on the rack, then think better of trying to reorganize the armory. If there’s any security still running, this is the kind of thing it might notice.",
-    },
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "ammoRack",
-    name: "ammo rack",
-    location: "ARMORY",
-    vocab: ["rack", "racks", "ammo", "ammunition"],
-    description:
-      "A metal ammunition rack with slotted shelves for magazines and boxes, most of them empty.",
-    sceneryDescription:
-      "The ammo rack is mostly bare; only a few dust shadows and scuffs remain where boxes and magazines once sat. One shelf still shows the faint outline of a clip that almost—but not quite—made it out the door.",
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 60,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
-  {
-    id: "clip",
-    name: "gauss clip",
-    location: "ARMORY",
-    vocab: ["clip", "bullets", "magazine", "gauss"],
-    initialDescription:
-      "One magazine of ammunition seems to have been left behind, half in and half out of an ammunition rack.",
-    description:
-      "A lightweight magazine designed for a gauss pistol or something similar. You can’t see how many rounds are left, but it feels satisfyingly heavy.",
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 2,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    overrides: {
-      take: "You slide the clip free from the rack. Somewhere nearby, a system you can’t see notes the change and quietly updates its threat assessment.",
-    },
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-  },
   {
     id: "levelTwoConferenceRoomTable",
     name: "conference table",
@@ -828,32 +565,6 @@ export const levelTwoItems: Item[] = [
     providesLight: false,
     isContagious: false,
     isRadioactive: false,
-  },
-  {
-    id: "medicalKey",
-    name: "small metal key",
-    location: "LevelTwoConferenceRoom",
-    vocab: ["small", "metal", "key"],
-    initialDescription:
-      "Resting in one of the woman’s half-open hands is a small metal key.",
-    description:
-      "A small, flat metal key, unmarked but clearly important enough for someone to die clutching it.",
-    itemClass: "solid",
-    itemCategory: "collectable",
-    itemWeight: 1,
-    itemSize: 1,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    doses: 0,
-    isSwitchable: false,
-    isOn: false,
-    providesLight: false,
-    isContagious: false,
-    isRadioactive: false,
-    meta: {
-      kind: "key",
-    },
   },
   {
     id: "levelTwoConferenceRoomLCD",

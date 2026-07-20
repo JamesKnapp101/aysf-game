@@ -25,6 +25,14 @@ function describeGelCameraOnCollar(state: GameState): string {
   return ` A small blob of sticky ${color} gel clings to the collar near the pendant.`;
 }
 
+function describeCatPresence(state: GameState): string {
+  if (state.worldState.catState.isWearingCollar) {
+    return "A black and white cat watches from a cautious distance, the onyx pendant on his collar catching the light.";
+  }
+
+  return "A black and white cat watches from a cautious distance, tail giving slow, suspicious flicks.";
+}
+
 export const catItems: Item[] = [
   {
     id: "IggyCollar",
@@ -91,6 +99,7 @@ export const catItems: Item[] = [
         return `It's a smallish male black and white short-haired cat, with a nick on his right ear.`;
       }
     },
+    npcDescribe: (state) => describeCatPresence(state),
     location: "seeded",
     vocab: ["cat", "kitten", "kitty", "iggy"],
     itemClass: "solid",

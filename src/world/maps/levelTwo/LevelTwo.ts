@@ -1,10 +1,11 @@
 import { medicalWingRooms } from "src/world/maps/levelTwo/MedicalWing";
 import type { WorldChunk } from "../../../game/types/gameTypes";
 import { levelTwoDoors } from "../../doors/levelTwoDoors";
+import { abominationItems } from "../../Items/creatures/abomination";
 import { levelTwoItems } from "../../Items/levelTwoMisc";
 
 export const LEVEL_TWO: WorldChunk = {
-  items: [...levelTwoItems],
+  items: [...levelTwoItems, ...abominationItems],
   doors: [...levelTwoDoors],
   teleportPads: [],
   rooms: [
@@ -118,18 +119,18 @@ export const LEVEL_TWO: WorldChunk = {
 
     {
       id: "LevelTwoBurnedQuartersFour",
-      name: "Living Quarters Four West",
+      name: "Fick Residence: Living Room",
       description:
         "This room has been damaged extensively by the fire; little has been left behind except the gutted remains of what looks to have been a television set which rests face down in the middle of the floor, and a few burnt sticks of what must have once been a sofa. The doorway to the south is completely blocked by a ceiling collapse in the room beyond. There is a doorway to the west leading into the darkness.",
       exits: [
         { direction: "west", toRoomId: "LevelTwoBurnedBedFour" },
         { direction: "east", toRoomId: "LevelTwoCorridorFour" },
-        // south room caved in
+        { direction: "south", toRoomId: "LevelTwoBurnedQuartersThree" },
       ],
     },
     {
       id: "LevelTwoBurnedBedFour",
-      name: "Four West Bedroom",
+      name: "Fick Residence: Bedroom",
       description:
         "This was once a bedroom, but it's been thoroughly burned. As you cast your flashlight beam around the room, all you can see are charred remnants of the furnishings: a blackened portion of an armoire, a shattered mirror, and a king-sized bed which has been burned down to its frame. The southern wall has actually burned through, providing a dark opening into the room beyond. A doorway leads back to the east.",
       exits: [
@@ -139,10 +140,11 @@ export const LEVEL_TWO: WorldChunk = {
     },
     {
       id: "LevelTwoBurnedQuartersThree",
-      name: "Gutted Quarters",
+      name: "Empty Residence: Living Area",
       description:
         "This looks like it was the main living area of one of the housing units, but there is literally nothing left in it; the entire room has been fire gutted. There is a blackened blob near one wall which might have been the television or entertainment center, but the rest, including the furniture, has been burned to ash. Most of the wall to the east has been burned away, with only a portion of the doorway frame still separating the main living area from the bedroom.",
       exits: [
+        { direction: "north", toRoomId: "LevelTwoBurnedQuartersFour" },
         { direction: "east", toRoomId: "LevelTwoCorridorThree" },
         { direction: "west", toRoomId: "LevelTwoBurnedBedThree" },
         { direction: "south", toRoomId: "LevelTwoBurnedQuartersTwo" },
@@ -150,7 +152,7 @@ export const LEVEL_TWO: WorldChunk = {
     },
     {
       id: "LevelTwoBurnedBedThree",
-      name: "Gutted Bedroom",
+      name: "Empty Residence: Bedroom",
       description:
         "Like the adjoining living area, this bedroom has been completely gutted by the fire. The center of the room is dominated by the twisted remains of a bedframe, and the blackened, bedspring skeleton that has dropped beneath it.",
       exits: [
@@ -160,12 +162,13 @@ export const LEVEL_TWO: WorldChunk = {
     },
     {
       id: "LevelTwoBurnedQuartersTwo",
-      name: "Living Quarters Two West",
+      name: "Wimbly Residence: Den",
       description:
         "This room, like the others, has seen extreme fire damage, but the fire seems to have begun burning itself out at this point and at least structurally this room is mostly intact. The wall separating the main living area from the bedroom has been burned away resulting in one large area, but the other walls and ceiling look sound. The sofa and loveseat are even still in one piece, though they are thoroughly covered with soot and smoke stains. There is a television with a shattered screen lying on one side next to the burned remains of a wooden TV stand.",
       exits: [
         { direction: "north", toRoomId: "LevelTwoBurnedQuartersThree" },
-        // east door jammed, west collapsed
+        { direction: "east", toRoomId: "LevelTwoCorridorTwo" },
+        // Western exit collapsed
       ],
     },
     {

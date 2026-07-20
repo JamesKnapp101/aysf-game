@@ -1,4 +1,5 @@
 import {
+  buildLooseRoomItemsDescription,
   buildRoomItemsDescription,
   getItemSceneryDescription,
 } from "@game/helpers/descriptionHelpers";
@@ -197,30 +198,18 @@ export function buildRoomDescription(
   if (opts.omitItems) {
     return parts.join("\n\n");
   }
-  const seen = state.itemState.pickedUpByPlayer ?? {};
-  const freshItems = nonSceneryItems.filter(
-    (it) => Boolean(it.initialDescription?.trim()) && !seen[it.id],
+  const looseItemText = buildLooseRoomItemsDescription(
+    state,
+    nonSceneryItems,
+    {
+      kind: "npc",
+      mode,
+      roomId,
+    },
   );
 
-  if (freshItems.length > 0) {
-    const initialText = freshItems
-      .map((it) => it.initialDescription!.trim())
-      .join("\n\n");
-    parts.push(initialText);
-  }
-
-  const listItems = nonSceneryItems.filter(
-    (it) => !freshItems.some((f) => f.id === it.id),
-  );
-
-  if (listItems.length > 0) {
-    const names = listItems.map((it) => it.named?.(state, it) ?? it.name);
-
-    if (names.length === 1) {
-      parts.push(`There is ${names[0]} here.`);
-    } else {
-      parts.push(`There are ${formatNameList(names)} here.`);
-    }
+  if (looseItemText) {
+    parts.push(looseItemText);
   }
 
   // Things in other things
