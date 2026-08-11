@@ -220,7 +220,7 @@ export const levelSixItems: Item[] = [
       "The suit is a single bulky garment with integrated gloves, boots, and a clear helmet folded into the collar. A compact oxygen tank is built into the back, with a wrist gauge marked from 0 to 100.",
     initialDescription:
       "A complete space suit lies folded here, its clear helmet tucked against the collar.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: ["space suit", "spacesuit", "suit", "helmet", "oxygen tank", "tank"],
     itemClass: "solid",
     itemCategory: "collectable",
@@ -239,7 +239,7 @@ export const levelSixItems: Item[] = [
       "The Flex-Plug is a wide black adhesive strip rolled around a peel-away backing. The package copy promises instant vacuum-rated hull repair, which feels like a very specific thing to be carrying around.",
     initialDescription:
       "A black adhesive strip of Flex-Plug is coiled here in its backing.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: [
       "flex-plug",
       "flex plug",
@@ -544,7 +544,7 @@ export const levelSixItems: Item[] = [
     named: getAtumCartridgeDisplayName,
     description:
       "A slim printer cartridge loaded with dense black atum capsules, less like money than printer toner with delusions of grandeur.",
-    location: "INVENTORY",
+    location: "seeded",
     vocab: [
       "atum",
       "atums",

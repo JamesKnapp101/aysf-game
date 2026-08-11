@@ -183,7 +183,7 @@ export const gymWeightRoomItems: Item[] = [
       "A pastel exercise weight branded SMARTBELL has a digital dial on one end and a large letter R printed on its shell.",
     describe: (state) =>
       `The pastel right Smartbell has an R printed on it. Its dial is set to ${getSmartbellWeight(state, RIGHT_SMARTBELL_ID)} kilograms.`,
-    location: "INVENTORY",
+    location: "GymWeightRoom",
     vocab: [
       "right",
       "right dumbbell",
@@ -205,7 +205,7 @@ export const gymWeightRoomItems: Item[] = [
       "A pastel exercise weight branded SMARTBELL has a digital dial on one end and a large letter L printed on its shell.",
     describe: (state) =>
       `The pastel left Smartbell has an L printed on it. Its dial is set to ${getSmartbellWeight(state, LEFT_SMARTBELL_ID)} kilograms.`,
-    location: "INVENTORY",
+    location: "GymWeightRoom",
     vocab: [
       "left",
       "left dumbbell",
