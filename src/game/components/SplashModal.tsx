@@ -14,7 +14,7 @@ type SplashModalProps = {
 const DEFAULT_SPLASH: React.ReactNode = (
   <>
     <div style={{ marginBottom: 12, fontWeight: 700, letterSpacing: 0.5 }}>
-      AYSF
+      WHO WOKE ME
     </div>
     <div style={{ lineHeight: 1.4 }}>
       <br />

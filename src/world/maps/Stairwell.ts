@@ -12,8 +12,8 @@ import { stairwellBottomItems } from "../Items/levelSevenMisc";
 import { teleportationPadItems } from "../Items/teleportationPads";
 import { weaponItems } from "../Items/weapons";
 import { experienceRooms, experienceRoomsItems } from "./experienceRooms";
-import { hasLevelTwoBombDetonated } from "./levelTwo/levelTwoBomb";
 import { resolveLevelFiveSpillLight } from "./levelFive/levelFiveLighting";
+import { hasLevelTwoBombDetonated } from "./levelTwo/levelTwoBomb";
 
 function describeStairTwo(state: GameState): string {
   if (!hasLevelTwoBombDetonated(state)) {
@@ -136,6 +136,9 @@ export const STAIRWELL: WorldChunk = {
     {
       id: "StairWellSeven",
       name: "Bottom of Stairwell",
+      ambientLightLevel: "very-dim",
+      resolveAmbientLightLevel: (state) =>
+        resolveLevelFiveSpillLight(state, "very-dim"),
       description:
         "This is the dimly lit bottom of a long stairwell, where the tiled floor is covered in grit and the dusty corners are shrouded in shadow. Above you, the stairwell towers in a narrow, boxy spiral that climbs many floors, stretching up into the gloom. [[SCENERY]]",
       descriptionShort:
