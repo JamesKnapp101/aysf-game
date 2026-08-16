@@ -4,10 +4,13 @@ export const ROOM_NAME_TOKEN_START = "[[ROOM_NAME]]";
 export const ROOM_NAME_TOKEN_END = "[[/ROOM_NAME]]";
 
 export const OPENING_SPLASH = `You dream of falling.\n\n
-The sensation of a bump, then a flip, then, for a moment, weightlessness. It's an almost peaceful sensation, for as long as it lasts, a flash of terror followed by an all too brief feeling of resignation, release, and finally, relief.\n\n
+The sensation of a bump, then a flip, then, for a moment, weightlessness.\n\n
+It's an almost peaceful sensation, for as long as it lasts. A flash of terror followed by an all too brief feeling of resignation, release, and finally, relief.\n\n
 A second later you jolt awake on your back, naked, and gasping for air. The floor is cold and hard beneath you, smooth tile covered in a thin layer of grit, and the stale air is cool, causing your bare skin to prickle.\n\n
-Still dazed, you stand up and put one hand against the wall until you're steady. You try to remember what happened, how you got here, and where here even is, but your mind is in a fog. You remember that you were in the middle of something, something important, but you must have really hit your head because everything is fragmented and at the moment, you can't even remember your own name.\n\n
-You look yourself over. You have no idea why you're nude, but there isn't so much as a scratch or a bruise on you at least, and while you don't seem to be in any sort of immediate danger something in your mind is sounding the alarm.\n\nThere's something you need to be doing, and you're running out of time...`;
+Still dazed, you stand up and put one hand against the wall until you're steady. You remember that you were in the middle of something, something important, but you must have really hit your head because everything is fragmented at the moment.\n\n
+You shake your head and try to take stock of the situation. Your name is Mox Eegler, you know that much, and you're a scientist on board the Aeneas...\n\n
+The Aeneas. That jogs something loose. The Aeneas is a generation ship, light years from a long-gone Earth. You're on the current crew rotation, awakened from hibernation, when something went wrong. The ship encountered something out there, something nobody, not even you was able to explain.\n\n
+Whatever it turns out to be, it's still here, right now.`;
 
 export const POWER_SECTION_MAP: Record<
   string,

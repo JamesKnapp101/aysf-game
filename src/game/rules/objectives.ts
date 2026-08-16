@@ -1,4 +1,4 @@
-import { inventoryHas } from "@game/rules/state";
+import { inventoryHas, inventoryHasAll } from "@game/rules/state";
 import type {
   GamePreserveDifficulty,
   GameState,
@@ -14,6 +14,7 @@ export type ObjectiveCommandContext = {
   direction?: string;
   fromRoomId?: string;
   message?: string;
+  targetItemId?: string;
   toRoomId?: string;
 };
 
@@ -57,6 +58,20 @@ function hasAnyTrigger(state: GameState, triggerIds: string[]): boolean {
 
 function hasItem(state: GameState, itemId: string): boolean {
   return inventoryHas(state.player.inventory, itemId);
+}
+
+function hasAllItems(state: GameState, itemIds: string[]): boolean {
+  return inventoryHasAll(state.player.inventory, itemIds);
+}
+
+function readItem(context: ObjectiveCommandContext, itemId: string): boolean {
+  return context.commandVerb === "read" && context.targetItemId === itemId;
+}
+
+function playerHasReadItem(state: GameState, itemName: string): boolean {
+  return (state.player.log ?? []).some(
+    (entry) => entry.source.toLowerCase() === itemName.toLowerCase(),
+  );
 }
 
 function contextText(context: ObjectiveCommandContext): string {
@@ -157,6 +172,41 @@ function reactorWarningSeen(
   );
 }
 
+function mysteriousNoteRead(
+  _previous: GameState,
+  state: GameState,
+  context: ObjectiveCommandContext,
+): boolean {
+  return (
+    hasTrigger(state, "MysteriousNoteFound") ||
+    readItem(context, "MysteriousNote") ||
+    playerHasReadItem(state, "mysterious note")
+  );
+}
+
+function quartersEquipmentObtained(state: GameState): boolean {
+  return hasAllItems(state, ["DNAReader", "MindGun", "MindCap"]);
+}
+
+function labReportRead(
+  _previous: GameState,
+  _state: GameState,
+  context: ObjectiveCommandContext,
+): boolean {
+  return readItem(context, "LabReport");
+}
+
+function researchNotesRead(
+  _previous: GameState,
+  state: GameState,
+  context: ObjectiveCommandContext,
+): boolean {
+  return (
+    readItem(context, "ResearchNotes") ||
+    playerHasReadItem(state, "research notes")
+  );
+}
+
 function zoologistLogSeen(
   _previous: GameState,
   state: GameState,
@@ -246,6 +296,26 @@ export const OBJECTIVE_DEFINITIONS: readonly ObjectiveDefinition[] = [
     initial: true,
     completeWhen: (_previous, state) =>
       state.worldState.powerRestoredSections["power-initialized"] === true,
+  },
+  {
+    id: "get_quarters_equipment",
+    title: "Get equipment from your quarters",
+    activateWhen: (previous, state, context) =>
+      mysteriousNoteRead(previous, state, context) ||
+      hasTrigger(state, "radioFirstCall"),
+    completeWhen: (_previous, state) => quartersEquipmentObtained(state),
+  },
+  {
+    id: "access_lab_for_threat_info",
+    title: "Access lab to find more info on nature of threat",
+    activateWhen: mysteriousNoteRead,
+    completeWhen: labReportRead,
+  },
+  {
+    id: "find_strange_holes_cause",
+    title: 'Find out what caused the "strange holes"',
+    activateWhen: mysteriousNoteRead,
+    completeWhen: researchNotesRead,
   },
   {
     id: "access_vivarium_park",
@@ -434,7 +504,7 @@ export function reconcileObjectives(
   state: GameState,
   context: ObjectiveCommandContext = {},
 ): GameState {
-  let next = ensureObjectiveState(state);
+  const next = ensureObjectiveState(state);
   let objectives = [...(next.player.objectives ?? [])];
   let didChange = next !== state;
 

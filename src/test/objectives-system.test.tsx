@@ -4,7 +4,11 @@ import {
   reconcileObjectives,
   type ObjectiveCommandContext,
 } from "@game/rules/objectives";
-import { addInventoryItems, createTestState } from "./helpers/gameTestHelpers";
+import {
+  addInventoryItems,
+  createTestState,
+  runCommand,
+} from "./helpers/gameTestHelpers";
 import { startGamePreserveRun } from "@game/preserve/preserveState";
 import type { GameState } from "@game/types/gameTypes";
 import { render, screen } from "@testing-library/react";
@@ -50,6 +54,83 @@ describe("objectives", () => {
     expect(getObjective(next, "Restore power")).toMatchObject({
       status: "completed",
     });
+  });
+
+  it("tracks mysterious-note objectives and their specific completion events", async () => {
+    const initial = createTestState({ roomId: "StairWellSeven" });
+
+    expect(getObjective(initial, "Get equipment from your quarters")).toBeUndefined();
+    expect(
+      getObjective(initial, "Access lab to find more info on nature of threat"),
+    ).toBeUndefined();
+    expect(
+      getObjective(initial, 'Find out what caused the "strange holes"'),
+    ).toBeUndefined();
+
+    const activated = await runCommand(initial, "read note");
+
+    for (const title of [
+      "Get equipment from your quarters",
+      "Access lab to find more info on nature of threat",
+      'Find out what caused the "strange holes"',
+    ]) {
+      expect(getObjective(activated, title)).toMatchObject({ status: "active" });
+    }
+
+    const equipped = reconcileObjectives(
+      activated,
+      addInventoryItems(activated, ["DNAReader", "MindGun", "MindCap"]),
+    );
+    expect(getObjective(equipped, "Get equipment from your quarters")).toMatchObject({
+      status: "completed",
+    });
+
+    const labReportRead = await runCommand({
+      ...equipped,
+      player: {
+        ...equipped.player,
+        roomId: "Lab",
+      },
+    }, "read report");
+
+    expect(
+      getObjective(labReportRead, "Access lab to find more info on nature of threat"),
+    ).toMatchObject({ status: "completed" });
+
+    const researchNotesRead = await runCommand(
+      {
+        ...labReportRead,
+        player: {
+          ...labReportRead.player,
+          roomId: "ThreeWestBed",
+        },
+      },
+      "read research notes",
+    );
+    expect(
+      getObjective(researchNotesRead, 'Find out what caused the "strange holes"'),
+    ).toMatchObject({ status: "completed" });
+  });
+
+  it("activates the quarters equipment objective after the first radio contact", async () => {
+    const afterRadioContact = await runCommand(
+      createTestState({ roomId: "StairSix" }),
+      "push radio",
+    );
+
+    expect(afterRadioContact.worldState.conditionalTriggers.radioFirstCall).toBe(
+      true,
+    );
+
+    expect(
+      getObjective(afterRadioContact, "Get equipment from your quarters"),
+    ).toMatchObject({ status: "active" });
+    expect(
+      getObjective(afterRadioContact, "Access lab to find more info on nature of threat"),
+    ).toBeUndefined();
+    expect(
+      getObjective(afterRadioContact, 'Find out what caused the "strange holes"'),
+    ).toBeUndefined();
   });
 
   it("tracks Vivarium Park access after the ranger bot blocks entry", () => {

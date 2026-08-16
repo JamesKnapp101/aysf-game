@@ -37,6 +37,7 @@ import {
 import { ACTION_HANDLERS } from "../actions";
 import { resolveRegisteredMovementRule } from "../registries/movementRuleRegistry";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
+import { resolveItemByNoun } from "../rules/scope";
 import { getDoorById, getDoorState } from "../selectors/doorSelectors";
 import { getCurrentRoom } from "../selectors/roomSelectors";
 import { useUIOverlayStore } from "../store/store";
@@ -828,6 +829,10 @@ export async function handleCommand(
     ]
       .filter((entry) => entry && entry.trim())
       .join("\n\n"),
+    targetItemId:
+      cmd.type === "action" && cmd.direct
+        ? resolveItemByNoun(state, cmd.direct)?.id
+        : undefined,
     toRoomId: nextState.player.roomId,
   };
 

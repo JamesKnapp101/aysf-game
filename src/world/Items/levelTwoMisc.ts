@@ -101,6 +101,21 @@ export const levelTwoBodyParts: Item[] = [
 
 export const labItems: Item[] = [
   {
+    id: "LabReport",
+    name: "lab report",
+    location: "Lab",
+    vocab: ["report", "folder"],
+    description: "It looks like it contains a lot of information.",
+    sceneryDescription:
+      "A stack of bound papers, some kind of report, rests on one of the lab tables.",
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 50,
+    itemSize: 6,
+    isReadable: true,
+    readableText: "Placeholder for lab experiment results.",
+  },
+  {
     id: "containmentField",
     name: "containment field",
     location: "Lab",
