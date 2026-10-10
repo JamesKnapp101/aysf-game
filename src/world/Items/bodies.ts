@@ -7,8 +7,6 @@ export const corpseItems: Item[] = [
     id: "FallenCorpse",
     name: "fallen corpse",
     description: `It looks like the poor guy maybe slipped, and fell over the railing from up above. His misshapen head is completely bald, like a broken dome sticking up from the crumpled wreckage. You don't recognize him, though you get the impression that the jumpsuit might not belong to him, as its too big and baggy for his thin frame.`,
-    sceneryDescription:
-      "[[newline]]In the middle of the tiled landing a man's body lay crumpled in a heap, having fallen from somewhere up above. He looks to have landed on his head which, while still in one piece, has cracked like an egg, and his body has been left sprawled at all angles. A pool of blood, tacky but not quite dry, has formed around his head.",
     location: "StairWellSeven",
     vocab: ["corpse", "body", "man"],
     itemClass: "solid",
@@ -18,7 +16,6 @@ export const corpseItems: Item[] = [
         hasIntactHead: true,
         memoryExperienceId: "fallen_corpse_memory",
       },
-      sceneryDescriptionOrder: 2,
     },
     itemWeight: 80,
     itemSize: 10,

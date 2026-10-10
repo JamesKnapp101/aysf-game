@@ -140,7 +140,7 @@ export const STAIRWELL: WorldChunk = {
       resolveAmbientLightLevel: (state) =>
         resolveLevelFiveSpillLight(state, "very-dim"),
       description:
-        "This is the dimly lit bottom of a long stairwell, where the tiled floor is covered in grit and the dusty corners are shrouded in shadow. Above you, the stairwell towers in a narrow, boxy spiral that climbs many floors, stretching up into the gloom. [[SCENERY]]",
+        "This is the dimly lit bottom of a long stairwell, where the tiled floor is covered in grit and the dusty corners are shrouded in shadow. Above you, the stairwell towers in a narrow, boxy spiral that climbs many floors, stretching up into the gloom. Tucked beneath the last flight of stairs are several stacks of boxes bound with metal bands, each covered in dust and looking affected by mold or mildew. Nothing down here has been touched in a long time. Curled up next to the boxes is the body of an older man dressed in boxers, a t-shirt, and a plush blue robe. His unshaven face is tinted blue, and his hair is greasy and unkempt. In the middle of the tiled landing, a man's body lies crumpled in a heap, having fallen from somewhere above. He seems to have landed on his head, which has cracked like an egg, and a pool of blood, tacky but not quite dry, has formed around it.",
       descriptionShort:
         "The dimly lit bottom of a long stairwell, where the body of a man lay sprawled.",
       exits: [{ direction: "up", toRoomId: "StairSeven" }],

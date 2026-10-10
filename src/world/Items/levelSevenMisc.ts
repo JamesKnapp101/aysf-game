@@ -59,15 +59,10 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     name: "stacks of old, dusty boxes",
     description:
       "The old boxes are bound with metal bands both vertically and horizontally. You're not sure how you'd open them, but it looks like they maybe contain spare parts or something.",
-    sceneryDescription:
-      "Tucked beneath the last flight of stairs are several stacks of boxes that are bound with metal bands, each covered in dust and looking affected by mold, or mildew. Nothing down here has been touched in a long time.",
     location: "StairWellSeven",
     vocab: ["boxes", "storage"],
     itemClass: "solid",
     itemCategory: "scenery",
-    meta: {
-      sceneryDescriptionOrder: 1,
-    },
     itemWeight: 0,
     itemSize: 1,
     isWearable: false,
@@ -79,8 +74,6 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     id: "UnderTheStairwellDeadMan",
     name: "a dead man",
     description: UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION,
-    sceneryDescription:
-      "[[newline]]Curled up next to the boxes is the body of an older man dressed in boxers, a t-shirt, and a plush blue robe. His unshaven face is tinted blue, and his hair is greasy and unkempt.",
     location: "StairWellSeven",
     vocab: [
       "body",
@@ -96,9 +89,6 @@ const LEVEL_SEVEN_MISC_ITEMS: Item[] = [
     itemCategory: "scenery",
     itemWeight: 180,
     itemSize: 5,
-    meta: {
-      sceneryDescriptionOrder: 2,
-    },
     overrides: {
       examine: ({ state }: { state: GameState }) =>
         examineUnderStairwellDeadMan(state),

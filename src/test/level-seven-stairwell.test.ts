@@ -1,5 +1,6 @@
 import { inventoryHas } from "@game/rules/state";
 import { getItemsInInventory } from "@game/selectors/itemSelectors";
+import { buildRoomDescription } from "@game/text/roomDescription";
 import { describe, expect, it } from "vitest";
 import { INITIAL_WORLD } from "../world/World";
 import {
@@ -9,6 +10,27 @@ import {
 } from "./helpers/gameTestHelpers";
 
 describe("level seven stairwell", () => {
+  it("owns the starting scene while leaving its scenery examinable", async () => {
+    const state = createTestState({ roomId: "StairWellSeven" });
+    const description = buildRoomDescription(state, "StairWellSeven", {
+      mode: "panel",
+      forceFull: true,
+    });
+
+    expect(description).not.toContain("[[SCENERY]]");
+    expect(description).toContain("stacks of boxes bound with metal bands");
+    expect(description).toContain("body of an older man");
+    expect(description).toContain("body lies crumpled in a heap");
+
+    const examinedBoxes = await runCommand(state, "examine boxes");
+    expect(getLastLogEntry(examinedBoxes)).toContain(
+      "bound with metal bands both vertically and horizontally",
+    );
+
+    const examinedCorpse = await runCommand(state, "examine fallen corpse");
+    expect(getLastLogEntry(examinedCorpse)).toContain("slipped");
+  });
+
   it("reveals the dead man's timer directly into the player's inventory", async () => {
     const start = createTestState({
       roomId: "StairWellSeven",
