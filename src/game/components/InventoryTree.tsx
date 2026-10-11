@@ -1,3 +1,7 @@
+import {
+  getInventoryItemLabel,
+  getInventoryVisibleContents,
+} from "../text/inventoryPresentation";
 import { getItemById } from "../selectors/itemSelectors";
 import type { GameState } from "../types/gameTypes";
 import type { Item } from "../types/itemTypes";
@@ -18,7 +22,7 @@ type InventoryTreeProps = {
  *
  * Notes:
  * - Only shows container contents if the container actually has contents in itemState.containerContents.
- * - If showContentsOnlyIfOpen is true, contents are only shown when the container is open.
+ * - Contents are only shown when the container is open.
  */
 
 export function InventoryTree({
@@ -26,44 +30,6 @@ export function InventoryTree({
   inventoryItems,
   sort,
 }: InventoryTreeProps) {
-  const showContentsOnlyIfOpen = true;
-
-  const startsWithVowelSound = (word: string) => {
-    const w = word.trim().toLowerCase();
-    if (
-      w.startsWith("hour") ||
-      w.startsWith("honest") ||
-      w.startsWith("heir") ||
-      w.startsWith("led")
-    )
-      return true;
-    if (w.startsWith("uni") || w.startsWith("use") || w.startsWith("euro"))
-      return false;
-    return /^[aeiou]/.test(w);
-  };
-
-  const withIndefiniteArticle = (name: string) => {
-    const n = name.trim();
-    if (!n) return n;
-
-    if (/^(a|an|the|some|your)\b/i.test(n)) return n;
-
-    const article = startsWithVowelSound(n) ? "an" : "a";
-    return `${article} ${n}`;
-  };
-
-  const isSwitchable = (id: string) => {
-    const s = state.itemState.itemSettings?.[id];
-    return Boolean(s && typeof (s as any).isOn === "boolean");
-  };
-
-  const isOn = (id: string) => {
-    const s = state.itemState.itemSettings?.[id];
-    return Boolean(
-      s && typeof (s as any).isOn === "boolean" && (s as any).isOn,
-    );
-  };
-
   const getSortName = (id: string) => {
     const it = getItemById(state, id);
     return (it?.named?.(state, it) ?? it?.name ?? id).trim().toLowerCase();
@@ -96,45 +62,7 @@ export function InventoryTree({
     return copy;
   };
 
-  const getItemLabel = (id: string) => {
-    const it = getItemById(state, id);
-    const baseName = withIndefiniteArticle(
-      it?.named?.(state, it) ?? it?.name ?? id,
-    );
-    let annotation = "";
-
-    if (state.itemState.containerFilled[id]?.[0]) {
-      let filledWith = state.itemState.containerFilled[id]?.[0];
-      if (filledWith) {
-        const liquidItem = getItemById(state, filledWith);
-        if (state.itemState.frozenItems[filledWith]) {
-          filledWith =
-            liquidItem?.meta?.liquid?.frozenName ??
-            state.itemState.containerFilled[id]?.[0];
-        }
-      }
-      annotation = `, which is filled with ${filledWith}`;
-    }
-
-    if (it?.isWearable && it?.clothingSlot) {
-      if (state.itemState.wornByPlayer[it.clothingSlot] === it.id) {
-        annotation = ` (worn on your ${it.clothingSlot})`;
-      }
-    }
-
-    if (isSwitchable(id) && isOn(id)) {
-      annotation += ` (which is on)`;
-    }
-
-    return `${baseName}${annotation}`;
-  };
-
-  const getContents = (containerId: string): string[] => {
-    const ids = state.itemState.containerContents?.[containerId] ?? [];
-    if (!ids.length) return [];
-    if (!showContentsOnlyIfOpen) return ids;
-    return state.itemState.openItems?.[containerId] ? ids : [];
-  };
+  const getItemLabel = (id: string) => getInventoryItemLabel(state, id);
 
   const getBranchGlyph = (isLast: boolean) => (isLast ? "└─" : "├─");
 
@@ -151,7 +79,7 @@ export function InventoryTree({
               const item = getItemById(state, itemId);
               if (!item) return null;
 
-              const contents = item.isContainer ? getContents(item.id) : [];
+              const contents = getInventoryVisibleContents(state, item).map((child) => child.id);
               const sortedContents = sortIds(contents);
 
               return (
@@ -161,6 +89,7 @@ export function InventoryTree({
                   {sortedContents.length > 0 && (
                     <ul className="inv-tree-contents">
                       {sortedContents.map((childId, idx) => {
+                        if (!getItemById(state, childId)) return null;
                         const isLast = idx === sortedContents.length - 1;
                         const glyph = getBranchGlyph(isLast);
 

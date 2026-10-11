@@ -3,6 +3,9 @@ import { SwitchState } from "./types/itemTypes";
 export const ROOM_NAME_TOKEN_START = "[[ROOM_NAME]]";
 export const ROOM_NAME_TOKEN_END = "[[/ROOM_NAME]]";
 
+export const FIRST_RUN_HELP_HINT =
+  "For instructions and other game info, type 'help'";
+
 export const OPENING_SPLASH = `You dream of falling.\n\n
 The sensation of a bump, then a flip, then, for a moment, weightlessness.\n\n
 It's an almost peaceful sensation, for as long as it lasts. A flash of terror followed by an all too brief feeling of resignation, release, and finally, relief.\n\n

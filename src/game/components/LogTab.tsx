@@ -1,5 +1,6 @@
 import { DNASampleTab } from "@game/components/DNASampleTab";
 import { useUIOverlayStore } from "@game/store/store";
+import { formatTopicType, previewText } from "@game/text/playerKnowledge";
 import type {
   GameState,
   JuicyTopic,
@@ -9,16 +10,6 @@ import * as React from "react";
 import "../../styles/log-tab.css";
 
 type LogSubview = "entries" | "gossip" | "dna";
-
-function previewText(body: string, maxChars = 80): string {
-  const s = (body ?? "").replace(/\s+/g, " ").trim();
-  if (s.length <= maxChars) return s;
-  return s.slice(0, maxChars).trimEnd() + "...";
-}
-
-function formatTopicType(type: JuicyTopic["type"]): string {
-  return type === "secret" ? "Secret" : "Gossip";
-}
 
 function renderLogEntry(
   entry: PlayerLogEntry,

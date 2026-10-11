@@ -44,7 +44,7 @@ import { useUIOverlayStore } from "../store/store";
 import { buildTranscriptRoomDescription } from "../text/roomDescription";
 import type { GameState } from "../types/gameTypes";
 import type { ParsedCommand } from "../types/parserTypes";
-import { appendLog } from "./log";
+import { appendLog, beginLogCapture } from "./log";
 import { advanceTurn } from "./turn";
 
 export { appendLog } from "./log";
@@ -159,35 +159,32 @@ async function grantDeveloperModeItems(state: GameState): Promise<GameState> {
 
 type HandleCommandOptions = {
   skipEcho?: boolean;
+  /** Final player log output, in presentation order, independent of log pruning. */
+  onOutput?: (entries: readonly string[]) => void;
 };
-
-function getAppendedLogEntries(
-  previous: string[],
-  current: string[],
-): string[] {
-  const maxOverlap = Math.min(previous.length, current.length);
-
-  for (let overlap = maxOverlap; overlap >= 0; overlap -= 1) {
-    const previousStart = previous.length - overlap;
-    let matches = true;
-
-    for (let index = 0; index < overlap; index += 1) {
-      if (previous[previousStart + index] !== current[index]) {
-        matches = false;
-        break;
-      }
-    }
-
-    if (matches) return current.slice(overlap);
-  }
-
-  return current;
-}
 
 export async function handleCommand(
   state: GameState,
   cmd: ParsedCommand,
   options: HandleCommandOptions = {},
+): Promise<GameState> {
+  const capture = beginLogCapture(state);
+  try {
+    const result = await executeCommand(capture.state, cmd, options, capture);
+    const output = Object.freeze(capture.take());
+    const clean = capture.finish(result);
+    options.onOutput?.(output);
+    return clean;
+  } finally {
+    capture.close();
+  }
+}
+
+async function executeCommand(
+  state: GameState,
+  cmd: ParsedCommand,
+  options: HandleCommandOptions,
+  capture: ReturnType<typeof beginLogCapture>,
 ): Promise<GameState> {
   const { openOverlay } = useUIOverlayStore.getState();
   const DEATH_MARKER = "*** You have died ***";
@@ -523,6 +520,9 @@ export async function handleCommand(
     }
   }
 
+  // Fresh initialization and snapshot restoration replace state entirely.
+  nextState = capture.attach(nextState);
+
   if (
     cmd.type === "action" &&
     nextState.player.roomId !== state.player.roomId
@@ -576,7 +576,7 @@ export async function handleCommand(
     };
   }
 
-  let immediateLogEntries = getAppendedLogEntries(state.log, nextState.log);
+  let immediateLogEntries = capture.take();
   if (immediateLogEntries.length > 0) {
     nextState = { ...nextState, log: state.log };
   }
@@ -603,7 +603,7 @@ export async function handleCommand(
   let tickLogEntries: string[] = [];
   let preRoomTickLogEntries: string[] = [];
   let diedThisTurn = immediateDeath;
-  const logBeforeLen = (nextState as any).log?.length ?? 0;
+  const logBeforeTurn = nextState.log;
 
   if (consumesTurn) {
     const roomIdBeforeTurn = nextState.player.roomId;
@@ -613,8 +613,7 @@ export async function handleCommand(
 
     nextState = advanceTurn(nextState);
 
-    const logAfter: string[] = (nextState as any).log ?? [];
-    tickLogEntries = logAfter.slice(logBeforeLen);
+    tickLogEntries = capture.take();
     diedThisTurn ||= tickLogEntries.some((entry) =>
       entry.includes(DEATH_MARKER),
     );
@@ -630,8 +629,8 @@ export async function handleCommand(
     // Roll back log to the pre-advanceTurn state so we can append echo first.
     nextState = {
       ...nextState,
-      log: logAfter.slice(0, logBeforeLen),
-    } as any;
+      log: logBeforeTurn,
+    };
 
     nextState = runScriptedEvents(
       nextState,

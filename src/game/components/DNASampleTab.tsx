@@ -1,5 +1,6 @@
 import { DNAResult } from "@game/rules/dnaReader";
 import { useUIOverlayStore } from "@game/store/store";
+import { formatDNASampleBody } from "@game/text/playerKnowledge";
 import type { GameState } from "@game/types/gameTypes";
 import * as React from "react";
 import "../../styles/dna-sample-tab.css";
@@ -14,7 +15,7 @@ export function DNASampleTab({ gameState }: { gameState: GameState }) {
       openOverlay({
         kind: "reader",
         title: e.title || "DNA Sample",
-        body: `DNA Analysis Results:\n--------------------\nName: ${e.name}\nGender: ${e.gender}\nAge: ${e.age}\nOccupation: ${e.occupation}\nAdditional Info: ${e.info}`,
+        body: formatDNASampleBody(e),
         sourceItemId: undefined,
       } as any);
     },

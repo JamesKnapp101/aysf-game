@@ -51,3 +51,7 @@ keyfile.json
 *.sw?
 ailog.md
 GAME_COMPLETENESS_AUDIT.md
+HEADLESS_GAMEPLAY_HARNESS_PLAN.md
+
+# Headless gameplay transcripts
+/.headless-transcripts/

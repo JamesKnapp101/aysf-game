@@ -1,3 +1,10 @@
+import {
+  BRAIN_WAVE_LABELS,
+  TEMP_MIN,
+  TEMP_MAX,
+  clampDisplayedBodyTemperature,
+  type BrainWaveLevel,
+} from "../text/statusPresentation";
 import React from "react";
 import {
   describeBodyTemperatureLevel,
@@ -419,16 +426,12 @@ const MeterRow: React.FC<MeterRowProps> = ({
     </div>
   );
 };
-
-const TEMP_MIN = 89;
-const TEMP_MAX = 110;
-
 interface TempRowProps {
   value: number;
 }
 
 const TempRow: React.FC<TempRowProps> = ({ value }) => {
-  const clamped = Math.max(TEMP_MIN, Math.min(TEMP_MAX, value));
+  const clamped = clampDisplayedBodyTemperature(value);
   const pct = (clamped - TEMP_MIN) / (TEMP_MAX - TEMP_MIN);
 
   let filled = Math.round(pct * NUM_BLOCKS);
@@ -467,21 +470,9 @@ const TempRow: React.FC<TempRowProps> = ({ value }) => {
     </div>
   );
 };
-
-type BrainWaveLevel = 1 | 2 | 3 | 4 | 5 | 6;
-
 interface BrainWaveRowProps {
   level: BrainWaveLevel;
 }
-
-const BRAIN_WAVE_LABELS: Record<BrainWaveLevel, string> = {
-  1: "Normal",
-  2: "Excited",
-  3: "Slowed",
-  4: "Altered",
-  5: "???",
-  6: "Foreign",
-};
 
 type BrainWaveTrackStyle = React.CSSProperties & {
   "--brain-wave-image": string;

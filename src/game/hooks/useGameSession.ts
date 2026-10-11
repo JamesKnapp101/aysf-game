@@ -10,6 +10,7 @@ import {
 import { parseCommand } from "../../parse/parser";
 import { INITIAL_WORLD } from "../../world/World";
 import { dispatchAction } from "../actions/dispatchAction";
+import { FIRST_RUN_HELP_HINT } from "../constants";
 import { handleCommand } from "../engine/handleCommand";
 import { appendLog } from "../engine/log";
 import { createInitialState } from "../gameInit";
@@ -52,7 +53,6 @@ type UseGameSessionResult = {
 };
 
 type ResultLike = Pick<ActionResult, "state" | "message" | "overlay">;
-const FIRST_RUN_HELP_HINT = "For instructions and other game info, type 'help'";
 
 function roundedMetric(value: number): number {
   return Math.round(value * 10) / 10;

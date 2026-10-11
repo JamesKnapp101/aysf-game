@@ -1,4 +1,5 @@
 import type { ActionResult } from "@game/types/actionsTypes";
+import { appendLog } from "@game/engine/log";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import { hydroponicsRooms } from "src/world/maps/levelSix/Hydroponics";
@@ -41,7 +42,7 @@ const HYDROPONICS_FATAL_MESSAGE =
   "The giant spider rears and convulses. A pressurized stream of acid erupts from its mouthparts and catches you before you can move, burning straight through skin, muscle, and bone.";
 
 function appendSpiderLog(state: GameState, text: string): GameState {
-  return { ...state, log: [...state.log, text] };
+  return appendLog(state, text);
 }
 
 function updateSpiderState(

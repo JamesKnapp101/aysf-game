@@ -1,4 +1,5 @@
 import { InventoryTree } from "@game/components/InventoryTree";
+import { getInventoryCounts } from "@game/text/inventoryPresentation";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
 import * as React from "react";
@@ -33,13 +34,7 @@ export function QuantumTotePanel({
     return getItemsForIds(activeIds);
   }, [activeIds, getItemsForIds]);
 
-  const counts = {
-    general: state.player.inventory.general.length,
-    badges: state.player.inventory.badges.length,
-    keys: state.player.inventory.keys.length,
-  };
-
-  const totalCount = counts.general + counts.badges + counts.keys;
+  const counts = getInventoryCounts(state);
   const tabLabel = (t: typeof activeTab) => {
     if (t === "general") return "General";
     if (t === "badges") return "Badges";
@@ -90,7 +85,7 @@ export function QuantumTotePanel({
             </div>
 
             <div className="qtote-total" aria-hidden="true">
-              Total: {totalCount}
+              Total: {counts.total}
             </div>
           </div>
 
