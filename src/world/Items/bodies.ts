@@ -733,25 +733,25 @@ export const corpseItems: Item[] = [
     isContagious: true,
   },
 
-  {
-    id: "StairOneBody",
-    name: "corpse",
-    description:
-      "The woman is long past saving—cold and rigid to the touch. Brushing her hair aside reveals red speckling around the corners of her eyes and mouth, as if countless tiny blood vessels had burst. Her tongue is so swollen it forces her lips apart slightly.",
-    initialDescription: undefined,
-    sceneryDescription:
-      "A woman lies on the stairs, skin gone still and cold, hair half-hiding a face marked with fine red speckling.",
-    location: "StairOne",
-    vocab: ["body", "corpse", "woman"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 60,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
+  // {
+  //   id: "StairOneBody",
+  //   name: "corpse",
+  //   description:
+  //     "The woman is long past saving—cold and rigid to the touch. Brushing her hair aside reveals red speckling around the corners of her eyes and mouth, as if countless tiny blood vessels had burst. Her tongue is so swollen it forces her lips apart slightly.",
+  //   initialDescription: undefined,
+  //   sceneryDescription:
+  //     "A woman lies on the stairs, skin gone still and cold, hair half-hiding a face marked with fine red speckling.",
+  //   location: "StairOne",
+  //   vocab: ["body", "corpse", "woman"],
+  //   itemClass: "solid",
+  //   itemCategory: "scenery",
+  //   itemWeight: 60,
+  //   itemSize: 7,
+  //   isWearable: false,
+  //   isReadable: false,
+  //   isContainer: false,
+  //   isContagious: true,
+  // },
 
   // Dead other self / gorilla -----------------------------------------------
   {

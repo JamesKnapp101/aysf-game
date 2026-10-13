@@ -346,7 +346,7 @@ export const stairwellItems: Item[] = [
     sceneryDescription: `At the gate to access the colored disks is a kiosk that houses a touchpad terminal. A colorful sign over the terminal invites you to 'Select Your Destination.'`,
     location: "TPADTerminal",
     vocab: [
-      "kisosk",
+      "kiosk",
       "terminal",
       "translocation terminal",
       "teleportation terminal",

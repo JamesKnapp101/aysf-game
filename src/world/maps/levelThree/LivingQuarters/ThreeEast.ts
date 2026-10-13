@@ -148,7 +148,7 @@ export const threeEastItems: Item[] = [
     sceneryDescription:
       "[[newline]]In one corner, tucked under the workspace, you can see a heavy looking metal barrel or tank fitted to various electronics, including a small display screen.",
     location: "SecretLab",
-    vocab: ["barrel", "cylinder", "printer", "3d"],
+    vocab: ["barrel", "cylinder", "tank", "printer", "3d"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 20,
@@ -414,6 +414,7 @@ export const threeEastItems: Item[] = [
     },
     isTurnable: true,
     overrides: {
+      switch: `The light doesn't come on, but it seems like the whole fixture could be turned.`,
       turn: turnEeglerWallFixture,
     },
   },

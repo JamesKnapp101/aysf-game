@@ -9,7 +9,7 @@ export const moxStairBottomItems: Item[] = [
     idleActions: [`The falling man's jumpsuit flaps as he falls headfirst.`],
     description: `He looks surprised.`,
     location: "FallenCorpseMemory",
-    vocab: ["scientist", "man", "guy", "mox"],
+    vocab: ["bald", "man", "jumpsuit", "mox"],
     itemClass: "solid",
     itemWeight: 2,
     itemSize: 2,

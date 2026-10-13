@@ -48,7 +48,10 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     voice: ["urgent", "helpful", "informal", "strained", "fading"],
   },
   ranger_bot: {
-    directives: ["Redirect unrelated topics to the Park or Park Passes."],
+    directives: [
+      "If given or shown any item that is not a park pass, inform the player the item is not a valid park pass",
+      "Redirect all other unrelated topics to the Park or Park Passes.",
+    ],
     goals: ["Keep anyone without a Park Pass out of the Park"],
     identity:
       "A ranger robot stationed at the Park entrance to enforce Park Pass rules.",

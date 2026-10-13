@@ -359,6 +359,22 @@ export const fiveWestItems: Item[] = [
     },
   },
   {
+    id: "AllPaintings",
+    name: "paintings",
+    description:
+      "The paintings each depict the same man standing over a different animal he's conquered, with a conspicuous space left open, presumably for a fifth painting of something he has yet to successfully hunt.",
+    sceneryDescription: "",
+    location: "LivingQuartersFiveWest",
+    vocab: ["oil", "paintings", "pictures"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 3,
+    itemSize: 2,
+    meta: {
+      sceneryDescriptionOrder: 10,
+    },
+  },
+  {
     id: "BoarPainting",
     name: "boar painting",
     description:
