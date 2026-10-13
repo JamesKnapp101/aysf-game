@@ -13,6 +13,18 @@ export function doShoot(state: GameState, cmd: ParsedCommand): ActionResult {
   const preposition = cmd.preposition?.trim();
   const indirect = cmd.indirect?.trim();
 
+  if (preposition === "through") {
+    const target = indirect ? resolveItemByNoun(state, indirect) : undefined;
+    const override = target?.overrides?.shootthrough;
+    if (target && override) {
+      const out = typeof override === "function"
+        ? override({ state, item: target, cmd }) : override;
+      if (typeof out === "string") return { state, message: out };
+      if (out) return out;
+    }
+    return { state, message: "You can't shoot through that." };
+  }
+
   if (!direct) {
     return { state, message: "Shoot what?" };
   }

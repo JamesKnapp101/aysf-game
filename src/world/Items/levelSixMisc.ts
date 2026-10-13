@@ -23,6 +23,7 @@ import {
   THREE_D_PRINTER_TRAY_ITEM_ID,
 } from "../maps/levelSix/threeDPrinter";
 import { lookThroughSpiderGap } from "./creatures/giantSpider";
+import { shootCameraThroughHydroponicsGap } from "../maps/levelSix/hydroponicsCamera";
 
 type ActionCommand = Extract<ParsedCommand, { type: "action" }>;
 
@@ -44,6 +45,7 @@ export const levelSixItems: Item[] = [
       sceneryDescriptionOrder: 1,
     },
     overrides: {
+      shootthrough: shootCameraThroughHydroponicsGap,
       lookthrough: ({ state }: { state: GameState }) =>
         lookThroughSpiderGap(state),
     },

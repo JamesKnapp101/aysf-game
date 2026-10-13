@@ -1,6 +1,6 @@
 import { startExperience } from "@game/experiences/experienceRegistry";
 import { isWornCatCollarTarget } from "@game/helpers/catHelpers";
-import { attachGelCameraToHost } from "@game/helpers/gelCameraHelpers";
+import { attachGelCameraToHost, deployGelCameraToRoom } from "@game/helpers/gelCameraHelpers";
 import { useUIEffectsStore } from "@game/store/store";
 import type { GameState } from "@game/types/gameTypes";
 import type { ItemId } from "@game/types/ids";
@@ -14,9 +14,12 @@ type ShootBeforeAmmoContext = {
   state: GameState;
 };
 
+export type RoomProjectileDestination = { roomId: string; message: string };
+
 type ProjectileShootContext = ShootBeforeAmmoContext & {
   firedRoundId: ItemId;
   message: string;
+  roomDestination?: RoomProjectileDestination;
 };
 
 type ShootBeforeAmmoHandler = {
@@ -139,9 +142,16 @@ function handleMindGunShot({
 function handleGelCameraShot({
   firedRoundId,
   message,
+  roomDestination,
   shotAtItem,
   state,
 }: ProjectileShootContext): ShootItemResult {
+  if (roomDestination) {
+    return {
+      state: deployGelCameraToRoom(state, firedRoundId, roomDestination.roomId),
+      message: roomDestination.message,
+    };
+  }
   let next = state;
   const targetIsWornCatCollar = isWornCatCollarTarget(next, shotAtItem.id);
   const hostId = targetIsWornCatCollar ? "cat" : (shotAtItem.id as ItemId);

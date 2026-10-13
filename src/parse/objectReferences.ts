@@ -39,6 +39,11 @@ export function normalizeObjectReferences(
     roles.add("direct");
     roles.add("indirect");
   }
+  // Shooting THROUGH uses a weapon/projectile phrase, rather than a target
+  // object ("the camera" can refer to the loaded round). Its handler owns it.
+  if (command.verb === "shoot" && command.preposition === "through") {
+    roles.delete("direct");
+  }
   // Item-owned syntax (e.g. SAMPLE target WITH device) declares its noun roles.
   for (const item of state.world.items) {
     for (const alias of item.commandAliases ?? []) {

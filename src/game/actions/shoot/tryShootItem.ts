@@ -2,6 +2,7 @@ import { moveItemToRoom } from "@game/helpers/itemHelpers";
 import {
   tryHandleRegisteredProjectileShot,
   tryHandleRegisteredShootBeforeAmmo,
+  type RoomProjectileDestination,
 } from "@game/registries/shootItemRegistry";
 import { GameState } from "@game/types/gameTypes";
 import { ItemId } from "@game/types/ids";
@@ -11,6 +12,7 @@ export function tryShootItem(
   state: GameState,
   shotAtItem: Item,
   shotWithItem: Item,
+  roomDestination?: RoomProjectileDestination,
 ): { state: GameState; message: string } {
   let next = state;
 
@@ -53,7 +55,7 @@ export function tryShootItem(
   };
 
   const targetRoomId =
-    next.itemState.itemRoomId[shotAtItem.id] ?? next.player.roomId;
+    roomDestination?.roomId ?? next.itemState.itemRoomId[shotAtItem.id] ?? next.player.roomId;
 
   next = moveItemToRoom(next, firedRoundId as ItemId, targetRoomId);
 
@@ -63,6 +65,7 @@ export function tryShootItem(
     shotWithItem,
     firedRoundId: firedRoundId as ItemId,
     message: msg,
+    roomDestination,
   });
   if (registeredProjectileResult) return registeredProjectileResult;
 

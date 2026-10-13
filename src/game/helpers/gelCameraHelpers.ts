@@ -14,6 +14,24 @@ export function attachGelCameraToHost(
   gelRoundId: ItemId,
   hostId: ItemId,
 ): GameState {
+  return activateGelCamera(state, gelRoundId, hostId, hostId);
+}
+
+/** A fired camera can rest in a room without being attached to an object. */
+export function deployGelCameraToRoom(
+  state: GameState,
+  gelRoundId: ItemId,
+  roomId: string,
+): GameState {
+  return activateGelCamera(state, gelRoundId, roomId);
+}
+
+function activateGelCamera(
+  state: GameState,
+  gelRoundId: ItemId,
+  location: string,
+  hostId?: ItemId,
+): GameState {
   return {
     ...state,
     player: {
@@ -48,7 +66,7 @@ export function attachGelCameraToHost(
       ),
       itemRoomId: {
         ...state.itemState.itemRoomId,
-        [gelRoundId]: hostId,
+        [gelRoundId]: location,
       },
     },
   };

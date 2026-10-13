@@ -148,6 +148,7 @@ export type ItemOverrideVerb =
   | "wear"
   | "lookunder"
   | "lookthrough"
+  | "shootthrough"
   | "knock"
   | "light"
   | "siton"
@@ -187,9 +188,9 @@ export type ItemCommandOverride =
     ) => ActionResult | string | undefined);
 
 export type ItemOverrides = Partial<
-  Record<Exclude<ItemOverrideVerb, "fix" | "shake">, any>
+  Record<Exclude<ItemOverrideVerb, "fix" | "shake" | "shootthrough">, any>
 > &
-  Partial<Record<"fix" | "shake", ItemCommandOverride>>;
+  Partial<Record<"fix" | "shake" | "shootthrough", ItemCommandOverride>>;
 export type CoolerMode = "off" | "cool" | "cold" | "freeze";
 
 export type ItemSettings =
