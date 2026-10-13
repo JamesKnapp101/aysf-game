@@ -97,8 +97,6 @@ export function resolveItemByNoun(
   noun: string,
 ): Item | undefined {
   const room = getCurrentRoom(state);
-  const normalizedNoun = normalize(noun);
-  const tokens = tokenize(noun);
 
   const itemsById = new Map(state.world.items.map((it) => [it.id, it]));
 
@@ -178,36 +176,47 @@ export function resolveItemByNoun(
     .filter((x): x is Item => Boolean(x))
     .sort((a, b) => scopeRank(a) - scopeRank(b));
 
-  const exactId = itemsInScope.find(
+  return (
+    resolveItemByVocabulary(itemsInScope, noun) ??
+    resolveRegisteredScopeItem({ state, room, noun }) ??
+    undefined
+  );
+}
+
+/** Matches definitions only; gameplay callers must still enforce scope. */
+export function resolveItemByVocabulary(
+  items: readonly Item[],
+  noun: string,
+): Item | undefined {
+  const normalizedNoun = normalize(noun);
+  const tokens = tokenize(noun);
+  const exactId = items.find(
     (it) => normalize(it.id) === normalizedNoun,
   );
   if (exactId) return exactId;
 
-  const exactName = itemsInScope.find(
+  const exactName = items.find(
     (it) => normalize(it.name) === normalizedNoun,
   );
   if (exactName) return exactName;
 
-  const exactVocab = itemsInScope.find((it) =>
+  const exactVocab = items.find((it) =>
     it.vocab?.some((v: string) => normalize(v) === normalizedNoun),
   );
   if (exactVocab) return exactVocab;
 
-  const byName = itemsInScope.find((it) => {
+  const byName = items.find((it) => {
     const nameTokens = new Set(tokenize(it.name));
     return tokens.every((t) => nameTokens.has(t));
   });
   if (byName) return byName;
 
-  const byVocab = itemsInScope.find((it) => {
+  const byVocab = items.find((it) => {
     if (!it.vocab?.length) return false;
     const vocabTokens = new Set(it.vocab.map((v: string) => normalize(v)));
     return tokens.every((t) => vocabTokens.has(t));
   });
   if (byVocab) return byVocab;
-
-  const registeredScopeItem = resolveRegisteredScopeItem({ state, room, noun });
-  if (registeredScopeItem) return registeredScopeItem;
 
   return undefined;
 }

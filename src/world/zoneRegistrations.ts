@@ -41,6 +41,10 @@ export {
 } from "./maps/levelThree/Park/Gym/gymTreadmill";
 export { tickMovieTheaterProjectionLighting } from "./maps/levelThree/Park/MovieTheater/movieTheaterMovie";
 export {
+  parkMaintenancePanelEvents,
+  tickParkMaintenancePanel,
+} from "./maps/levelThree/Park/parkMaintenancePanel";
+export {
   applyMovieTheaterVapeUseEffect,
   handleMovieTheaterUsherTell,
   resolveMovieTheaterMovement,

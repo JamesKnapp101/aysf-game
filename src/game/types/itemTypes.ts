@@ -13,7 +13,7 @@ import type {
   PreserveSense,
 } from "@game/preserve/preserveTypes";
 import type { ItemId } from "./ids";
-import type { ParsedCommand } from "./parserTypes";
+import type { ItemCommandAlias, ParsedCommand } from "./parserTypes";
 
 export type ItemClass = "solid" | "liquid" | "gas";
 export type ItemCategory =
@@ -34,6 +34,7 @@ export type clothingSlots =
   | "body";
 
 export interface Item {
+  commandAliases?: ItemCommandAlias[];
   allowedContentsIds?: string[];
   canHideUnder?: boolean;
   capacity?: number;

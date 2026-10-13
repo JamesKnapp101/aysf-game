@@ -15,6 +15,7 @@ import {
   triggerParkEastPowerKeySnatch,
 } from "@game/helpers/parkKeyHijack";
 import { ScriptedEvent } from "@game/types/eventTypes";
+import { parkMaintenancePanelEvents } from "src/world/zoneRegistrations";
 import { GYM_ROOM_ID } from "src/world/maps/levelThree/Park/Gym/gymConstants";
 import {
   moveGymExerciseBallToRoom,
@@ -35,6 +36,7 @@ function runParkEastPowerKeySnatch(state: Parameters<ScriptedEvent["run"]>[0]) {
 }
 
 export const SCRIPTED_EVENTS: ScriptedEvent[] = [
+  ...parkMaintenancePanelEvents,
   ...greenhouseScriptedEvents,
   ...movieTheaterScriptedEvents,
   ...threeWestScriptedEvents,

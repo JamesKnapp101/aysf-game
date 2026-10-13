@@ -193,6 +193,16 @@ export const threeEastItems: Item[] = [
   },
   {
     id: "MindGun",
+    commandAliases: [
+      {
+        verb: "use", preposition: "on", device: "direct", target: "indirect",
+        canonicalVerb: "shoot", canonicalPreposition: "with",
+      },
+      {
+        verb: "point", preposition: "at", device: "direct", target: "indirect",
+        canonicalVerb: "shoot", canonicalPreposition: "with",
+      },
+    ],
     name: "electronic scanner",
     vocab: [
       "scanner",
@@ -243,6 +253,20 @@ export const threeEastItems: Item[] = [
   },
   {
     id: "DNAReader",
+    commandAliases: [
+      {
+        verb: "use", preposition: "on", device: "direct", target: "indirect",
+        canonicalVerb: "touch", canonicalPreposition: "with",
+      },
+      {
+        verb: "sample", preposition: "with", device: "indirect", target: "direct",
+        canonicalVerb: "touch", canonicalPreposition: "with",
+      },
+      {
+        verb: "swab", preposition: "with", device: "indirect", target: "direct",
+        canonicalVerb: "touch", canonicalPreposition: "with",
+      },
+    ],
     name: "slim electronic wand",
     description:
       "A slim electronic wand about a foot long, ending in a small porous bulb for collecting and analyzing trace samples.",

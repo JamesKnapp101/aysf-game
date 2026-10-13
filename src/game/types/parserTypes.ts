@@ -15,6 +15,16 @@ export type Preposition =
   | "to"
   | "through";
 
+/** Contextual syntax owned by an item, normalized before action dispatch. */
+export type ItemCommandAlias = {
+  verb: string;
+  preposition: Preposition;
+  device: "direct" | "indirect";
+  target?: "direct" | "indirect";
+  canonicalVerb: string;
+  canonicalPreposition?: Preposition;
+};
+
 export type ParsedCommand =
   | { type: "inventory" }
   | { type: "diagnose" }

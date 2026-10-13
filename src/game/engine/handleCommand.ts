@@ -1,4 +1,5 @@
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
+import { normalizeCommandAliases } from "../../parse/commandAliases";
 import {
   getEncounterActionGuard,
   getEncounterMoveGuard,
@@ -170,7 +171,13 @@ export async function handleCommand(
 ): Promise<GameState> {
   const capture = beginLogCapture(state);
   try {
-    const result = await executeCommand(capture.state, cmd, options, capture);
+    const normalized = normalizeCommandAliases(state, cmd);
+    const result = await executeCommand(
+      capture.state,
+      normalized,
+      options,
+      capture,
+    );
     const output = Object.freeze(capture.take());
     const clean = capture.finish(result);
     options.onOutput?.(output);

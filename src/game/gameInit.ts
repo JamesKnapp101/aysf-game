@@ -222,10 +222,9 @@ export const createInitialState = (world: World): GameState => {
         ParkMaintenanceInterior: {
           roomId: "ParkMaintenanceInterior",
           unlockTriggers: [],
-          conditionalTriggers: ["TrashBotMaintenanceDoorOpen"],
           direction: "out",
           blockMsg: `The hidden panel is closed.`,
-          passMsg: `You step back out through the hidden opening in the concrete structure.`,
+          passMsg: `The hidden panel opens automatically as you leave. You step back out through the hidden opening in the concrete structure.`,
         },
         LevelSixCorridorEnd: {
           roomId: "LevelSixCorridorEnd",

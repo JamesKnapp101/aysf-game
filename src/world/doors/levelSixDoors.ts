@@ -40,7 +40,7 @@ export const levelSixDoors: DoorDefinition[] = [
       roomBId: "StorageQuadOne",
     },
     directions: { fromA: "south", fromB: "north" },
-    initiallyOpen: false,
+    initiallyOpen: true,
     initiallyLocked: false,
     beforeOpen: blockOuterDoorOpenIfInnerOpen,
     afterOpen: handleOuterDoorOpened,

@@ -12,6 +12,7 @@ import {
   tickLevelTwoBomb,
   tickMovieTheaterProjectionLighting,
   tickMovieTheaterUsher,
+  tickParkMaintenancePanel,
   tickReactorConsensus,
   tickReactorSystems,
 } from "src/world/zoneRegistrations";
@@ -74,6 +75,7 @@ const TURN_TICK_HANDLERS: RegisteredTurnTickHandler[] = [
   { phase: "late", tick: tickBarJukebox },
   { phase: "late", tick: tickMovieTheaterUsher },
   { phase: "late", tick: tickReactorSystems },
+  { phase: "late", tick: tickParkMaintenancePanel },
 ];
 
 export function runRegisteredTurnTicks(

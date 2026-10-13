@@ -33,7 +33,7 @@ export const movieBathroomItems: Item[] = [
     name: "e-cigar",
     description: `It's a thick mahogany cylinder that simulates a papery feel, and sports a gold emblem stamped on a silk cigar band. The end that would normally be lit is fitted with a colored LED ring capped by a fine mesh, while the cigar band end tapers slightly, and has a hole in the center.`,
     initialDescription: "A fat e-cigar rests on the dry counter by the sinks.",
-    location: "seeded",
+    location: "MovieTheaterBathroom",
     vocab: ["cigar", "e-cigar", "vape-cigar"],
     itemClass: "solid",
     itemCategory: "collectable",

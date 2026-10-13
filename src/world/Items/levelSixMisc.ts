@@ -35,7 +35,7 @@ export const levelSixItems: Item[] = [
     sceneryDescription:
       "A narrow gap runs along the damaged door's edge, exposing only darkness and the occasional twitch of shadow beyond.",
     location: "LevelSixCorridorEnd",
-    vocab: ["gap", "door", "opening"],
+    vocab: ["gap", "hole", "door", "opening"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 30,

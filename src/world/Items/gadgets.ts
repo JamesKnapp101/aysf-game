@@ -251,6 +251,9 @@ export const specialItems: Item[] = [
   // 10. Radio ---------------------------------------------------------------
   {
     id: "Radio",
+    commandAliases: [
+      { verb: "turn", preposition: "on", device: "direct", canonicalVerb: "push" },
+    ],
     name: "a two-way radio",
     description:
       "A hand-held two-way radio with a knurled power switch on the left side, a large rectangular push-to-talk button on the right, a small green frequency display above the speaker grille, and a squat black antenna jutting from the top. The casing is cracked on one corner, but it still works. There's a red call button on one side of it.",
@@ -273,12 +276,10 @@ export const specialItems: Item[] = [
     itemSize: 2,
     isContagious: true,
     isPushable: true,
-    isSwitchable: true,
     isUseable: true,
     isSettable: true,
     describe: describePrimaryRadio,
     overrides: {
-      switch: pushRadioCallButton,
       push: pushRadioCallButton,
       use: pushRadioCallButton,
       set: openRadioFrequencyDisplay,
