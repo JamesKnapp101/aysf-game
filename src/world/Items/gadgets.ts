@@ -273,10 +273,12 @@ export const specialItems: Item[] = [
     itemSize: 2,
     isContagious: true,
     isPushable: true,
+    isSwitchable: true,
     isUseable: true,
     isSettable: true,
     describe: describePrimaryRadio,
     overrides: {
+      switch: pushRadioCallButton,
       push: pushRadioCallButton,
       use: pushRadioCallButton,
       set: openRadioFrequencyDisplay,

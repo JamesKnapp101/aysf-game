@@ -1,22 +1,19 @@
 import { getItemById } from "@game/helpers/itemHelpers";
 import { applyRegisteredTakeItemEffects } from "@game/registries/takeItemEffectRegistry";
-import { isItemOpen } from "@game/rules/containers";
 import { updateItemLocation } from "@game/rules/items";
 import { RuleResult } from "@game/rules/result";
 import { triggerScoreOnce } from "@game/rules/score";
-import { addToInventory, inventoryHas } from "@game/rules/state";
+import { addToInventory } from "@game/rules/state";
 import {
   getContainerContentsIds,
   getContainerContentsItems,
   getSurfaceItems,
 } from "@game/selectors/containerSelectors";
 import { getWaterSourcesInRoom } from "@game/selectors/itemSelectors";
-import {
-  getCurrentRoom,
-  getItemsInCurrentRoom,
-} from "@game/selectors/roomSelectors";
+import { getItemsInCurrentRoom } from "@game/selectors/roomSelectors";
 import { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
+import { canReachContainerContents, getTakeHolders } from "./takeScope";
 
 type TakeOverrideResult = RuleResult | string | undefined;
 
@@ -51,11 +48,16 @@ function getBlockingTakeMessage(
   return { state, message: typeof override === "string" ? override : fallback };
 }
 
-export function tryTakeItem(state: GameState, noun: string): RuleResult {
-  const lower = noun.toLowerCase();
+// An exact target lets bulk TAKE avoid ambiguous names without changing noun resolution.
+export function tryTakeItem(
+  state: GameState,
+  noun: string | { itemId: string },
+): RuleResult {
+  const lower = typeof noun === "string" ? noun.toLowerCase() : "";
   const nounWords = lower.split(/\s+/).filter(Boolean);
   const nounMatchesItem = (item: ReturnType<typeof getItemById>): boolean => {
     if (!item) return false;
+    if (typeof noun !== "string") return item.id === noun.itemId;
 
     const named = (item.named?.(state, item) ?? item.name).toLowerCase();
     if (named === lower) return true;
@@ -70,7 +72,6 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     return nounWords.every((word) => vocabTokens.has(word));
   };
 
-  const room = getCurrentRoom(state);
   const itemsHere = getItemsInCurrentRoom(state);
   const itemOnFloor = itemsHere.find((item) => nounMatchesItem(item));
 
@@ -133,12 +134,7 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     };
   }
 
-  const surfacesHere = state.world.items.filter(
-    (i) =>
-      i.isSurface &&
-      ((state.itemState.itemRoomId[i.id] ?? i.location) === room.id ||
-        inventoryHas(state.player.inventory, i.id)),
-  );
+  const surfacesHere = getTakeHolders(state, "isSurface");
 
   for (const surface of surfacesHere) {
     const surfaceItems = getSurfaceItems(state, surface);
@@ -191,20 +187,10 @@ export function tryTakeItem(state: GameState, noun: string): RuleResult {
     };
   }
 
-  const containersHere = state.world.items.filter(
-    (i) =>
-      i.isContainer &&
-      ((state.itemState.itemRoomId[i.id] ?? i.location) === room.id ||
-        inventoryHas(state.player.inventory, i.id)),
-  );
+  const containersHere = getTakeHolders(state, "isContainer");
 
   for (const container of containersHere) {
-    const canReachInside =
-      !(
-        container.meta?.contentsAccessibleWhenClosed === false &&
-        state.itemState.openItems?.[container.id] !== true
-      ) && isItemOpen(state, container.id);
-    if (!canReachInside) continue;
+    if (!canReachContainerContents(state, container)) continue;
 
     const contentsItems = getContainerContentsItems(state, container);
     const found = contentsItems.find((item) => nounMatchesItem(item));

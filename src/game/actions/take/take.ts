@@ -11,6 +11,7 @@ import { getItemsInCurrentRoom } from "../../selectors/roomSelectors";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
+import { doTakeAll } from "./takeAll";
 
 export function doTake(state: GameState, cmd: ParsedCommand): ActionResult {
   if (cmd.type !== "action" || (cmd.verb !== "take" && cmd.verb !== "get")) {
@@ -20,6 +21,10 @@ export function doTake(state: GameState, cmd: ParsedCommand): ActionResult {
   const direct = cmd.direct?.trim();
   if (!direct) {
     return { state, message: "Take what?" };
+  }
+
+  if (direct.toLowerCase() === "all" && !cmd.preposition && !cmd.indirect) {
+    return doTakeAll(state);
   }
 
   if (isCatNoun(direct)) {
