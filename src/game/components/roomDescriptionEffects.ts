@@ -38,13 +38,7 @@ export function computeLingerMs(text: string): number {
   return Math.max(MIN_LINGER_MS, Math.min(MAX_LINGER_MS, raw));
 }
 
-export function splitMemory(memory: string): string[] {
-  return memory
-    .split(".")
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((s) => (s.endsWith(".") ? s : `${s}.`));
-}
+export { splitMemory } from "../text/memorySequence";
 
 // Tiny deterministic RNG so flashes feel consistent per run.
 export function makeRand(seed: number) {

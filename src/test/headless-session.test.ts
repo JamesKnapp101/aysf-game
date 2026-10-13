@@ -243,7 +243,7 @@ describe("headless game session", () => {
     const spy = vi.spyOn(commandEngine, "handleCommand");
     const controller = session();
     await controller.start();
-    useUIOverlayStore.getState().openOverlay({ kind: "power-station-terminal", isOn: true });
+    useUIOverlayStore.getState().openOverlay({ kind: "matter-transmitter", isOn: true });
     expect(text(await controller.explorer.command("wait"))).toContain("needs a headless gameplay adapter");
     expect(spy).not.toHaveBeenCalled();
     await controller.reset();
@@ -278,14 +278,55 @@ describe("headless game session", () => {
     await controller.start();
     const pending = controller.explorer.command("wait");
     await entered.promise;
-    const disposal = controller.dispose();
-    expect(controller.dispose()).toBe(disposal);
+    const end = { finalAgentMessage: "  Final [[ROOM_NAME]] message.\n\n**Complete.**\n" };
+    const disposal = controller.dispose(end);
+    end.finalAgentMessage = "Changed after disposal began.";
+    expect(controller.dispose({ finalAgentMessage: "Duplicate disposal." })).toBe(disposal);
     await expect(controller.explorer.command("up")).rejects.toThrow("session is closed");
     expect(() => createHeadlessSession()).toThrow("Only one headless session");
     finish.release();
     expect(text(await pending)).toContain("Moves: 1");
     await disposal;
+    const records = await history(controller);
+    expect(records.map(entry => entry.kind)).toEqual(["start", "command", "end"]);
+    expect(records.map(entry => entry.sequence)).toEqual([1, 2, 3]);
+    expect(records.at(-1)?.finalAgentMessage).toBe("  Final [[ROOM_NAME]] message.\n\n**Complete.**\n");
+    expect(records.at(-1)?.observation.text).toEqual([]);
+    expect(records.slice(0, -1).every(entry => entry.finalAgentMessage === undefined)).toBe(true);
     expect(text(await session().start())).toContain("Moves: 0");
+  });
+
+  it("snapshots public action context before queuing and keeps it out of observations", async () => {
+    const entered = latch();
+    const finish = latch();
+    vi.spyOn(commandEngine, "handleCommand").mockImplementationOnce(async (...args) => {
+      entered.release();
+      await finish.promise;
+      return execute(...args);
+    });
+    const controller = session();
+    await controller.start();
+    const details = { goal: "Explore the immediate surroundings", reason: "Wait to observe what happens.", hiddenState: "PRIVATE_STATE" };
+    const pending = controller.explorer.command("wait", details);
+    await entered.promise;
+    details.goal = "Changed after queuing.";
+    details.reason = "Changed after queuing.";
+    const queued = controller.explorer.information("room", undefined, { reason: "Check my current location." });
+    finish.release();
+    expect(Object.keys(await pending)).toEqual(["sequence", "text"]);
+    expect(Object.keys(await queued)).toEqual(["sequence", "text"]);
+    await controller.explorer.command("look");
+    await controller.dispose();
+    const records = await history(controller);
+    expect(records.map(entry => entry.kind)).toEqual(["start", "command", "information", "command", "end"]);
+    expect(records[1]).toMatchObject({ goal: "Explore the immediate surroundings", reason: "Wait to observe what happens." });
+    expect(records[2]).toMatchObject({ reason: "Check my current location." });
+    expect(records[2]).not.toHaveProperty("goal");
+    for (const index of [0, 3, 4]) {
+      expect(records[index]).not.toHaveProperty("goal");
+      expect(records[index]).not.toHaveProperty("reason");
+    }
+    expect(JSON.stringify(records)).not.toMatch(/PRIVATE_STATE|hiddenState|Changed after queuing/);
   });
 
   it("persists a long run incrementally without losing repeated output at the engine log cap", async () => {

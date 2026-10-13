@@ -35,6 +35,14 @@ describe("autonomous player launch configuration", () => {
     expect(await invoke('console.log(JSON.stringify(parseArguments(["--model", "another-model", "--input-price", "3", "--output-price", "15"]).options));')).toMatchObject({ model: "another-model", inputUsdPerMillion: 3, outputUsdPerMillion: 15 });
   });
 
+  it("parses cache controls and preserves custom-model price requirements", async () => {
+    expect(await invoke('console.log(JSON.stringify(parseArguments(["--no-cache", "--cache-read-multiplier", "0.2"]).options));'))
+      .toEqual({ promptCaching: false, cacheReadMultiplier: 0.2 });
+    for (const args of [["--no-cache", "--no-cache"], ["--cache-read-multiplier", "0"], ["--cache-read-multiplier", "NaN"], ["--model", "custom", "--no-cache"]]) {
+      expect(await invoke(`try { parseArguments(${JSON.stringify(args)}); console.log('false'); } catch { console.log('true'); }`)).toBe(true);
+    }
+  });
+
   it("loads only the server-side key with environment precedence and does not mutate environment", async () => {
     const directory = resolve(".headless-transcripts", `credential-test-${randomUUID()}`);
     directories.push(directory);
@@ -65,7 +73,7 @@ describe("autonomous player launch configuration", () => {
         countTokens: async () => ({ input_tokens: 100 }),
         create: async () => ({
           content: [{ type: 'tool_use', id: 'tool_' + (++calls), name: 'game_command', input: { command: calls === 1 ? 'examine dead man' : 'inventory' } }],
-          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 20 }
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 }
         })
       }};
       await play({ options: { maxActions: 2 }, outputDirectory: ${JSON.stringify(directory)} }, client);
@@ -79,5 +87,91 @@ describe("autonomous player launch configuration", () => {
     const records = (await fs.readFile(resolve(directory, files.find(file => file.endsWith(".jsonl"))), "utf8")).trim().split("\n").map(JSON.parse);
     expect(records.map(record => record.kind)).toEqual(["start", "command", "command", "end"]);
     expect(records[2].observation.text.join(" ")).toMatch(/timer/i);
-  });
+  }, 20000);
+
+  it.each([
+    [false, "Complete **findings**.\n\nSecond paragraph.\n"],
+    [true, "Complete **findings**.\n\nSecond paragraph.\n"],
+    [true, ""],
+  ])("prints the captured final message according to verbose=%s, text=%j", async (verbose, finalAgentMessage) => {
+    const directory = resolve(".headless-transcripts", `node-final-message-${randomUUID()}`);
+    directories.push(directory);
+    const program = `
+      import { play } from './scripts/run-headless-agent.mjs';
+      let calls = 0;
+      const client = { messages: {
+        countTokens: async () => ({ input_tokens: 100 }),
+        create: async () => ++calls === 1 ? ({
+          content: [{ type: 'text', text: 'I will look.' }, { type: 'tool_use', id: 'tool_1', name: 'game_command', input: { command: 'look' } }],
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 }
+        }) : ({
+          content: [{ type: 'thinking', thinking: 'PRIVATE_THOUGHT', signature: 'PRIVATE_SIGNATURE' }, { type: 'text', text: ${JSON.stringify(finalAgentMessage)} }],
+          stop_reason: 'end_turn', usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 }
+        })
+      }};
+      await play({ options: { maxActions: 2 }, verbose: ${verbose}, outputDirectory: ${JSON.stringify(directory)} }, client);
+    `;
+    const result = await execute(process.execPath, ["--input-type=module", "--eval", program], { timeout: 20000 });
+    expect(result.stderr).toBe("");
+    expect(result.stdout).toContain("Stopped: model_finished. Actions: 1; model turns: 2; tokens: 240");
+    if (!finalAgentMessage) expect(result.stdout).toContain("No final text was returned by the model.");
+    else if (verbose) expect(result.stdout).toContain(`Final Agent Message:\n${finalAgentMessage}`);
+    else {
+      expect(result.stdout).toContain("Final agent message captured in transcript and report.");
+      expect(result.stdout).not.toContain(finalAgentMessage);
+    }
+    const files = await fs.readdir(directory);
+    const jsonl = await fs.readFile(resolve(directory, files.find(file => file.endsWith(".jsonl"))), "utf8");
+    const records = jsonl.trim().split("\n").map(JSON.parse);
+    expect(records.map(record => record.kind)).toEqual(["start", "command", "end"]);
+    expect(records.map(record => record.sequence)).toEqual([1, 2, 3]);
+    expect(records.at(-1).finalAgentMessage).toBe(finalAgentMessage);
+    const report = await fs.readFile(resolve(directory, files.find(file => file.endsWith(".report.md"))), "utf8");
+    expect(report).toContain("## Final Agent Message");
+    if (finalAgentMessage) expect(report).toContain(finalAgentMessage.split("\n").map(line => `    ${line}`).join("\n"));
+    expect(result.stdout + jsonl + report).not.toMatch(/PRIVATE_THOUGHT|PRIVATE_SIGNATURE|I will look/);
+  }, 20000);
+
+  it.each([false, true])("keeps action goals and reasons in artifacts and prints them only with verbose=%s", async verbose => {
+    const directory = resolve(".headless-transcripts", `node-action-goals-${randomUUID()}`);
+    directories.push(directory);
+    const goal = "Explore the immediate surroundings";
+    const commandReason = "Inspect the available exits.";
+    const informationReason = "Review the visible room description.";
+    const program = `
+      import { play } from './scripts/run-headless-agent.mjs';
+      const client = { messages: {
+        countTokens: async () => ({ input_tokens: 100 }),
+        create: async () => ({
+          content: [
+            { type: 'thinking', thinking: 'PRIVATE_THOUGHT', signature: 'PRIVATE_SIGNATURE' },
+            { type: 'tool_use', id: 'command', name: 'game_command', input: { command: 'look', goal: ${JSON.stringify(goal)}, reason: ${JSON.stringify(commandReason)} } },
+            { type: 'tool_use', id: 'information', name: 'game_information', input: { view: 'room', goal: ${JSON.stringify(goal)}, reason: ${JSON.stringify(informationReason)} } }
+          ],
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 }
+        })
+      }};
+      await play({ options: { maxActions: 2 }, verbose: ${verbose}, outputDirectory: ${JSON.stringify(directory)} }, client);
+    `;
+    const result = await execute(process.execPath, ["--input-type=module", "--eval", program], { timeout: 20000 });
+    expect(result.stderr).toBe("");
+    expect(result.stdout).toContain("Stopped: action_limit. Actions: 2; model turns: 1; tokens: 120");
+    if (verbose) {
+      expect(result.stdout).toContain(`[2] look\nGoal: ${goal}\nReason: ${commandReason}\n`);
+      expect(result.stdout).toContain(`[3] :room\nGoal: ${goal}\nReason: ${informationReason}\n`);
+    } else {
+      expect(result.stdout).not.toMatch(/Goal:|Reason:/);
+      expect(result.stdout).not.toContain(goal);
+    }
+    const files = await fs.readdir(directory);
+    const jsonl = await fs.readFile(resolve(directory, files.find(file => file.endsWith(".jsonl"))), "utf8");
+    const records = jsonl.trim().split("\n").map(JSON.parse);
+    expect(records.map(record => record.kind)).toEqual(["start", "command", "information", "end"]);
+    expect(records[1]).toMatchObject({ input: "look", goal, reason: commandReason });
+    expect(records[2]).toMatchObject({ input: ":room", goal, reason: informationReason });
+    const report = await fs.readFile(resolve(directory, files.find(file => file.endsWith(".report.md"))), "utf8");
+    expect(report).toContain(`### Transcript #2: look\n\n- **Goal:** ${goal}\n- **Reason:** ${commandReason}`);
+    expect(report).toContain(`### Transcript #3: :room\n\n- **Goal:** ${goal}\n- **Reason:** ${informationReason}`);
+    expect(result.stdout + jsonl + report).not.toMatch(/PRIVATE_THOUGHT|PRIVATE_SIGNATURE/);
+  }, 20000);
 });

@@ -114,7 +114,8 @@ describe("teleportation pads", () => {
   });
 
   it("loads a missing destination chunk before moving from a disk", async () => {
-    const base = createInitialState(INITIAL_WORLD);
+    // Incidental NPC narration can otherwise replace the last log entry.
+    const base = { ...createInitialState(INITIAL_WORLD), rng: () => 0.99 };
     const start = setInventory(
       withPoweredTeleportPads(setPlayerRoom(base, "TPADTerminal")),
       ["greenbadge"],

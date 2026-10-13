@@ -5,20 +5,20 @@ import type { SwitchStates } from "../types/itemTypes";
 import { CrtModal } from "./CrtModal";
 import { PowerStationTerminalScreen } from "./PowerStationTerminalScreen";
 import {
-  applyPowerFromSwitches,
+  activatePowerSwitch,
+  synchronizePowerTerminal,
   buildInitialSwitchStates,
   clampIndex,
   getBreadcrumbText,
   getListItems,
   isBackNode,
   isMenu,
-  isToggleable,
   POWER_GRID_ROOT,
   type Breadcrumb,
   type MenuTreeNode,
   type PowerListItem,
   type TreeNode,
-} from "./powerStationTerminalHelpers";
+} from "../rules/powerStationTerminal";
 
 type Props = {
   onClose: () => void;
@@ -68,19 +68,7 @@ export function PowerStationTerminalModal({
   };
 
   const toggleSwitch = (node: TreeNode) => {
-    if (!isToggleable(node)) return;
-
-    setSwitchStates((prev) => {
-      const currentStatus = prev[node.id] ?? "off";
-      if (currentStatus === "locked" || currentStatus === "failure") {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        [node.id]: currentStatus === "on" ? "off" : "on",
-      };
-    });
+    setSwitchStates((prev) => activatePowerSwitch(node, prev));
   };
 
   const activateItem = (item: PowerListItem | undefined) => {
@@ -108,11 +96,7 @@ export function PowerStationTerminalModal({
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setGameState((prev) => {
-      const nextWorldState = applyPowerFromSwitches(prev.worldState, switchStates);
-      if (nextWorldState === prev.worldState) return prev;
-      return { ...prev, worldState: nextWorldState };
-    });
+    setGameState((prev) => synchronizePowerTerminal(prev, switchStates));
   }, [setGameState, switchStates]);
 
   useEffect(() => {

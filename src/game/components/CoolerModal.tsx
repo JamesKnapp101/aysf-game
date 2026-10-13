@@ -2,14 +2,13 @@ import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { CrtModal } from "./CrtModal";
 import "../../styles/cooler-modal.css";
 import type { CoolerMode } from "../types/itemTypes";
+import { COOLER_MODES as MODES, coolerModeTemperature as modeTemp } from "../text/coolerPanel";
 
 type CoolerModalProps = {
   mode: CoolerMode;
   onSetMode: (mode: CoolerMode) => void;
   onClose: () => void;
 };
-
-const MODES: CoolerMode[] = ["off", "cool", "cold", "freeze"];
 
 function clampIndex(i: number) {
   return Math.max(0, Math.min(MODES.length - 1, i));
@@ -25,19 +24,6 @@ function modeLabel(mode: CoolerMode) {
       return "COLD";
     case "freeze":
       return "FREEZE";
-  }
-}
-
-function modeTemp(mode: CoolerMode) {
-  switch (mode) {
-    case "off":
-      return 70;
-    case "cool":
-      return 55;
-    case "cold":
-      return 40;
-    case "freeze":
-      return 0;
   }
 }
 

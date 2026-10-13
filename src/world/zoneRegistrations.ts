@@ -47,9 +47,11 @@ export {
   tickMovieTheaterUsher,
 } from "./maps/levelThree/Park/MovieTheater/movieTheaterUsherPuzzle";
 export { handleGreenhouseRadioCall } from "./maps/levelFour/Greenhouse";
+export { apiaryReadout } from "./maps/levelFour/apiaryReadout";
 export { GAME_PRESERVE_ANIMAL_PROFILES } from "./maps/levelFour/gamePreserveRules";
 export { tickLevelTwoBomb } from "./maps/levelTwo/levelTwoBomb";
 export { ReactorBigBoard } from "./maps/levelFive/ReactorBigBoard";
+export { operateReactorTerminal, reactorTerminalView, REACTOR_TERMINAL_INITIAL_MESSAGE } from "./maps/levelFive/reactorTerminal";
 export {
   isReactorBigBoardVisible,
   tickReactorConsensus,
@@ -80,6 +82,7 @@ export {
 export {
   DEEP_STORAGE_HYPOTHERMIA_CAUSE,
   getDeepStorageDeathMessage,
+  isDeepStorageSuitOverlayActive,
   resolveDeepStorageMovement,
   returnDeepStorageSuitHome,
   shouldDeepStorageExposureKill,

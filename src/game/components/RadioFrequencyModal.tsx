@@ -5,19 +5,13 @@ import {
   RADIO_FREQUENCY_MAX,
   RADIO_FREQUENCY_MIN,
   RADIO_FREQUENCY_STEP,
+  RADIO_FINE_TUNE_CONTROLS as FINE_TUNE_CONTROLS,
   setRadioFrequency,
 } from "@game/helpers/radioHelpers";
 import type { GameState } from "@game/types/gameTypes";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import "../../styles/radio-frequency-modal.css";
 import { CrtModal } from "./CrtModal";
-
-const FINE_TUNE_CONTROLS = [
-  { label: "-0.050", delta: -RADIO_FREQUENCY_STEP * 10 },
-  { label: "-0.005", delta: -RADIO_FREQUENCY_STEP },
-  { label: "+0.005", delta: RADIO_FREQUENCY_STEP },
-  { label: "+0.050", delta: RADIO_FREQUENCY_STEP * 10 },
-] as const;
 
 type RadioFrequencyModalProps = {
   onClose: () => void;

@@ -159,6 +159,7 @@ export const Game: React.FC = () => {
   });
 
   const nonce = useUIEffectsStore((s) => s.teleportFlashNonce);
+  const automaticMemoryActive = useUIEffectsStore((s) => s.mindFlash !== null);
   const screenShakeNonce = useUIEffectsStore((s) => s.screenShakeNonce);
   const playSyndromeXSignal = useUIEffectsStore((s) => s.playSyndromeXSignal);
 
@@ -476,7 +477,7 @@ export const Game: React.FC = () => {
                 state={gs}
                 onCommand={enqueueCommand}
                 inputRef={inputRef}
-                inputDisabled={deepStorageSuitOverlayActive}
+                inputDisabled={deepStorageSuitOverlayActive || automaticMemoryActive}
                 onGamePromptFocus={handleGamePromptFocus}
                 onLogPanelClick={focusGamePrompt}
               />

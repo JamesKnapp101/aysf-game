@@ -455,7 +455,7 @@ export const sixEastItems: Item[] = [
     description: `The diagrams look highly technical. You're able to glean they have something to do with water treatment, but you can't decipher the meaning of it.`,
     sceneryDescription: `next to a large whiteboard that's covered in diagrams scribbled in different colored marker,`,
     location: "LivingQuartersSixEast",
-    vocab: ["board", "white board", "diagrams", "notes", "paper notes"],
+    vocab: ["white", "board", "whiteboard", "diagrams", "notes", "paper notes"],
     itemClass: "solid",
     itemCategory: "scenery",
     meta: {

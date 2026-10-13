@@ -11,8 +11,11 @@ import { getInventoryCounts, getInventoryItemLabel, getInventoryVisibleContents 
 import { buildStatusReadings } from "../text/statusPresentation";
 import type { Item } from "../types/itemTypes";
 import type { GameState } from "@game/types/gameTypes";
-import { isDeepStorageSuitOverlayActive } from "src/world/maps/levelSeven/deepStorage";
+import { pendingHeadlessWorldGate } from "../registries/headlessGateRegistry";
 import { useUIEffectsStore, useUIOverlayStore } from "../store/store";
+import { supportsSimpleOverlay } from "./simpleOverlays";
+import { supportsTerminalOverlay } from "./terminalOverlays";
+import { supportsCameraGunOverlay } from "./cameraGun";
 
 export const ADAPTER_REQUIRED =
   "This interaction needs a headless gameplay adapter. Reset the session to continue.";
@@ -82,15 +85,16 @@ export function statusText(state: GameState): string {
   ].join("\n");
 }
 
-// Informational overlays are completed before this check. Remaining UI-only
-// contexts still need mechanical adapters and must not be bypassed.
+// Reader/help overlays are completed immediately. Mounted supported controls
+// remain available; every other gameplay UI gate requires an adapter.
 export function requiresGameplayAdapter(state: GameState): boolean {
   const effects = useUIEffectsStore.getState();
+  const overlay = useUIOverlayStore.getState().overlay;
   return (
-    useUIOverlayStore.getState().overlay.kind !== "none" ||
+    (overlay.kind !== "none" && overlay.kind !== "message-machine" && !supportsSimpleOverlay(overlay.kind) && !supportsTerminalOverlay(overlay.kind) && !supportsCameraGunOverlay(overlay.kind)) ||
     effects.mindFlash !== null ||
     effects.organismDeath !== null ||
     effects.syndromeXSignal !== null ||
-    isDeepStorageSuitOverlayActive(state)
+    pendingHeadlessWorldGate(state) !== undefined
   );
 }

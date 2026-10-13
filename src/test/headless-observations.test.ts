@@ -252,7 +252,7 @@ describe("context-aware headless room observations", () => {
       const command = commands[index++];
       return { content: command ? [{ type: "tool_use", id: `tool-${index}`, name: command === ":log" ? "game_information" : "game_command",
         input: command === ":log" ? { view: "log" } : { command }, caller: { type: "direct" } }] : [{ type: "text", text: "Finished.", citations: null }],
-      stop_reason: command ? "tool_use" : "end_turn", usage: { input_tokens: 100, output_tokens: 20 },
+      stop_reason: command ? "tool_use" : "end_turn", usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 },
       } as Message;
     });
     const run = await runHeadlessAgent({ client: { messages: { create, countTokens: async () => ({ input_tokens: 100 }) } }, session: controller });

@@ -1,13 +1,8 @@
 import { CrtModal } from "@game/components/CrtModal";
-import { getItemById } from "@game/helpers/itemHelpers";
-import { updateItemLocation } from "@game/rules/items";
-import { addToInventory } from "@game/rules/state";
-import { GameState } from "@game/types/gameTypes";
-import type { Item } from "@game/types/itemTypes";
-import React, { useMemo, useState } from "react";
+import { getLockerModels, lockerFoundText, openLocker, type LockerType } from "@game/rules/lockers";
+import type { GameState } from "@game/types/gameTypes";
+import React, { useState } from "react";
 import "../../styles/components/locker-modal.css";
-
-type LockerType = "men" | "women";
 
 type LockerModalProps = {
   onClose: () => void;
@@ -22,85 +17,6 @@ type FoundPopup = {
   itemIds: string[];
 };
 
-const LOCKER_COUNT = 16;
-
-function lockerIdFor(type: LockerType, index: number): string {
-  return type === "men" ? `menLocker${index}` : `womenLocker${index}`;
-}
-
-function appendLog(
-  setGameState: React.Dispatch<React.SetStateAction<GameState>>,
-  text: string
-) {
-  setGameState((prev: any) => {
-    if (Array.isArray(prev?.log)) return { ...prev, log: [...prev.log, text] };
-    if (Array.isArray(prev?.logLines))
-      return { ...prev, logLines: [...prev.logLines, text] };
-    if (Array.isArray(prev?.uiState?.logLines)) {
-      return {
-        ...prev,
-        uiState: {
-          ...prev.uiState,
-          logLines: [...prev.uiState.logLines, text],
-        },
-      };
-    }
-    if (Array.isArray(prev?.storyLog?.entries)) {
-      return {
-        ...prev,
-        storyLog: {
-          ...prev.storyLog,
-          entries: [...prev.storyLog.entries, { text }],
-        },
-      };
-    }
-
-    console.warn(
-      "appendLog: couldn't find a log array on state; message:",
-      text
-    );
-    return prev;
-  });
-}
-
-function getInventoryItemIds(state: any): string[] {
-  const inventory = state?.player?.inventory;
-
-  if (Array.isArray(inventory)) return inventory;
-
-  if (inventory && typeof inventory === "object") {
-    return [
-      ...(inventory.general ?? []),
-      ...(inventory.badges ?? []),
-      ...(inventory.keys ?? []),
-    ];
-  }
-
-  return [];
-}
-
-function playerHasKeyForLocker(
-  state: any,
-  type: LockerType,
-  lockerIndex: number
-): boolean {
-  const inventoryIds = new Set(getInventoryItemIds(state));
-  return ((state?.world?.items ?? []) as Item[]).some(
-    (it) =>
-      (inventoryIds.has(it.id) ||
-        it?.location === "INVENTORY" ||
-        state?.itemState?.itemRoomId?.[it.id] === "INVENTORY") &&
-      it?.meta?.lockerType === type && it?.meta?.lockerIndex === lockerIndex
-  );
-}
-
-function moveItemIdsToInventory(prev: GameState, itemIds: string[]): GameState {
-  return itemIds.reduce((next, itemId) => {
-    const moved = updateItemLocation(next, itemId, "INVENTORY");
-    return addToInventory(moved, itemId);
-  }, prev);
-}
-
 export function LockerModal({
   onClose,
   state,
@@ -113,95 +29,18 @@ export function LockerModal({
     itemIds: [],
   });
 
-  const contentsMap = (
-    type === "men"
-      ? state.worldState?.mensLockerContents
-      : state.worldState?.womensLockerContents
-  ) as Record<string, string[]>;
+  const lockerModels = getLockerModels(state, type);
 
-  const openedMap = (
-    type === "men"
-      ? state.worldState?.mensLockersOpened
-      : state.worldState?.womensLockersOpened
-  ) as Record<string, boolean>;
-
-  const lockerModels = useMemo(() => {
-    const cMap = contentsMap ?? {};
-    const oMap = openedMap ?? {};
-    return Array.from({ length: LOCKER_COUNT }, (_, i) => {
-      const idx = i + 1;
-      const lockerId = lockerIdFor(type, idx);
-      const contents = cMap[lockerId] ?? [];
-      const opened = Boolean(oMap[lockerId]);
-      return { idx, lockerId, contents, opened };
+  const handleLockerClick = async (lockerIndex: number) => {
+    const result = await new Promise<ReturnType<typeof openLocker>>((resolve) => {
+      setGameState((previous) => {
+        const opened = openLocker(previous, type, lockerIndex);
+        resolve(opened);
+        return opened.state;
+      });
     });
-  }, [contentsMap, openedMap, type]);
-
-  const handleLockerClick = (lockerIndex: number) => {
-    const lockerId = lockerIdFor(type, lockerIndex);
-    const alreadyOpened = Boolean(openedMap?.[lockerId]);
-    const contents: string[] = contentsMap?.[lockerId] ?? [];
-
-    if (alreadyOpened) {
-      if (!contents?.length) appendLog(setGameState, "It's empty.");
-      else setPopup({ open: true, lockerIndex, itemIds: contents });
-      return;
-    }
-
-    const hasKey = playerHasKeyForLocker(state as any, type, lockerIndex);
-    if (!hasKey) {
-      appendLog(setGameState, "It won't budge.");
-      return;
-    }
-
-    // Mark opened + move contents + clear locker
-    setGameState((prev: any) => {
-      let next = prev;
-
-      const openedKey =
-        type === "men" ? "mensLockersOpened" : "womensLockersOpened";
-      const contentsKey =
-        type === "men" ? "mensLockerContents" : "womensLockerContents";
-
-      const prevOpened = (prev.worldState?.[openedKey] ?? {}) as Record<
-        string,
-        boolean
-      >;
-
-      next = {
-        ...next,
-        worldState: {
-          ...next.worldState,
-          [openedKey]: {
-            ...prevOpened,
-            [lockerId]: true,
-          },
-        },
-      };
-
-      if (contents?.length) {
-        next = moveItemIdsToInventory(next, contents);
-      }
-
-      // Clear contents after opening
-      next = {
-        ...next,
-        worldState: {
-          ...next.worldState,
-          [contentsKey]: {
-            ...next.worldState?.[contentsKey],
-            [lockerId]: [],
-          },
-        },
-      };
-
-      return next;
-    });
-
-    if (contents?.length) {
-      setPopup({ open: true, lockerIndex, itemIds: contents });
-    } else {
-      appendLog(setGameState, "It's empty.");
+    if (result.foundItemIds.length) {
+      setPopup({ open: true, lockerIndex, itemIds: result.foundItemIds });
     }
   };
 
@@ -263,10 +102,9 @@ export function LockerModal({
             >
               <ul className="ml-popupList">
                 {popup.itemIds.map((id) => {
-                  const name = getItemById(state, id)?.name ?? id;
                   return (
                     <li key={id} className="ml-popupItem">
-                      {`Inside the locker you find a ${name}`}
+                      {lockerFoundText(state, id)}
                     </li>
                   );
                 })}

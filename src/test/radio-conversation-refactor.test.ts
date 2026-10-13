@@ -15,6 +15,39 @@ describe("conversation system refactor", () => {
     vi.restoreAllMocks();
   });
 
+  it.each([
+    "use radio",
+    "use walkie-talkie",
+    "talk into radio",
+    "talk into walkie-talkie",
+  ])(
+    "%s performs the same call action as pushing the call button",
+    async (command) => {
+      const initial = setInventory(createTestState({ roomId: "StairSix" }), [
+        "Radio",
+      ]);
+
+      const pushed = await handleCommand(initial, parseCommand("push call button"));
+      const used = await handleCommand(initial, parseCommand(command));
+
+      expect(used.worldState).toEqual(pushed.worldState);
+      expect(used.radio).toEqual(pushed.radio);
+      expect(used.radio?.activeNpcId).toBe("you_1st_contact");
+      expect(used.log.at(-1)?.split("\n").slice(1)).toEqual(
+        pushed.log.at(-1)?.split("\n").slice(1),
+      );
+
+      const pushedAgain = await handleCommand(used, parseCommand("push call button"));
+      const usedAgain = await handleCommand(used, parseCommand(command));
+
+      expect(usedAgain.worldState).toEqual(pushedAgain.worldState);
+      expect(usedAgain.radio).toEqual(pushedAgain.radio);
+      expect(usedAgain.log.at(-1)?.split("\n").slice(1)).toEqual(
+        pushedAgain.log.at(-1)?.split("\n").slice(1),
+      );
+    },
+  );
+
   it("keeps the first radio call state separate from NPC conversation state", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: false,

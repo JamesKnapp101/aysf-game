@@ -382,6 +382,7 @@ export function useGameSession({
 
   const executeCommand = useCallback(
     async (input: string) => {
+      if (useUIEffectsStore.getState().mindFlash) return;
       const trimmed = input.trim();
       if (!trimmed) return;
 
@@ -508,6 +509,7 @@ export function useGameSession({
 
   const runAction = useCallback(
     (req: ActionRequest) => {
+      if (useUIEffectsStore.getState().mindFlash) return;
       if (req.verb === "command") {
         enqueueCommand(req.payload.input ?? "");
         return;

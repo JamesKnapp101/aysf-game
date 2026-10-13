@@ -1,15 +1,5 @@
 import { useState } from "react";
-import {
-  authenticateReactorTerminal,
-  ENGINE_ROOM_KEY_ID,
-  insertReactorTerminalKey,
-  isReactorTerminalAuthenticated,
-  REACTOR_KEY_SLOT_ID,
-  REACTOR_KEY_TURNED_TRIGGER,
-  REACTOR_RESTARTED_TRIGGER,
-  restartReactorCore,
-  turnReactorTerminalKey,
-} from "src/world/maps/levelFive/reactorSystems";
+import { operateReactorTerminal, reactorTerminalView, REACTOR_TERMINAL_INITIAL_MESSAGE, type ReactorTerminalControl } from "src/world/maps/levelFive/reactorTerminal";
 import type { GameState } from "../types/gameTypes";
 import { CrtModal } from "./CrtModal";
 import "../../styles/components/reactor-control-terminal.css";
@@ -26,26 +16,20 @@ export function ReactorControlTerminalModal({
   state,
 }: Props) {
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("AWAITING ETHICS CREDENTIAL");
-  const authenticated = isReactorTerminalAuthenticated(state);
-  const keyInserted = Boolean(
-    state.itemState.containerContents[REACTOR_KEY_SLOT_ID]?.includes(
-      ENGINE_ROOM_KEY_ID,
-    ),
-  );
-  const keyTurned = Boolean(
-    state.worldState.conditionalTriggers[REACTOR_KEY_TURNED_TRIGGER],
-  );
-  const restarted = Boolean(
-    state.worldState.conditionalTriggers[REACTOR_RESTARTED_TRIGGER],
-  );
+  const [message, setMessage] = useState(REACTOR_TERMINAL_INITIAL_MESSAGE);
+  const view = reactorTerminalView(state);
+  const authenticated = view.authenticated;
 
-  const apply = (
-    action: (current: GameState) => { message: string; state: GameState },
-  ) => {
-    const result = action(state);
-    setMessage(result.message);
-    setGameState(() => result.state);
+  const apply = async (control: ReactorTerminalControl) => {
+    const result = await new Promise<ReturnType<typeof operateReactorTerminal>>((resolve) => {
+      setGameState((previous) => {
+        const operated = operateReactorTerminal(previous, control, password);
+        resolve(operated);
+        return operated.state;
+      });
+    });
+    if (!result.available) return;
+    if (result.message) setMessage(result.message);
   };
 
   return (
@@ -67,9 +51,7 @@ export function ReactorControlTerminalModal({
             className="reactor-terminal__login"
             onSubmit={(event) => {
               event.preventDefault();
-              apply((current) =>
-                authenticateReactorTerminal(current, password),
-              );
+              apply("authenticate");
             }}
           >
             <label htmlFor="reactor-password">PASSWORD</label>
@@ -86,27 +68,27 @@ export function ReactorControlTerminalModal({
           <div className="reactor-terminal__controls">
             <div className="reactor-terminal__status">
               <span>ETHICS CREDENTIAL</span><strong>ACCEPTED</strong>
-              <span>ENGINE ROOM KEY</span><strong>{keyTurned ? "TURNED" : keyInserted ? "INSERTED" : "MISSING"}</strong>
-              <span>REACTOR CORE</span><strong>{restarted ? "ONLINE" : "OFFLINE"}</strong>
+              <span>ENGINE ROOM KEY</span><strong>{view.keyStatus}</strong>
+              <span>REACTOR CORE</span><strong>{view.coreStatus}</strong>
             </div>
 
             <div className="reactor-terminal__actions">
-              {!keyInserted && (
-                <button onClick={() => apply(insertReactorTerminalKey)} type="button">
+              {view.controls.includes("insert") && (
+                <button onClick={() => apply("insert")} type="button">
                   INSERT ENGINE ROOM KEY
                 </button>
               )}
-              {keyInserted && !keyTurned && (
-                <button onClick={() => apply(turnReactorTerminalKey)} type="button">
+              {view.controls.includes("turn") && (
+                <button onClick={() => apply("turn")} type="button">
                   TURN AUTHORIZATION KEY
                 </button>
               )}
-              {keyTurned && !restarted && (
-                <button onClick={() => apply(restartReactorCore)} type="button">
+              {view.controls.includes("restart") && (
+                <button onClick={() => apply("restart")} type="button">
                   RESTART REACTOR CORE
                 </button>
               )}
-              {restarted && <strong className="reactor-terminal__online">REACTOR CORE ONLINE</strong>}
+              {view.coreStatus === "ONLINE" && <strong className="reactor-terminal__online">REACTOR CORE ONLINE</strong>}
             </div>
           </div>
         )}

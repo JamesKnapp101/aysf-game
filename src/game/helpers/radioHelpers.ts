@@ -5,6 +5,13 @@ export const RADIO_FREQUENCY_MIN = 136;
 export const RADIO_FREQUENCY_MAX = 174;
 export const RADIO_FREQUENCY_STEP = 0.005;
 
+export const RADIO_FINE_TUNE_CONTROLS = [
+  { label: "-0.050", delta: -RADIO_FREQUENCY_STEP * 10 },
+  { label: "-0.005", delta: -RADIO_FREQUENCY_STEP },
+  { label: "+0.005", delta: RADIO_FREQUENCY_STEP },
+  { label: "+0.050", delta: RADIO_FREQUENCY_STEP * 10 },
+] as const;
+
 export function clampRadioFrequency(frequency: number): number {
   if (!Number.isFinite(frequency)) return DEFAULT_RADIO_FREQUENCY;
 

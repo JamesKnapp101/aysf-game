@@ -78,6 +78,7 @@ const VERB_ALIASES: Record<string, string> = {
 
 const PHRASAL_VERB_ALIASES: Record<string, string> = {
   "get on": "ride",
+  "talk into": "use",
 };
 
 const PREPOSITIONS: Preposition[] = [

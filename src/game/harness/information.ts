@@ -7,6 +7,7 @@ import type { DNAResult } from "../rules/dnaReader";
 import type { GameState } from "../types/gameTypes";
 import type { InformationView } from "./types";
 import { currentRoomText } from "./playerView";
+import { shipMapText, type MapInformationOptions } from "../map/shipMapText";
 
 const CHOOSE_RECORD = "Choose a record number from the current list.";
 
@@ -77,9 +78,10 @@ function roomText(state: GameState): string {
 }
 
 /** Read-only projections from player-owned records and the currently mounted UI. */
-export function informationText(state: GameState, view: InformationView, record?: number): string {
+export function informationText(state: GameState, view: InformationView, record?: number | MapInformationOptions): string {
+  if (view === "map") return shipMapText(state, record);
   if (record !== undefined) {
-    if (!Number.isSafeInteger(record) || record < 1) return CHOOSE_RECORD;
+    if (typeof record !== "number" || !Number.isSafeInteger(record) || record < 1) return CHOOSE_RECORD;
     if (view === "log") {
       const entry = state.player.log?.[record - 1];
       return entry ? `${entry.title || "Log Entry"}\n\n${entry.body || ""}` : CHOOSE_RECORD;

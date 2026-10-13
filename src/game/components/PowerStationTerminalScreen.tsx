@@ -14,7 +14,7 @@ import {
   stripParenNotes,
   type MenuTreeNode,
   type PowerListItem,
-} from "./powerStationTerminalHelpers";
+} from "../rules/powerStationTerminal";
 
 type PowerStationTerminalScreenProps = {
   breadcrumbText: string;

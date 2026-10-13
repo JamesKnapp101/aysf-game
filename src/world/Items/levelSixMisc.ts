@@ -31,7 +31,7 @@ export const levelSixItems: Item[] = [
     id: "LevelSixCorridorEndDoorGap",
     name: "gap",
     description:
-      "The damaged door has warped just enough to leave a narrow gap along one side. The metal around it is scorched and pitted, and something about the darkness beyond feels attentive.",
+      "The damaged door has warped just enough to leave a narrow gap along one side. The metal around it is scorched and pitted, and something about the darkness beyond feels attentive. The gap is big enough to stick your head through, so you could look through the gap to try and get a better look.",
     sceneryDescription:
       "A narrow gap runs along the damaged door's edge, exposing only darkness and the occasional twitch of shadow beyond.",
     location: "LevelSixCorridorEnd",
@@ -91,7 +91,7 @@ export const levelSixItems: Item[] = [
     description: `It's a large, flat panel display mounted in the wall over the door.`,
     sceneryDescription: `Z`,
     location: "LevelSixCorridorBend",
-    vocab: ["display", "door display"],
+    vocab: ["status", "panel", "display", "door display"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 50,

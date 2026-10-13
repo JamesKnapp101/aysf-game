@@ -307,12 +307,12 @@ function resolveExitTargetRoomId(
   return undefined;
 }
 
-export function buildShipMapEdges(
-  state: GameState,
+/** Only the strokes authored in the player-visible drawing; never query exits. */
+export function getAuthoredShipMapEdges(
   nodes: readonly ShipMapNode[],
 ): ShipMapEdge[] {
   const levelIds = new Set(nodes.map((node) => node.levelId));
-  const generatedEdges = CONNECTORS
+  return CONNECTORS
     .filter((connector) => levelIds.has(connector.levelId))
     .map((connector) => ({
       fromNodeId: connector.fromNodeId,
@@ -326,6 +326,13 @@ export function buildShipMapEdges(
       toRoomId: connector.toRoomId,
     }));
 
+}
+
+export function buildShipMapEdges(
+  state: GameState,
+  nodes: readonly ShipMapNode[],
+): ShipMapEdge[] {
+  const generatedEdges = getAuthoredShipMapEdges(nodes);
   if (generatedEdges.length > 0) return generatedEdges;
 
   const nodesByRoomId = nodes.reduce<Map<string, ShipMapNode[]>>((acc, node) => {

@@ -4,17 +4,13 @@ import {
   isDeactivatedBeeOnApiaryTray,
 } from "src/world/maps/levelFour/Apiary";
 import type { BeeSpecs } from "src/world/maps/levelFour/Greenhouse";
+import { buildBeeSpecRows } from "src/world/maps/levelFour/apiaryReadout";
 import "../../styles/apiary-terminal.css";
 import { CrtModal } from "./CrtModal";
 
 type ApiaryTerminalModalProps = {
   onClose: () => void;
   state: GameState;
-};
-
-type BeeSpecRow = {
-  label: string;
-  value: string;
 };
 
 function OmniBeeIcon() {
@@ -51,35 +47,6 @@ function OmniBeeIcon() {
       />
     </svg>
   );
-}
-
-function buildBeeSpecRows(specs: BeeSpecs): BeeSpecRow[] {
-  return [
-    { label: "Id", value: specs.id },
-    { label: "Model", value: specs.model },
-    { label: "Version", value: specs.version },
-    { label: "Uptime", value: String(specs.uptime) },
-    { label: "Ping freq", value: `${specs.pingFrequencyMs}ms` },
-    { label: "Last ping", value: String(specs.lastPing) },
-    { label: "Last objective", value: specs.objective },
-    { label: "Trips", value: String(specs.trips) },
-    {
-      label: "Total payloads",
-      value: `${specs.totalPayloadGrams.toFixed(3)}g`,
-    },
-    { label: "Status", value: specs.status },
-    { label: "Error Code", value: specs.errorCode },
-    { label: "Req Shutdown?", value: String(specs.requiresShutdown) },
-    {
-      label: "Shutdown freq",
-      value: `${specs.shutdownFrequencyMHz.toFixed(4)}MHz`,
-    },
-    { label: "Swarm ID", value: String(specs.swarmId) },
-    { label: "Hive ID", value: specs.hiveId },
-    { label: "Region", value: specs.region },
-    { label: "Section", value: String(specs.section) },
-    { label: "Last log", value: specs.log },
-  ];
 }
 
 function renderTerminalReadout(hasUnit: boolean, specs: BeeSpecs | undefined) {

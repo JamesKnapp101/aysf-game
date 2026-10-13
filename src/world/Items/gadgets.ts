@@ -99,7 +99,7 @@ export const specialItems: Item[] = [
     id: "Comet",
     name: "Comet terminal",
     description:
-      "A slim, portable library terminalÃ¢â‚¬â€basically a ruggedized tablet with a matte display and a scattering of status LEDs along one edge.",
+      "A slim, portable library terminal with a matte display and a scattering of status LEDs along one edge.",
     initialDescription:
       "Lying on the bed is a slim electronic device of some kind.",
     location: "INVENTORY", //"SixWestBed",
@@ -273,10 +273,12 @@ export const specialItems: Item[] = [
     itemSize: 2,
     isContagious: true,
     isPushable: true,
+    isUseable: true,
     isSettable: true,
     describe: describePrimaryRadio,
     overrides: {
       push: pushRadioCallButton,
+      use: pushRadioCallButton,
       set: openRadioFrequencyDisplay,
     },
   },

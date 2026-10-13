@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import "../../styles/components/camera-gun-viewer.css";
 import type { GameState } from "../types/gameTypes";
-import type { Item } from "../types/itemTypes";
-import type { Room } from "../types/roomTypes";
-import { getCameraFeedDescription } from "./cameraGunViewerHelpers";
+import { cameraGunViewer } from "../helpers/cameraGunViewerHelpers";
 import { CrtModal } from "./CrtModal";
 
 type CameraGunViewerModalProps = {
@@ -13,46 +11,6 @@ type CameraGunViewerModalProps = {
   onClose: () => void;
   onRunCommand?: (rawCommand: string) => void;
 };
-
-function getItemById(state: any, itemId: string): any | undefined {
-  return state?.world?.items?.filter((wi: Item) => wi.id === itemId)?.[0];
-}
-
-function getRoomById(state: any, roomId: string): any | undefined {
-  return state?.world?.rooms?.filter((r: Room) => r.id === roomId)?.[0];
-}
-
-function isRoomId(state: GameState, id: string | undefined): id is string {
-  return Boolean(id && state.world.rooms.some((room) => room.id === id));
-}
-
-function resolveCameraRoomId(
-  state: GameState,
-  itemId: string | undefined,
-  seen = new Set<string>(),
-): string | undefined {
-  if (!itemId || seen.has(itemId)) return undefined;
-  seen.add(itemId);
-
-  if (itemId === "PLAYER" || itemId === "INVENTORY") {
-    return state.player.roomId;
-  }
-
-  const attachedHostId = state.itemState.attachedTo[itemId];
-  if (attachedHostId) {
-    return resolveCameraRoomId(state, attachedHostId, seen);
-  }
-
-  const liveLocation = state.itemState.itemRoomId[itemId];
-  if (isRoomId(state, liveLocation)) return liveLocation;
-  if (liveLocation) return resolveCameraRoomId(state, liveLocation, seen);
-
-  const seedLocation = getItemById(state, itemId)?.location;
-  if (isRoomId(state, seedLocation)) return seedLocation;
-  if (seedLocation) return resolveCameraRoomId(state, seedLocation, seen);
-
-  return undefined;
-}
 
 export function CameraGunViewerModal({
   state,
@@ -72,39 +30,7 @@ export function CameraGunViewerModal({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
-  const activeCameraIds = useMemo(() => {
-    const cams = state.itemState.activeGelCameras as
-      | Record<string, any>
-      | undefined;
-    if (!cams) return [];
-    return Object.keys(cams)
-      .filter((id) => !!cams[id])
-      .sort((a, b) => a.localeCompare(b));
-  }, [state.itemState.activeGelCameras]);
-
-  const selectedCameraId = useMemo(() => {
-    if (activeCameraIds.length === 0) return null;
-    const idx =
-      ((currentView % activeCameraIds.length) + activeCameraIds.length) %
-      activeCameraIds.length;
-    return activeCameraIds[idx] ?? null;
-  }, [activeCameraIds, currentView]);
-
-  const item = selectedCameraId
-    ? getItemById(state, selectedCameraId)
-    : undefined;
-  const roomId = resolveCameraRoomId(state, item?.id);
-  const room = roomId ? getRoomById(state, roomId) : undefined;
-
-  const description = getCameraFeedDescription(state, roomId);
-
-  const statusLine = (() => {
-    if (!selectedCameraId) return "NO SIGNAL";
-    const roomName = (room?.name ?? "UNKNOWN LOCATION")
-      .toString()
-      .toUpperCase();
-    return `CAM: ${selectedCameraId}  •  ${roomName}`;
-  })();
+  const { statusLine, description, canView } = cameraGunViewer(state, currentView);
 
   function handleCycleView() {
     onCycleView(0);
@@ -113,8 +39,6 @@ export function CameraGunViewerModal({
   function handleWatch() {
     onRunCommand?.("wait");
   }
-
-  const canView = activeCameraIds.length > 0;
 
   return (
     <CrtModal

@@ -1,13 +1,8 @@
 import { CrtModal } from "@game/components/CrtModal";
-import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
-import { appendLog } from "@game/engine/log";
-import { movePlayerToRoom } from "@game/helpers/gameHelpers";
-import { getRoomById } from "@game/helpers/itemHelpers";
-import { prepareRoomForTravel } from "@game/helpers/roomChunkTravel";
 import { useUIEffectsStore } from "@game/store/store";
-import { buildTranscriptRoomDescription } from "@game/text/roomDescription";
-import { GameState } from "@game/types/gameTypes";
-import React, { useMemo } from "react";
+import type { GameState } from "@game/types/gameTypes";
+import React, { useEffect, useMemo, useRef } from "react";
+import { destinationLabelMap, isRingOnline, MARQUEE_MESSAGE, prepareTerminalTeleport, RINGS, type RingConfig, type RingId } from "../rules/teleportationTerminal";
 import "../../styles/teleport-terminal.css";
 
 type TeleportationTerminalProps = {
@@ -15,116 +10,6 @@ type TeleportationTerminalProps = {
   state: GameState;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
 };
-
-type RingKey =
-  | "teleport-pads-green"
-  | "teleport-pads-blue"
-  | "teleport-pads-maroon"
-  | "teleport-pads-yellow"
-  | "teleport-pads-violet"
-  | "teleport-pads-white"
-  | "teleport-pads-orange";
-
-type RingId =
-  | "botanical"
-  | "deepStorage"
-  | "medical"
-  | "operations"
-  | "powerGrid"
-  | "utilities"
-  | "zoological";
-
-type RingConfig = {
-  fallbackRequiredBadgeIds: string[];
-  id: RingId;
-  label: string;
-  sectionKey: RingKey;
-  ringColor: string;
-  destinations: string[];
-};
-
-const RINGS: RingConfig[] = [
-  {
-    fallbackRequiredBadgeIds: ["greenbadge", "maroonbadge", "ultravioletbadge"],
-    id: "botanical",
-    label: "BOTANICAL",
-    sectionKey: "teleport-pads-green",
-    ringColor: "#24ff68",
-    destinations: ["ParkCenter", "UnderWebOne", "BotanicalOne"],
-  },
-  {
-    fallbackRequiredBadgeIds: ["bluebadge", "maroonbadge", "ultravioletbadge"],
-    id: "medical",
-    label: "MEDICAL",
-    sectionKey: "teleport-pads-blue",
-    ringColor: "#38a7ff",
-    destinations: ["Lab", "RemoteMedicalOne"],
-  },
-  {
-    fallbackRequiredBadgeIds: ["maroonbadge", "ultravioletbadge"],
-    id: "operations",
-    label: "OPERATIONS",
-    sectionKey: "teleport-pads-maroon",
-    ringColor: "#ff3d45",
-    destinations: ["Bridge"],
-  },
-  {
-    fallbackRequiredBadgeIds: ["yellowbadge", "maroonbadge", "ultravioletbadge"],
-    id: "powerGrid",
-    label: "POWER GRID",
-    sectionKey: "teleport-pads-yellow",
-    ringColor: "#ffdf38",
-    destinations: ["PowerGrid", "RemotePowerStation"],
-  },
-  {
-    fallbackRequiredBadgeIds: ["violetbadge", "maroonbadge", "ultravioletbadge"],
-    id: "utilities",
-    label: "UTILITIES",
-    sectionKey: "teleport-pads-violet",
-    ringColor: "#b15cff",
-    destinations: ["ReactorPlatform"],
-  },
-  {
-    fallbackRequiredBadgeIds: ["orangebadge", "maroonbadge", "ultravioletbadge"],
-    id: "zoological",
-    label: "ZOOLOGICAL",
-    sectionKey: "teleport-pads-orange",
-    ringColor: "#ff982f",
-    destinations: ["VeterinaryCenter", "OuterRingSouth", "XenobiologyLab"],
-  },
-  {
-    fallbackRequiredBadgeIds: ["whitebadge", "maroonbadge", "ultravioletbadge"],
-    id: "deepStorage",
-    label: "DEEP STORAGE",
-    sectionKey: "teleport-pads-white",
-    ringColor: "#f4f7ff",
-    destinations: ["CryoLab", "DeepStorageGrid"],
-  },
-];
-
-const destinationLabelMap = {
-  ParkCenter: "Park Center",
-  HydroponicsOne: "Hydroponics",
-  BotanicalOne: "Botanical",
-  Lab: "Medical Lab",
-  RemoteMedicalOne: "Remote Medical Facility",
-  Bridge: "Command Portal",
-  PowerGrid: "Power Station",
-  RemotePowerStation: "Remote Power Station",
-  ReactorPlatform: "Reactor Platform",
-  VeterinaryCenter: "Veterinary Center",
-  OuterRingSouth: "Aviary",
-  CryoLab: "Deep Lab",
-  DeepStorageGrid: "Grid",
-  GridC3: "Grid",
-  UnderWebOne: "Hydroponics",
-  XenobiologyLab: "Xenobiology Lab",
-};
-
-const MARQUEE_MESSAGE =
-  "PLEASE SELECT YOUR TRAVEL DESTINATION! SOME DESTINATIONS MAY REQUIRE AUTHORIZATION.";
-const UNAUTHORIZED_MESSAGE =
-  `The terminal flashes a destination preview, then a harsh buzzer snaps across the platform.\n\n"Unauthorized."`;
 
 function ScrollingBannerMessage() {
   const repeats = Array.from({ length: 3 }, (_, index) => index);
@@ -144,40 +29,6 @@ function ScrollingBannerMessage() {
       </span>
     </span>
   );
-}
-
-function isRingOnline(state: GameState, key: RingKey): boolean {
-  return Boolean((state.worldState.powerRestoredSections as any)?.[key]);
-}
-
-function getInventoryItemIds(state: GameState): string[] {
-  return [
-    ...state.player.inventory.general,
-    ...state.player.inventory.badges,
-    ...state.player.inventory.keys,
-  ];
-}
-
-function getRequiredBadgeIds(state: GameState, ring: RingConfig): string[] {
-  const terminalPad = state.world.items.find(
-    (item) =>
-      item.location === "TPADTerminal" &&
-      item.meta?.teleport?.section === ring.sectionKey &&
-      item.meta?.teleport?.order === 1,
-  );
-  const requires = terminalPad?.meta?.teleport?.requires;
-
-  return Array.isArray(requires)
-    ? requires.map((badgeId) => String(badgeId))
-    : ring.fallbackRequiredBadgeIds;
-}
-
-function hasRingAuthorization(state: GameState, ring: RingConfig): boolean {
-  const requiredBadgeIds = getRequiredBadgeIds(state, ring);
-  if (requiredBadgeIds.length === 0) return true;
-
-  const inventoryItemIds = new Set(getInventoryItemIds(state));
-  return requiredBadgeIds.some((badgeId) => inventoryItemIds.has(badgeId));
 }
 
 export function TeleportationTerminalModal({
@@ -200,74 +51,46 @@ export function TeleportationTerminalModal({
     return map;
   }, [state]);
 
+  const cancelled = useRef(false);
+  const pending = useRef(false);
+  useEffect(() => {
+    cancelled.current = false;
+    return () => { cancelled.current = true; };
+  }, []);
+  const closeTerminal = () => {
+    cancelled.current = true;
+    onClose();
+  };
   const teleportTo = async (ring: RingConfig, roomId: string) => {
-    if (!hasRingAuthorization(state, ring)) {
-      setGameState((prev) => appendLog(prev, `${UNAUTHORIZED_MESSAGE}\n`));
-      return;
-    }
-
-    const destination = await prepareRoomForTravel(state, roomId);
-    const canTeleport = destination.roomExists;
-
-    setGameState((prev) => {
-      const workingState = destination.applyTo(prev);
-      if (!hasRingAuthorization(workingState, ring)) {
-        return appendLog(workingState, `${UNAUTHORIZED_MESSAGE}\n`);
+    if (pending.current || cancelled.current) return;
+    pending.current = true;
+    try {
+      const prepared = await prepareTerminalTeleport(state, ring.id, roomId);
+      if (cancelled.current) return;
+      // Production's setter is synchronous; awaiting the updater also supports
+      // ordinary React setters without moving completion effects into a reducer.
+      const result = await new Promise<ReturnType<typeof prepared.complete>>((resolve) => {
+        setGameState((previous) => {
+          const completed = cancelled.current
+            ? { state: previous, messages: [], teleported: false }
+            : prepared.complete(previous);
+          resolve(completed);
+          return completed.state;
+        });
+      });
+      if (result.teleported && !cancelled.current) {
+        useUIEffectsStore.getState().triggerTeleportFlash();
+        closeTerminal();
       }
-
-      const destinationRoom = getRoomById(workingState, destination.roomId);
-
-      if (!destinationRoom) {
-        return appendLog(
-          workingState,
-          "The terminal chirps, then clears its destination readout. That endpoint is not responding.\n",
-        );
-      }
-
-      const wasVisitedBeforeTeleport = Boolean(
-        (workingState.worldState.visitedRooms ?? {})[destination.roomId],
-      );
-      let next = movePlayerToRoom(workingState, destination.roomId);
-      next = {
-        ...next,
-        worldState: {
-          ...next.worldState,
-          visitedRooms: {
-            ...next.worldState.visitedRooms,
-            [destination.roomId]: true,
-          },
-        },
-      };
-
-      next = appendLog(
-        next,
-        "You feel a tingling in your belly a beat before the world warps around you, blurring together and then snapping back into focus an instant later to reveal someplace entirely different.\n",
-      );
-      const roomName = `${ROOM_NAME_TOKEN_START}${destinationRoom.name}${ROOM_NAME_TOKEN_END}`;
-      const roomTranscriptDesc = buildTranscriptRoomDescription(
-        next,
-        destination.roomId,
-        {
-          isFirstVisit: !wasVisitedBeforeTeleport,
-        },
-      );
-      next = appendLog(
-        next,
-        [roomName, roomTranscriptDesc].filter(Boolean).join("\n"),
-      );
-      return next;
-    });
-
-    if (canTeleport) {
-      useUIEffectsStore.getState().triggerTeleportFlash();
-      onClose();
+    } finally {
+      pending.current = false;
     }
   };
 
   return (
     <CrtModal
       title={title}
-      onClose={onClose}
+      onClose={closeTerminal}
       width={1550}
       height={750}
       showHeader={false}

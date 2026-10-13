@@ -84,7 +84,7 @@ export const STAIRWELL: WorldChunk = {
       id: "StairFour",
       name: "Stairs Level Four",
       description:
-        "This is the stair landing for Level Four. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the words 'BIOSPHERE/POWER GRID' printed on it and mounted over it is a plastic sign labeled '4'. A series of sooty footprints can be seen on the steps coming from the level above, and there are black streaks on the railing which flanks the stairs which also continue down. The footprints lead to a burned body which lies face down in the middle of the landing, its blackened hands extended in front of it, curled into claws.",
+        "This is the stair landing for Level Four. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the words 'BIOSPHERE/POWER GRID' printed on it and mounted over it is a plastic sign labeled '4'.",
       exits: [
         { direction: "up", toRoomId: "StairThree" },
         { direction: "down", toRoomId: "StairFive" },
@@ -197,10 +197,11 @@ export const STAIRWELL: WorldChunk = {
       resolveAmbientLightLevel: (state) =>
         resolveLevelFiveSpillLight(state, "dim"),
       description:
-        "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. The elevator doors are hanging open, allowing entry to the elevator car beyond which is stuck at this floor. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
+        "This is a small lobby area for accessing an elevator, which is sealed shut and powered down at the moment. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
+      // "there is a set of elevator doors to the north, next to which is a call button. The elevator doors are hanging open, allowing entry to the elevator car beyond which is stuck at this floor. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'."
       exits: [
         { direction: "east", doorId: "EngineeringDoors" },
-        { direction: "north", toRoomId: "Elevator" },
+        //        { direction: "north", toRoomId: "Elevator" },
         { direction: "west", toRoomId: "EngCorridorOne" },
       ],
     },

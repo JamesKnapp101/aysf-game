@@ -8,9 +8,12 @@ export const corpseItems: Item[] = [
     name: "fallen corpse",
     description: `It looks like the poor guy maybe slipped, and fell over the railing from up above. His misshapen head is completely bald, like a broken dome sticking up from the crumpled wreckage. You don't recognize him, though you get the impression that the jumpsuit might not belong to him, as its too big and baggy for his thin frame.`,
     location: "StairWellSeven",
-    vocab: ["corpse", "body", "man"],
+    vocab: ["corpse", "body", "crumpled", "fallen", "man", "jumpsuit"],
     itemClass: "solid",
     itemCategory: "scenery",
+    overrides: {
+      take: `It's pretty gross, you'd rather not mess with it.`,
+    },
     meta: {
       corpse: {
         hasIntactHead: true,
@@ -719,7 +722,7 @@ export const corpseItems: Item[] = [
     sceneryDescription:
       "A young man lies on his back in the middle of the landing, lifeless eyes gazing up the stairwell. He looks to have been no older than twenty, fit, and healthy looking but his mouth is frozen open and he's as still as a stone. He's dressed in a blue collared short-sleeve shirt and a pair of khaki pants, the tips of his leather shoes pointing in opposite directions.",
     location: "StairSix",
-    vocab: ["dead", "body", "corpse"],
+    vocab: ["dead", "body", "corpse", "young", "man"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 75,
