@@ -30,7 +30,8 @@ describe("mounted reactor control terminal", () => {
     expect(opened).not.toContain(credential);
     expect(opened).not.toMatch(/ENGINE ROOM KEY:|REACTOR CORE:|Use insert|Use turn|Use restart/);
     const before = await spy.mock.results[0].value;
-    for (const input of ["insert", "turn", "restart", "wait", "authenticate 3THIC4L", "authenticate", `authenticate ${credential} `]) {
+    for (const input of ["insert", "turn", "restart", "wait", "authenticate 3THIC4L", "authenticate", `authenticate ${credential} `,
+      `authenticate the ${credential}`, `authenticate a ${credential}`, `authenticate an ${credential}`]) {
       const response = text(await controller.explorer.command(input));
       expect(response).not.toContain("ETHICS CREDENTIAL: ACCEPTED");
       expect(response).toContain("Moves: 1");

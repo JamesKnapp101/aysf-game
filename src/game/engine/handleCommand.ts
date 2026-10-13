@@ -1,5 +1,6 @@
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
 import { normalizeCommandAliases } from "../../parse/commandAliases";
+import { normalizeObjectReferences } from "../../parse/objectReferences";
 import {
   getEncounterActionGuard,
   getEncounterMoveGuard,
@@ -171,12 +172,14 @@ export async function handleCommand(
 ): Promise<GameState> {
   const capture = beginLogCapture(state);
   try {
-    const normalized = normalizeCommandAliases(state, cmd);
+    const objects = normalizeObjectReferences(state, cmd);
+    const normalized = normalizeCommandAliases(state, objects.command);
     const result = await executeCommand(
       capture.state,
       normalized,
       options,
       capture,
+      objects.ambiguousNoun,
     );
     const output = Object.freeze(capture.take());
     const clean = capture.finish(result);
@@ -192,6 +195,7 @@ async function executeCommand(
   cmd: ParsedCommand,
   options: HandleCommandOptions,
   capture: ReturnType<typeof beginLogCapture>,
+  ambiguousNoun?: string,
 ): Promise<GameState> {
   const { openOverlay } = useUIOverlayStore.getState();
   const DEATH_MARKER = "*** You have died ***";
@@ -431,6 +435,10 @@ async function executeCommand(
     }
 
     case "action": {
+      if (ambiguousNoun) {
+        message = `Which object do you mean by "${ambiguousNoun}"?`;
+        break;
+      }
       consumesTurn = true;
 
       const encounterActionGuard = getEncounterActionGuard(state, cmd);

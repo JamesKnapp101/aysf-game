@@ -15,6 +15,12 @@ beforeEach(() => {
 
 describe("device aliases in browser and headless sessions", () => {
   it.each([
+    "look through the gap",
+    "look through the hole",
+    "examine the fallen corpse",
+    "use the scanner on the fallen corpse",
+    "sample the fallen corpse with the wand",
+    "turn on the radio",
     "use scanner on fallen corpse",
     "point scanner at fallen corpse",
     "use wand on fallen corpse",
@@ -25,6 +31,11 @@ describe("device aliases in browser and headless sessions", () => {
   ])("uses the same native parser and dispatch exactly once for %s", async (input) => {
     const equipment = ["MindGun", "MindCap", "DNAReader", "Radio"];
     let initial = setInventory(overlayFixture([]), equipment);
+    if (input.startsWith("look through")) {
+      // The headless session requires the production starting room. Place the
+      // real gap there for client parity; the zone test uses its actual room.
+      initial = updateItemLocation(initial, "LevelSixCorridorEndDoorGap", initial.player.roomId);
+    }
     for (const id of equipment) initial = updateItemLocation(initial, id, "INVENTORY");
     initial.itemState.wornByPlayer.head = "MindCap";
     const controller = overlaySession(initial);

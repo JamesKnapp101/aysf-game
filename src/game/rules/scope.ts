@@ -96,6 +96,15 @@ export function resolveItemByNoun(
   state: GameState,
   noun: string,
 ): Item | undefined {
+  return (
+    resolveItemByVocabulary(getItemsInScope(state), noun) ??
+    resolveRegisteredScopeItem({ state, room: getCurrentRoom(state), noun }) ??
+    undefined
+  );
+}
+
+/** The ordinary resolver's candidates, in the same gameplay priority order. */
+export function getItemsInScope(state: GameState): Item[] {
   const room = getCurrentRoom(state);
 
   const itemsById = new Map(state.world.items.map((it) => [it.id, it]));
@@ -176,11 +185,7 @@ export function resolveItemByNoun(
     .filter((x): x is Item => Boolean(x))
     .sort((a, b) => scopeRank(a) - scopeRank(b));
 
-  return (
-    resolveItemByVocabulary(itemsInScope, noun) ??
-    resolveRegisteredScopeItem({ state, room, noun }) ??
-    undefined
-  );
+  return itemsInScope;
 }
 
 /** Matches definitions only; gameplay callers must still enforce scope. */
@@ -188,37 +193,43 @@ export function resolveItemByVocabulary(
   items: readonly Item[],
   noun: string,
 ): Item | undefined {
+  return findItemsByVocabulary(items, noun)[0];
+}
+
+/** Return the winning vocabulary tier, retaining ties for ambiguity checks. */
+export function findItemsByVocabulary(
+  items: readonly Item[],
+  noun: string,
+): Item[] {
   const normalizedNoun = normalize(noun);
   const tokens = tokenize(noun);
-  const exactId = items.find(
+  const exactId = items.filter(
     (it) => normalize(it.id) === normalizedNoun,
   );
-  if (exactId) return exactId;
+  if (exactId.length) return exactId;
 
-  const exactName = items.find(
+  const exactName = items.filter(
     (it) => normalize(it.name) === normalizedNoun,
   );
-  if (exactName) return exactName;
+  if (exactName.length) return exactName;
 
-  const exactVocab = items.find((it) =>
+  const exactVocab = items.filter((it) =>
     it.vocab?.some((v: string) => normalize(v) === normalizedNoun),
   );
-  if (exactVocab) return exactVocab;
+  if (exactVocab.length) return exactVocab;
 
-  const byName = items.find((it) => {
+  const byName = items.filter((it) => {
     const nameTokens = new Set(tokenize(it.name));
     return tokens.every((t) => nameTokens.has(t));
   });
-  if (byName) return byName;
+  if (byName.length) return byName;
 
-  const byVocab = items.find((it) => {
+  const byVocab = items.filter((it) => {
     if (!it.vocab?.length) return false;
     const vocabTokens = new Set(it.vocab.map((v: string) => normalize(v)));
     return tokens.every((t) => vocabTokens.has(t));
   });
-  if (byVocab) return byVocab;
-
-  return undefined;
+  return byVocab;
 }
 
 const DIRECTION_ADJECTIVES: Partial<Record<Direction, string>> = {
@@ -273,6 +284,13 @@ export function resolveDoorByNoun(
   state: GameState,
   noun: string,
 ): { def: DoorDefinition; doorState: DoorState } | null {
+  return findDoorsByNoun(state, noun)[0] ?? null;
+}
+
+export function findDoorsByNoun(
+  state: GameState,
+  noun: string,
+): { def: DoorDefinition; doorState: DoorState }[] {
   const room = getCurrentRoom(state);
   const normalizedNoun = normalize(noun);
   const tokens = tokenize(noun);
@@ -281,7 +299,8 @@ export function resolveDoorByNoun(
     .map((e: Exit) => e.doorId)
     .filter((id): id is string => Boolean(id));
 
-  for (const doorId of doorIds) {
+  const matchesInScope: { def: DoorDefinition; doorState: DoorState }[] = [];
+  for (const doorId of new Set(doorIds)) {
     const def = state.world.doors.find((d) => d.id === doorId);
     const doorState = state.worldState.doors[doorId];
 
@@ -293,11 +312,11 @@ export function resolveDoorByNoun(
       doorAliasTokenMatch(aliases, tokens);
 
     if (matches) {
-      return { def, doorState };
+      matchesInScope.push({ def, doorState });
     }
   }
 
-  return null;
+  return matchesInScope;
 }
 
 export function resolveTeleportPadByNoun(
