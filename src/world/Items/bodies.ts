@@ -1,4 +1,29 @@
+import { updateItemLocation } from "@game/rules/items";
+import { addToInventory } from "@game/rules/state";
+import { GameState } from "@game/types/gameTypes";
+import {
+  describeLevelTwoBombTimer,
+  readLevelTwoBombTimer,
+} from "src/world/maps/levelTwo/levelTwoBomb";
 import type { Item } from "../../game/types/itemTypes";
+
+export const BOMB_TIMER_ID = "BombTimer";
+const UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION =
+  "The dead man sits in the shadows beneath the stairwell, way back in the corner as if he were hiding.";
+
+function examineUnderStairwellDeadMan(state: GameState) {
+  if (state.itemState.pickedUpByPlayer[BOMB_TIMER_ID]) {
+    return { state, message: UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION };
+  }
+
+  let next = updateItemLocation(state, BOMB_TIMER_ID, "INVENTORY");
+  next = addToInventory(next, BOMB_TIMER_ID);
+
+  return {
+    state: next,
+    message: `${UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION} Clutched in one shriveled hand is some sort of little timer or stopwatch. You work it free from the corpse's stiff fingers and slip it into your inventory.`,
+  };
+}
 
 export const corpseItems: Item[] = [
   // STAIRWELL BOTTOM -----------------------------------
@@ -8,7 +33,7 @@ export const corpseItems: Item[] = [
     name: "fallen corpse",
     description: `It looks like the poor guy maybe slipped, and fell over the railing from up above. His misshapen head is completely bald, like a broken dome sticking up from the crumpled wreckage. You don't recognize him, though you get the impression that the jumpsuit might not belong to him, as its too big and baggy for his thin frame.`,
     location: "StairWellSeven",
-    vocab: ["corpse", "body", "crumpled", "fallen", "man", "jumpsuit"],
+    vocab: ["corpse", "body", "crumpled", "fallen", "man", "bald"],
     itemClass: "solid",
     itemCategory: "scenery",
     overrides: {
@@ -29,6 +54,81 @@ export const corpseItems: Item[] = [
     isSearchable: true,
   },
   {
+    id: "UnderTheStairwellDeadMan",
+    name: "a dead man",
+    description: UNDER_STAIRWELL_DEAD_MAN_DESCRIPTION,
+    location: "StairWellSeven",
+    vocab: ["body", "old", "older", "man", "dead man", "corpse"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 180,
+    itemSize: 5,
+    overrides: {
+      examine: ({ state }: { state: GameState }) =>
+        examineUnderStairwellDeadMan(state),
+    },
+  },
+  {
+    id: "both",
+    name: "two dead men",
+    description:
+      "Even though they're both down here together, these two don't look like they came together. The bald man looks to have fallen from the top of the stairwell, while the old man under the stairs looks like he came down in order to hide.",
+    location: "StairWellSeven",
+    vocab: ["bodies", "corpses", "men", "dead men"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 180,
+    itemSize: 5,
+  },
+  {
+    id: "DeadMansRobe",
+    name: "a blue robe",
+    description: "It's a light blue color, well worn with fraying cuffs.",
+    location: "StairWellSeven",
+    vocab: ["robe", "blue robe"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 180,
+    itemSize: 5,
+    overrides: {
+      take: "You'll never get it off the stiff corpse.",
+    },
+  },
+  {
+    id: "DeadMansJumpsuit",
+    name: "a dead mans jumpsuit",
+    description:
+      "It's a little big for the guy wearing it, enough to make you question if it belongs to him.",
+    location: "StairWellSeven",
+    vocab: ["jumpsuit", "flight suit"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 180,
+    itemSize: 5,
+    overrides: {
+      take: "Even if you could manage to get it off the stiff corpse, it's sticky with blood.",
+    },
+  },
+  {
+    id: BOMB_TIMER_ID,
+    name: "little timer",
+    description: "",
+    describe: (state) => describeLevelTwoBombTimer(state),
+    initialDescription:
+      "Clutched in one shriveled hand is some sort of little timer or stopwatch.",
+    location: "seeded",
+    vocab: ["timer", "stopwatch", "little timer", "watch"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    isReadable: true,
+    itemWeight: 1,
+    itemSize: 1,
+    readableText: (state) => readLevelTwoBombTimer(state),
+    overrides: {
+      take: "You work the little timer free from the corpse's stiff fingers.",
+    },
+  },
+  {
     id: "HeadlessCorpse",
     name: "headless corpse",
     description: `On closer inspection you can see that he was exposed to something highly acidic, strong enough to dissolve the head completely away and leave the bones of his chest and shoulders exposed.`,
@@ -47,6 +147,21 @@ export const corpseItems: Item[] = [
     isReadable: false,
     isContainer: false,
     isContagious: true,
+  },
+  {
+    id: "HeadlessManRobe",
+    name: "a headless man's robe",
+    description:
+      "It's sheer, silky, with a colorful floral pattern. It's too small for the person wearing it, .",
+    location: "LevelSixCorridorEnd",
+    vocab: ["robe", "silk", "silky", "floral"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 180,
+    itemSize: 5,
+    overrides: {
+      take: "Even if you could manage to get it off the stiff corpse, it's got melted flesh on it.",
+    },
   },
   {
     id: "HalvedCorpse",

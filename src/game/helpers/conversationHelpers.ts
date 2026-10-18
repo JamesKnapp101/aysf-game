@@ -15,6 +15,7 @@ import {
   getClaudeResponse,
   type GossipContext,
 } from "@game/services/claudeClient";
+import { conversationErrorCode, reportAiConversationFailure } from "@game/services/conversationDiagnostics";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
@@ -503,6 +504,10 @@ async function getNpcAiResponse(
     }
 
     const processedResponse = postProcessAiConversationResponse(claudeResponse);
+    if (!processedResponse.trim()) {
+      reportAiConversationFailure({ npcId: npc.id, ...playerInput, reason: "empty_response" });
+      return { state, response: null };
+    }
 
     const respondedState = recordNpcConversationTurn(
       nextState,
@@ -516,7 +521,11 @@ async function getNpcAiResponse(
       response: processedResponse,
     };
   } catch (error) {
-    console.warn("Claude integration error, using fallback:", error);
+    reportAiConversationFailure({
+      npcId: npc.id, ...playerInput, reason: "integration_error",
+      reasonCode: conversationErrorCode(error),
+      errorName: error instanceof Error ? error.name : undefined,
+    });
     return { state, response: null };
   }
 }

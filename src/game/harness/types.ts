@@ -1,4 +1,5 @@
 import type { MapInformationOptions } from "../map/shipMapText";
+import type { AiConversationFailure } from "../services/conversationDiagnostics";
 
 export type Observation = Readonly<{
   sequence: number;
@@ -19,11 +20,16 @@ export type TranscriptEntry = Readonly<{
   observation: Observation;
   /** Host-only end-record text. Absent in older transcripts and non-model endings. */
   finalAgentMessage?: string;
+  /** Host-only failures for this command; excluded from observations/tool results. */
+  aiConversationFailures?: readonly AiConversationFailure[];
 }> & ActionExplanation;
 
 export type TranscriptInfo = Readonly<{ path: string; sessionId: string; records: number }>;
 
-export type SessionOptions = Readonly<{ transcriptDirectory?: string }>;
+export type SessionOptions = Readonly<{
+  transcriptDirectory?: string;
+  onAiConversationFailure?: (failure: AiConversationFailure) => void;
+}>;
 export type SessionEndOptions = Readonly<{ finalAgentMessage?: string }>;
 
 /** Host-only metadata. Never attach this to a player observation or tool result. */

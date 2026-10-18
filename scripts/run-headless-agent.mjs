@@ -129,7 +129,10 @@ export async function play(config, client) {
       revision = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
       if (execFileSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim()) revision += " (working tree modified)";
     } catch { /* Revision metadata is optional and never sent to Claude. */ }
-    session = createHeadlessSession({ transcriptDirectory: config.outputDirectory });
+    session = createHeadlessSession({
+      transcriptDirectory: config.outputDirectory,
+      onAiConversationFailure: (failure) => process.stderr.write(`[AI CONVERSATION FAILURE] ${JSON.stringify(failure)}\n`),
+    });
     process.stdout.write(`Starting fresh game with ${config.options.model ?? defaultModel}; NPC dialogue: authored or maybe not.\n`);
     const run = await runHeadlessAgent({
       client, session, options: config.options, revision, signal: abort.signal,

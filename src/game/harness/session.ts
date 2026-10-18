@@ -22,6 +22,7 @@ import {
   clearResumeSnapshot,
 } from "../persistence/resumeStorage";
 import { reconcileObjectives } from "../rules/objectives";
+import { subscribeAiConversationFailures, type AiConversationFailure } from "../services/conversationDiagnostics";
 import { useUIEffectsStore, useUIOverlayStore } from "../store/store";
 import { buildHelpText } from "../text/help";
 import type { GameState } from "../types/gameTypes";
@@ -30,6 +31,7 @@ import { missingCapabilityDiagnostic } from "./capabilityDiagnostics";
 import { informationText } from "./information";
 import { consumeMindFlashSequence } from "./memorySequence";
 import { createMessageMachineAdapter } from "./messageMachine";
+import { consumeOrganismDeathSequence } from "./organismDeathSequence";
 import {
   ADAPTER_REQUIRED,
   currentRoomPresentation,
@@ -107,6 +109,11 @@ export function createHeadlessSession(
   const messageMachine = createMessageMachineAdapter();
   const terminals = createTerminalOverlayAdapter();
   const capabilityDiagnostics: MissingCapabilityDiagnostic[] = [];
+  const aiConversationFailures: AiConversationFailure[] = [];
+  const unsubscribeFailures = subscribeAiConversationFailures((failure) => {
+    aiConversationFailures.push(failure);
+    options.onAiConversationFailure?.(failure);
+  });
 
   function blockUnsupported(input: string | null, executed: boolean): void {
     if (state && capabilityDiagnostics.length === 0) {
@@ -138,6 +145,8 @@ export function createHeadlessSession(
         ...(event === undefined ? {} : { event }),
         observation,
         ...(kind === "command" || kind === "information" ? explanation : {}),
+        ...(kind === "command" && aiConversationFailures.length
+          ? { aiConversationFailures: aiConversationFailures.splice(0) } : {}),
         ...(kind === "end" && finalAgentMessage !== undefined ? { finalAgentMessage } : {}),
       });
     } catch {
@@ -150,14 +159,14 @@ export function createHeadlessSession(
     return observation;
   }
 
-  function createActionRecorder(explanation?: ActionExplanation) {
+  function createActionRecorder(explanation?: ActionExplanation, leadingText: string[] = []) {
     // Snapshot only public strings before queuing; callers cannot add state or mutate a pending record.
     const details: ActionExplanation = {
       ...(typeof explanation?.goal === "string" ? { goal: explanation.goal } : {}),
       ...(typeof explanation?.reason === "string" ? { reason: explanation.reason } : {}),
     };
     return (kind: "command" | "information", text: string[], input?: string, event?: TranscriptEntry["event"]) =>
-      recordEntry(kind, text, input, event, undefined, details);
+      recordEntry(kind, [...leadingText, ...text], input, event, undefined, details);
   }
 
   function enqueue<T>(operation: () => Promise<T>): Promise<T> {
@@ -183,6 +192,7 @@ export function createHeadlessSession(
     messageMachine.reset();
     terminals.reset();
     capabilityDiagnostics.length = 0;
+    aiConversationFailures.length = 0;
     episode += 1;
     try {
       clearSessionPresentation();
@@ -216,7 +226,8 @@ export function createHeadlessSession(
   }
 
   async function command(input: string, explanation?: ActionExplanation): Promise<Observation> {
-    const record = createActionRecorder(explanation);
+    const leadingText: string[] = [];
+    const record = createActionRecorder(explanation, leadingText);
     return enqueue(async () => {
       // Runtime callers do not necessarily obey TypeScript's input contract.
       if (typeof input !== "string")
@@ -236,6 +247,11 @@ export function createHeadlessSession(
         return record("command", ["Start a game session first."], trimmed);
 
       try {
+        // An automatic reveal may already be pending when a request arrives.
+        // Settle it before checking UI gates or executing another game action.
+        const pendingDeath = consumeOrganismDeathSequence();
+        leadingText.push(...pendingDeath.fragments);
+        if (pendingDeath.completed) lastRoomDescription = undefined;
         if (requiresGameplayAdapter(state)) {
           blockUnsupported(null, false);
           return record("command", [ADAPTER_REQUIRED], trimmed);
@@ -248,12 +264,14 @@ export function createHeadlessSession(
             trimmed,
           );
           state = control.state;
-          if (!control.wait)
+          if (!control.wait) {
+            const death = consumeOrganismDeathSequence();
             return record(
               "command",
-              [...control.text, currentRoomPresentation(state).summary],
+              [...control.text, ...death.fragments, currentRoomPresentation(state).summary],
               trimmed,
             );
+          }
           // Like OverlayHost's onRunCommand("wait"), use the normal engine path.
           // The transcript retains the requested WATCH control and its explanation.
           parsed = parseCommand("wait");
@@ -272,16 +290,18 @@ export function createHeadlessSession(
             interfaceInput,
           );
           state = result.state;
+          const death = consumeOrganismDeathSequence();
           if (requiresGameplayAdapter(state)) {
             blockUnsupported(interfaceInput, true);
             return record(
               "command",
-              [...result.text, ADAPTER_REQUIRED],
+              [...result.text, ...death.fragments, ADAPTER_REQUIRED],
               interfaceInput,
             );
           }
           const room = currentRoomPresentation(state);
           const needsDescription =
+            death.completed ||
             state.player.roomId !== previous.player.roomId ||
             room.description !== lastRoomDescription;
           const alreadyNarrated =
@@ -292,6 +312,7 @@ export function createHeadlessSession(
             "command",
             [
               ...result.text,
+              ...death.fragments,
               needsDescription && !alreadyNarrated
                 ? room.fullText
                 : room.summary,
@@ -306,9 +327,10 @@ export function createHeadlessSession(
             trimmed,
           );
           state = result.state;
+          const death = consumeOrganismDeathSequence();
           return record(
             "command",
-            [...result.text, currentRoomPresentation(state).summary],
+            [...result.text, ...death.fragments, currentRoomPresentation(state).summary],
             trimmed,
           );
         }
@@ -320,9 +342,10 @@ export function createHeadlessSession(
           );
           state = result.state;
           if (result.closed) useUIOverlayStore.getState().closeOverlay();
+          const death = consumeOrganismDeathSequence();
           return record(
             "command",
-            [...result.text, currentRoomPresentation(state).summary],
+            [...result.text, ...death.fragments, currentRoomPresentation(state).summary],
             trimmed,
           );
         }
@@ -354,7 +377,7 @@ export function createHeadlessSession(
         // Consume only informational output authorized by the engine. Reading
         // already applies logging, disposal and gossip acquisition in the action;
         // close notifications can be text without creating a UI lifecycle.
-        const overlay = useUIOverlayStore.getState().overlay;
+        let overlay = useUIOverlayStore.getState().overlay;
         if (overlay.kind === "reader" || overlay.kind === "help") {
           output.push(
             overlay.kind === "reader"
@@ -373,6 +396,10 @@ export function createHeadlessSession(
         // command. No intervening player action or extra game turn is possible.
         const memory = consumeMindFlashSequence();
         output.push(...memory.fragments);
+        const death = consumeOrganismDeathSequence();
+        output.push(...death.fragments);
+        // Completion callbacks can change the mounted interface.
+        overlay = useUIOverlayStore.getState().overlay;
         if (supportsTerminalOverlay(overlay.kind))
           state = terminals.open(state, overlay);
         for (const notification of state.uiState.notifications) {
@@ -400,7 +427,7 @@ export function createHeadlessSession(
           !parsed.direct &&
           !parsed.preposition;
         const needsDescription =
-          memory.completed ||
+          memory.completed || death.completed ||
           explicitLook ||
           state.player.roomId !== previous.player.roomId ||
           parsed.type === "restart" ||
@@ -410,7 +437,7 @@ export function createHeadlessSession(
         // snapshot is conditional; first arrivals and look often narrate it
         // already, whereas revisits can narrate just the room's loose items.
         const alreadyNarrated =
-          !memory.completed &&
+          !memory.completed && !death.completed &&
           Boolean(room.description) &&
           playerText(output.join("\n\n")).includes(room.description);
         lastRoomDescription = room.description;
@@ -451,7 +478,8 @@ export function createHeadlessSession(
     selection?: number | MapInformationOptions,
     explanation?: ActionExplanation,
   ): Promise<Observation> {
-    const record = createActionRecorder(explanation);
+    const leadingText: string[] = [];
+    const record = createActionRecorder(explanation, leadingText);
     return enqueue(async () => {
       if (
         ![
@@ -475,20 +503,23 @@ export function createHeadlessSession(
       if (blocked) return record("information", [blocked], input);
       if (!state)
         return record("information", ["Start a game session first."], input);
-      if (requiresGameplayAdapter(state)) {
-        blockUnsupported(null, false);
-        return record("information", [ADAPTER_REQUIRED], input);
-      }
-      if (state.worldState.gameOver && view !== "map") {
-        return record(
-          "information",
-          [
-            "That information is unavailable while the game is over. Restart or reset to continue.",
-          ],
-          input,
-        );
-      }
       try {
+        const pendingDeath = consumeOrganismDeathSequence();
+        leadingText.push(...pendingDeath.fragments);
+        if (pendingDeath.completed) lastRoomDescription = undefined;
+        if (requiresGameplayAdapter(state)) {
+          blockUnsupported(null, false);
+          return record("information", [ADAPTER_REQUIRED], input);
+        }
+        if (state.worldState.gameOver && view !== "map") {
+          return record(
+            "information",
+            [
+              "That information is unavailable while the game is over. Restart or reset to continue.",
+            ],
+            input,
+          );
+        }
         // No engine command, objective reconciliation, overlay, or file read is
         // needed for a free sidebar view. Only the observation is persisted.
         const text = informationText(state, view, selection);
@@ -527,6 +558,7 @@ export function createHeadlessSession(
               messageMachine.reset();
               terminals.reset();
               sessionInUse = false;
+              unsubscribeFailures();
             }
           }
           if (transcriptFailed) throw new Error(TRANSCRIPT_FAILED);

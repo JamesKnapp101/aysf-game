@@ -20,9 +20,11 @@ function message(content: Message["content"] = [], stop: Message["stop_reason"] 
 }
 function client(responses: Message[]) {
   const queue = [...responses];
+  // A model that chooses to finish can confirm its ending after the follow-up.
+  const ending = responses.at(-1);
   return { messages: {
     countTokens: vi.fn(async () => ({ input_tokens: 100 })),
-    create: vi.fn(async () => queue.shift() ?? message([{ type: "text", text: "Finished.", citations: null }], "end_turn")),
+    create: vi.fn(async () => queue.shift() ?? (ending?.stop_reason === "end_turn" ? ending : message([{ type: "text", text: "Finished.", citations: null }], "end_turn"))),
   } };
 }
 function directory() {
@@ -171,8 +173,8 @@ describe("public action goals and reasons", () => {
       expect(records[index + 1].goal).toBe(event.goal);
     }
     expect(run.actions).toBe(6);
-    expect(run.turns).toBe(3);
-    expect(sdk.messages.create).toHaveBeenCalledTimes(3);
+    expect(run.turns).toBe(4);
+    expect(sdk.messages.create).toHaveBeenCalledTimes(4);
     for (const index of [1, 2]) {
       expect(request(sdk, index)[0].messages[index * 2 - 1].content).toEqual(responses[index - 1].content);
       const results = request(sdk, index)[0].messages[index * 2].content;
@@ -221,7 +223,80 @@ describe("public action goals and reasons", () => {
 });
 
 describe("autonomous Explorer controller", () => {
-  it("captures Haiku text-only endings without executing them or publishing gameplay progress", async () => {
+  it("resumes gameplay after a guessed token limit and accepts a later ending without another follow-up", async () => {
+    const premature = message([
+      { type: "thinking", thinking: "PRIVATE_THOUGHT", signature: "PRIVATE_SIGNATURE" },
+      { type: "text", text: "My token budget is approaching limits. Next steps: inspect the room.", citations: null },
+    ], "end_turn");
+    const final = "I have no actionable leads left.";
+    const sdk = client([premature, message([command("look")]), message([{ type: "text", text: final, citations: null }], "end_turn")]);
+    const progress = vi.fn();
+    const run = await runHeadlessAgent({ client: sdk, session: realSession(), options: { maxTokens: 5_000_000_000, maxTurns: 800, maxCostUsd: 800 }, onProgress: progress });
+    expect(run.reason).toBe("model_finished");
+    expect(run.actions).toBe(1);
+    expect(run.turns).toBe(3);
+    expect(run.finalAgentMessage).toBe(final);
+    expect(run.inputTokens).toBe(300);
+    expect(run.outputTokens).toBe(60);
+    expect(run.estimatedCostUsd).toBeCloseTo(0.0006, 10);
+    expect(progress).toHaveBeenCalledTimes(1);
+    expect(request(sdk, 0)[0].system).toContain("The harness manages token, spending, time, action and model-turn budgets");
+    expect(request(sdk, 1)[0].messages[1]).toEqual({ role: "assistant", content: premature.content });
+    const followUp = request(sdk, 1)[0].messages[2];
+    expect(followUp.role).toBe("user");
+    expect(followUp.content).toContain("Remaining cumulative token budget: 4999999880; remaining model turns: 799");
+    expect(followUp.content).toContain("continue now using game_command or game_information");
+    expect(request(sdk, 2)[0].messages.slice(0, 3)).toEqual(request(sdk, 1)[0].messages);
+    expect(sdk.messages.create).toHaveBeenCalledTimes(3);
+    const records = await transcript(run);
+    expect(records.map(entry => entry.kind)).toEqual(["start", "command", "end"]);
+    expect(records.at(-1)?.finalAgentMessage).toBe(final);
+    const report = await fs.readFile(run.reportPath, "utf8");
+    expect(report).toContain(final);
+    expect(JSON.stringify(run) + JSON.stringify(records) + report).not.toMatch(/PRIVATE_THOUGHT|PRIVATE_SIGNATURE|My token budget is approaching limits/);
+  });
+
+  it.each([
+    [{ maxTurns: 1 }, "model_turn_limit"],
+    [{ maxTokens: 200 }, "token_budget"],
+    [{ maxCostUsd: 0.0003 }, "spending_budget"],
+  ] as [Partial<AgentOptions>, string][])("respects limits before paying for a finish continuation: %j", async (options, reason) => {
+    const sdk = client([message([{ type: "text", text: "I should stop to save tokens.", citations: null }], "end_turn")]);
+    const session = await fakeSession();
+    const run = await runHeadlessAgent({ client: sdk, session, options });
+    expect(run.reason).toBe(reason);
+    expect(run.turns).toBe(1);
+    expect(run.actions).toBe(0);
+    expect(run).not.toHaveProperty("finalAgentMessage");
+    expect(sdk.messages.create).toHaveBeenCalledTimes(1);
+    expect(session.explorer.command).not.toHaveBeenCalled();
+  });
+
+  it("checks the action limit after gameplay resumes from a text-only ending", async () => {
+    const sdk = client([message([], "end_turn"), message([command("look"), command("up")])]);
+    const session = await fakeSession();
+    const run = await runHeadlessAgent({ client: sdk, session, options: { maxActions: 1 } });
+    expect(run.reason).toBe("action_limit");
+    expect(run.turns).toBe(2);
+    expect(run.actions).toBe(1);
+    expect(session.explorer.command).toHaveBeenCalledExactlyOnceWith("look");
+    expect(run).not.toHaveProperty("finalAgentMessage");
+  });
+
+  it("honors cancellation during token counting for the finish continuation", async () => {
+    const abort = new AbortController();
+    const sdk = client([message([], "end_turn")]);
+    sdk.messages.countTokens.mockResolvedValueOnce({ input_tokens: 100 }).mockImplementationOnce(async () => {
+      abort.abort();
+      return { input_tokens: 100 };
+    });
+    const run = await runHeadlessAgent({ client: sdk, session: await fakeSession(), signal: abort.signal });
+    expect(run.reason).toBe("interrupted");
+    expect(sdk.messages.create).toHaveBeenCalledTimes(1);
+    expect(run).not.toHaveProperty("finalAgentMessage");
+  });
+
+  it("confirms Haiku text-only endings without executing them or publishing gameplay progress", async () => {
     const session = await fakeSession();
     const sdk = client([message([{ type: "text", text: "game_command look", citations: null }], "end_turn")]);
     const progress = vi.fn();
@@ -229,12 +304,12 @@ describe("autonomous Explorer controller", () => {
     expect(run.reason).toBe("model_finished");
     expect(run.finalAgentMessage).toBe("game_command look");
     expect(run.actions).toBe(0);
-    expect(run.inputTokens).toBe(100);
-    expect(run.outputTokens).toBe(20);
+    expect(run.inputTokens).toBe(200);
+    expect(run.outputTokens).toBe(40);
     expect(session.explorer.command).not.toHaveBeenCalled();
     expect(progress).not.toHaveBeenCalled();
     expect(request(sdk, 0)[0]).not.toHaveProperty("thinking");
-    expect(run.responseDiagnostics).toEqual([{ turn: 1, contentBlockTypes: ["text"], stopReason: "end_turn", validationFailure: null }]);
+    expect(run.responseDiagnostics).toEqual([1, 2].map(turn => ({ turn, contentBlockTypes: ["text"], stopReason: "end_turn", validationFailure: null })));
   });
 
   it.each<[string, Message["content"], string]>([
@@ -262,16 +337,16 @@ describe("autonomous Explorer controller", () => {
     expect(run.reason).toBe("model_finished");
     expect(run.finalAgentMessage).toBe(expected);
     expect(run.actions).toBe(0);
-    expect(run.turns).toBe(1);
+    expect(run.turns).toBe(2);
     expect(run.events).toEqual([]);
     expect(progress).not.toHaveBeenCalled();
-    expect(sdk.messages.create).toHaveBeenCalledTimes(1);
-    expect(sdk.messages.countTokens).toHaveBeenCalledTimes(1);
+    expect(sdk.messages.create).toHaveBeenCalledTimes(2);
+    expect(sdk.messages.countTokens).toHaveBeenCalledTimes(2);
     expect(request(sdk, 0)[0].cache_control).toEqual({ type: "ephemeral", ttl: "5m" });
-    expect(run.inputTokens).toBe(100);
-    expect(run.outputTokens).toBe(20);
-    expect(run.estimatedCostUsd).toBeCloseTo(0.0002, 10);
-    expect(run.cacheUsage).toMatchObject({ uncachedInputTokens: 100, outputCostUsd: 0.0001, cacheReadInputTokens: 0, cacheCreationInputTokens: 0 });
+    expect(run.inputTokens).toBe(200);
+    expect(run.outputTokens).toBe(40);
+    expect(run.estimatedCostUsd).toBeCloseTo(0.0004, 10);
+    expect(run.cacheUsage).toMatchObject({ uncachedInputTokens: 200, outputCostUsd: 0.0002, cacheReadInputTokens: 0, cacheCreationInputTokens: 0 });
     const records = await transcript(run);
     expect(records.map(entry => entry.kind)).toEqual(["start", "end"]);
     expect(records.map(entry => entry.sequence)).toEqual([1, 2]);
@@ -281,7 +356,7 @@ describe("autonomous Explorer controller", () => {
     const section = report.split("## Final Agent Message\n\n")[1].split("\n\n## Token categories")[0];
     expect(section).toBe(expected === "" ? "No final text was returned by the model." : expected.split("\n").map(line => `    ${line}`).join("\n"));
     expect(JSON.stringify(run) + JSON.stringify(records) + report).not.toMatch(/PRIVATE_THOUGHT|PRIVATE_SIGNATURE|PRIVATE_ENCRYPTED|PRIVATE_API_METADATA/);
-    expect(run.responseDiagnostics).toEqual([{ turn: 1, contentBlockTypes: content.map(block => block.type), stopReason: "end_turn", validationFailure: null }]);
+    expect(run.responseDiagnostics).toEqual([1, 2].map(turn => ({ turn, contentBlockTypes: content.map(block => block.type), stopReason: "end_turn", validationFailure: null })));
   });
 
   it.each(["refusal", "stop_sequence"] as const)("also captures visible text for the existing model_finished stop %s", async stop => {
@@ -289,6 +364,7 @@ describe("autonomous Explorer controller", () => {
     const run = await runHeadlessAgent({ client: client([message([{ type: "text", text: "Visible ending.", citations: null }], stop)]), session });
     expect(run.reason).toBe("model_finished");
     expect(run.finalAgentMessage).toBe("Visible ending.");
+    expect(run.turns).toBe(1);
     expect(session.dispose).toHaveBeenCalledExactlyOnceWith({ finalAgentMessage: "Visible ending." });
   });
 
@@ -344,10 +420,10 @@ describe("autonomous Explorer controller", () => {
     const run = await runHeadlessAgent({ client: sdk, session, options: { model: "claude-haiku-4-5-20251001" } });
     expect(run.reason).toBe("model_finished");
     expect(run.actions).toBe(3);
-    expect(run.turns).toBe(3);
-    expect(run.inputTokens).toBe(300);
-    expect(run.outputTokens).toBe(60);
-    expect(run.estimatedCostUsd).toBeCloseTo(0.0006);
+    expect(run.turns).toBe(4);
+    expect(run.inputTokens).toBe(400);
+    expect(run.outputTokens).toBe(80);
+    expect(run.estimatedCostUsd).toBeCloseTo(0.0008);
     expect(run.events.map(event => event.request)).toEqual(["look", ":log", "inventory"]);
     expect(request(sdk, 1)[0].messages[1].content).toEqual(first.content);
     expect(request(sdk, 2)[0].messages[3].content).toEqual(second.content);
@@ -391,9 +467,9 @@ describe("autonomous Explorer controller", () => {
       const count = sdk.messages.countTokens.mock.calls[index] as unknown as [MessageCreateParamsNonStreaming];
       expect(count[0].messages).toEqual(request(sdk, index)[0].messages);
     }
-    expect(run.inputTokens).toBe(300);
-    expect(run.outputTokens).toBe(60);
-    expect(run.estimatedCostUsd).toBeCloseTo(0.0006);
+    expect(run.inputTokens).toBe(400);
+    expect(run.outputTokens).toBe(80);
+    expect(run.estimatedCostUsd).toBeCloseTo(0.0008);
     const recorded = JSON.stringify({ run, progress: progress.mock.calls }) + await fs.readFile(run.reportPath, "utf8") + await fs.readFile(run.transcriptPath, "utf8");
     expect(recorded).not.toMatch(/PRIVATE_THOUGHT|PRIVATE_INTERLEAVED|OPAQUE_/);
     expect(run.responseDiagnostics[0].contentBlockTypes).toEqual(["thinking", "text", "tool_use", "thinking", "tool_use"]);

@@ -89,6 +89,35 @@ describe("autonomous player launch configuration", () => {
     expect(records[2].observation.text.join(" ")).toMatch(/timer/i);
   }, 20000);
 
+  it("retains NPC failure diagnostics despite suppressing the runtime console", async () => {
+    const directory = resolve(".headless-transcripts", `node-conversation-${randomUUID()}`);
+    directories.push(directory);
+    const program = `
+      import { play } from './scripts/run-headless-agent.mjs';
+      globalThis.fetch = async () => {
+        throw new TypeError('fetch failed', { cause: Object.assign(new Error('refused'), { code: 'ECONNREFUSED' }) });
+      };
+      const commands = ['up', 'up', 'take radio', 'use radio', 'tell radio about reactor'];
+      let calls = 0;
+      const client = { messages: {
+        countTokens: async () => ({ input_tokens: 100 }),
+        create: async () => ({
+          content: [{ type: 'tool_use', id: 'tool_' + calls, name: 'game_command', input: { command: commands[calls++] } }],
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 }
+        })
+      }};
+      await play({ options: { maxActions: 5 }, outputDirectory: ${JSON.stringify(directory)} }, client);
+    `;
+    const result = await execute(process.execPath, ["--input-type=module", "--eval", program], { timeout: 20000 });
+    const diagnostic = JSON.parse(result.stderr.trim().replace(/^\[AI CONVERSATION FAILURE\] /, ""));
+    expect(diagnostic).toMatchObject({ npcId: "you_1st_contact", type: "tell", reason: "network_error", reasonCode: "ECONNREFUSED" });
+    expect(result.stdout).toContain("Stopped: action_limit. Actions: 5");
+    expect(result.stdout).not.toMatch(/ECONNREFUSED|network_error/);
+    const files = await fs.readdir(directory);
+    const records = (await fs.readFile(resolve(directory, files.find(file => file.endsWith(".jsonl"))), "utf8")).trim().split("\n").map(JSON.parse);
+    expect(records.find(record => record.input === 'tell radio about reactor').aiConversationFailures).toEqual([diagnostic]);
+  }, 20000);
+
   it.each([
     [false, "Complete **findings**.\n\nSecond paragraph.\n"],
     [true, "Complete **findings**.\n\nSecond paragraph.\n"],
@@ -113,7 +142,7 @@ describe("autonomous player launch configuration", () => {
     `;
     const result = await execute(process.execPath, ["--input-type=module", "--eval", program], { timeout: 20000 });
     expect(result.stderr).toBe("");
-    expect(result.stdout).toContain("Stopped: model_finished. Actions: 1; model turns: 2; tokens: 240");
+    expect(result.stdout).toContain("Stopped: model_finished. Actions: 1; model turns: 3; tokens: 360");
     if (!finalAgentMessage) expect(result.stdout).toContain("No final text was returned by the model.");
     else if (verbose) expect(result.stdout).toContain(`Final Agent Message:\n${finalAgentMessage}`);
     else {

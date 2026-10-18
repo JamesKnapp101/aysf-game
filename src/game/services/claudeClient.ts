@@ -5,6 +5,11 @@ import type {
   CharacterProfile,
   ConversationHistoryEntry,
 } from "@game/types/npcTypes";
+import {
+  conversationErrorCode,
+  reportAiConversationFailure,
+  type AiConversationFailure,
+} from "./conversationDiagnostics";
 
 const API_BASE =
   import.meta.env.PROD
@@ -34,6 +39,8 @@ interface ClaudeResponse {
   cached?: boolean;
   error?: string;
   fallback?: boolean;
+  reasonCode?: string;
+  code?: string;
 }
 
 // Track pending requests to prevent duplicate API calls
@@ -72,8 +79,22 @@ export async function getClaudeResponse(
 
   // Create new request promise
   const requestPromise = (async () => {
+    const endpoint = `${API_BASE}/conversation/ask`;
+    let status: number | undefined;
+    let requestId: string | undefined;
+    let reason: AiConversationFailure["reason"] = "network_error";
+    const fail = (failureReason: AiConversationFailure["reason"], reasonCode?: string, errorName?: string) => {
+      reportAiConversationFailure({
+        npcId, ...playerInput, endpoint, reason: failureReason,
+        ...(status === undefined ? {} : { status }),
+        ...(requestId ? { requestId } : {}),
+        ...(reasonCode ? { reasonCode } : {}),
+        ...(errorName ? { errorName } : {}),
+      });
+      return null;
+    };
     try {
-      const response = await fetch(`${API_BASE}/conversation/ask`, {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -87,20 +108,25 @@ export async function getClaudeResponse(
           assistantContext,
         }),
       });
-
+      status = response.status;
+      requestId = response.headers?.get("x-request-id") ?? undefined;
+      reason = response.ok ? "invalid_json" : "http_error";
+      let data: ClaudeResponse | null;
+      try {
+        data = await response.json();
+      } catch (error) {
+        return fail(reason, conversationErrorCode(error), error instanceof Error ? error.name : undefined);
+      }
+      const reasonCode = typeof data?.reasonCode === "string"
+        ? data.reasonCode
+        : typeof data?.code === "string" ? data.code : undefined;
       if (!response.ok) {
-        console.warn(
-          `Claude API returned ${response.status}, falling back to static dialog`,
-        );
-        return null;
+        return fail("http_error", reasonCode);
       }
 
-      const data: ClaudeResponse = await response.json();
-
-      if (!data.success || !data.response) {
-        console.warn("Claude API failed, falling back to static dialog");
-        return null;
-      }
+      if (!data?.success) return fail("api_error", reasonCode);
+      if (typeof data.response !== "string" || !data.response.trim())
+        return fail("empty_response", reasonCode);
 
       if (data.cached) {
         logClaudeDebug(`Using cached response for ${npcId}`);
@@ -108,8 +134,7 @@ export async function getClaudeResponse(
 
       return data.response;
     } catch (error) {
-      console.error("Failed to reach Claude service:", error);
-      return null; // Signal to use static fallback
+      return fail(reason, conversationErrorCode(error), error instanceof Error ? error.name : undefined);
     } finally {
       // Clean up pending request after completion
       pendingRequests.delete(requestKey);

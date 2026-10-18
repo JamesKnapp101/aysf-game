@@ -164,6 +164,9 @@ test("conversation endpoint returns 429 after repeated valid requests", async ()
           method: "POST",
         });
         statuses.push(response.status);
+        if (response.status === 429) {
+          assert.equal((await response.json()).reasonCode, "per-minute-limit");
+        }
       }
 
       assert.deepEqual(statuses.slice(0, 8), Array(8).fill(200));
@@ -200,9 +203,27 @@ test("malformed conversation requests are rejected before the AI provider", asyn
 
       assert.equal(response.status, 400);
       assert.equal(providerCalls, 0);
-      assert.equal((await response.json()).fallback, true);
+      const body = await response.json();
+      assert.equal(body.fallback, true);
+      assert.equal(body.reasonCode, "body-invalid-fields");
     },
   );
+});
+
+test("AI provider failures include a reason code and request ID", async () => {
+  await withServer(async () => { throw new Error("synthetic provider failure"); }, async baseUrl => {
+    const response = await fetch(`${baseUrl}/api/conversation/ask`, {
+      body: JSON.stringify(validConversationBody("reactor", "tell")),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    });
+    assert.equal(response.status, 500);
+    assert.ok(response.headers.get("x-request-id"));
+    assert.deepEqual(await response.json(), {
+      success: false, error: "Conversation service failed",
+      reasonCode: "conversation-service-failed", fallback: true,
+    });
+  });
 });
 
 test("AI generate logs include sanitized ask and tell text", async () => {

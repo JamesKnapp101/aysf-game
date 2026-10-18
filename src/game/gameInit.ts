@@ -3,8 +3,8 @@ import { createInitialAviarySpotlightState } from "@game/engine/ticks/aviaryTick
 import { deriveRoomCoordMaps } from "@game/helpers/coordHelpers";
 import { getFlashlightDefaults } from "@game/helpers/flashlightHelpers";
 import { bucketForItem, inventoryHas } from "@game/rules/state";
-import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
 import { createInitialAbominationState } from "src/world/Items/creatures/abomination";
+import { createInitialBullEncounterState } from "src/world/Items/creatures/bull";
 import {
   AQUARIUM_BREATHER_CORPSE_ITEM_ID,
   AQUARIUM_BREATHER_ITEM_ID,
@@ -336,13 +336,13 @@ export const createInitialState = (world: World): GameState => {
         "gravity-level-seven": true,
         "library-power": true,
         "park-security": true,
-        "teleport-pads-green": true,
-        "teleport-pads-blue": true,
-        "teleport-pads-yellow": true,
-        "teleport-pads-violet": true,
-        "teleport-pads-orange": true,
-        "teleport-pads-white": true,
-        "teleport-pads-maroon": true,
+        "teleport-pads-green": false,
+        "teleport-pads-blue": false,
+        "teleport-pads-yellow": false,
+        "teleport-pads-violet": false,
+        "teleport-pads-orange": false,
+        "teleport-pads-white": false,
+        "teleport-pads-maroon": false,
         "engine-room-power-lock": false,
         "weapons-system": false,
         "loading-dock-door": true,

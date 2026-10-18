@@ -62,7 +62,9 @@ async function play(demo) {
       ssr: { optimizeDeps: { noDiscovery: true, include: [] } },
     });
     const { createHeadlessSession } = await loader.ssrLoadModule("/src/game/harness/session.ts");
-    session = createHeadlessSession();
+    session = createHeadlessSession({
+      onAiConversationFailure: (failure) => process.stderr.write(`[AI CONVERSATION FAILURE] ${JSON.stringify(failure)}\n`),
+    });
     show(await session.start());
     if (stopping) return;
 

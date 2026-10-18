@@ -88,6 +88,7 @@ export function createConversationRouter(
       res.status(429).json({
         success: false,
         error: "Too many conversation requests. Please wait a minute and try again.",
+        reasonCode: "per-minute-limit",
         fallback: true,
       });
     },
@@ -106,6 +107,7 @@ export function createConversationRouter(
         res.status(400).json({
           success: false,
           error: "Invalid conversation request",
+          reasonCode: validation.reason,
           fallback: true,
         });
         return;
@@ -142,6 +144,7 @@ export function createConversationRouter(
       res.status(500).json({
         success: false,
         error: "Conversation service failed",
+        reasonCode: "conversation-service-failed",
         fallback: true,
       });
     }

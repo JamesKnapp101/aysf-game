@@ -83,6 +83,7 @@ export const movieBathroomItems: Item[] = [
     itemCategory: "scenery",
     itemWeight: 120,
     itemSize: 5,
+
     meta: {
       sceneryDescriptionOrder: 2,
     },

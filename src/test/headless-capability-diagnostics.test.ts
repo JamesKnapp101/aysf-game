@@ -112,11 +112,10 @@ describe("host-only missing capability diagnostics", () => {
     expect((await controller.explorer.command("wait")).text.join("\n")).toContain("Moves: 2");
   });
 
-  it.each(["organism-death", "mind-flash", "syndrome-x-signal"])("records pending %s without exposing its payload", async kind => {
+  it.each(["mind-flash", "syndrome-x-signal"])("records pending %s without exposing its payload", async kind => {
     const { controller } = session();
     await controller.start();
     const effects = useUIEffectsStore.getState();
-    if (kind === "organism-death") effects.playOrganismDeath({ cipherText: "PRIVATE_EFFECT_PAYLOAD" });
     if (kind === "mind-flash") effects.playMindFlash({ memory: "PRIVATE_EFFECT_PAYLOAD" });
     if (kind === "syndrome-x-signal") effects.playSyndromeXSignal({ id: "PRIVATE_EFFECT_ID", text: "PRIVATE_EFFECT_PAYLOAD" });
     const observation = await controller.explorer.command("wait");
