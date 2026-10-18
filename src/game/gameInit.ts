@@ -173,6 +173,7 @@ export const createInitialState = (world: World): GameState => {
       statusEffects: [],
     },
     worldState: {
+      elevator: { doorsOpen: false },
       conditionalExits: {
         ParkEntrance: {
           roomId: "ParkEntrance",
@@ -234,8 +235,8 @@ export const createInitialState = (world: World): GameState => {
           blockMsg: `The door is jammed tight in the damaged metal frame, with or without a security badge, you'll never get it open.`,
           passMsg: `You step through the large gap that has been burned through the metal.`,
         },
-        StairTwo: {
-          roomId: "StairTwo",
+        LevelTwoStairAccess: {
+          roomId: "LevelTwoStairAccess",
           unlockTriggers: [],
           conditionalTriggers: [LEVEL_TWO_BOMB_DETONATED_TRIGGER_ID],
           direction: "west",
@@ -320,6 +321,7 @@ export const createInitialState = (world: World): GameState => {
       },
       deepStorage: createInitialDeepStorageState(),
       powerRestoredSections: {
+        elevators: false,
         "lights-level-one": true,
         "lights-level-two": false,
         "lights-level-three": true,

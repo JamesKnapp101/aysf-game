@@ -13,7 +13,7 @@ export const LEVEL_SEVEN: WorldChunk = {
       description:
         "The long, straight corridor ends here, and bends to the south. To the west is a blank white door with a light mounted over it which is currently dark. A flat white light illuminates this area, and you can see the white walls, ceiling, and floor are covered with blood splatters and sprays. Down the hall to the south you can see some scoring on the floor, like something was burned. There are several holes in the northern wall that look like they might be bullet holes.",
       exits: [
-        { direction: "east", toRoomId: "LevelSevenStairAccess" },
+        { direction: "east", doorId: "CryoStairDoors" },
         { direction: "west", toRoomId: "CryoLab" },
         { direction: "south", toRoomId: "Stasis" },
       ],

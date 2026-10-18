@@ -13,6 +13,7 @@ import { teleportationPadItems } from "../Items/teleportationPads";
 import { weaponItems } from "../Items/weapons";
 import { experienceRooms, experienceRoomsItems } from "./experienceRooms";
 import { resolveLevelFiveSpillLight } from "./levelFive/levelFiveLighting";
+import { elevatorItems, ELEVATOR_INTERIOR_DESCRIPTION } from "./stairwell/elevator";
 import { hasLevelTwoBombDetonated } from "./levelTwo/levelTwoBomb";
 
 function describeStairTwo(state: GameState): string {
@@ -33,6 +34,7 @@ function openTeleportationTerminal({ state }: { state: GameState }) {
 
 export const STAIRWELL: WorldChunk = {
   items: [
+    ...elevatorItems,
     ...creatureItems,
     ...badgeItems,
     ...corpseItems,
@@ -52,10 +54,10 @@ export const STAIRWELL: WorldChunk = {
       id: "StairOne",
       name: "Stairs Level One",
       description:
-        "This is the topmost stair landing. A set of emergency lights cast the stairwell in a dim glow. Sitting on the floor with her back against the wall next to the door is the body of a woman dressed in some kind of uniform. Her arms are crossed over her knees, and her forehead is resting on her forearms. Her shoulder-length black hair covers her face.",
+        "This is the topmost stair landing. A set of emergency lights cast the stairwell in a dim glow. Sitting on the floor with her back against the wall next to the western passage is the body of a woman dressed in some kind of uniform. Her arms are crossed over her knees, and her forehead is resting on her forearms. Her shoulder-length black hair covers her face.",
       exits: [
         { direction: "down", toRoomId: "StairTwo" },
-        { direction: "west", doorId: "BridgeStairDoors" },
+        { direction: "west", toRoomId: "LevelOneStairAccess" },
       ],
     },
     {
@@ -66,7 +68,7 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "up", toRoomId: "StairOne" },
         { direction: "down", toRoomId: "StairThree" },
-        { direction: "west", doorId: "StairDoorTwo" },
+        { direction: "west", toRoomId: "LevelTwoStairAccess" },
       ],
     },
     {
@@ -77,18 +79,18 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "up", toRoomId: "StairTwo" },
         { direction: "down", toRoomId: "StairFour" },
-        { direction: "west", doorId: "StairDoorThree" },
+        { direction: "west", toRoomId: "LevelThreeStairAccess" },
       ],
     },
     {
       id: "StairFour",
       name: "Stairs Level Four",
       description:
-        "This is the stair landing for Level Four. A set of emergency lights cast the stairwell in a dim glow. There is a door to the west with the words 'BIOSPHERE/POWER GRID' printed on it and mounted over it is a plastic sign labeled '4'.",
+        "This is the stair landing for Level Four. A set of emergency lights cast the stairwell in a dim glow. An open passage to the west leads to the elevator lobby beneath a plastic sign labeled '4'.",
       exits: [
         { direction: "up", toRoomId: "StairThree" },
         { direction: "down", toRoomId: "StairFive" },
-        { direction: "west", doorId: "StairDoorFour" },
+        { direction: "west", toRoomId: "LevelFourStairAccess" },
       ],
     },
     {
@@ -96,18 +98,15 @@ export const STAIRWELL: WorldChunk = {
       name: "Stairs Level Five",
       description: "",
       describe: (state) => {
-        const levelFiveLightsOn =
-          state.worldState.powerRestoredSections["lights-level-five"];
-        const lobbyLight = levelFiveLightsOn
+        const lobbyLight = state.worldState.powerRestoredSections["lights-level-five"]
           ? "the lit elevator lobby beyond"
           : "the dim elevator lobby beyond, illuminated mostly by light leaking through from the stairwell";
-
-        return `This is the stair landing for the fifth floor, where emergency lights flicker over the walls. To the west is a slate-gray security door marked 'ENGINEERING' beneath a plastic sign labeled '5'. Its violet-striped badge reader is scorched and hanging from exposed wires, while the door itself is buckled and stuck mostly open, revealing ${lobbyLight}.\n\nThe stairs, flanked by a metal railing, continue up and down.`;
+        return `This is the stair landing for the fifth floor, where emergency lights flicker over the walls. An open passage to the west reveals ${lobbyLight}, beneath a plastic sign labeled '5'.\n\nThe stairs, flanked by a metal railing, continue up and down.`;
       },
       exits: [
         { direction: "up", toRoomId: "StairFour" },
         { direction: "down", toRoomId: "StairSix" },
-        { direction: "west", doorId: "EngineeringDoors" },
+        { direction: "west", toRoomId: "LevelFiveStairAccess" },
       ],
     },
     {
@@ -118,7 +117,7 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "up", toRoomId: "StairFive" },
         { direction: "down", toRoomId: "StairSeven" },
-        { direction: "west", doorId: "StairDoorSix" },
+        { direction: "west", toRoomId: "LevelSixStairAccess" },
       ],
     },
     {
@@ -130,7 +129,7 @@ export const STAIRWELL: WorldChunk = {
       exits: [
         { direction: "up", toRoomId: "StairSix" },
         { direction: "down", toRoomId: "StairWellSeven" },
-        { direction: "west", doorId: "CryoStairDoors" },
+        { direction: "west", toRoomId: "LevelSevenStairAccess" },
       ],
     },
     {
@@ -152,42 +151,49 @@ export const STAIRWELL: WorldChunk = {
       id: "LevelOneStairAccess",
       name: "Level One Stair Access",
       description:
-        "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark.",
+        "This is a small elevator lobby. [[SCENERY]]",
       exits: [
-        { direction: "east", doorId: "BridgeStairDoors" },
-        { direction: "west", toRoomId: "LevelOneCorridorOne" },
+        { direction: "north", toRoomId: "Elevator" },
+        { direction: "east", toRoomId: "StairOne" },
+        { direction: "west", doorId: "BridgeStairDoors" },
       ],
     },
     {
       id: "LevelTwoStairAccess",
       name: "Level Two Stair Access",
       description: `You are standing in a dimly lit lobby with an arched ceiling and a tiled floor the color of unpolished ivory. [[SCENERY]]`,
-      exits: [{ direction: "east", doorId: "StairDoorTwo" }],
+      exits: [
+        { direction: "north", toRoomId: "Elevator" },
+        { direction: "east", toRoomId: "StairTwo" },
+        { direction: "west", doorId: "StairDoorTwo" },
+      ],
     },
     {
       id: "LevelThreeStairAccess",
       name: "Level Three Stair Access",
-      description: `You are standing in a dimly lit lobby with an arched ceiling and a tiled floor the color of unpolished ivory.[[SCENERY]]\n\nAn open doorway to the west leads to a corridor with flickering overhead lights.`,
+      description: `You are standing in a dimly lit lobby with an arched ceiling and a tiled floor the color of unpolished ivory. [[SCENERY]]\n\nBeyond the western access door is a corridor with flickering overhead lights.`,
       exits: [
-        { direction: "east", doorId: "StairDoorThree" },
-        { direction: "west", toRoomId: "LevelThreeCorridorSeven" },
-        { direction: "north", toRoomId: "TPADTerminal" },
+        { direction: "north", toRoomId: "Elevator" },
+        { direction: "east", toRoomId: "StairThree" },
+        { direction: "west", doorId: "StairDoorThree" },
+        { direction: "southeast", toRoomId: "TPADTerminal" },
       ],
     },
     {
       id: "TPADTerminal",
       name: "Terminal",
       description: `This is a large, open area whose walls and floor are covered in white ceramic tile. The terminal is lit by a series of dimmed overhead lights that cast shadows across a floor marked with queue lines. Everything steers toward a slightly raised platform along the northern wall.`,
-      exits: [{ direction: "south", toRoomId: "LevelThreeStairAccess" }],
+      exits: [{ direction: "northwest", toRoomId: "LevelThreeStairAccess" }],
     },
     {
       id: "LevelFourStairAccess",
       name: "Level Four Stair Access",
       description:
-        "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
+        "This is a small elevator lobby. [[SCENERY]] An open passage to the east is marked by a plastic sign reading 'STAIRS'.",
       exits: [
-        { direction: "east", doorId: "StairDoorFour" },
-        { direction: "west", toRoomId: "LevelFourCorridorTwo" },
+        { direction: "north", toRoomId: "Elevator" },
+        { direction: "east", toRoomId: "StairFour" },
+        { direction: "west", doorId: "StairDoorFour" },
       ],
     },
     {
@@ -197,31 +203,32 @@ export const STAIRWELL: WorldChunk = {
       resolveAmbientLightLevel: (state) =>
         resolveLevelFiveSpillLight(state, "dim"),
       description:
-        "This is a small lobby area for accessing an elevator, which is sealed shut and powered down at the moment. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
-      // "there is a set of elevator doors to the north, next to which is a call button. The elevator doors are hanging open, allowing entry to the elevator car beyond which is stuck at this floor. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'."
+        "This is a small elevator lobby. [[SCENERY]] An open passage to the east is marked by a plastic sign reading 'STAIRS'.",
       exits: [
-        { direction: "east", doorId: "EngineeringDoors" },
-        //        { direction: "north", toRoomId: "Elevator" },
-        { direction: "west", toRoomId: "EngCorridorOne" },
+        { direction: "north", toRoomId: "Elevator" },
+        { direction: "east", toRoomId: "StairFive" },
+        { direction: "west", doorId: "EngineeringDoors" },
       ],
     },
     {
       id: "LevelSixStairAccess",
       name: "Level Six Stair Access",
-      description: `This is a small lobby area for accessing an elevator but while there are signs of many people passing through it is eerily quiet now. [[SCENERY]] A corridor heads off to the west, away from the lobby, and you can see that it bends further down.`,
+      description: `This is a small lobby area for accessing an elevator but while there are signs of many people passing through it is eerily quiet now. [[SCENERY]] Beyond the western access door, a corridor heads away from the lobby and bends further down.`,
       exits: [
-        { direction: "east", doorId: "StairDoorSix" },
-        { direction: "west", toRoomId: "LevelSixCorridorBend" },
+        { direction: "north", toRoomId: "Elevator" },
+        { direction: "east", toRoomId: "StairSix" },
+        { direction: "west", doorId: "StairDoorSix" },
       ],
     },
     {
       id: "LevelSevenStairAccess",
       name: "Level Seven Stair Access",
       description:
-        "This is a small lobby area for accessing an elevator; there is a set of elevator doors to the north, next to which is a call button. An LCD display mounted above the elevator doors probably indicated the current floor the elevator is on, but it is currently dark. The atmosphere here is rather sterile and drab, and it manages to convey the feeling that this area is perhaps not quite as well traveled as some of the other parts of the ship. In stark contrast, you can see the walls and floor to the west are splattered with a large amount of blood, and a body lies in a heap there right where the corridor bends to the south. There is a door to the east over which is mounted a plastic sign reading 'STAIRS'. Fine ice crystals cover every surface here, and the air is dangerously cold; something in the stasis chamber or cryonics labs must have ruptured.",
+        "This is a small elevator lobby. [[SCENERY]] The atmosphere here is rather sterile and drab, and it manages to convey the feeling that this area is perhaps not quite as well traveled as some of the other parts of the ship. In stark contrast, you can see the walls and floor to the west are splattered with a large amount of blood, and a body lies in a heap there right where the corridor bends to the south. An open passage to the east is marked by a plastic sign reading 'STAIRS'. Fine ice crystals cover every surface here, and the air is dangerously cold; something in the stasis chamber or cryonics labs must have ruptured.",
       exits: [
-        { direction: "east", doorId: "CryoStairDoors" },
-        { direction: "west", toRoomId: "LevelSevenCorridorBend" },
+        { direction: "north", toRoomId: "Elevator" },
+        { direction: "east", toRoomId: "StairSeven" },
+        { direction: "west", doorId: "CryoStairDoors" },
       ],
     },
 
@@ -231,21 +238,17 @@ export const STAIRWELL: WorldChunk = {
       id: "ShaftFive",
       name: "Elevator Shaft Level Five",
       description:
-        "This is an elevator shaft which continues into darkness above you. Currently, you are standing on top of the elevator car which is stuck at this floor. Stenciled in paint on the west wall is a large yellow number '5'. On the north wall are a series of metal rungs which extend upward, into the darkness. There is an emergency access panel at your feet which leads into the elevator car.",
+        "This is an elevator shaft which continues into darkness above you. You are standing on a disused service platform. Stenciled in paint on the west wall is a large yellow number '5'. On the north wall are a series of metal rungs which extend upward, into the darkness. A sealed emergency access panel lies at your feet.",
       exits: [
         { direction: "up", toRoomId: "ShaftFour" },
-        { direction: "down", toRoomId: "Elevator" },
       ],
     },
     {
       id: "Elevator",
       name: "Elevator",
-      description:
-        "This is the interior of a passenger elevator. There is a panel of buttons, all dark, to the left of a set of elevator doors which hang open to the south. Above you, in the rear left corner of the elevator is a small access panel.",
-      exits: [
-        { direction: "up", toRoomId: "ShaftFive" },
-        { direction: "south", toRoomId: "LevelFiveStairAccess" },
-      ],
+      description: ELEVATOR_INTERIOR_DESCRIPTION,
+      // The movement registry redirects SOUTH to the saved boarding lobby.
+      exits: [{ direction: "south", toRoomId: "LevelFiveStairAccess" }],
     },
     {
       id: "ShaftFour",
@@ -290,42 +293,10 @@ export const STAIRWELL: WorldChunk = {
 
 export const stairwellItems: Item[] = [
   {
-    id: "levelTwoElevators",
-    name: "elevators",
-    description: `There are little up and down arrows above each door, all dark, along with the call buttons. Something must have lost power, or gotten damaged.`,
-    sceneryDescription: `To the south are a row of three elevator doors, each made of polished steel, all closed, and none of the buttons are lit.`,
-    location: "LevelTwoStairAccess",
-    vocab: ["elevator", "elevators", "doors", "door"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    meta: {
-      sceneryDescriptionOrder: 1,
-    },
-  },
-  {
-    id: "levelTwoLCD",
-    name: "lcd screen",
-    description: `It displays the message 'ELEVATOR FAILURE.' The screen is speckled with dead pixels.`,
-    sceneryDescription: `An LCD screen mounted above the elevator doors is tinted red, and displays the message 'ELEVATOR FAILURE.'`,
-    readableText: `ELEVATOR FAILURE`,
-    location: "LevelTwoStairAccess",
-    vocab: ["lcd", "screen", "lcd screen", "message"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isReadable: true,
-    meta: {
-      sceneryDescriptionOrder: 2,
-    },
-  },
-  {
     id: "levelTwoSecurityDoor",
     name: "security door",
-    description: `It displays the message 'ELEVATOR FAILURE.' The screen is speckled with dead pixels.`,
-    sceneryDescription: `[[newline]]The western exit to blocked by a heavy security door with a notice posted at eye level.`,
+    description: `The heavy western access door bears a notice warning of a potential explosive device.`,
+    sceneryDescription: `[[newline]]The western exit is blocked by a heavy security door with a notice posted at eye level.`,
     readableText: `DANGER: Potential explosive device. Keep Out by order of Aeneas Security`,
     location: "LevelTwoStairAccess",
     vocab: ["door", "security", "notice", "message"],
@@ -363,43 +334,13 @@ export const stairwellItems: Item[] = [
       kind: "teleportation-terminal",
     },
   },
-  {
-    id: "levelThreeElevators",
-    name: "elevators",
-    description: `There are little up and down arrows above each door, all dark, along with the call buttons. Something must have lost power, or gotten damaged.`,
-    sceneryDescription: `To the south are a row of three elevator doors, each made of polished steel, all closed, and none of the buttons are lit.`,
-    location: "LevelThreeStairAccess",
-    vocab: ["elevator", "elevators", "doors", "door"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    meta: {
-      sceneryDescriptionOrder: 1,
-    },
-  },
-  {
-    id: "levelThreeLCD",
-    name: "lcd screen",
-    description: `It displays the message 'ELEVATOR FAILURE.' The screen is speckled with dead pixels.`,
-    sceneryDescription: `An LCD screen mounted above the elevator doors is tinted red, and displays the message 'ELEVATOR FAILURE.'`,
-    readableText: `ELEVATOR FAILURE`,
-    location: "LevelThreeStairAccess",
-    vocab: ["lcd", "screen", "lcd screen", "message"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 1,
-    itemSize: 1,
-    isReadable: true,
-    meta: {
-      sceneryDescriptionOrder: 2,
-    },
-  },
+
+
   {
     id: "levelThreeTerminalArchway",
     name: "terminal entrance",
     description: `The area inside looks very well travelled, and is set up for queueing.`,
-    sceneryDescription: `To the north is a long open archway that looks into what appears to be some sort of transit platform centered around a row of large colored disks along the far wall, each large enough to stand on.`,
+    sceneryDescription: `To the southeast is a long open archway that looks into what appears to be some sort of transit platform centered around a row of large colored disks along the far wall, each large enough to stand on.`,
     location: "LevelThreeStairAccess",
     vocab: ["entrance", "terminal", "terminal entrance", "archway", "arch"],
     itemClass: "solid",
@@ -414,7 +355,7 @@ export const stairwellItems: Item[] = [
     id: "levelThreeTerminalSign",
     name: "terminal sign",
     description: `The 'E' in 'TERMINAL' flickers ever so slightly.`,
-    sceneryDescription: `Over the north archway is a sign in white block letters that glow softly, spelling out the word 'TERMINAL.'`,
+    sceneryDescription: `Over the southeast archway is a sign in white block letters that glow softly, spelling out the word 'TERMINAL.'`,
     location: "LevelThreeStairAccess",
     vocab: ["sign"],
     itemClass: "solid",

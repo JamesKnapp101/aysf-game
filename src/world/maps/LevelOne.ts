@@ -75,7 +75,7 @@ export const LEVEL_ONE: WorldChunk = {
         { direction: "north", doorId: "BridgeDoors" },
         { direction: "south", toRoomId: "LevelOneConf" },
         { direction: "west", toRoomId: "Observation" },
-        { direction: "east", toRoomId: "LevelOneStairAccess" },
+        { direction: "east", doorId: "BridgeStairDoors" },
       ],
     },
     {

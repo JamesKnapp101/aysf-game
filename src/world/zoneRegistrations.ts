@@ -93,3 +93,4 @@ export {
   tickDeepStorageExposure,
 } from "./maps/levelSeven/deepStorage";
 export { handleSecurityDoorPartAction } from "./doors/badgeScannerDoors";
+export { handleElevatorFloorSelection, resolveElevatorMovement, migrateElevatorSnapshot } from "./maps/stairwell/elevator";

@@ -19,7 +19,7 @@ export const LEVEL_SIX: WorldChunk = {
       description:
         "The corridor has experienced some minor structural damage, with a visible crack along the north wall near the floor, which is scattered with debris. Some but not all of the overhead lights have been broken, leaving the corridor partially lit as it heads east toward the elevator lobby and stair access, and also to the west, continuing on into the gloom. Letters have been stenciled along the south wall read 'Storage Quad Two' with an arrow pointing in that direction. [[SCENERY]]",
       exits: [
-        { direction: "east", toRoomId: "LevelSixStairAccess" },
+        { direction: "east", doorId: "StairDoorSix" },
         { direction: "south", doorId: "InnerDoor" },
         { direction: "west", toRoomId: "LevelSixCorridorEnd" },
       ],

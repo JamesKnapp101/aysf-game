@@ -19,6 +19,7 @@ export const POWER_SECTION_MAP: Record<
   string,
   { section: string; activeWhen: SwitchState }
 > = {
+  Elevators: { section: "elevators", activeWhen: "on" },
   TPADPOWER1: { section: "teleport-pads-green", activeWhen: "on" },
   TPADPOWER2: { section: "teleport-pads-white", activeWhen: "on" },
   TPADPOWER3: { section: "teleport-pads-blue", activeWhen: "on" },

@@ -175,6 +175,9 @@ export function applyPowerFromSwitches(
   return {
     ...worldState,
     powerRestoredSections: nextPower,
+    elevator: !nextPower.elevators && worldState.elevator.doorsOpen
+      ? { ...worldState.elevator, doorsOpen: false }
+      : worldState.elevator,
   };
 }
 
@@ -223,9 +226,8 @@ export const POWER_GRID_ROOT: MenuTreeNode = {
         },
         {
           id: "Elevators",
-          kind: "static",
-          label: "Elevators (system failure)",
-          status: "failure",
+          kind: "switch",
+          label: "Elevators",
         },
         {
           id: "Lvl1Weapons",

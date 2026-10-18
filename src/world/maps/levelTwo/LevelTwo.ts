@@ -12,11 +12,13 @@ export const LEVEL_TWO: WorldChunk = {
     ...medicalWingRooms,
     {
       id: "LevelTwoBurnedArea",
+      // The fire-damaged wing has irregular routes and was previously outside the transmitter grid.
+      meta: { excludeFromTransmitterMap: true },
       name: "Burned Area",
       description:
         "Of all the places you've seen so far, this is easily the most devastated. You're standing in the north-south corridor of what must have been living quarters, like the floor below. Here, however, the damage is horrific; the way north, just like one floor down, is completely closed off due to some kind of collapse. The way south is open but this whole area, which is easily big enough to cover several of the living units, has been completely burned away. The floor is blackened and covered in an inch of greasy black soot and you can see a skeletal forearm and hand sticking up out of the debris. As you look to the south, charred bits of wall poke up from the ash and down from the burnt ceiling like stubby, rotten teeth. Here and there you see taller pieces; in one area two pieces still suggest a corner to one of the units. Off to the west you can see a blackened washlet still standing amongst the rubble, and the area extends in that direction.",
       exits: [
-        { direction: "east", toRoomId: "LevelTwoStairAccess" },
+        { direction: "east", doorId: "StairDoorTwo" },
         { direction: "west", toRoomId: "EdgeOfBurnedArea" },
         { direction: "south", toRoomId: "LevelTwoCorridorFive" },
         // north is blocked by collapse

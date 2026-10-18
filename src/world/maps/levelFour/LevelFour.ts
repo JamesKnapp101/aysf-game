@@ -62,7 +62,7 @@ export const LEVEL_FOUR: WorldChunk = {
       description:
         "This is a wide corridor which looks like at times it may be used to transport large objects or cargo. The corridor bends here, heading off to the north. To the south is a metal door with no handle. Mounted next to the door is some kind of scanner with a yellow strip across the top of it. The door to the south has the words 'MAIN POWER GRID' printed on it.",
       exits: [
-        { direction: "east", toRoomId: "LevelFourStairAccess" },
+        { direction: "east", doorId: "StairDoorFour" },
         { direction: "south", doorId: "PowerGridDoors" },
         { direction: "north", toRoomId: "LevelFourCorridorOne" },
       ],

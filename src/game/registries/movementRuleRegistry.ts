@@ -2,6 +2,7 @@ import type { GameState } from "@game/types/gameTypes";
 import {
   BAR_DRINK_EXIT_BLOCK_MESSAGE,
   resolveDeepStorageMovement,
+  resolveElevatorMovement,
   resolveGymTreadmillMovement,
   resolveLevelSixStorageMovement,
   resolveMovieTheaterMovement,
@@ -67,6 +68,7 @@ const resolveReactorPlatformMovementRule: MovementRule = (state, ctx) =>
   resolveReactorPlatformMovement(state, ctx);
 
 const MOVEMENT_RULES: MovementRule[] = [
+  resolveElevatorMovement,
   blockLeavingBarWithDrink,
   resolveGymTreadmillMovementRule,
   resolveMovieTheaterMovementRule,

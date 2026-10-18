@@ -159,6 +159,7 @@ type PendingNarration = {
 export type PlayerScoreId = keyof typeof playerScoreMap;
 export type PlayerMemoryId = keyof typeof playerMemoryMap;
 type PowerSectionId =
+  | "elevators"
   | "lights-level-one"
   | "lights-level-two"
   | "lights-level-three"
@@ -501,6 +502,7 @@ export interface WorldState {
   darkRooms: Record<string, boolean>;
   deepStorage: DeepStorageState;
   doors: Record<string, DoorState>;
+  elevator: { doorsOpen: boolean; boardingLobbyId?: string };
   gamePreserve: GamePreserveState;
   gameOver?: GameOverState;
   hydroponicsCocoonPuzzle: HydroponicsCocoonPuzzleState;

@@ -1050,11 +1050,11 @@ describe("Doors and level mechanics", () => {
     );
   });
 
-  it("blocks the level two stairwell door until the bomb detonates", async () => {
-    const start = createTestState({ roomId: "StairTwo" });
+  it("blocks the level two western lobby door until the bomb detonates", async () => {
+    const start = createTestState({ roomId: "LevelTwoStairAccess" });
     const blocked = await runCommand(start, "west");
 
-    expect(blocked.player.roomId).toBe("StairTwo");
+    expect(blocked.player.roomId).toBe("LevelTwoStairAccess");
     expect(getLastLogEntry(blocked)).toContain("ACTIVE INVESTIGATION AREA");
 
     const ready = setLevelTwoBomb(blocked, {
@@ -1062,9 +1062,9 @@ describe("Doors and level mechanics", () => {
       isActive: false,
       remainingTurns: 0,
     });
-    const enteredLobby = await runCommand(ready, "west");
+    const enteredArea = await runCommand(ready, "west");
 
-    expect(enteredLobby.player.roomId).toBe("LevelTwoStairAccess");
+    expect(enteredArea.player.roomId).toBe("LevelTwoBurnedArea");
   });
 
   it("routes the level two medical lab door through the door system", async () => {

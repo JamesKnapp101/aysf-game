@@ -39,10 +39,10 @@ describe("Level Five reactor platforms", () => {
     expect(roomIds).not.toContain("MaintenanceDuctThree");
   });
 
-  it("lets the player pass the damaged violet stairwell door without a badge", async () => {
-    const next = await runCommand(createTestState({ roomId: "StairFive" }), "west");
+  it("lets the player pass the damaged violet lobby door without a badge", async () => {
+    const next = await runCommand(createTestState({ roomId: "LevelFiveStairAccess" }), "west");
 
-    expect(next.player.roomId).toBe("LevelFiveStairAccess");
+    expect(next.player.roomId).toBe("EngCorridorOne");
     expect(next.worldState.doors.EngineeringDoors?.isOpen).toBe(true);
   });
 

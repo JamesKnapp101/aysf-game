@@ -22,11 +22,25 @@ function PowerStationHarness({ initialState }: { initialState: GameState }) {
       <div data-testid="lights-level-five">
         {String(state.worldState.powerRestoredSections["lights-level-five"])}
       </div>
+      <div data-testid="elevator-power">
+        {String(state.worldState.powerRestoredSections.elevators)}
+      </div>
     </>
   );
 }
 
 describe("Power station terminal", () => {
+  it("shows elevator power and toggles it on and off", async () => {
+    render(<PowerStationHarness initialState={createTestState()} />);
+    await userEvent.click(screen.getByRole("option", { name: /level one/i }));
+    expect(screen.getByTestId("elevator-power")).toHaveTextContent("false");
+    expect(screen.getByRole("option", { name: /elevators/i })).toHaveTextContent("OFF");
+    await userEvent.click(screen.getByRole("option", { name: /elevators/i }));
+    expect(screen.getByTestId("elevator-power")).toHaveTextContent("true");
+    expect(screen.getByRole("option", { name: /elevators/i })).toHaveTextContent("ON");
+    await userEvent.click(screen.getByRole("option", { name: /elevators/i }));
+    expect(screen.getByTestId("elevator-power")).toHaveTextContent("false");
+  });
   it("can navigate to the teleportation menu and toggle teleporter power", async () => {
     render(<PowerStationHarness initialState={createTestState()} />);
 

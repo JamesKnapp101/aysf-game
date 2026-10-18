@@ -83,7 +83,8 @@ describe.each(badgeScannerDoors)("$id reader and stripe feedback", (door) => {
 
   it("does not invent parts on the reverse side", async () => {
     const state = fixture(door.connects.roomBId);
-    for (const input of ["examine badge reader", "examine stripe", "show badge to scanner"]) {
+    // Another door on this corridor may legitimately have its own reader.
+    for (const input of [`examine ${door.id}'s badge reader`, `examine ${door.id}'s stripe`, `show badge to ${door.id}'s scanner`]) {
       const next = await command(state, input);
       expect(next.log.join("\n")).not.toContain(READER);
       expect(next.log.join("\n")).not.toContain(STRIPE);
@@ -108,7 +109,7 @@ describe("badge accessibility and command variations", () => {
       "use white on scanner",
       "show white to reader",
     ])("responds to %s without changing security or handheld devices", async (input) => {
-      const state = setInventory(fixture("StairSeven"), [...inventory]);
+      const state = setInventory(fixture("LevelSevenStairAccess"), [...inventory]);
       const next = await command(state, input);
       expect(next.log.join("\n")).toContain(input.startsWith("show") ? SHOW : SWIPE);
       expect(next.worldState.doors).toEqual(state.worldState.doors);
@@ -249,7 +250,7 @@ describe("security behavior stays unchanged", () => {
 
 describe("unrelated objects and commands", () => {
   it("keeps explicit handheld references and examinations while next to a security reader", async () => {
-    const state = setInventory(fixture("StairSeven"), ["whitebadge", "DNAReader", "MindGun"]);
+    const state = setInventory(fixture("LevelSevenStairAccess"), ["whitebadge", "DNAReader", "MindGun"]);
     const reader = state.world.items.find((item) => item.id === "MindGun")!;
     expect((await command(state, "examine reader")).log.join("\n")).toContain(reader.description);
     for (const input of [
@@ -265,7 +266,7 @@ describe("unrelated objects and commands", () => {
 
   it("still requires an accessible badge when handheld readers share the alias", async () => {
     const state = updateItemLocation(
-      setInventory(fixture("StairSeven"), ["DNAReader", "MindGun"]), "whitebadge", "Lab",
+      setInventory(fixture("LevelSevenStairAccess"), ["DNAReader", "MindGun"]), "whitebadge", "Lab",
     );
     for (const input of [
       "touch white on reader", "touch white to reader", "touch white badge to reader",

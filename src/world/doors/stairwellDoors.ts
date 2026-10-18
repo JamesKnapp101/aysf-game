@@ -9,9 +9,9 @@ export const stairwellDoors: DoorDefinition[] = [
     name: "stairwell access door",
     describe: (state: GameState, ctx: DescriptionContext) => {
       const description =
-        ctx.roomId === "StairTwo"
+        ctx.roomId === "LevelTwoStairAccess"
           ? `It's a heavy door painted slate gray, with a horizontal blue stripe at eye level, across which is printed the word 'MEDICAL'. Underneath that are the words 'COMMUNITY/RECREATIONAL'.`
-          : `It's a heavy gray door that leads to the stairwell.`;
+          : `It's a heavy gray door that leads to the elevator lobby.`;
       return description;
     },
     descriptionFromA:
@@ -27,7 +27,7 @@ export const stairwellDoors: DoorDefinition[] = [
         : "To the east is a plain metal door labeled 'STAIRS'. A warning panel beside it flashes red.",
     kind: "standard",
     vocab: ["door"],
-    connects: { roomAId: "StairTwo", roomBId: "LevelTwoStairAccess" },
+    connects: { roomAId: "LevelTwoStairAccess", roomBId: "LevelTwoBurnedArea" },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: true,
     initiallyLocked: false,
@@ -37,9 +37,9 @@ export const stairwellDoors: DoorDefinition[] = [
     name: "stairwell access door",
     describe: (state: GameState, ctx: DescriptionContext) => {
       const description =
-        ctx.roomId === "StairThree"
+        ctx.roomId === "LevelThreeStairAccess"
           ? `It's a heavy door painted slate gray, with the words 'COMMUNITY/RECREATIONAL' printed on it.`
-          : `It's a heavy gray door that leads to the stairwell.`;
+          : `It's a heavy gray door that leads to the elevator lobby.`;
       return description;
     },
     descriptionFromA:
@@ -47,7 +47,7 @@ export const stairwellDoors: DoorDefinition[] = [
     descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
     kind: "standard",
     vocab: ["door"],
-    connects: { roomAId: "StairThree", roomBId: "LevelThreeStairAccess" },
+    connects: { roomAId: "LevelThreeStairAccess", roomBId: "LevelThreeCorridorSeven" },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: true,
     initiallyLocked: false,
@@ -57,9 +57,9 @@ export const stairwellDoors: DoorDefinition[] = [
     name: "stairwell access door",
     describe: (state: GameState, ctx: DescriptionContext) => {
       const description =
-        ctx.roomId === "StairFour"
+        ctx.roomId === "LevelFourStairAccess"
           ? `It's a heavy door painted slate gray, with three horizontal stripes at eye level; one orange, one yellow, and one green. The orange stripe has 'ZOOLOGICAL' printed across it, the yellow stripe has the words 'POWER GRID', and the green stripe has the word 'BOTANICAL'.`
-          : `It's a heavy gray door that leads to the stairwell.`;
+          : `It's a heavy gray door that leads to the elevator lobby.`;
       return description;
     },
     descriptionFromA:
@@ -67,7 +67,7 @@ export const stairwellDoors: DoorDefinition[] = [
     descriptionFromB: "To the east is a plain metal door labeled 'STAIRS'.",
     kind: "standard",
     vocab: ["door"],
-    connects: { roomAId: "StairFour", roomBId: "LevelFourStairAccess" },
+    connects: { roomAId: "LevelFourStairAccess", roomBId: "LevelFourCorridorTwo" },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: true,
     initiallyLocked: false,
@@ -77,9 +77,9 @@ export const stairwellDoors: DoorDefinition[] = [
     name: "stairwell access door",
     describe: (state: GameState, ctx: DescriptionContext) => {
       const description =
-        ctx.roomId === "StairSix"
+        ctx.roomId === "LevelSixStairAccess"
           ? `The door is painted slate gray, with a green horizontal stripe at eye level, across which is printed the word 'HYDROPONICS'. Beneath the stripe is the word 'STORAGE'.`
-          : `It's a heavy gray door that leads to the stairwell.`;
+          : `It's a heavy gray door that leads to the elevator lobby.`;
       return description;
     },
     descriptionFromA:
@@ -88,7 +88,7 @@ export const stairwellDoors: DoorDefinition[] = [
     description: `It's a sturdy-looking door, but doesn't appear to have any sort of lock or security scanner.`,
     kind: "standard",
     vocab: ["door", "stairwell door"],
-    connects: { roomAId: "StairSix", roomBId: "LevelSixStairAccess" },
+    connects: { roomAId: "LevelSixStairAccess", roomBId: "LevelSixCorridorBend" },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
     initiallyLocked: false,

@@ -179,7 +179,7 @@ export const LEVEL_FIVE: WorldChunk = {
         "This is the main corridor leading into the engineering section. It forms an 'L' here and bends south, and also heads back to the east. Only a faint wash of light reaches in from the stairwell.",
       exits: [
         { direction: "south", toRoomId: "EngCorridorTwo" },
-        { direction: "east", toRoomId: "LevelFiveStairAccess" },
+        { direction: "east", doorId: "EngineeringDoors" },
         { direction: "north", toRoomId: "ShuttleBay" },
       ],
     },

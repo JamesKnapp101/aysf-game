@@ -66,27 +66,7 @@ export const levelSixItems: Item[] = [
       sceneryDescriptionOrder: 1,
     },
   },
-  {
-    id: "LevelSixElevators",
-    name: "elevators",
-    description: `'Cable Fault Detected' doesn't sound good. Something must have gotten seriously damaged.`,
-    sceneryDescription: `There is a row of three elevator doors to the north, but the lights are currently off and the display mounted above each doors is red, with the message 'Out of Order: Cable Fault Detected'.`,
-    location: "LevelSixStairAccess",
-    vocab: ["elevator", "elevators", "elevator doors"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 50,
-    itemSize: 50,
-    isOpenable: true,
-    isContainer: true,
-    meta: {
-      sceneryDescriptionOrder: 1,
-      isUnopenableDoor: true,
-    },
-    overrides: {
-      open: `They're stuck shut, you can't even sneak your fingers into the seam to pull them apart.`,
-    },
-  },
+
   {
     id: "AirlockStatusDisplay",
     name: "status display",

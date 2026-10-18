@@ -45,6 +45,7 @@ const COVERED_ACTIONS = [
   "stand",
   "turn",
   "push",
+  "pick",
   "play",
   "ask",
   "give",

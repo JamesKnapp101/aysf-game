@@ -32,7 +32,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     name: "bridge access door",
     describe: (state: GameState, ctx: DescriptionContext) => {
       const description =
-        ctx.roomId === "StairOne"
+        ctx.roomId === "LevelOneStairAccess"
           ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a maroon horizontal stripe across it at eye level. Stenciled across the banner is the word 'OPERATIONS'.`
           : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
       return description;
@@ -43,8 +43,8 @@ export const badgeScannerDoors: DoorDefinition[] = [
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",
     vocab: ["door"],
-    connects: { roomAId: "StairOne", roomBId: "LevelOneStairAccess" },
-    directions: { fromA: "east", fromB: "west" },
+    connects: { roomAId: "LevelOneStairAccess", roomBId: "LevelOneCorridorOne" },
+    directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
     initiallyLocked: true,
     badgeItemId: "maroonbadge",
@@ -164,7 +164,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     name: "cryo access door",
     describe: (state: GameState, ctx: DescriptionContext) => {
       const description =
-        ctx.roomId === "StairSeven"
+        ctx.roomId === "LevelSevenStairAccess"
           ? `It's a security door with no obvious handle and a badge reader mounted next to it. The door is painted slate gray, with a white horizontal stripe across it at eye level. Stenciled across the banner are the words 'DEEP STORAGE'.`
           : `It's a heavy security door, painted slate gray. There is no badge reader on this side of the door.`;
       return description;
@@ -175,8 +175,8 @@ export const badgeScannerDoors: DoorDefinition[] = [
       "There is a door to the east over which is mounted a plastic sign reading 'STAIRS'.",
     kind: "badgeScanner",
     vocab: ["door"],
-    connects: { roomAId: "StairSeven", roomBId: "LevelSevenStairAccess" },
-    directions: { fromA: "east", fromB: "west" },
+    connects: { roomAId: "LevelSevenStairAccess", roomBId: "LevelSevenCorridorBend" },
+    directions: { fromA: "west", fromB: "east" },
     initiallyOpen: false,
     initiallyLocked: false,
     badgeItemId: "whitebadge",
@@ -188,7 +188,7 @@ export const badgeScannerDoors: DoorDefinition[] = [
     name: "engineering access door",
     describe: (_state: GameState, ctx: DescriptionContext) => {
       const description =
-        ctx.roomId === "StairFive"
+        ctx.roomId === "LevelFiveStairAccess"
           ? `It's a slate-gray security door with a violet stripe and the word 'ENGINEERING' stenciled across it. The badge reader is scorched and hanging from its wiring, and the door itself is buckled in its track, stuck mostly open.`
           : `It's a heavy slate-gray security door buckled in its track. The damaged panels are stuck mostly open, leaving plenty of room to pass through.`;
       return description;
@@ -196,12 +196,12 @@ export const badgeScannerDoors: DoorDefinition[] = [
     descriptionFromA:
       "To the west, the damaged engineering security door is buckled and stuck mostly open. Its violet-striped badge reader hangs uselessly from exposed wires.",
     descriptionFromB:
-      "To the east, the damaged security door is stuck mostly open, revealing the dim stairwell beyond.",
+      "To the east, the damaged security door is stuck mostly open, revealing the elevator lobby beyond.",
     kind: "standard",
     vocab: ["door", "security door", "engineering door"],
     connects: {
-      roomAId: "StairFive",
-      roomBId: "LevelFiveStairAccess",
+      roomAId: "LevelFiveStairAccess",
+      roomBId: "EngCorridorOne",
     },
     directions: { fromA: "west", fromB: "east" },
     initiallyOpen: true,

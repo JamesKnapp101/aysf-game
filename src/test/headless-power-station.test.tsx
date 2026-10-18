@@ -9,6 +9,7 @@ import { activatePowerSwitch, buildInitialSwitchStates, POWER_GRID_ROOT, synchro
 import { useUIOverlayStore } from "../game/store/store";
 import type { GameState } from "../game/types/gameTypes";
 import { overlayFixture, overlayHistory, overlaySession, observationText as text } from "./helpers/headlessOverlayHelpers";
+import { setInventory } from "./helpers/gameTestHelpers";
 
 function fixture(powered = true) {
   const state = overlayFixture(["PowerStationMonitor"]);
@@ -49,7 +50,7 @@ describe("mounted power distribution", () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it("retains LOCKED/FAIL rows and does not toggle static or restricted switches", async () => {
+  it("keeps restricted switches static while allowing elevator power to toggle", async () => {
     const controller = overlaySession(fixture());
     const spy = vi.spyOn(engine, "handleCommand");
     await controller.start();
@@ -57,13 +58,44 @@ describe("mounted power distribution", () => {
     const before = await spy.mock.results[0].value;
     const levelOne = text(await controller.explorer.command("select 2"));
     expect(levelOne).toContain("Main Shields: LOCKED");
-    expect(levelOne).toContain("Elevators: FAIL");
+    expect(levelOne).toContain("Elevators: OFF");
     expect(levelOne).not.toContain("Bridge access only");
     await controller.explorer.command("select 3");
-    await controller.explorer.command("select 4");
+    expect(text(await controller.explorer.command("select 4"))).toContain("Elevators: ON");
+    expect(text(await controller.explorer.command("select 4"))).toContain("Elevators: OFF");
     await controller.explorer.command("close");
     await controller.explorer.command("inventory");
     expect(spy.mock.calls[1][0]).toEqual(reconcileObjectives(before, synchronizePowerTerminal(before, buildInitialSwitchStates(before.worldState))));
+  });
+
+  it("restores power at the real station and uses the elevator without bypassing badge security", async () => {
+    const initial = setInventory(overlayFixture([]), ["yellowbadge", "PowerStationKey"]);
+    const controller = overlaySession(initial);
+    const spy = vi.spyOn(engine, "handleCommand");
+    await controller.start();
+    for (let step = 0; step < 5; step++) await controller.explorer.command("up");
+    await controller.explorer.command("west");
+    expect(text(await controller.explorer.command("examine elevator"))).toContain("heavy doors currently closed");
+    expect(text(await controller.explorer.command("examine call button"))).toContain("single round button");
+    expect(text(await controller.explorer.command("press button"))).toContain("It looks like the power is out.");
+    for (const input of ["east", "down", "west", "west", "south", "put key in keyhole", "turn key", "push button", "examine monitor"]) {
+      await controller.explorer.command(input);
+    }
+    await controller.explorer.command("select 2");
+    expect(text(await controller.explorer.command("select 4"))).toContain("Elevators: ON");
+    await controller.explorer.command("close");
+    for (const input of ["north", "east", "east", "up", "west"]) await controller.explorer.command(input);
+    expect(text(await controller.explorer.command("push elevator button"))).toContain("the elevator door slides open.");
+    expect(text(await controller.explorer.command("north"))).toContain("standing inside an elevator car");
+    expect(text(await controller.explorer.command("press 4"))).toContain("Level Four Stair Access");
+    const arrived = await spy.mock.results.at(-1)!.value;
+    expect(arrived.player.roomId).toBe("LevelFourStairAccess");
+    expect(arrived.worldState.elevator).toEqual({ doorsOpen: false });
+    // Level Four's lobby door is ordinary; its existing secured areas are farther in.
+    for (const input of ["press button", "north", "press 7"]) await controller.explorer.command(input);
+    expect(text(await controller.explorer.command("west"))).toContain("badge scanner emits a flat buzz");
+    expect(text(await controller.explorer.command("east"))).toContain("Stairs Level Seven");
+    expect(text(await controller.explorer.command("up"))).toContain("Stairs Level Six");
   });
 
   it("matches browser mount synchronization and propagates switch changes to global power", async () => {

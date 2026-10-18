@@ -12,9 +12,10 @@ import {
   throwDartAtBarDartboard,
   orderBarDrink,
   handleSecurityDoorPartAction,
+  handleElevatorFloorSelection,
 } from "src/world/zoneRegistrations";
 
-const COMMAND_ACTION_HANDLERS = [handleSecurityDoorPartAction];
+const COMMAND_ACTION_HANDLERS = [handleElevatorFloorSelection, handleSecurityDoorPartAction];
 
 export function handleRegisteredCommandAction(
   state: GameState,

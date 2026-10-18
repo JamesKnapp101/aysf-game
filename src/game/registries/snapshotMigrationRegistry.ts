@@ -9,6 +9,7 @@ import {
   INITIAL_PLAYER_HUSK_NUMBER,
 } from "@game/helpers/playerHuskHelpers";
 import type { GameState } from "@game/types/gameTypes";
+import { migrateElevatorSnapshot } from "src/world/zoneRegistrations";
 
 type SnapshotMigration = (state: GameState) => GameState;
 
@@ -115,6 +116,7 @@ function migrateLegacyTeleportPadLocations(state: GameState): GameState {
 }
 
 const SNAPSHOT_MIGRATIONS: SnapshotMigration[] = [
+  migrateElevatorSnapshot,
   normalizeInventoryItemLocations,
   preserveLegacyBadgeSwapProgress,
   migrateLegacyPlayerHusks,
