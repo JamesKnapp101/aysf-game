@@ -2,6 +2,7 @@ import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import type { ConversationTarget } from "@game/types/npcTypes";
+import type { ParsedCommand } from "@game/types/parserTypes";
 import {
   giveDartToBarBartender,
   handleMovieTheaterUsherTell,
@@ -10,7 +11,21 @@ import {
   maybeAwardBarTriviaPrize,
   throwDartAtBarDartboard,
   orderBarDrink,
+  handleSecurityDoorPartAction,
 } from "src/world/zoneRegistrations";
+
+const COMMAND_ACTION_HANDLERS = [handleSecurityDoorPartAction];
+
+export function handleRegisteredCommandAction(
+  state: GameState,
+  command: ParsedCommand,
+): ActionResult | undefined {
+  for (const handler of COMMAND_ACTION_HANDLERS) {
+    const result = handler(state, command);
+    if (result) return result;
+  }
+  return undefined;
+}
 
 type AskForActionHandler = {
   handle: (

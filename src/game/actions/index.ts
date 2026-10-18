@@ -23,6 +23,7 @@ import { doUse } from "@game/actions/use/use";
 import { doStand } from "../actions/stand/stand";
 import { doSubmerge } from "@game/actions/submerge/submerge";
 import type { ActionHandler } from "../types/actionsTypes";
+import { handleRegisteredCommandAction } from "../registries/actionInteractionRegistry";
 import { doClose } from "./close/close";
 import { doDrink } from "./drink/drink";
 import { doDrop } from "./drop/drop";
@@ -49,7 +50,7 @@ import { doTake } from "./take/take";
 import { doWait } from "./wait/wait";
 import { doWear } from "./wear/wear";
 
-export const ACTION_HANDLERS: Record<string, ActionHandler> = {
+const BASE_ACTION_HANDLERS: Record<string, ActionHandler> = {
   abort: doAbort,
   open: doOpen,
   order: doOrder,
@@ -104,4 +105,17 @@ export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   dive: doSubmerge,
   submerge: doSubmerge,
   drown: doSubmerge,
+};
+
+// Contextual interactions fall through to the existing verb's normal behavior.
+export const ACTION_HANDLERS: Record<string, ActionHandler> = {
+  ...BASE_ACTION_HANDLERS,
+  ...Object.fromEntries(
+    ["examine", "look", "touch", "swipe", "use", "show", "present"].map((verb) => [
+      verb,
+      ((state, cmd) => handleRegisteredCommandAction(state, cmd) ??
+        BASE_ACTION_HANDLERS[verb]?.(state, cmd) ??
+        { state, message: "I don't understand that.", consumesTurn: false }) satisfies ActionHandler,
+    ]),
+  ),
 };

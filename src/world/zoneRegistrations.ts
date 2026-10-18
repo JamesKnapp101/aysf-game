@@ -92,3 +92,4 @@ export {
   shouldDeepStorageExposureKill,
   tickDeepStorageExposure,
 } from "./maps/levelSeven/deepStorage";
+export { handleSecurityDoorPartAction } from "./doors/badgeScannerDoors";
