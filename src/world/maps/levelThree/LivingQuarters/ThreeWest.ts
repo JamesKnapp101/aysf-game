@@ -387,6 +387,9 @@ export const threeWestItems: Item[] = [
     itemCategory: "scenery",
     itemWeight: 2,
     itemSize: 3,
+    overrides: {
+      take: "It's all fused together, you don't want to touch any of it.",
+    },
     meta: {
       sceneryDescriptionOrder: 12,
     },
@@ -724,6 +727,9 @@ export const threeWestItems: Item[] = [
     itemCategory: "scenery",
     itemWeight: 2,
     itemSize: 3,
+    overrides: {
+      take: "It's all fused together, you don't want to touch any of it.",
+    },
     meta: {
       sceneryDescriptionOrder: 2,
     },
@@ -797,6 +803,9 @@ export const threeWestItems: Item[] = [
     ],
     itemClass: "solid",
     itemCategory: "scenery",
+    overrides: {
+      take: "It's all fused together, you don't want to touch any of it.",
+    },
     meta: {
       sceneryDescriptionOrder: 6,
     },

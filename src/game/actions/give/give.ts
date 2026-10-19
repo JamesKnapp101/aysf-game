@@ -1,9 +1,30 @@
 import { handleRegisteredGiveAction } from "@game/registries/actionInteractionRegistry";
+import type { RuleResult } from "@game/rules/result";
 import { resolveItemByNoun } from "@game/rules/scope";
 import { inventoryHas } from "@game/rules/state";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
+import type { Item } from "@game/types/itemTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
+
+type GiveOverrideResult = RuleResult | string | undefined;
+
+function getGiveOverrideResult(
+  state: GameState,
+  item: Item,
+): GiveOverrideResult {
+  const override = item.overrides?.give;
+
+  if (typeof override === "function") {
+    return override({ state, item });
+  }
+
+  return override;
+}
+
+function isRuleResult(value: GiveOverrideResult): value is RuleResult {
+  return typeof value === "object" && value !== null && "state" in value;
+}
 
 export function doGive(state: GameState, cmd: ParsedCommand): ActionResult {
   if (cmd.type !== "action" || cmd.verb !== "give") {
@@ -36,6 +57,14 @@ export function doGive(state: GameState, cmd: ParsedCommand): ActionResult {
   const target = resolveItemByNoun(state, indirect);
   if (!target) {
     return { state, message: "You don't see them here." };
+  }
+
+  const giveOverride = getGiveOverrideResult(state, target);
+  if (isRuleResult(giveOverride)) {
+    return giveOverride;
+  }
+  if (typeof giveOverride === "string") {
+    return { state, message: giveOverride };
   }
 
   const registered = handleRegisteredGiveAction({ state, item, target });

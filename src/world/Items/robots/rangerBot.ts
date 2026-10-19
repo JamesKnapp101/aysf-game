@@ -19,5 +19,8 @@ export const rangerBotItems: Item[] = [
     itemClass: "solid",
     itemWeight: 2,
     itemSize: 2,
+    overrides: {
+      give: `"No need to give me anything," the robot says, holding up one hand. "I'll scan your pass as you enter, and I'm not permitted to accept tips or gifts."`,
+    },
   },
 ];

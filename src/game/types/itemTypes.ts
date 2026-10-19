@@ -1,4 +1,10 @@
 import type {
+  AnimalStatusEffect,
+  PreserveActorId,
+  PreserveSense,
+} from "@game/preserve/preserveTypes";
+import type { ActionResult } from "./actionsTypes";
+import type {
   GameState,
   JuicyTopic,
   PlayerScoreId,
@@ -6,12 +12,6 @@ import type {
   StatusId,
   SyringeState,
 } from "./gameTypes";
-import type { ActionResult } from "./actionsTypes";
-import type {
-  AnimalStatusEffect,
-  PreserveActorId,
-  PreserveSense,
-} from "@game/preserve/preserveTypes";
 import type { ItemId } from "./ids";
 import type { ItemCommandAlias, ParsedCommand } from "./parserTypes";
 
@@ -139,6 +139,7 @@ export type ItemOverrideVerb =
   | "take"
   | "drop"
   | "get"
+  | "give"
   | "blow"
   | "bounce"
   | "shake"
