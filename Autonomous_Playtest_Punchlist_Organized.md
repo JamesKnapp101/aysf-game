@@ -27,13 +27,13 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] Same goes for 'racks' / 'rack'
 
-- [ ] Right now the Level Four Stair Access (and perhaps other floors) elevators are not well plugged in, where the agent couldn't press the elevator button despite it being described, etc.
+- [x] Right now the Level Four Stair Access (and perhaps other floors) elevators are not well plugged in, where the agent couldn't press the elevator button despite it being described, etc.
 
-- [ ] In Stairs Level Seven, attempting to examine the badge reader failed 'examine badge reader' resulted in 'you don't see that here'
+- [x] In Stairs Level Seven, attempting to examine the badge reader failed 'examine badge reader' resulted in 'you don't see that here'
 
 - [ ] In Onche's quarters, 'examine painting' worked but 'look behind painting' responded with 'you don't see that here'
 
-- [ ] In the Sanyi quarters 'take t-shirt' from one of the corpses responds 'You can't take that' make that something more interesting like it's fused to the remains
+- [x] In the Sanyi quarters 'take t-shirt' from one of the corpses responds 'You can't take that' make that something more interesting like it's fused to the remains
 
 - [ ] The agent usually tries to 'give pass to robot' once they have the park pass, and right now it responds 'Ranger Rick does not seem interested in the laminated pass' which doesn't track. Use an override to have Rick tell the player they should keep the pass, and it will scan it as they enter
 
@@ -51,7 +51,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 ## Existing puzzle correctness
 
-- [ ] I forgot and left all the teleport rings active while testing, set those back to inactive until the player reactivates them in the power station terminal
+- [x] I forgot and left all the teleport rings active while testing, set those back to inactive until the player reactivates them in the power station terminal
 
 - [ ] Debug the trashbot/key puzzle, in each run the agent thinks to drop an item to see if trashbot sweeps it up, one even noting that doing so might make it go empty the bin, so the logic seems fine. When it dropped things though the trashbot never swept them up. They always ended up solving the puzzle by using 'put \<item> in bin' which shouldn't work, but does (it does correctly trigger the emptying sequence)
 
