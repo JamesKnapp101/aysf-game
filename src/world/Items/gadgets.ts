@@ -1,3 +1,4 @@
+import { isItemOpen } from "@game/rules/containers";
 import { startRadioCall } from "@game/helpers/conversationHelpers";
 import {
   getCurrentRadioFrequency,
@@ -159,6 +160,7 @@ export const specialItems: Item[] = [
     isWearable: false,
     isReadable: false,
     isContainer: true,
+    isOpenable: true,
     isSwitchable: false,
     isSettable: true,
     isOn: true,
@@ -183,6 +185,8 @@ export const specialItems: Item[] = [
       },
     },
     overrides: {
+      insert: ({ state, item }: { state: GameState; item: Item }) =>
+        isItemOpen(state, item.id) ? undefined : "The cooler is closed.",
       examine: openCoolerPanel,
       set: openCoolerPanel,
     },

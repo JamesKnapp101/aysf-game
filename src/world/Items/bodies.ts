@@ -512,13 +512,13 @@ export const corpseItems: Item[] = [
 
   {
     id: "saunacorpse",
-    name: "woman",
+    name: "Freeny Salk's body",
     description:
-      "The woman appears to be in her early thirties. Her blonde hair hangs in a tangled, dried mess. She’s dressed in a black one-piece swimsuit with a small waterproof purse tied to her right wrist by a neon cord. Her face is frozen in a mask of terror, lips blue and parted, eyes bulging wide. Two gaping puncture wounds mark either side of her neck, and her upper body looks almost bloodless.",
+      "The man appears to be in his early thirties. His blonde hair hangs in a tangled, dried mess. He wears a black swimsuit with a small waterproof purse tied to his right wrist by a neon cord. His face is frozen in a mask of terror, lips blue and parted, eyes bulging wide. Two gaping puncture wounds mark either side of his neck, and his upper body looks almost bloodless. The card in the purse's ID window identifies him as Freeny Salk.",
     initialDescription:
-      "A woman in a black one-piece bathing suit sits slumped in the corner on a cedar platform, her face turned toward the wall.",
+      "A man in a black swimsuit sits slumped in the corner on a cedar platform, his face turned toward the wall.",
     location: "Sauna",
-    vocab: ["woman", "corpse", "body", "suit", "bathing"],
+    vocab: ["freeny", "salk", "freeny salk", "man", "corpse", "body", "suit", "bathing"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 60,

@@ -83,6 +83,11 @@ export async function simpleOverlayCommand(state: GameState, overlay: Overlay, i
   }
   const before = next;
   const result = await dispatchAction(next, request);
+  // Controls may emit world events as well as their own response. Account for
+  // the bounded log dropping old entries, without logging those events twice.
+  let overlap = Math.min(before.log.length, result.state.log.length);
+  while (overlap > 0 && !before.log.slice(-overlap).every((entry, index) => entry === result.state.log[index])) overlap--;
+  text.push(...result.state.log.slice(overlap));
   next = result.message ? appendLog(result.state, result.message) : result.state;
   next = reconcileObjectives(before, next, { fromRoomId: before.player.roomId, toRoomId: next.player.roomId });
   if (result.message) text.push(result.message);

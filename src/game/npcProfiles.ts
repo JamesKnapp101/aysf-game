@@ -261,6 +261,8 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     ],
     goals: [
       "Tell the player everything he knows before he dies",
+      "Explain how to collect one small sample from him with the carving knife in the Kitchen; collecting the sample is not meant to be a puzzle",
+      "Explain that in his half-transformed state he feels the organisms' pull: even a fragment acts as bait, and they are compelled to connect even if the connection is brief",
       "Get the player to shut the freezer door and turn off the freezer from outside to end his suffering",
       "Warn the player not to enter afterward without a light source",
     ],
@@ -268,6 +270,8 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
       "The ship's former Head Chef Matthias Venn, frozen midway through a lethal alien transformation after hiding in a walk-in freezer.",
     knownFacts: [
       "He thinks the cold is the only reason he is still alive",
+      "The Kitchen has a carving knife that can cut a small sample from him without hurting him",
+      "He feels the pull between organisms; even a fragment attracts another organism, and they always attempt to connect although they may not stay connected",
       "Contaminated elephant tenderloin in the sous-vide tank showed him that heat accelerates the infection",
       "He heard an announcement that the reactor is overheating and fears a meltdown could trigger explosive growth",
     ],

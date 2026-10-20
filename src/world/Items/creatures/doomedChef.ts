@@ -1,4 +1,5 @@
 import { Item } from "@game/types/itemTypes";
+import { extractChefSample } from "src/world/maps/levelThree/Park/Restaurant/chefSample";
 
 export const doomedChefItems: Item[] = [
   {
@@ -12,5 +13,6 @@ export const doomedChefItems: Item[] = [
     itemClass: "solid",
     itemWeight: 2,
     itemSize: 2,
+    overrides: { cut: extractChefSample },
   },
 ];

@@ -1,6 +1,7 @@
 import type { Item } from "@game/types/itemTypes";
 import type { Room } from "@game/types/roomTypes";
 import { gymExerciseBallItems } from "./gymExerciseBall";
+import { gymShowerItems } from "./gymShowerItems";
 import { gymTreadmillItems } from "./gymTreadmill";
 import { gymWeightRoomItems } from "./gymWeightlifterPuzzle";
 
@@ -49,7 +50,7 @@ export const gymRooms: Room[] = [
   {
     id: "WomensShower",
     name: "Gymnasium: Women's Locker Room",
-    description: `This is the women's locker room, dimly lit and eerily quiet. There are a series of thin, worn wooden benches running alongside rows of lockers. At the other end is a communal shower, currently empty, leaving only a slow drip to echo in the small space. A doorway to the southwest leads back out to the gymnasium.`,
+    description: `This is the women's locker room, dimly lit and eerily quiet. There are a series of thin, worn wooden benches running alongside rows of lockers. At the other end is a communal shower, currently empty, and dry. A doorway to the southwest leads back out to the gymnasium.`,
     exits: [{ direction: "southwest", toRoomId: "Gym" }],
   },
 ];
@@ -214,4 +215,5 @@ export const gymItems: Item[] = [
     },
   },
   ...gymWeightRoomItems,
+  ...gymShowerItems,
 ];

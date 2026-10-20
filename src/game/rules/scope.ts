@@ -109,8 +109,13 @@ export function getItemsInScope(state: GameState): Item[] {
 
   const itemsById = new Map(state.world.items.map((it) => [it.id, it]));
 
-  const isOpen = (itemId: string): boolean =>
-    state.itemState.openItems?.[itemId] === true;
+  const isOpen = (itemId: string): boolean => {
+    const item = itemsById.get(itemId);
+    // Fixed scenery can use explicit open flags as discovery gates. Portable
+    // non-openable containers are open vessels, including while carried.
+    return state.itemState.openItems?.[itemId] === true ||
+      (item?.itemCategory === "collectable" && item.isContainer === true && item.isOpenable === false);
+  };
   const isTransparentContainer = (itemId: string): boolean =>
     itemsById.get(itemId)?.meta?.transparentContainer === true;
 
@@ -135,14 +140,13 @@ export function getItemsInScope(state: GameState): Item[] {
     if (wornItemId) inScopeIds.add(wornItemId);
   }
 
-  // 2) Add contents of open containers in the room (recursively)
+  // 2) Add contents of open containers in scope (recursively)
   const queue: string[] = [];
   const visitedContainers = new Set<string>();
 
-  // Seed with open items that are physically in the room
+  // Base scope includes carried containers as well as containers in the room.
   for (const id of inScopeIds) {
-    const loc = liveLocById(id);
-    if (loc === room.id && (isOpen(id) || isTransparentContainer(id))) {
+    if (isOpen(id) || isTransparentContainer(id)) {
       queue.push(id);
       visitedContainers.add(id);
     }

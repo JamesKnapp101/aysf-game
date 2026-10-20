@@ -277,6 +277,7 @@ export const createInitialState = (world: World): GameState => {
         ThreeWestBath: true,
         ThreeWestBed: false,
         BarBasement: true,
+        Sauna: true,
         // Aviary rooms
         OuterRingNorth: true,
         OuterRingTopEastBend: true,

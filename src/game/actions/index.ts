@@ -32,7 +32,7 @@ import { doExamine } from "./examine/examine";
 import { doFill } from "./fill/fill";
 import { doInject } from "./inject/inject";
 import { doLoad } from "./load/load";
-import { doLift, doMoveItem } from "./manipulate/manipulate";
+import { doCut, doErase, doLift, doMoveItem } from "./manipulate/manipulate";
 import { doOpen } from "./open/open";
 import { doOrder } from "./order/order";
 import { doPour } from "./pour/pour";
@@ -77,6 +77,8 @@ const BASE_ACTION_HANDLERS: Record<string, ActionHandler> = {
   smell: doSmell,
   load: doLoad,
   lift: doLift,
+  erase: doErase,
+  cut: doCut,
   move: doMoveItem,
   search: doSearch,
   stand: doStand,
@@ -111,7 +113,7 @@ const BASE_ACTION_HANDLERS: Record<string, ActionHandler> = {
 export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   ...BASE_ACTION_HANDLERS,
   ...Object.fromEntries(
-    ["examine", "look", "touch", "swipe", "use", "show", "present", "push", "pick"].map((verb) => [
+    ["examine", "look", "touch", "swipe", "use", "show", "present", "push", "pick", "cut", "take", "get", "flip", "turn", "switch"].map((verb) => [
       verb,
       ((state, cmd) => handleRegisteredCommandAction(state, cmd) ??
         BASE_ACTION_HANDLERS[verb]?.(state, cmd) ??

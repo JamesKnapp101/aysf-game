@@ -15,6 +15,8 @@ import {
   tickParkMaintenancePanel,
   tickReactorConsensus,
   tickReactorSystems,
+  tickChefSampleDanger,
+  tickChefSampleLifetime,
 } from "src/world/zoneRegistrations";
 
 export type TurnTickPhase =
@@ -71,11 +73,13 @@ const TURN_TICK_HANDLERS: RegisteredTurnTickHandler[] = [
   { phase: "environment", tick: tickLevelSixStorageVacuum },
   { phase: "environment", tick: tickDeepStorageExposure },
   { phase: "environment", tick: tickMovieTheaterProjectionLighting },
+  { phase: "environment", tick: tickChefSampleDanger },
   { phase: "simulation", tick: tickGamePreserveTurn },
   { phase: "late", tick: tickBarJukebox },
   { phase: "late", tick: tickMovieTheaterUsher },
   { phase: "late", tick: tickReactorSystems },
   { phase: "late", tick: tickParkMaintenancePanel },
+  { phase: "late", tick: tickChefSampleLifetime },
 ];
 
 export function runRegisteredTurnTicks(

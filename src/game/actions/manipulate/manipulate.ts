@@ -4,7 +4,7 @@ import type { GameState } from "@game/types/gameTypes";
 import type { ItemOverrideVerb } from "@game/types/itemTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
 
-type ManipulateVerb = Extract<ItemOverrideVerb, "lift" | "move">;
+type ManipulateVerb = Extract<ItemOverrideVerb, "lift" | "move" | "erase" | "cut">;
 
 function doManipulate(
   state: GameState,
@@ -19,7 +19,7 @@ function doManipulate(
   if (!direct) {
     return {
       state,
-      message: verb === "lift" ? "Lift what?" : "Move what?",
+      message: `${verb[0].toUpperCase()}${verb.slice(1)} what?`,
     };
   }
 
@@ -49,12 +49,20 @@ function doManipulate(
 
   return {
     state,
-    message: verb === "lift" ? "You can't lift that." : "You can't move that.",
+    message: `You can't ${verb} that.`,
   };
 }
 
 export function doLift(state: GameState, cmd: ParsedCommand): ActionResult {
   return doManipulate(state, cmd, "lift");
+}
+
+export function doErase(state: GameState, cmd: ParsedCommand): ActionResult {
+  return doManipulate(state, cmd, "erase");
+}
+
+export function doCut(state: GameState, cmd: ParsedCommand): ActionResult {
+  return doManipulate(state, cmd, "cut");
 }
 
 export function doMoveItem(

@@ -1,3 +1,4 @@
+import { isSaunaDimlyLit, isSpaLightOn } from "../maps/levelThree/Park/spaLighting";
 import type { Item } from "../../game/types/itemTypes";
 
 export const levelThreeItems: Item[] = [
@@ -196,12 +197,19 @@ export const levelThreeItems: Item[] = [
     id: "JACQUZZI",
     name: "jacuzzi",
     description:
-      "A large, deep jacuzzi sunk into the floor, its surface a broad oval of tepid, gently rippling water.",
-    sceneryDescription:
-      "The jacuzzi is lined with smooth composite panels designed to look like stone, interrupted by small, circular jets around the perimeter. A faint haze of steam clings just above the water, carrying the leftover scent of mineral additives and cleaning chemicals. The water itself has that lukewarm, overused feel—too cool to be inviting, too warm to be natural.",
+      "The jacuzzi's four rounded lobes join in the middle like a four-leaf clover. With the water drained, its tiled seats and inactive jets are exposed.",
     location: "Spa",
-    vocab: ["jacuzzi", "bath", "hot", "tub"],
-    itemClass: "liquid",
+    vocab: [
+      "jacuzzi",
+      "jaquzzi",
+      "bath",
+      "hot tub",
+      "tub",
+      "pool",
+      "clover",
+      "jets",
+    ],
+    itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 500,
     itemSize: 10,
@@ -213,13 +221,14 @@ export const levelThreeItems: Item[] = [
   },
   {
     id: "portholeSpa",
+    describeLookThrough: (state, item) => isSaunaDimlyLit(state)
+      ? "Beyond the open cedar door, very dim light reveals the Sauna's benches and the figure slumped on one of them."
+      : isSpaLightOn(state) ? item.lookThroughDescription! : "Beyond the glass, the Sauna is completely dark.",
     name: "porthole",
     description:
-      "A round porthole set into the cedar door at about head height, its glass slightly fogged by the humid air of the spa.",
+      "A round porthole set into the cedar door at about head height, its glass clear enough to catch a little of the Spa's light.",
     lookThroughDescription:
-      "Through the fogged porthole you can just make out the dark sauna beyond. Weak light from the spa slips in far enough to catch the edges of simple benches and the deep claw marks that gouge the wood inside.",
-    sceneryDescription:
-      "The porthole’s metal frame bites cleanly into the wood, sealing the glass in a neat circle. Condensation beads and slowly crawls down the inside surface, blurring whatever lies beyond into soft shapes and diffuse light. It’s just wide enough to make you want to look through, and just small enough to make you feel like you’re spying.",
+      "Through the porthole you can just make out the edges of cedar benches. A little Spa light reaches the doorway, but the Sauna beyond remains dark.",
     location: "Spa",
     vocab: ["porthole", "window", "glass"],
     itemClass: "solid",
@@ -232,13 +241,20 @@ export const levelThreeItems: Item[] = [
   },
   {
     id: "portholeSauna",
+    describeLookThrough: (state, item) => isSpaLightOn(state)
+      ? item.lookThroughDescription!
+      : "Through the glass you can make out the main Spa, but its overhead light is off.",
+    describeScenery: (state, item) => isSaunaDimlyLit(state)
+      ? "The open cedar doorway admits very dim light from the Spa."
+      : isSpaLightOn(state) ? item.sceneryDescription!
+      : "The porthole in the cedar door admits no light from the unlit Spa.",
     name: "porthole",
     description:
-      "A circular glass porthole set into the sauna door, clouded by layers of steam and heat.",
+      "A circular glass porthole is set into the cedar door. The Sauna is cool now, and the glass is dry.",
     lookThroughDescription:
-      "Through the clouded glass you can see the brighter spa beyond in softened shapes: white tile, the broad central jacuzzi, and light diffused by drifting steam.",
+      "Through the glass you can see the brighter Spa beyond: white tile and the broad central jacuzzi.",
     sceneryDescription:
-      "From the sauna side, the porthole is mostly a glowing blur. The glass is hot to the touch, a thin barrier between the dense, wet heat inside and the cooler corridor beyond. Occasional droplets of condensation run down in lazy, crooked paths, distorting the view even further.",
+      "A little light passes through the door's porthole from the Spa. It does not reach far enough to illuminate the Sauna.",
     location: "Sauna",
     vocab: ["porthole", "window", "glass"],
     itemClass: "solid",
@@ -249,32 +265,32 @@ export const levelThreeItems: Item[] = [
     isReadable: false,
     isContainer: false,
   },
-  {
-    id: "portholePortal",
-    name: "porthole",
-    description:
-      "A small round porthole looking out from the portal area, offering a controlled view of the spa complex.",
-    lookThroughDescription:
-      "Through the clear porthole you get a tidy view into the spa complex beyond: bright tile, softened moisture, and the calm, overdesigned look of a place built for relaxation that has clearly failed at it.",
-    sceneryDescription:
-      "Here the porthole feels less decorative and more intentional: a sanctioned line-of-sight into the spa environment. The glass is clearer on this side, ringed by a reinforced frame that suggests monitoring or access control was once someone’s full-time job.",
-    location: "portal",
-    vocab: ["porthole", "window", "glass"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 5,
-    itemSize: 2,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-  },
+  // {
+  //   id: "portholePortal",
+  //   name: "porthole",
+  //   description:
+  //     "A small round porthole looking out from the portal area, offering a controlled view of the spa complex.",
+  //   lookThroughDescription:
+  //     "Through the clear porthole you get a tidy view into the spa complex beyond: bright tile, softened moisture, and the calm, overdesigned look of a place built for relaxation that has clearly failed at it.",
+  //   sceneryDescription:
+  //     "Here the porthole feels less decorative and more intentional: a sanctioned line-of-sight into the spa environment. The glass is clearer on this side, ringed by a reinforced frame that suggests monitoring or access control was once someone’s full-time job.",
+  //   location: "portal",
+  //   vocab: ["porthole", "window", "glass"],
+  //   itemClass: "solid",
+  //   itemCategory: "scenery",
+  //   itemWeight: 5,
+  //   itemSize: 2,
+  //   isWearable: false,
+  //   isReadable: false,
+  //   isContainer: false,
+  // },
   {
     id: "OILS",
     name: "smell of oil",
     description:
       "There are no bottles of massage oil left out, just the lingering smell—sweet, herbal, and faintly medicinal.",
     sceneryDescription:
-      "The room carries a ghost of its former purpose: a thin trace of warmed oils and aromatics soaked into the walls and upholstery. It smells like eucalyptus, lavender, and something sharper underneath, a scent that promises relief for muscles and absolutely nothing for the nervous system.",
+      "The room carries a ghost of its former purpose: a thin trace of warmed oils and aromatics soaked into the walls and upholstery. It smells like eucalyptus, lavender, and something sharper underneath.",
     location: "Massage",
     vocab: ["smell", "oil", "oils", "scent"],
     itemClass: "gas",
@@ -285,56 +301,56 @@ export const levelThreeItems: Item[] = [
     isReadable: false,
     isContainer: false,
   },
-  {
-    id: "massagetable",
-    name: "massage table",
-    description:
-      "A six-foot-long massage table with a collapsible extension at one end and a padded headrest at the other, complete with a face-sized opening in the center.",
-    sceneryDescription:
-      "The table is upholstered in easy-clean synthetic leather that’s just a shade too neutral to have been chosen by a human. Slight discolorations mark where oil and sweat have been wiped away countless times, leaving only subtle ghosts in the padding. The face cradle hangs open like a second, smaller void, waiting for someone to put their weight and trust into it.",
-    location: "Massage",
-    vocab: ["massage", "table", "padded", "leather"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 40,
-    itemSize: 6,
-    isWearable: false,
-    isReadable: false,
-    isContainer: true,
-    isOpenable: false,
-    capacity: 1,
-  },
-  {
-    id: "massagecheckin",
-    name: "white board",
-    description:
-      "A wall-mounted whiteboard near the spa desk, its surface smudged with the faint ghosts of erased names and appointment times.",
-    sceneryDescription:
-      "Old marker ink has stained the board in a permanent haze of rectangles and crossed-out lines. You can still make out fragments of phrases—“10:30 DEEP TISSUE,” “NO SHOW,” a few initials—but whatever schedule it once enforced has dissolved into noise.",
-    location: "Spa",
-    vocab: ["white", "board", "whiteboard", "check-in", "checkin"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 5,
-    itemSize: 3,
-    isWearable: false,
-    isReadable: true,
-    isLoggable: true,
-    readableTitle: `Faded Massage Check-In Whiteboard`,
-    readableText:
-      "The board is mostly wiped clean, but you can pick out a few lingering traces:\n" +
-      "10:30  DT / K.D.\n" +
-      "11:15  ST / CXL\n" +
-      "12:00  HOT STONE / WAITLIST\n",
-    isContainer: false,
-  },
+  // {
+  //   id: "massagetable",
+  //   name: "massage table",
+  //   description:
+  //     "A six-foot-long massage table with a collapsible extension at one end and a padded headrest at the other, complete with a face-sized opening in the center.",
+  //   sceneryDescription:
+  //     "The table is upholstered in easy-clean synthetic leather that’s just a shade too neutral to have been chosen by a human. Slight discolorations mark where oil and sweat have been wiped away countless times, leaving only subtle ghosts in the padding. The face cradle hangs open like a second, smaller void, waiting for someone to put their weight and trust into it.",
+  //   location: "Massage",
+  //   vocab: ["massage", "table", "padded", "leather"],
+  //   itemClass: "solid",
+  //   itemCategory: "scenery",
+  //   itemWeight: 40,
+  //   itemSize: 6,
+  //   isWearable: false,
+  //   isReadable: false,
+  //   isContainer: true,
+  //   isOpenable: false,
+  //   capacity: 1,
+  // },
+  // {
+  //   id: "massagecheckin",
+  //   name: "white board",
+  //   description:
+  //     "A wall-mounted whiteboard near the spa desk, its surface smudged with the faint ghosts of erased names and appointment times.",
+  //   sceneryDescription:
+  //     "Old marker ink has stained the board in a permanent haze of rectangles and crossed-out lines. You can still make out fragments of phrases—“10:30 DEEP TISSUE,” “NO SHOW,” a few initials—but whatever schedule it once enforced has dissolved into noise.",
+  //   location: "Spa",
+  //   vocab: ["white", "board", "whiteboard", "check-in", "checkin"],
+  //   itemClass: "solid",
+  //   itemCategory: "scenery",
+  //   itemWeight: 5,
+  //   itemSize: 3,
+  //   isWearable: false,
+  //   isReadable: true,
+  //   isLoggable: true,
+  //   readableTitle: `Faded Massage Check-In Whiteboard`,
+  //   readableText:
+  //     "The board is mostly wiped clean, but you can pick out a few lingering traces:\n" +
+  //     "10:30  DT / K.D.\n" +
+  //     "11:15  ST / CXL\n" +
+  //     "12:00  HOT STONE / WAITLIST\n",
+  //   isContainer: false,
+  // },
   {
     id: "saunacorpsepurse",
     name: "waterproof purse",
     description:
-      "A compact waterproof purse made from rubberized fabric, designed to survive steam, splashes, and bad decisions.",
+      "A compact waterproof purse made from rubberized fabric, designed to survive steam, splashes, and bad decisions. A card in its ID window reads 'Freeny Salk'.",
     sceneryDescription:
-      "The purse’s matte surface beads condensation instead of absorbing it, tiny droplets of moisture clinging and slowly rolling off. A sealed zipper runs along the top, and a translucent ID window on the side has fogged from the sauna’s heat, blurring whatever card is pressed against it.",
+      "The purse is made from matte waterproof fabric. A sealed zipper runs along the top, and a translucent ID window on the side holds a card bearing the name Freeny Salk.",
     location: "Sauna",
     vocab: ["waterproof", "purse", "bag"],
     itemClass: "solid",

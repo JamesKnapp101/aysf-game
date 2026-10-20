@@ -35,11 +35,11 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] In the Sanyi quarters 'take t-shirt' from one of the corpses responds 'You can't take that' make that something more interesting like it's fused to the remains
 
-- [ ] The agent usually tries to 'give pass to robot' once they have the park pass, and right now it responds 'Ranger Rick does not seem interested in the laminated pass' which doesn't track. Use an override to have Rick tell the player they should keep the pass, and it will scan it as they enter
+- [x] The agent usually tries to 'give pass to robot' once they have the park pass, and right now it responds 'Ranger Rick does not seem interested in the laminated pass' which doesn't track. Use an override to have Rick tell the player they should keep the pass, and it will scan it as they enter
 
 - [ ] In the Movie Theater the agent attempted to 'push button' but it got interpreted as pushing the radio call button
 
-- [ ] In the Gym showers (men and women) the agent tried the very reasonable 'examine shower' and 'examine benches' and both return 'You don't see that here'
+- [x] In the Gym showers (men and women) the agent tried the very reasonable 'examine shower' and 'examine benches' and both return 'You don't see that here'
 
 - [ ] In the weight room, consider more things a player might try, the agent tried to 'pull badge' and 'push man' for example which are both reasonable so have responses ready
 

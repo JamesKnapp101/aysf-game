@@ -1,3 +1,4 @@
+import { isRoomAmbientlyLit } from "@game/registries/roomLightRegistry";
 import { SplashModal } from "@game/components/SplashModal";
 import { OPENING_SPLASH } from "@game/constants";
 import { isDeepStorageSuitOverlayActive } from "src/world/maps/levelSeven/deepStorage";
@@ -327,7 +328,7 @@ export const Game: React.FC = () => {
   );
 
   const roomIsDark = currentRoom
-    ? Boolean(gs.worldState.darkRooms[currentRoom.id])
+    ? !isRoomAmbientlyLit(gs, currentRoom.id)
     : false;
   const visualEffectsMode = gs.uiState.visualEffectsMode ?? "full";
 

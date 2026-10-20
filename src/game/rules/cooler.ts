@@ -1,3 +1,4 @@
+import { applyRegisteredCoolerModeEffects } from "../registries/coolerModeEffectRegistry";
 import { getItemById } from "../selectors/itemSelectors";
 import type { ActionResult } from "../types/actionsTypes";
 import type { GameState } from "../types/gameTypes";
@@ -17,21 +18,12 @@ export function setCoolerMode(
   mode: CoolerMode,
   coolerItem?: CoolerItemLike
 ): ActionResult {
-  const next: GameState = {
-    ...state,
-    itemState: {
-      ...state.itemState,
-      itemSettings: {
-        ...state.itemState.itemSettings,
-        Cooler: { kind: "cooler", mode },
-      },
-    },
-  };
+  const result = handleSetCoolerMode(state, mode);
 
   const msg = coolerItem?.meta?.settable?.[mode]?.text;
 
   return {
-    state: next,
+    ...result,
     message: msg ?? `You set the cooler to '${mode}'.`,
   };
 }
@@ -68,7 +60,7 @@ export function handleSetCoolerMode(
           if (!item) {
             return { state, message: `I see no water here.` };
           }
-          next = setItemFrozen(state, item);
+          next = setItemFrozen(next, item);
         }
       }
     }
@@ -82,5 +74,12 @@ export function handleSetCoolerMode(
       "You set the cooler to 'freeze' and it emits a high-pitched electronic tone.",
   }[mode];
 
-  return { state: next, message: msg };
+  const affected = applyRegisteredCoolerModeEffects(next);
+  return {
+    state: affected,
+    message: msg,
+    consumesTurn: false,
+    // A control-triggered death ends interaction with the device at the death scene.
+    overlay: affected.player.roomId !== next.player.roomId ? { kind: "none" } : undefined,
+  };
 }

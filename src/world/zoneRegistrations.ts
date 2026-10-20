@@ -94,3 +94,13 @@ export {
 } from "./maps/levelSeven/deepStorage";
 export { handleSecurityDoorPartAction } from "./doors/badgeScannerDoors";
 export { handleElevatorFloorSelection, resolveElevatorMovement, migrateElevatorSnapshot } from "./maps/stairwell/elevator";
+export { migrateSpaContentSnapshot } from "./maps/levelThree/Park/spaContentMigration";
+export {
+  handleChefSampleExtraction,
+  migrateChefSampleSnapshot,
+  tickChefSampleDanger,
+  tickChefSampleLifetime,
+} from "./maps/levelThree/Park/Restaurant/chefSample";
+
+export { getSpaAmbientLight, getSpaDarkActionGuard, handleSpaLightCommand, migrateSpaLightingSnapshot } from "./maps/levelThree/Park/spaLighting";
+export { migrateSpaOrganismSnapshot } from "./maps/levelThree/Park/spaOrganism";

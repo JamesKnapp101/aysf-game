@@ -75,6 +75,8 @@ const VERB_ALIASES: Record<string, string> = {
   smell: "smell",
   sniff: "smell",
   fire: "shoot",
+  carve: "cut",
+  slice: "cut",
 };
 
 const PHRASAL_VERB_ALIASES: Record<string, string> = {

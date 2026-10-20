@@ -24,7 +24,7 @@ export async function dispatchAction(
 
       return {
         ...result,
-        overlay: {
+        overlay: result.overlay ?? {
           kind: "cooler",
           mode,
         },

@@ -16,6 +16,7 @@ const DIRECT_OBJECT_VERBS = new Set([
   "eat", "set", "wear", "remove", "switch", "lift", "move", "search",
   "turn", "push", "pet", "play", "call", "ride", "smell", "blow",
   "bounce", "shake", "fix", "sit", "drown",
+  "cut", "flip",
 ]);
 const TWO_OBJECT_VERBS = new Set([
   "put", "use", "give", "shoot", "touch", "throw", "apply", "load",

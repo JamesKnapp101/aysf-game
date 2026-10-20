@@ -1,3 +1,4 @@
+import { isRoomAmbientlyLit } from "@game/registries/roomLightRegistry";
 import { getRetryableEncounterDeathOverride } from "@game/encounters/retryableEncounters";
 import { appendLog } from "@game/engine/log";
 import { recordBarBotCellarDeathWitness } from "@game/helpers/barBotAwareness";
@@ -233,7 +234,7 @@ export function triggerPlayerDeath(
   const potentialRegenRoomIds = uniqueAdjacentRoomIds.filter(
     (candidateRoomId) => {
       const isVisited = state.worldState.visitedRooms[candidateRoomId] === true;
-      const isLit = !state.worldState.darkRooms[candidateRoomId];
+      const isLit = isRoomAmbientlyLit(state, candidateRoomId);
       return isVisited && isLit && candidateRoomId !== roomId;
     },
   );
@@ -242,7 +243,7 @@ export function triggerPlayerDeath(
     .filter(([candidateRoomId, visited]) => {
       if (!visited) return false;
       if (candidateRoomId === roomId) return false;
-      return !state.worldState.darkRooms[candidateRoomId];
+      return isRoomAmbientlyLit(state, candidateRoomId);
     })
     .map(([candidateRoomId]) => candidateRoomId);
 
@@ -259,10 +260,10 @@ export function triggerPlayerDeath(
   const selectedRoomIsValid =
     selectedRegenRoom !== roomId &&
     state.worldState.visitedRooms[selectedRegenRoom] === true &&
-    !state.worldState.darkRooms[selectedRegenRoom];
+    isRoomAmbientlyLit(state, selectedRegenRoom);
 
   const finalRegenRoom = selectedRoomIsValid ? selectedRegenRoom : "PowerGrid";
-  const finalRoomIsDark = !!state.worldState.darkRooms[finalRegenRoom];
+  const finalRoomIsDark = !isRoomAmbientlyLit(state, finalRegenRoom);
 
   // Absolute safety: never respawn into the death room or a dark room.
   const safeRegenRoom =

@@ -418,7 +418,7 @@ export const levelThreeParkDoors: DoorDefinition[] = [
     descriptionFromB:
       "To the east is the freezer door, covered with a thin layer of frost.",
     kind: "keyed",
-    vocab: ["freezer door", "walk-in door", "walk in door"],
+    vocab: ["freezer door", "walk-in door", "walk in door", "fridge door", "steel door", "refrigerator door", "fridge", "refrigerator"],
     connects: {
       roomAId: "Kitchen",
       roomBId: "WalkIn",
@@ -451,16 +451,16 @@ export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
     id: "SteamRoomDoor",
     name: "heavy glass door",
     descriptionFromA:
-      "To the east is a heavy glass door that looks into a tiled steam room.",
+      "To the south is a heavy glass door with a brass handle that looks into a tiled steam room.",
     descriptionFromB:
-      "To the west, a heavy glass door looks out into the main Spa.",
+      "To the north, a heavy glass door looks out into the main Spa.",
     kind: "standard",
     vocab: ["glass door", "heavy glass door", "steam door", "steam room door"],
     connects: {
       roomAId: "Spa",
       roomBId: "SteamRoom",
     },
-    directions: { fromA: "east", fromB: "west" },
+    directions: { fromA: "south", fromB: "north" },
     initiallyOpen: false,
     initiallyLocked: false,
   },
@@ -477,6 +477,7 @@ export const levelThreeMedicalAndSpaDoors: DoorDefinition[] = [
       "varnished door",
       "varnished wooden door",
       "massage door",
+      "nail salon door",
     ],
     connects: {
       roomAId: "Spa",

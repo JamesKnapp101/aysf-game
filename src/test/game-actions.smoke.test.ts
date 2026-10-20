@@ -35,6 +35,8 @@ const COVERED_ACTIONS = [
   "wear",
   "remove",
   "switch",
+  // Contextual FLIP behavior is exercised in spa-lighting.test.tsx.
+  "flip",
   "wait",
   "shoot",
   "smell",
@@ -66,10 +68,16 @@ const COVERED_ACTIONS = [
   "fix",
   "lift",
   "move",
+  "erase",
+  "cut",
   "sit",
   "get",
   "pet",
   "stick",
+  // Contextual badge-reader verbs are exercised in badge-scanner-doors.test.ts.
+  "swipe",
+  "show",
+  "present",
 ] as const satisfies ReadonlyArray<keyof typeof ACTION_HANDLERS>;
 
 function getCommandEntry(state: { log: string[] }, command: string): string {
@@ -100,6 +108,20 @@ function expectCommandEntry(
 }
 
 describe("Action smoke coverage", () => {
+  it.each([
+    ["cut", "Cut what?"],
+    ["cut nonexistent object", "You don't see that here."],
+    ["cut jacuzzi", "You can't cut that."],
+  ])("covers ordinary cut handling: %s", async (command, message) => {
+    const state = await runCommand(createTestState({ roomId: "Spa" }), command);
+    expectCommandEntry(state, command, message);
+  });
+
+  it("covers erase through the research whiteboard's item override", async () => {
+    const state = await runCommand(createTestState({ roomId: "SecretLab" }), "erase whiteboard");
+    expectCommandEntry(state, "erase whiteboard", "I'd leave it, it could be important.");
+  });
+
   it("keeps smoke coverage aligned with registered action verbs", async () => {
     expect([...COVERED_ACTIONS].sort()).toEqual(
       Object.keys(ACTION_HANDLERS).sort(),

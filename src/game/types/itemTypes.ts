@@ -174,6 +174,7 @@ export type ItemOverrideVerb =
   | "eat"
   | "set"
   | "move"
+  | "erase"
   | "examine";
 
 export type ItemCommandOverrideContext = {

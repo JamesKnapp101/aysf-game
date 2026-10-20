@@ -497,6 +497,7 @@ export interface WorldState {
   brainSlug: BrainSlugState;
   bullEncounter: BullEncounterState;
   catState: CatState;
+  chefSample?: { remainingWarmTurns: number };
   conditionalExits: Record<RoomId, ConditionalExit>;
   conditionalTriggers: Record<string, boolean>;
   darkRooms: Record<string, boolean>;

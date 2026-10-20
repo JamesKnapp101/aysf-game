@@ -1,3 +1,4 @@
+import { isRoomAmbientlyLit } from "@game/registries/roomLightRegistry";
 import { inventoryHas } from "@game/rules/state";
 import {
   canTraversePreserveExit,
@@ -82,7 +83,7 @@ export function getRandomMoveTarget(
 // ---------- Darkness ----------
 
 export function isRoomDark(state: GameState, roomId: string): boolean {
-  return state.worldState.darkRooms[roomId] === true;
+  return !isRoomAmbientlyLit(state, roomId);
 }
 
 // ---------- Exits ----------

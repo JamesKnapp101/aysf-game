@@ -162,7 +162,8 @@ export function buildRoomDescription(
     const doorText = doorsHere
       .map((door) => getDoorDescriptionForRoom(state, door, roomId))
       .filter((t): t is string => Boolean(t && t.trim()))
-      .join("");
+      .map((text) => text.trim())
+      .join(" ");
     if (doorText) parts.push(doorText);
   }
 

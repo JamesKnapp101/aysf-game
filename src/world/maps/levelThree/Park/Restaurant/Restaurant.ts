@@ -1,5 +1,6 @@
 import type { Item } from "@game/types/itemTypes";
 import { Room } from "@game/types/roomTypes";
+import { chefSampleItems } from "./chefSample";
 import { restaurantBathroomItems } from "./restaurantBathroomItems";
 import { restaurantDiningRoomItems } from "./restaurantDiningRoomItems";
 import { restaurantEntranceItems } from "./restaurantEntranceItems";
@@ -10,7 +11,7 @@ export const restaurantRooms: Room[] = [
   {
     id: "RestaurantEntrance",
     name: "Restaurant Entrance",
-    description: `This is the entrance to a restaurant with a small outdoor-cafe area. There are several round tables, each surrounded by several chairs, situated on a level area covered in pale salmon colored tile. Mounted over the door leading in is a large, rustic-looking painted sign which reads 'Saveurs du Passé'. A paved brick path leads northeast through a grassy area toward a large, stone obelisk. The path around the park's perimeter also leads north and east. A glass door leads southwest into the establishment.`,
+    description: `This is the entrance to a restaurant with a small outdoor-cafe area. There are several round tables, each surrounded by several chairs, situated on a level area covered in pale salmon colored tile. Mounted over the door leading in is a large, rustic-looking painted sign which reads 'Saveurs du Passé'. A paved brick path leads northeast through a grassy area toward a large, stone obelisk. The path around the park's perimeter also leads north and east. A set of automatic glass doors lead southwest into the establishment, stuck in the open position.`,
     exits: [
       { direction: "northwest", toRoomId: "ParkWest" },
       { direction: "northeast", toRoomId: "ParkCenter" },
@@ -39,7 +40,7 @@ export const restaurantRooms: Room[] = [
   {
     id: "Kitchen",
     name: "Kitchen",
-    description: `This is the kitchen area for the restaurant. It appears to have been hastilly abandoned, and you see signs of things having been cleaned up quickly, then perhaps abandoned before the clean-up was quite complete. Most of the food has been put away, with only some scattered flour, bread crumbs, and a few pieces of stray pasta to betray the fact that this was a once busy kitchen. One wall is dominated by a large steel door which must belong to a walk-in refridgerator which is padlocked.`,
+    description: `This is the kitchen area for the restaurant. It appears to have been hastily abandoned, and you see signs of things having been cleaned up quickly, then perhaps abandoned before the clean-up was quite complete. Most of the food has been put away, with only some scattered flour, bread crumbs, and a few pieces of stray pasta to betray the fact that this was a once busy kitchen. One wall is dominated by a large steel door leading west into a walk-in freezer. An open padlock hangs from its hasp.`,
     exits: [
       { direction: "east", toRoomId: "Restaurant" },
       { direction: "west", doorId: "WalkInDoor" },
@@ -48,7 +49,7 @@ export const restaurantRooms: Room[] = [
   {
     id: "WalkIn",
     name: "Walk In",
-    description: `This is a small walk-in area that leads to the back of the restaurant. The walls are lined with metal shelves and there is a large padlocked steel door.`,
+    description: `This is the restaurant's walk-in freezer. Frost coats the metal shelves and the air is bitterly cold. The heavy steel door leads east into the Kitchen.`,
     exits: [{ direction: "east", doorId: "WalkInDoor" }],
   },
   {
@@ -76,6 +77,7 @@ export const restaurantRooms: Room[] = [
 ];
 
 export const restaurantItems: Item[] = [
+  ...chefSampleItems,
   ...restaurantEntranceItems,
   ...restaurantDiningRoomItems,
   ...restaurantKitchenItems,

@@ -37,6 +37,7 @@ import {
   loadWorldChunk,
 } from "src/world/World";
 import { ACTION_HANDLERS } from "../actions";
+import { getRegisteredActionGuard } from "../registries/commandGuardRegistry";
 import { resolveRegisteredMovementRule } from "../registries/movementRuleRegistry";
 import { canMoveThroughExit, resolveDoorDestination } from "../rules/doors";
 import { resolveItemByNoun } from "../rules/scope";
@@ -222,6 +223,7 @@ async function executeCommand(
   let nextState = state;
   let message = "I don't understand that.";
   let consumesTurn = false;
+  let actionGuarded = false;
   let forceRoomDescription = false;
   let attemptedDestinationRoomId: string | undefined;
   let attemptedMoveDirection: string | undefined;
@@ -435,6 +437,13 @@ async function executeCommand(
     }
 
     case "action": {
+      const guard = ACTION_HANDLERS[cmd.verb] && getRegisteredActionGuard(state, cmd);
+      if (guard) {
+        actionGuarded = true;
+        message = guard.message;
+        consumesTurn = guard.consumesTurn;
+        break;
+      }
       if (ambiguousNoun) {
         message = `Which object do you mean by "${ambiguousNoun}"?`;
         break;
@@ -564,7 +573,7 @@ async function executeCommand(
     );
   }
 
-  if (cmd.type === "action") {
+  if (cmd.type === "action" && !actionGuarded) {
     nextState = runScriptedEvents(
       nextState,
       {
@@ -654,12 +663,12 @@ async function executeCommand(
         roomId: nextState.player.roomId,
         fromRoomId: state.player.roomId,
         commandText:
-          cmd.type === "action" || cmd.type === "unknown"
+          !actionGuarded && (cmd.type === "action" || cmd.type === "unknown")
             ? cmd.raw.trim().toLowerCase()
             : undefined,
-        commandVerb: cmd.type === "action" ? cmd.verb : undefined,
+        commandVerb: cmd.type === "action" && !actionGuarded ? cmd.verb : undefined,
         commandDirect:
-          cmd.type === "action" ? cmd.direct?.trim().toLowerCase() : undefined,
+          cmd.type === "action" && !actionGuarded ? cmd.direct?.trim().toLowerCase() : undefined,
       },
       SCRIPTED_EVENTS,
     );
@@ -827,13 +836,13 @@ async function executeCommand(
   const objectiveContext: ObjectiveCommandContext = {
     attemptedDestinationRoomId,
     commandDirect:
-      cmd.type === "action" ? cmd.direct?.trim().toLowerCase() : undefined,
-    commandText:
+      cmd.type === "action" && !actionGuarded ? cmd.direct?.trim().toLowerCase() : undefined,
+    commandText: actionGuarded ? undefined :
       cmd.type === "action" || cmd.type === "unknown"
         ? cmd.raw?.trim().toLowerCase()
         : cmd.type,
     commandType: cmd.type,
-    commandVerb: cmd.type === "action" ? cmd.verb : undefined,
+    commandVerb: cmd.type === "action" && !actionGuarded ? cmd.verb : undefined,
     direction: attemptedMoveDirection,
     fromRoomId: state.player.roomId,
     message: [

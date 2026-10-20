@@ -1,3 +1,4 @@
+import { isRoomAmbientlyLit } from "@game/registries/roomLightRegistry";
 import {
   HAIRY_STATUS_MESSAGES,
   HORNY_STATUS_MESSAGES,
@@ -371,7 +372,7 @@ function describeStatusEffect(
       return "Your bladder feels geologically stable.";
     case "nightvision-active": {
       const currentRoom = getCurrentRoom(state);
-      return state.worldState.darkRooms[currentRoom.id]
+      return !isRoomAmbientlyLit(state, currentRoom.id)
         ? "You're wearing night vision goggles, which allow you to see in the darkness."
         : "You're wearing night vision goggles, but since there's plenty of light you're effectively blind.";
     }
