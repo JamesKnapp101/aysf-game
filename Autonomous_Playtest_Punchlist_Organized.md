@@ -45,7 +45,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [ ] In the weight room it also later tried 'remove plates from barbell' and 'take plates' so work something out for that. It can use the same mechanism the smart dumbells use where the weight is settable, but it's stuck for some reason, maybe it got damaged when it fell
 
-- [ ] It references a massage table in the nail salon but 'sit on massage table' returns 'You don't see that here'
+- [x] It references a massage table in the nail salon but 'sit on massage table' returns 'You don't see that here'
 
 - [ ] In the park after the trashbot enters the maintenance depot through the 'hidden panel' using 'examine panel' returns 'you don't see that here'
 
