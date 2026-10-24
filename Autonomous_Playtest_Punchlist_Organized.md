@@ -97,10 +97,10 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 ## Unfinished game systems
 
-- [ ] Right now the Spa/Steam Room/Sauna aren't fleshed out, so do that now; add the light switch, the mechanics, the organism, everything until it works end-to-end
-  - [ ] This will mean deciding how the frozen sample / Cooler puzzle works, and implementing those mechanics as well
+- [x] Right now the Spa/Steam Room/Sauna aren't fleshed out, so do that now; add the light switch, the mechanics, the organism, everything until it works end-to-end
+  - [x] This will mean deciding how the frozen sample / Cooler puzzle works, and implementing those mechanics as well
 
-- [ ] The Walk In needs work. Some of it is plugged in but need to close the loop on the following:
+- [x] The Walk In needs work. Some of it is plugged in but need to close the loop on the following:
   - [ ] Plug in the whole 'getting a sample from the doomed chef' mechanic
     - [ ] Add a carving knife to the kitchen the player can use to carve off small slices, when they do the chef murmurs 'take all you need...'
     - [ ] Decide what the actual sample rules are and implement them

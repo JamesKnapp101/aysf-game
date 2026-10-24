@@ -79,7 +79,9 @@ function expectSuccess(state: GameState) {
 function expectDeath(state: GameState) {
   expect(state.player.roomId).not.toBe("Spa");
   expect(state.worldState.playerDeaths.Spa?.cause).toBe("organism");
-  expect(location(state)).toBe("Spa");
+  expect(location(state)).toBe("Sauna");
+  expect(state.worldState.darkRooms.Spa).toBe(false);
+  expect(state.worldState.conditionalTriggers.SpaOrganismLeftSauna).toBeUndefined();
   expect(state.log.join("\n").split("*** You have died ***")).toHaveLength(2);
   expect(useUIEffectsStore.getState().organismDeath).not.toBeNull();
   expectGone(state);
@@ -270,15 +272,15 @@ describe("ordinary behavior after the Spa lure", () => {
     expect(state.log.join("\n").split(RUSH)).toHaveLength(2);
   });
 
-  it("supports a complete retry after death without resetting creature placement", async () => {
+  it("supports the complete sample/lure solution after a lethal attack resets the organism", async () => {
     const initial = addInventoryItems(door(door(fixture(), "CedarDoor"), "SteamRoomDoor"), ["flashlight", "CarvingKnife", "Cooler"]);
     let state = await runCommand(initial, "turn lights off");
     expectDeath(state);
     expect(state.player.roomId).toBe("ParkWest");
     state = await runCommands(state, ["turn flashlight on", "west", "turn lights on"]);
     expect(state.player.roomId).toBe("Spa");
-    expect(location(state)).toBe("Spa");
-    expect(getSpaOrganismReaction(state).active).toBe(false);
+    expect(location(state)).toBe("Sauna");
+    expect(getSpaOrganismReaction(state).active).toBe(true);
     state = await runCommands(state, ["east", "southeast", "southwest", "west", "west"]);
     expect(state.player.roomId).toBe("WalkIn");
     state = await runCommands(state, ["open cooler", "carve sample from chef", "put sample in cooler", "set cooler"]);
@@ -286,19 +288,16 @@ describe("ordinary behavior after the Spa lure", () => {
     expect(remaining(state)).toBe(4);
     state = await runCommands(state, ["east", "east", "northeast", "northwest", "west", "south", "drop cooler", "set cooler"]);
     state = (await actions.dispatchAction(state, { verb: "setCoolerMode", payload: { mode: "off" } })).state;
-    state = await runCommands(state, ["north", "turn lights off"]);
-    // The carried beam holds the organism in Spa until the player leaves safely.
-    expect(location(state)).toBe("Spa");
-    expect(remaining(state)).toBe(2);
-    state = await runCommand(state, "east");
+    state = await runCommands(state, ["north", "turn flashlight off", "turn lights off"]);
+    expect(state.player.roomId).toBe("Spa");
     expect(location(state)).toBe("SteamRoom");
     expectGone(state);
-    state = await runCommands(state, ["west", "turn lights on", "close steam room door"]);
+    state = await runCommands(state, ["turn lights on", "close steam room door"]);
     expect(state.player.roomId).toBe("Spa");
     expect(location(state)).toBe("SteamRoom");
     expect(state.worldState.doors.SteamRoomDoor.isOpen).toBe(false);
     expect(state.log.join("\n").split("*** You have died ***")).toHaveLength(2);
-    expect(state.log.join("\n")).not.toContain(RUSH);
+    expect(state.log.join("\n")).toContain(RUSH);
   });
 });
 

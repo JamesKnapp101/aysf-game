@@ -1,6 +1,4 @@
 import { ROOM_NAME_TOKEN_END, ROOM_NAME_TOKEN_START } from "@game/constants";
-import { normalizeCommandAliases } from "../../parse/commandAliases";
-import { normalizeObjectReferences } from "../../parse/objectReferences";
 import {
   getEncounterActionGuard,
   getEncounterMoveGuard,
@@ -36,6 +34,8 @@ import {
   isWorldChunkLoaded,
   loadWorldChunk,
 } from "src/world/World";
+import { normalizeCommandAliases } from "../../parse/commandAliases";
+import { normalizeObjectReferences } from "../../parse/objectReferences";
 import { ACTION_HANDLERS } from "../actions";
 import { getRegisteredActionGuard } from "../registries/commandGuardRegistry";
 import { resolveRegisteredMovementRule } from "../registries/movementRuleRegistry";
@@ -69,6 +69,7 @@ const DEVELOPER_MODE_ITEM_IDS = [
   "whitebadge",
   "flashlight",
   "AllPurposeAdhesive",
+  "PowerStationKey",
 ] as const;
 
 function moveItemIntoPlayerInventory(
@@ -207,15 +208,10 @@ async function executeCommand(
     cmd.type !== "restore"
   ) {
     const rawCommand =
-      cmd.type === "action" || cmd.type === "unknown"
-        ? cmd.raw
-        : cmd.type;
+      cmd.type === "action" || cmd.type === "unknown" ? cmd.raw : cmd.type;
     const echo = options.skipEcho ? "" : `> ${rawCommand}\n`;
 
-    return appendLog(
-      state,
-      `${echo}${state.worldState.gameOver.message}\n\n`,
-    );
+    return appendLog(state, `${echo}${state.worldState.gameOver.message}\n\n`);
   }
 
   const room = getCurrentRoom(state);
@@ -437,7 +433,8 @@ async function executeCommand(
     }
 
     case "action": {
-      const guard = ACTION_HANDLERS[cmd.verb] && getRegisteredActionGuard(state, cmd);
+      const guard =
+        ACTION_HANDLERS[cmd.verb] && getRegisteredActionGuard(state, cmd);
       if (guard) {
         actionGuarded = true;
         message = guard.message;
@@ -666,9 +663,12 @@ async function executeCommand(
           !actionGuarded && (cmd.type === "action" || cmd.type === "unknown")
             ? cmd.raw.trim().toLowerCase()
             : undefined,
-        commandVerb: cmd.type === "action" && !actionGuarded ? cmd.verb : undefined,
+        commandVerb:
+          cmd.type === "action" && !actionGuarded ? cmd.verb : undefined,
         commandDirect:
-          cmd.type === "action" && !actionGuarded ? cmd.direct?.trim().toLowerCase() : undefined,
+          cmd.type === "action" && !actionGuarded
+            ? cmd.direct?.trim().toLowerCase()
+            : undefined,
       },
       SCRIPTED_EVENTS,
     );
@@ -836,20 +836,19 @@ async function executeCommand(
   const objectiveContext: ObjectiveCommandContext = {
     attemptedDestinationRoomId,
     commandDirect:
-      cmd.type === "action" && !actionGuarded ? cmd.direct?.trim().toLowerCase() : undefined,
-    commandText: actionGuarded ? undefined :
-      cmd.type === "action" || cmd.type === "unknown"
+      cmd.type === "action" && !actionGuarded
+        ? cmd.direct?.trim().toLowerCase()
+        : undefined,
+    commandText: actionGuarded
+      ? undefined
+      : cmd.type === "action" || cmd.type === "unknown"
         ? cmd.raw?.trim().toLowerCase()
         : cmd.type,
     commandType: cmd.type,
     commandVerb: cmd.type === "action" && !actionGuarded ? cmd.verb : undefined,
     direction: attemptedMoveDirection,
     fromRoomId: state.player.roomId,
-    message: [
-      finalLogText,
-      ...immediateLogEntries,
-      ...tickLogEntries,
-    ]
+    message: [finalLogText, ...immediateLogEntries, ...tickLogEntries]
       .filter((entry) => entry && entry.trim())
       .join("\n\n"),
     targetItemId:

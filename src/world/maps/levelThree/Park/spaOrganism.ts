@@ -11,6 +11,7 @@ import {
 import type { TickContext } from "@game/types/context";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
+import { setSpaLightOn } from "./spaLightState";
 import {
   getAccessibleChefSampleRoom,
   removeChefSample,
@@ -75,13 +76,27 @@ export function getSpaOrganismReaction(state: GameState) {
   return { roomId, baitRoomId, active, sensedRoute, movementRoute };
 }
 
+function resetSpaOrganismAfterKill(state: GameState): GameState {
+  const next: SpaTurnState = setSpaLightOn(
+    updateItemLocation(state, SPA_ORGANISM_ID, "Sauna"),
+    true,
+  );
+  // Routes and pursuit are derived each tick. Only the initial-rush history and
+  // command-local switch intent need clearing to allow the normal lure again.
+  const conditionalTriggers = { ...next.worldState.conditionalTriggers };
+  delete conditionalTriggers[LEFT_SAUNA];
+  delete next[LIGHTS_OFF_TURN];
+  return { ...next, worldState: { ...next.worldState, conditionalTriggers } };
+}
+
 function contactDeath(state: GameState): GameState {
   // Use the same retirement path as sample contact, without granting bait immunity.
-  return triggerPlayerDeath(
+  // Reset after standard death resolution so respawn selection stays unchanged.
+  return resetSpaOrganismAfterKill(triggerPlayerDeath(
     state.worldState.chefSample ? removeChefSample(state) : state,
     "In the dark, something touches you and your body goes rigid. You feel the sensation of something cold and sticky brushing over your bare skin, then a tingle, then everything gets washed away with stark, bright light. You stare into the blinding white void for only a second before being all at once replaced by sudden, final darkness.",
     "organism",
-  );
+  ));
 }
 
 /** The sole contact exception: an initial, fully validated two-room lure. */

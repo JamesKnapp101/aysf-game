@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import * as engine from "@game/engine/handleCommand";
 import * as actions from "@game/actions/dispatchAction";
-import { canPlayerSeeInRoom } from "@game/helpers/visibilityHelpers";
+import { canPlayerSeeInRoom, isRoomPhysicallyLit } from "@game/helpers/visibilityHelpers";
+import { triggerPlayerDeath } from "@game/helpers/gameHelpers";
 import { getItemPlacementContext, stashItemInContainer } from "@game/helpers/itemPlacement";
 import { restoreResumeSnapshot, saveManualSnapshot, saveResumeSnapshot } from "@game/persistence/resumeStorage";
 import { setCoolerModeInState } from "@game/rules/cooler";
@@ -14,8 +15,9 @@ import { useUIEffectsStore } from "@game/store/store";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import { DEFERRED_WORLD_CHUNK_IDS } from "src/world/World";
-import { CHEF_SAMPLE_EXPIRATION_MESSAGE, getAccessibleChefSampleRoom, getChefSampleEnvironment } from "src/world/maps/levelThree/Park/Restaurant/chefSample";
-import { getSpaOrganismReaction, SPA_ORGANISM_ID, SPA_ORGANISM_RANGE, spaOrganism, tickSpaOrganism } from "src/world/maps/levelThree/Park/spaOrganism";
+import { CHEF_SAMPLE_EXPIRATION_MESSAGE, getAccessibleChefSampleRoom, getChefSampleEnvironment, tickChefSampleDanger } from "src/world/maps/levelThree/Park/Restaurant/chefSample";
+import { isSpaLightOn, spaLightSwitch } from "src/world/maps/levelThree/Park/spaLighting";
+import { getSpaOrganismReaction, queueSpaLightsOffEncounter, SPA_ORGANISM_ID, SPA_ORGANISM_RANGE, spaOrganism, tickSpaOrganism } from "src/world/maps/levelThree/Park/spaOrganism";
 import { addInventoryItems, createTestState, patchRoomDarkness, runCommand, runCommands, setPlayerRoom } from "./helpers/gameTestHelpers";
 import { observationText, overlaySession } from "./helpers/headlessOverlayHelpers";
 
@@ -327,9 +329,122 @@ describe("Spa organism biological primitives", () => {
   it("resolves the completed encounter's no-bait rush without unrelated rewards", async () => {
     const state = await runCommand(door(door(fixture("Spa"), "CedarDoor"), "SteamRoomDoor"), "turn lights off");
     expect(state.player.roomId).not.toBe("Spa");
-    expect(location(state)).toBe("Spa");
+    expect(location(state)).toBe("Sauna");
     expect(state.worldState.playerDeaths.Spa?.cause).toBe("organism");
     expect(state.itemState.itemRoomId.RobotWhistle).toBe("seeded");
+  });
+});
+
+describe("Spa organism reset after a lethal attack", () => {
+  function expectReset(state: GameState) {
+    expect(location(state)).toBe("Sauna");
+    expect(state.world.items.find(item => item.id === SPA_ORGANISM_ID)?.location).toBe("Sauna");
+    expect(isSpaLightOn(state)).toBe(true);
+    expect(state.worldState.darkRooms.Spa).toBe(false);
+    expect(spaLightSwitch.describe!(state, spaLightSwitch, { kind: "examine", roomId: "Spa" })).toContain("ON position");
+    for (const room of ["Spa", "SteamRoom"]) expect(isRoomPhysicallyLit(state, room)).toBe(true);
+    expect(isRoomPhysicallyLit(state, "Sauna")).toBe(false);
+    expect(reaction(state).active).toBe(true);
+    expect(reaction(state).movementRoute).toBeUndefined();
+    expect(state.worldState.conditionalTriggers.SpaOrganismLeftSauna).toBeUndefined();
+    expect(Object.getOwnPropertySymbols(state)).toHaveLength(0);
+  }
+
+  it.each(["SteamRoom", "Spa", "Sauna"])("resets after same-room contact in %s and preserves ordinary respawn", async roomId => {
+    let initial = updateItemLocation(darkness(door(door(fixture(roomId), "CedarDoor"), "SteamRoomDoor")), SPA_ORGANISM_ID, roomId);
+    initial = { ...initial, worldState: { ...initial.worldState,
+      conditionalTriggers: { ...initial.worldState.conditionalTriggers, SpaOrganismLeftSauna: true } } };
+    const expectedRespawn = triggerPlayerDeath(initial, "test", "organism").player.roomId;
+    const state = await runCommand(initial, "wait");
+    expectReset(state);
+    expect(state.player.roomId).toBe(expectedRespawn);
+    expect(state.worldState.playerDeaths[roomId]?.cause).toBe("organism");
+    expect(state.worldState.playerHuskCount).toBe((initial.worldState.playerHuskCount ?? 0) + 1);
+    expect(state.log.join("\n").split("*** You have died ***")).toHaveLength(2);
+    expect(useUIEffectsStore.getState().organismDeath).not.toBeNull();
+    expectReset(await runCommands(state, ["wait", "wait"]));
+  });
+
+  it.each([
+    ["Sauna", "Spa"], ["Spa", "SteamRoom"], ["Spa", "Sauna"],
+  ])("resets when pursuit from %s reaches the player in %s", async (from, to) => {
+    const initial = updateItemLocation(darkness(door(door(fixture(to), "CedarDoor"), "SteamRoomDoor")), SPA_ORGANISM_ID, from);
+    const state = await runCommand(initial, "wait");
+    expect(state.worldState.playerDeaths[to]?.cause).toBe("organism");
+    expectReset(state);
+  });
+
+  it("clears the initial rush and pending switch intent without resetting other progress", () => {
+    let initial = addInventoryItems(door(door(fixture("Spa"), "CedarDoor"), "SteamRoomDoor"), ["CarvingKnife", "saunacorpsepurse"]);
+    initial = setItemOpen(patchRoomDarkness(initial, "NailSalon", true), "saunacorpsepurse", true);
+    initial = { ...initial, score: 42, worldState: { ...initial.worldState,
+      conditionalTriggers: { ...initial.worldState.conditionalTriggers, unrelatedProgress: true } } };
+    const state = tickSpaOrganism(queueSpaLightsOffEncounter(darkness(initial)));
+    expectReset(state);
+    expect(state.player.inventory).toEqual(initial.player.inventory);
+    expect(state.itemState.openItems).toEqual(initial.itemState.openItems);
+    expect(state.worldState.doors).toEqual(initial.worldState.doors);
+    expect(state.worldState.darkRooms.NailSalon).toBe(true);
+    expect(state.worldState.conditionalTriggers.unrelatedProgress).toBe(true);
+    expect(state.score).toBe(initial.score);
+    // Even a queued switch intent from the lethal turn cannot replay the rush.
+    const pending = queueSpaLightsOffEncounter(darkness(setPlayerRoom(state, "Sauna")));
+    expectReset(tickSpaOrganism(pending));
+  });
+
+  it("prevents relighting the previous SteamRoom position from opening safe access to Sauna", async () => {
+    let state = await runCommand(patchRoomDarkness(ready("Spa"), "Spa", false), "turn lights off");
+    expect(location(state)).toBe("SteamRoom");
+    state = await runCommand(state, "south");
+    expect(state.worldState.playerDeaths.SteamRoom?.cause).toBe("organism");
+    expectReset(state);
+    state = await runCommands(setPlayerRoom(state, "ParkWest"), ["west", "turn lights on", "close steam room door"]);
+    expect(location(state)).toBe("Sauna");
+    state = await runCommand(state, "north");
+    expect(state.worldState.playerDeaths.Sauna?.cause).toBe("organism");
+    expectReset(state);
+  });
+
+  it.each(["fall", "organism"])("does not reset for an unrelated %s death", cause => {
+    const initial = updateItemLocation(ready(), SPA_ORGANISM_ID, "SteamRoom");
+    const state = triggerPlayerDeath(initial, "An unrelated hazard kills you.", cause);
+    expect(location(state)).toBe("SteamRoom");
+    expect(isSpaLightOn(state)).toBe(false);
+    expect(state.worldState.chefSample).toEqual(initial.worldState.chefSample);
+    expect(state.worldState.darkRooms).toEqual(initial.worldState.darkRooms);
+  });
+
+  it("does not reset for sample contact even with the same death cause inside the Spa", () => {
+    const initial = updateItemLocation(bait(ready("Spa"), "Spa"), SPA_ORGANISM_ID, "SteamRoom");
+    const state = tickChefSampleDanger(initial).state;
+    expect(state.worldState.playerDeaths.Spa?.cause).toBe("organism");
+    expect(location(state)).toBe("SteamRoom");
+    expect(isSpaLightOn(state)).toBe(false);
+    expectGone(state);
+  });
+
+  it.each(["manual", "resume"])("preserves reset state and permits the intended lure after %s restore", async kind => {
+    const initial = updateItemLocation(darkness(door(door(fixture("SteamRoom"), "CedarDoor"), "SteamRoomDoor")), SPA_ORGANISM_ID, "SteamRoom");
+    const dead = await runCommand(initial, "wait");
+    if (kind === "manual") expect(saveManualSnapshot(dead)).toBe(true);
+    else expect(saveResumeSnapshot(dead)).toBe(true);
+    let state = kind === "manual" ? await runCommand(dead, "restore") : (await restoreResumeSnapshot())!;
+    expectReset(state);
+    expect(state.worldState.playerDeaths.SteamRoom?.cause).toBe("organism");
+    expect(state.worldState.doors).toEqual(dead.worldState.doors);
+    expect(state.moves).toBe(dead.moves);
+    state = await runCommand(state, "wait");
+    expectReset(state);
+    state = await runCommand(bait(setPlayerRoom(state, "Spa")), "turn lights off");
+    expect(state.player.roomId).toBe("Spa");
+    expect(location(state)).toBe("SteamRoom");
+    expect(state.log.join("\n")).toContain("passes close beside you");
+    expectGone(state);
+    state = await runCommands(state, ["turn lights on", "close steam room door", "north"]);
+    expect(state.player.roomId).toBe("Sauna");
+    expect(location(state)).toBe("SteamRoom");
+    expect(reaction(state).active).toBe(false);
+    expect(state.worldState.playerDeaths.Sauna).toBeUndefined();
   });
 });
 

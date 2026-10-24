@@ -1,16 +1,13 @@
 import { getItemPlacementContext } from "@game/helpers/itemPlacement";
 import { queueSpaLightsOffEncounter, SPA_ORGANISM_ID } from "./spaOrganism";
+import { isSpaLightOn, setSpaLightOn } from "./spaLightState";
 import { resolveItemByNoun } from "@game/rules/scope";
 import type { ActionResult } from "@game/types/actionsTypes";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item, ItemCommandOverrideContext } from "@game/types/itemTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
 
-// The Spa's existing darkness flag is the sole stored switch state. SteamRoom
-// derives its ambient light through the glass, without a second saved flag.
-export function isSpaLightOn(state: GameState): boolean {
-  return state.worldState.darkRooms.Spa !== true;
-}
+export { isSpaLightOn } from "./spaLightState";
 
 /** Visibility from the doorway is derived; the creature's presence takes priority. */
 export function isSaunaDimlyLit(state: GameState): boolean {
@@ -34,9 +31,7 @@ function switchSpaLights({ state, cmd }: ItemCommandOverrideContext): ActionResu
   const wasOn = isSpaLightOn(state);
   const on = cmd.preposition === "on" ? true : cmd.preposition === "off" ? false : !wasOn;
   if (on === wasOn) return { state, message: `The light is already ${on ? "on" : "off"}.` };
-  const next = { ...state, worldState: { ...state.worldState,
-    darkRooms: { ...state.worldState.darkRooms, Spa: !on },
-  } };
+  const next = setSpaLightOn(state, on);
   return {
     state: on ? next : queueSpaLightsOffEncounter(next),
     message: `You turn the Spa lights ${on ? "on" : "off"}.`,

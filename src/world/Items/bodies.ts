@@ -509,14 +509,13 @@ export const corpseItems: Item[] = [
     isContainer: false,
     isContagious: true,
   },
-
   {
     id: "saunacorpse",
     name: "Freeny Salk's body",
     description:
-      "The man appears to be in his early thirties. His blonde hair hangs in a tangled, dried mess. He wears a black swimsuit with a small waterproof purse tied to his right wrist by a neon cord. His face is frozen in a mask of terror, lips blue and parted, eyes bulging wide. Two gaping puncture wounds mark either side of his neck, and his upper body looks almost bloodless. The card in the purse's ID window identifies him as Freeny Salk.",
+      "The man appears to be in his early thirties and is almost comically muscled, his blonde hair hanging in a tangled, dried mess. He wears a black swimsuit with a small waterproof purse tied to his right wrist by a neon cord. His face is frozen in a mask of pain, lips blue and parted, eyes bulging wide.",
     initialDescription:
-      "A man in a black swimsuit sits slumped in the corner on a cedar platform, his face turned toward the wall.",
+      "The body of a man with huge, bulging muscles over just about every inch of him sits slumped in the corner on a cedar platform, his face turned toward the wall.",
     location: "Sauna",
     vocab: [
       "freeny",
@@ -537,7 +536,6 @@ export const corpseItems: Item[] = [
     isContainer: false,
     isContagious: true,
   },
-
   {
     id: "steamroomcorpseone",
     name: "older man",
