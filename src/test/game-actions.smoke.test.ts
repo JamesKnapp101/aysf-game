@@ -70,6 +70,9 @@ const COVERED_ACTIONS = [
   "move",
   "erase",
   "cut",
+  // Contextual head-cutting verbs are exercised in restaurant-chef-interactions.test.ts.
+  "sever",
+  "decapitate",
   "sit",
   "get",
   "pet",

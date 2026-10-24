@@ -1,5 +1,5 @@
 import { Item } from "@game/types/itemTypes";
-import { extractChefSample } from "src/world/maps/levelThree/Park/Restaurant/chefSample";
+import { cutChef, getChefIdleActions } from "src/world/maps/levelThree/Park/Restaurant/chefInteractions";
 
 export const doomedChefItems: Item[] = [
   {
@@ -15,10 +15,11 @@ export const doomedChefItems: Item[] = [
     itemSize: 2,
     isSearchable: true,
     overrides: {
-      cut: extractChefSample,
+      cut: cutChef,
       search:
         "Everything is fused together, you don't see anything useful in the wreckage though he does seem to somehow still be alive. The exposed parts of his remaining flesh are riddled with some kind of webbing. You might be able to get a sample of it, if you had something to cut with.",
     },
+    getIdleActions: getChefIdleActions,
     idleActions: [
       `"It pulls me...calls me..."`,
       `The chef's eyes swim, but stay focused on you.`,

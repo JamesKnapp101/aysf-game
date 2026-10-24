@@ -62,6 +62,7 @@ export interface Item {
   hasEffect?: (state: GameState, item: Item) => GameState;
   id: string;
   idleActions?: string[];
+  getIdleActions?: (state: GameState, item: Item) => string[];
   initialDescription?: string;
   injectionEffectId?: StatusId;
   injectionRemoveEffectId?: StatusId;
