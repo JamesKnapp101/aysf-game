@@ -5,6 +5,7 @@ import { restaurantBathroomItems } from "./restaurantBathroomItems";
 import { restaurantDiningRoomItems } from "./restaurantDiningRoomItems";
 import { restaurantEntranceItems } from "./restaurantEntranceItems";
 import { restaurantKitchenItems } from "./restaurantKitchenItems";
+import { isWalkInFreezerOn, walkInOrganism } from "./walkInFreezer";
 
 export const restaurantRooms: Room[] = [
   // RESTAURANT AREA
@@ -52,6 +53,9 @@ export const restaurantRooms: Room[] = [
   {
     id: "WalkIn",
     name: "Walk In",
+    describe: (state, room) => isWalkInFreezerOn(state)
+      ? room.description
+      : room.description.replace("and the air is bitterly cold.", "and its cooling system is silent."),
     description:
       "The walk-in freezer is a short, tight corridor and the air is bitterly cold. Frost coats the metal shelving to either side, tightly packed with frozen meats, seafood, sauces, and stocks. There's blood on the floor, frozen and flecked with pink crystals, that leads to the back of the freezer. The heavy steel door leads east, back to the kitchen.",
     exits: [{ direction: "east", doorId: "WalkInDoor" }],
@@ -78,6 +82,7 @@ export const restaurantRooms: Room[] = [
 ];
 
 export const restaurantItems: Item[] = [
+  walkInOrganism,
   ...chefSampleItems,
   ...restaurantEntranceItems,
   ...restaurantDiningRoomItems,

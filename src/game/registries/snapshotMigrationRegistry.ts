@@ -11,6 +11,7 @@ import {
 import type { GameState } from "@game/types/gameTypes";
 import { migrateChefSampleSnapshot, migrateElevatorSnapshot, migrateSpaContentSnapshot, migrateSpaLightingSnapshot } from "src/world/zoneRegistrations";
 import { migrateSpaOrganismSnapshot } from "src/world/zoneRegistrations";
+import { synchronizeWalkInFreezer } from "src/world/zoneRegistrations";
 
 type SnapshotMigration = (state: GameState) => GameState;
 
@@ -117,6 +118,7 @@ function migrateLegacyTeleportPadLocations(state: GameState): GameState {
 }
 
 const SNAPSHOT_MIGRATIONS: SnapshotMigration[] = [
+  synchronizeWalkInFreezer,
   migrateElevatorSnapshot,
   migrateSpaContentSnapshot,
   (state) => migrateSpaLightingSnapshot(state),

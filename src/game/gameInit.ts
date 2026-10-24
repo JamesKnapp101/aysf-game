@@ -321,7 +321,9 @@ export const createInitialState = (world: World): GameState => {
         LevelFiveStairAccess: false,
       },
       deepStorage: createInitialDeepStorageState(),
+      walkInChefTransformed: false,
       powerRestoredSections: {
+        "restaurant-freezer": true,
         elevators: false,
         "lights-level-one": true,
         "lights-level-two": false,

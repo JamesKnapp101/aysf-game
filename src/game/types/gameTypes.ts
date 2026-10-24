@@ -175,6 +175,7 @@ type PowerSectionId =
   | "gravity-level-six"
   | "gravity-level-seven"
   | "library-power"
+  | "restaurant-freezer"
   | "teleport-pads-green"
   | "teleport-pads-blue"
   | "teleport-pads-yellow"
@@ -501,6 +502,7 @@ export interface WorldState {
   conditionalExits: Record<RoomId, ConditionalExit>;
   conditionalTriggers: Record<string, boolean>;
   darkRooms: Record<string, boolean>;
+  walkInChefTransformed?: boolean;
   deepStorage: DeepStorageState;
   doors: Record<string, DoorState>;
   elevator: { doorsOpen: boolean; boardingLobbyId?: string };

@@ -15,7 +15,8 @@ const INFECTED_IDLE_ACTIONS = [
 ];
 
 function canChefSpeak(state: GameState, chef: Item): boolean {
-  return chef.meta?.isAlive === true && !state.itemState.frozenItems[chef.id];
+  return !state.worldState.walkInChefTransformed &&
+    chef.meta?.isAlive === true && !state.itemState.frozenItems[chef.id];
 }
 
 export function getChefIdleActions(state: GameState, chef: Item): string[] {

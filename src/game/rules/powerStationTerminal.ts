@@ -1,4 +1,5 @@
 import { POWER_SECTION_MAP } from "../constants";
+import { synchronizeRegisteredPowerEffects } from "../registries/terminalRuleRegistry";
 import type { GameState, WorldState } from "../types/gameTypes";
 import type { SwitchState, SwitchStates } from "../types/itemTypes";
 
@@ -148,7 +149,9 @@ export function activatePowerSwitch(node: TreeNode, switches: SwitchStates): Swi
 /** The browser applies this on mount and after each local switch change. */
 export function synchronizePowerTerminal(state: GameState, switches: SwitchStates): GameState {
   const worldState = applyPowerFromSwitches(state.worldState, switches);
-  return worldState === state.worldState ? state : { ...state, worldState };
+  return synchronizeRegisteredPowerEffects(
+    worldState === state.worldState ? state : { ...state, worldState },
+  );
 }
 
 export function applyPowerFromSwitches(
@@ -259,6 +262,7 @@ export const POWER_GRID_ROOT: MenuTreeNode = {
         { id: "Lvl3Lights", kind: "switch", label: "Level Three Lights" },
         { id: "ParkSecurity", kind: "switch", label: "Park Security" },
         { id: "Lvl3Terminal", kind: "switch", label: "Library Terminals" },
+        { id: "RestaurantFreezer", kind: "switch", label: "Restaurant Walk-In Freezer" },
       ],
     },
     {

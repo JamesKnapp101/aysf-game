@@ -41,6 +41,7 @@ export const POWER_SECTION_MAP: Record<
   Lvl6Grav: { section: "gravity-level-six", activeWhen: "on" },
   Lvl7Grav: { section: "gravity-level-seven", activeWhen: "on" },
   Lvl3Terminal: { section: "library-power", activeWhen: "on" },
+  RestaurantFreezer: { section: "restaurant-freezer", activeWhen: "on" },
   ParkSecurity: { section: "park-security", activeWhen: "on" },
   Lvl1Weapons: { section: "weapons-system", activeWhen: "on" },
   ECore: { section: "engine-room-power-lock", activeWhen: "on" },

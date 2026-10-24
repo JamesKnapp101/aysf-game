@@ -179,7 +179,7 @@ export function extractChefSample({
   cmd,
 }: ItemCommandOverrideContext): ActionResult {
   const chef = state.world.items.find((item) => item.id === "DoomedChef");
-  if (!chef || !canReachItem(state, chef))
+  if (state.worldState.walkInChefTransformed || !chef || !canReachItem(state, chef))
     return { state, message: "You don't see the chef here." };
 
   if (state.worldState.chefSample)
