@@ -71,6 +71,7 @@ const BAR_BASEMENT_HEAD_MEMORY_ROOM_ID2 = "BarBasementHeadMemory2";
 const BAR_VISION_QUEST_ROOM_ID = "BarVisionQuest";
 const BAR_VISION_QUEST_PRIZE_ITEM_ID = "TShirtPrize";
 const BAR_VISION_QUEST_SCORE_ID = "completed_vision_quest";
+const STEAM_ROOM_MEMORY_ROOM_ID = "SteamRoomMemory";
 
 const NURSERY_MISHAP_GOSSIP: JuicyTopic = {
   id: "nursery mishap",
@@ -370,6 +371,68 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
       },
     ],
     startMessage: `As the barrel drifts to the corpse's head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe hallway peels away as the memory takes hold...`,
+  },
+  steam_room_guy_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The steam room snaps back into place around you.",
+    completeMessage: `The man moves to the edge of the hatch above and goes up on his toes, gripping the edge for balance as he sticks his head up into the light. At that same moment something moves in the darkness, a fluid motion, a presence that slinks past you in order to reach the man. It touches him, and then his body is gone somehow. Wet, empty clothes slop down onto the floor where he stood, followed by his head, which lands with a thud and rolls to one side. The head's eyes twinkle, briefly, then the bar cellar snaps back into place around you.`,
+    id: "steam_room_guy_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 3,
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "convo-one",
+            message: `"Something is wrong," she says, shaking her head. "Something is really wrong."\n\nThe young man puts his hand on her shoulders in an attempt to comfort her.\n\n"Rhim, try to calm down," he tells her. "Tell me what happened."\n\n"They don't want to tell people but it's bad," she continues. "It's worse than they say, it's not just people getting sick."`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "convo-two",
+            message: `"What do you mean?" the man asks, and she shakes her head.\n\n"It's changing us," she says, her voice low. "My father told me. He found out that some people, powerful people, think it's too late, and that the change is good."\n\n"What change?" the man asks.\n\n"It turns us into, I don't know, something else," she says. "They're crazy, they think it's better, they're supposed to be stopping it and they're letting it happen!"`,
+          },
+          {
+            atElapsedTurns: 3,
+            id: "convo-three",
+            message: `"Where's your dad now?" the man asks, and her face contorts in response.\n\n"Bil, I think he's done something."\n\n"What do you mean 'done something'?" the man asks. "What's he done?"\n\n"He got a call," she says. "I don't know who it was, but after he got all freaked out. He said he had 'no choice', and he had to 'go ahead with it'. He left wearing nothing but a robe and carrying some kind of device."\n\n"Wait, what kind of device?" the man asks.\n\n"I don't know," she answers. "Some kind of timer, I think."`,
+          },
+        ],
+        roomId: STEAM_ROOM_MEMORY_ROOM_ID,
+      },
+    ],
+    startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe steam room peels away as the memory takes hold...`,
+  },
+  steam_room_gal_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The steam room snaps back into place around you.",
+    completeMessage: `The man moves to the edge of the hatch above and goes up on his toes, gripping the edge for balance as he sticks his head up into the light. At that same moment something moves in the darkness, a fluid motion, a presence that slinks past you in order to reach the man. It touches him, and then his body is gone somehow. Wet, empty clothes slop down onto the floor where he stood, followed by his head, which lands with a thud and rolls to one side. The head's eyes twinkle, briefly, then the steam room snaps back into place around you.`,
+    id: "steam_room_gal_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 3,
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "convo-one",
+            message: `The young woman stands with her back against the tiled wall and then drops slowly into the sitting position. She looks very frightened, but stares at nothing like she's wrestling with something she can't understand. The young man stands near her as if he's unsure how to approach, holding a small pill bottle in one hand.\n\n"I've always loved this place," she says. "It always calms me down."`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "convo-two",
+            message: `She is approached by the young man, who sits down next to her, close, so that their shoulders touch.\n\n"It won't hurt," he says, holding up the pill bottle. "We'll be out in seconds."\n\nShe nods. "I know."\n\nThe man hesitates, and in that moment a vibration rumbles through the floor, and the lights flicker.\n\n"You don't have to do this," he says. "If you have doubts, you need to listen to them."\n\nThe woman shakes her head."We always think of evolution as an advancement," she says, "but is it, always? Can you evolve into something worse?"`,
+          },
+          {
+            atElapsedTurns: 3,
+            id: "convo-three",
+            message: `"I saw one," she says, her stare still far off. "They change in the light, they freeze, and they're almost pretty sometimes, but I saw one on a night-vision camera."\n\nThe man waits to see if she'll say more, and when she doesn't, he asks, "What did it look like?"\n\nThe young woman shakes her head, like she's not sure how to explain.\n\n"If it's evolution, count me out," she says.\n\nShe musters up a smile then, and takes the man's hand, lacing her fingers between his.\n\n"Whatever my dad has planned it won't matter," she says. "It's everywhere, now. I want to go with you, while we're still me and you."\n\nShe smiles as he gives her hand a squeeze.\n\n"Me and you."`,
+          },
+        ],
+        roomId: STEAM_ROOM_MEMORY_ROOM_ID,
+      },
+    ],
+    startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe steam room peels away as the memory takes hold...`,
   },
 };
 

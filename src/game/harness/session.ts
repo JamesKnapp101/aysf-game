@@ -50,6 +50,11 @@ import {
   supportsTerminalOverlay,
 } from "./terminalOverlays";
 import { createTranscript, TRANSCRIPT_FAILED } from "./transcript";
+import {
+  evaluateScenario, prepareScenario, runtimeSnapshot, scenarioMetadata, ScenarioError,
+  summarizeState, validateScenario, playerIsAlive,
+} from "./scenario";
+import type { DeathEvent, GoalEvaluation, HostStatus, ScenarioMetadata, StateSummary } from "./scenario";
 import type {
   ActionExplanation,
   InformationView,
@@ -93,6 +98,7 @@ export function createHeadlessSession(
 ): SessionController {
   if (sessionInUse)
     throw new Error("Only one headless session can be open at a time.");
+  if (options.scenario) validateScenario(options.scenario);
   const transcript = createTranscript(options.transcriptDirectory);
   sessionInUse = true;
 
@@ -106,6 +112,25 @@ export function createHeadlessSession(
   let queue: Promise<void> = Promise.resolve();
   let closing = false;
   let disposal: Promise<void> | undefined;
+  let initialState: StateSummary | undefined;
+  let metadata: ScenarioMetadata | undefined;
+  let evaluation: GoalEvaluation | undefined;
+  let gameTurns = 0;
+  let lastMoves = 0;
+  let deaths = 0;
+  let lastHuskCount = 0;
+  let lastDeaths: GameState["worldState"]["playerDeaths"] = {};
+  let lastAlive = true;
+  const deathEvents: DeathEvent[] = [];
+  let recoveryAttempts = 0;
+  let awaitingRecovery = false;
+  const hostStatus = (): HostStatus | undefined => state && initialState ? {
+    conversationMode: state.uiState.conversationMode,
+    ...(metadata ? { scenario: metadata } : {}), initial: initialState,
+    final: summarizeState(state), gameTurns, deaths, deathEvents: [...deathEvents], recoveryAttempts,
+    ...(evaluation ? { evaluation } : {}),
+    ...(metadata ? { finalGameState: runtimeSnapshot(state) } : {}),
+  } : undefined;
   const messageMachine = createMessageMachineAdapter();
   const terminals = createTerminalOverlayAdapter();
   const capabilityDiagnostics: MissingCapabilityDiagnostic[] = [];
@@ -129,7 +154,46 @@ export function createHeadlessSession(
     event?: TranscriptEntry["event"],
     finalAgentMessage?: string,
     explanation?: ActionExplanation,
+    agentSummary?: SessionEndOptions["agentSummary"],
+    completedAction = false,
   ): Promise<Observation> {
+    let deathEvent: DeathEvent | undefined;
+    let recoveryAttempt: number | undefined;
+    if (awaitingRecovery && (kind === "command" || kind === "information")) {
+      recoveryAttempt = ++recoveryAttempts;
+      awaitingRecovery = false;
+    }
+    if (kind === "command" && state) {
+      if (event !== "restart" && event !== "restore") gameTurns += Math.max(0, state.moves - lastMoves);
+      lastMoves = state.moves;
+      const alive = playerIsAlive(state);
+      const changedDeaths = Object.entries(state.worldState.playerDeaths).filter(([room, death]) => death !== lastDeaths[room]);
+      // Husk deltas count repeated deaths in one room; death records also cover
+      // encounters that regenerate without creating a husk. Never count echoes.
+      const deathCount = event === "restart" || event === "restore" ? 0 : Math.max(
+        0, state.worldState.playerHuskCount - lastHuskCount, changedDeaths.length, lastAlive && !alive ? 1 : 0,
+      );
+      const died = deathCount > 0;
+      if (died) {
+        deaths += deathCount;
+        deathEvent = { sequence: sequence + 1, move: state.moves, count: deathCount, totalDeaths: deaths,
+          deathRoomIds: changedDeaths.map(([room]) => room), roomId: state.player.roomId, regenerated: alive };
+        deathEvents.push(deathEvent);
+        awaitingRecovery = alive;
+        if (options.scenario) {
+          const room = currentRoomPresentation(state);
+          const roomName = state.world.rooms.find(room => room.id === state!.player.roomId)?.name ?? "an unfamiliar location";
+          text = [...text, `Death ${deaths}: ${alive ? `You died and regenerated. You are now in ${roomName}.` : "You died and have not regenerated."}`,
+            ...(alive ? [room.fullText, inventoryText(state), statusText(state)] : [])];
+        }
+      }
+      lastHuskCount = state.worldState.playerHuskCount;
+      lastDeaths = state.worldState.playerDeaths;
+      lastAlive = alive;
+      // All command paths converge here after engine turns and automatic reveals.
+      if (options.scenario && !blocked && completedAction) evaluation = evaluateScenario(options.scenario, state);
+      if (died && evaluation && options.scenario?.success?.length) evaluation = { ...evaluation, verified: false, reason: "Player died during the resolved action (the game may already have regenerated the player)." };
+    }
     const observation = Object.freeze({
       sequence: ++sequence,
       text: Object.freeze(text.map(playerText).filter(Boolean)),
@@ -148,6 +212,10 @@ export function createHeadlessSession(
         ...(kind === "command" && aiConversationFailures.length
           ? { aiConversationFailures: aiConversationFailures.splice(0) } : {}),
         ...(kind === "end" && finalAgentMessage !== undefined ? { finalAgentMessage } : {}),
+        ...((kind === "start" || kind === "reset") && metadata ? { scenario: metadata, initialState } : {}),
+        ...(kind === "end" && agentSummary ? { agentSummary } : {}),
+        ...(deathEvent ? { deathEvent } : {}),
+        ...(recoveryAttempt === undefined ? {} : { recoveryAttempt }),
       });
     } catch {
       transcriptFailed = true;
@@ -159,14 +227,14 @@ export function createHeadlessSession(
     return observation;
   }
 
-  function createActionRecorder(explanation?: ActionExplanation, leadingText: string[] = []) {
+  function createActionRecorder(explanation?: ActionExplanation, leadingText: string[] = [], completedAction = () => false) {
     // Snapshot only public strings before queuing; callers cannot add state or mutate a pending record.
     const details: ActionExplanation = {
       ...(typeof explanation?.goal === "string" ? { goal: explanation.goal } : {}),
       ...(typeof explanation?.reason === "string" ? { reason: explanation.reason } : {}),
     };
     return (kind: "command" | "information", text: string[], input?: string, event?: TranscriptEntry["event"]) =>
-      recordEntry(kind, [...leadingText, ...text], input, event, undefined, details);
+      recordEntry(kind, [...leadingText, ...text], input, event, undefined, details, undefined, completedAction());
   }
 
   function enqueue<T>(operation: () => Promise<T>): Promise<T> {
@@ -193,6 +261,14 @@ export function createHeadlessSession(
     terminals.reset();
     capabilityDiagnostics.length = 0;
     aiConversationFailures.length = 0;
+    initialState = undefined;
+    metadata = undefined;
+    evaluation = undefined;
+    gameTurns = 0;
+    deaths = 0;
+    deathEvents.length = 0;
+    recoveryAttempts = 0;
+    awaitingRecovery = false;
     episode += 1;
     try {
       clearSessionPresentation();
@@ -202,12 +278,24 @@ export function createHeadlessSession(
       if (fresh.player.roomId !== FINAL_PLAYER_START_ROOM_ID) {
         throw new Error("Production start unavailable.");
       }
-      // Authored dialogue is an ordinary player setting; no external service
-      // or alternate NPC implementation is required by this first milestone.
+      // Preserve the existing session's NPC conversation setting.
       state = await hydrate({
         ...fresh,
         uiState: { ...fresh.uiState, conversationMode: "ai" },
       });
+      if (options.scenario) {
+        state = prepareScenario(state, options.scenario);
+        metadata = scenarioMetadata(options.scenario, state);
+        // Starting at a goal cannot bypass hazards: wait for a completed action.
+        evaluation = options.scenario.success?.length
+          ? { verified: false, checks: [], reason: "Awaiting a completed player action before verification." }
+          : evaluateScenario(options.scenario, state);
+      }
+      initialState = summarizeState(state);
+      lastMoves = state.moves;
+      lastHuskCount = state.worldState.playerHuskCount;
+      lastDeaths = state.worldState.playerDeaths;
+      lastAlive = playerIsAlive(state);
       state = appendLog(state, FIRST_RUN_HELP_HINT);
       const room = currentRoomPresentation(state);
       lastRoomDescription = room.description;
@@ -217,8 +305,9 @@ export function createHeadlessSession(
         room.fullText,
       ]);
       return opening;
-    } catch {
+    } catch (error) {
       state = undefined;
+      if (error instanceof ScenarioError) throw error;
       blocked =
         "The game could not be initialized. Reset the session to try again.";
       return recordEntry(kind, [blocked]);
@@ -227,7 +316,8 @@ export function createHeadlessSession(
 
   async function command(input: string, explanation?: ActionExplanation): Promise<Observation> {
     const leadingText: string[] = [];
-    const record = createActionRecorder(explanation, leadingText);
+    let completedAction = false;
+    const record = createActionRecorder(explanation, leadingText, () => completedAction);
     return enqueue(async () => {
       // Runtime callers do not necessarily obey TypeScript's input contract.
       if (typeof input !== "string")
@@ -265,6 +355,7 @@ export function createHeadlessSession(
           );
           state = control.state;
           if (!control.wait) {
+            completedAction = true;
             const death = consumeOrganismDeathSequence();
             return record(
               "command",
@@ -290,6 +381,7 @@ export function createHeadlessSession(
             interfaceInput,
           );
           state = result.state;
+          completedAction = true;
           const death = consumeOrganismDeathSequence();
           if (requiresGameplayAdapter(state)) {
             blockUnsupported(interfaceInput, true);
@@ -327,6 +419,7 @@ export function createHeadlessSession(
             trimmed,
           );
           state = result.state;
+          completedAction = true;
           const death = consumeOrganismDeathSequence();
           return record(
             "command",
@@ -341,6 +434,7 @@ export function createHeadlessSession(
             trimmed,
           );
           state = result.state;
+          completedAction = true;
           if (result.closed) useUIOverlayStore.getState().closeOverlay();
           const death = consumeOrganismDeathSequence();
           return record(
@@ -360,6 +454,7 @@ export function createHeadlessSession(
           skipEcho: Boolean(pending),
           onOutput: (entries) => output.push(...entries),
         });
+        completedAction = parsed.type !== "unknown" && parsed.type !== "restart" && parsed.type !== "restore";
         state = reconcileObjectives(previous, result, {
           fromRoomId: previous.player.roomId,
           toRoomId: result.player.roomId,
@@ -537,19 +632,29 @@ export function createHeadlessSession(
   }
 
   return Object.freeze({
+    ...(options.scenario ? { scenario: {
+      id: options.scenario.id, objective: options.scenario.objective,
+      maxDeaths: options.scenario.maxDeaths,
+      budgets: options.scenario.budgets && { ...options.scenario.budgets },
+    } } : {}),
     explorer: Object.freeze({ command, information }),
     start: () => enqueue(async () => opening ?? initialize("start")),
     reset: () => enqueue(() => initialize("reset")),
     transcript: transcript.info,
     capabilityDiagnostics: () => Object.freeze([...capabilityDiagnostics]),
+    hostStatus: () => {
+      const status = hostStatus();
+      return status && structuredClone(status);
+    },
     dispose: (end: SessionEndOptions = {}) => {
       if (!disposal) {
         const finalAgentMessage = end.finalAgentMessage;
+        const agentSummary = end.agentSummary;
         closing = true;
         disposal = queue.then(async () => {
           try {
             clearSessionPresentation();
-            if (!transcriptFailed) await recordEntry("end", [], undefined, undefined, finalAgentMessage);
+            if (!transcriptFailed) await recordEntry("end", [], undefined, undefined, finalAgentMessage, undefined, agentSummary);
           } finally {
             try {
               await transcript.close();

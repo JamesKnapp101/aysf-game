@@ -142,14 +142,14 @@ Original item wording retained. Items are grouped by their primary workstream; n
 - [ ] In the Movie Theater bathroom the agent consistently tried to look in the stalls, so make them searchable and maybe put the e-cigar in one of the stalls perched on the toilet paper dispenser with a melted body but intact head sitting in the bowl. Add a DNA profile and an NPC profile that plays out a memory of him smoking while the usherbot yells from outside that it 'can detect smoke from out here' and that it will 'go in there if I have to' to give clues
   - [ ] This is another pro for the idea that not just any water will rehydrate the slug, as otherwise any stray toilet bowl could activate it
 
-- [ ] The Restaurant needs fleshing out. It mentions a tablecloth but 'examine tablecloth' returns 'You don't see that here'. It's basically a placeholder with a revamped description, but I think even that can go further.
-  - [ ] Lean into the opulence, with a sumptuous (though now getting stinky) bordering on vulgar buffet on display of all the most controversial shit you can think of
-  - [ ] For the buffet basically describe a mish mash of the menu items without naming anything, make anything described examine-able but it can be one general description for all, to signal the buffet itself isn't part of any puzzle, save for maybe some named items among the display
-  - [ ] For the menu: Elephant tenderloin, baby sea turtle soup, great ape stew (containing gorilla, chimpanzee, and orangutan), bald eagle foie gras, shark fin tip soup, baby seal paillard (pounded thin), pouring stew (containing both cat and dog), three whale sashimi, suckling dolphin, and long pig
+- [x] The Restaurant needs fleshing out. It mentions a tablecloth but 'examine tablecloth' returns 'You don't see that here'. It's basically a placeholder with a revamped description, but I think even that can go further.
+  - [x] Lean into the opulence, with a sumptuous (though now getting stinky) bordering on vulgar buffet on display of all the most controversial shit you can think of
+  - [x] For the buffet basically describe a mish mash of the menu items without naming anything, make anything described examine-able but it can be one general description for all, to signal the buffet itself isn't part of any puzzle, save for maybe some named items among the display
+  - [x] For the menu: Elephant tenderloin, baby sea turtle soup, great ape stew (containing gorilla, chimpanzee, and orangutan), bald eagle foie gras, shark fin tip soup, baby seal paillard (pounded thin), pouring stew (containing both cat and dog), three whale sashimi, suckling dolphin, and long pig
 
 - [ ] In the Restaurant, there are men's and women's bathrooms but they're just pretty much blank. Do they need to be there? If these people are so over the top hedoninstic might they have a comical shared bathroom space? What about something like a 'polyopticon' where there are no urinals, no stalls, and the toilets are arranged in a circle around a large circular room all facing in with no explanation, and in the center is a ring-shaped sink everybody uses, with some hoity toity phrase about having nothing to hide
 
-- [ ] In the Kitchen the description mentions a 'large padlocked steel door' which was meant to be the walk in freezer, but I decided to leave it unlocked and it has a scenery description of its own so remove the reference in the room description
+- [x] In the Kitchen the description mentions a 'large padlocked steel door' which was meant to be the walk in freezer, but I decided to leave it unlocked and it has a scenery description of its own so remove the reference in the room description
 
 - [ ] Add the old woman corpse to the park bench, give her a dna profile, and an NPC profile
 

@@ -8,6 +8,7 @@ import { removeFromAllBuckets } from "@game/rules/state";
 import { resolveItemByNoun } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState, PlayerLogEntry } from "../../types/gameTypes";
+import type { Item } from "../../types/itemTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
 
 export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
@@ -25,6 +26,11 @@ export function doRead(state: GameState, cmd: ParsedCommand): ActionResult {
     return { state, message: "There's nothing to read." };
   }
 
+  return readItem(state, item);
+}
+
+/** Apply reading/knowledge effects without command dispatch or reader presentation. */
+export function readItem(state: GameState, item: Item): ActionResult {
   const readableText =
     typeof item.readableText === "function"
       ? item.readableText(state, item)

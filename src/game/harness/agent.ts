@@ -20,6 +20,8 @@ import {
 import type { CacheAccounting } from "./promptCaching";
 import { isMapInformationOptions, mapInformationLabel, type MapInformationOptions } from "../map/shipMapText";
 import type { ActionExplanation, InformationView, MissingCapabilityDiagnostic, Observation, SessionController } from "./types";
+import type { Termination } from "./types";
+import { ScenarioError, type HostStatus } from "./scenario";
 
 export const INITIAL_OBJECTIVE =
   "Explore your immediate surroundings, investigate interesting objects, collect useful items, and begin discovering where you are and what has happened. Use the information the game provides. Make your own decisions, experiment with ordinary commands, and pursue interesting leads. Do not assume prior knowledge of the world.";
@@ -44,7 +46,7 @@ export type AgentOptions = {
   [Key in keyof typeof DEFAULT_AGENT_OPTIONS]: (typeof DEFAULT_AGENT_OPTIONS)[Key] extends string
     ? string
     : (typeof DEFAULT_AGENT_OPTIONS)[Key] extends boolean ? boolean : number;
-} & { cacheReadMultiplier?: number };
+} & { cacheReadMultiplier?: number; maxGameTurns?: number; maxDeaths?: number };
 const views: InformationView[] = [
   "log",
   "gossip",
@@ -151,6 +153,10 @@ export type AgentRun = {
   capabilityDiagnostics?: readonly MissingCapabilityDiagnostic[];
   opening: string[];
   limits: AgentOptions;
+  /** Host-only state and verification, excluded from model context. */
+  playtest?: HostStatus;
+  termination?: Termination;
+  configurationError?: string;
 };
 export type AgentClient = {
   messages: {
@@ -282,6 +288,10 @@ function validateResponseContent(
 }
 
 export function validateAgentOptions(options: AgentOptions): void {
+  if (options.maxDeaths !== undefined && (!Number.isSafeInteger(options.maxDeaths) || options.maxDeaths < 1))
+    throw new Error("Invalid maxDeaths.");
+  if (options.maxGameTurns !== undefined && (!Number.isSafeInteger(options.maxGameTurns) || options.maxGameTurns < 1))
+    throw new Error("Invalid maxGameTurns.");
   if (typeof options.promptCaching !== "boolean") throw new Error("Invalid promptCaching.");
   if (options.cacheReadMultiplier !== undefined && (!Number.isFinite(options.cacheReadMultiplier) || options.cacheReadMultiplier <= 0))
     throw new Error("Invalid cacheReadMultiplier.");
@@ -395,7 +405,8 @@ function stoppedObservation(text: string[]): string | undefined {
 
 /** Owns shutdown and reporting. Only the Explorer port is used for gameplay. */
 export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
-  const options = { ...DEFAULT_AGENT_OPTIONS, ...deps.options };
+  const options = { ...DEFAULT_AGENT_OPTIONS, ...deps.session.scenario?.budgets,
+    ...(deps.session.scenario?.maxDeaths === undefined ? {} : { maxDeaths: deps.session.scenario.maxDeaths }), ...deps.options };
   validateAgentOptions(options);
   if (options.model !== DEFAULT_MODEL && (deps.options?.inputUsdPerMillion === undefined || deps.options?.outputUsdPerMillion === undefined))
     throw new Error("A custom model requires explicit input and output prices.");
@@ -406,7 +417,7 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
     date: new Date().toISOString(),
     model: options.model,
     revision: deps.revision ?? "unknown",
-    objective: INITIAL_OBJECTIVE,
+    objective: deps.session.scenario?.objective ?? INITIAL_OBJECTIVE,
     actions: 0,
     turns: 0,
     inputTokens: 0,
@@ -446,6 +457,8 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
       run.reason = "elapsed_time_limit";
       abort.abort();
     } else if (run.actions >= options.maxActions) run.reason = "action_limit";
+    else if (options.maxGameTurns !== undefined && (run.playtest?.gameTurns ?? 0) >= options.maxGameTurns)
+      run.reason = "game_turn_limit";
     else if (run.inputTokens + run.outputTokens >= options.maxTokens)
       run.reason = "token_budget";
     else if (run.estimatedCostUsd >= options.maxCostUsd)
@@ -483,8 +496,9 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
     run.reason = stoppedObservation(run.opening) ?? run.reason;
     messages.push({
       role: "user",
-      content: `${INITIAL_OBJECTIVE}\n\nOpening game observation:\n${run.opening.join("\n\n")}`,
+      content: `${run.objective}\n\nOpening game observation:\n${run.opening.join("\n\n")}`,
     });
+    run.playtest = deps.session.hostStatus?.();
     while (run.reason === "running") {
       checkLimits();
       if (run.reason !== "running") break;
@@ -494,7 +508,9 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
       }
       const base = {
         model: options.model,
-        system: PLAYER_INSTRUCTIONS,
+        system: deps.session.scenario
+          ? `${PLAYER_INSTRUCTIONS}\n\nAssigned scenario objective (high priority): ${run.objective}\nFocus on this goal. Explore only when necessary to make progress toward it. Do not pursue unrelated puzzles or map the entire game. You may inspect objects, collect items, experiment, and solve prerequisites. The harness will stop automatically when it independently verifies success.`
+          : PLAYER_INSTRUCTIONS,
         tools: PLAYER_TOOLS,
         tool_choice: { type: "auto" as const, disable_parallel_tool_use: true },
         messages: structuredClone(messages),
@@ -669,7 +685,7 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
         continue;
       }
       const results: ToolResultBlockParam[] = [];
-      for (const tool of tools) {
+      for (const [toolIndex, tool] of tools.entries()) {
         checkLimits();
         if (run.reason !== "running") break;
         const request = validateTool(tool);
@@ -701,6 +717,7 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
         };
         const explanationArgs: [] | [ActionExplanation] = Object.keys(explanation).length ? [explanation] : [];
         let observation: Observation;
+        const deathsBeforeRequest = run.playtest?.deaths ?? 0;
         try {
           // Never race game operations against the deadline: drain the one
           // outstanding operation so persistence/state cannot be duplicated.
@@ -740,24 +757,56 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
           content: text.join("\n\n"),
         });
         run.reason = stoppedObservation(text) ?? run.reason;
+        run.playtest = deps.session.hostStatus?.();
+        // Success precedes budget checks but follows the entire resolved command.
+        // An information request cannot newly establish success.
+        if (run.reason === "running" && "command" in request && run.playtest) {
+          const hasVerifier = Boolean(run.playtest.scenario?.success.length);
+          // No-verifier exploration retains its old behavior unless explicitly overridden.
+          const deathLimit = options.maxDeaths ?? (hasVerifier ? 1 : undefined);
+          if (!run.playtest.final.alive && deathLimit !== undefined) run.reason = "death";
+          else if (run.playtest.evaluation?.verified) run.reason = "scenario_success";
+          else if (deathLimit !== undefined && run.playtest.deaths >= deathLimit)
+            run.reason = deathLimit === 1 ? "death" : "death_limit";
+        }
+        if (run.reason === "running" && run.playtest && run.playtest.deaths > deathsBeforeRequest &&
+          (run.playtest.scenario || options.maxDeaths !== undefined)) {
+          // A batch was planned before the fatal result was visible. Let the model
+          // reconsider in the regenerated world instead of executing stale actions.
+          for (const skipped of tools.slice(toolIndex + 1)) results.push({
+            type: "tool_result", tool_use_id: skipped.id, is_error: true,
+            content: "Not executed: you died and regenerated during the preceding action. Review the resulting location and consequences before choosing your next action.",
+          });
+          break;
+        }
       }
       checkLimits();
       if (run.reason === "running")
         messages.push({ role: "user", content: results });
     }
-  } catch {
-    if (run.reason === "running") run.reason = "controller_failure";
+  } catch (error) {
+    if (error instanceof ScenarioError) {
+      run.configurationError = error.message;
+      run.reason = "initialization_failure";
+    } else if (run.reason === "running") run.reason = "controller_failure";
   } finally {
     clearTimeout(timer);
     deps.signal?.removeEventListener("abort", cancel);
     abort.abort();
     run.capabilityDiagnostics = deps.session.capabilityDiagnostics?.() ?? [];
+    run.playtest = deps.session.hostStatus?.() ?? run.playtest;
+    run.termination = terminationCategory(run.reason);
     try {
-      await deps.session.dispose(
-        run.finalAgentMessage === undefined ? undefined : { finalAgentMessage: run.finalAgentMessage },
-      );
+      await deps.session.dispose({
+        ...(run.finalAgentMessage === undefined ? {} : { finalAgentMessage: run.finalAgentMessage }),
+        agentSummary: { objective: run.objective, actions: run.actions, modelTurns: run.turns,
+          reason: run.reason, termination: run.termination, playtest: run.playtest,
+          recoveryAttempts: run.playtest?.recoveryAttempts ?? 0,
+          maxDeaths: options.maxDeaths ?? (run.playtest?.scenario?.success.length ? 1 : undefined) },
+      });
     } catch {
       run.reason += "; cleanup_or_transcript_failure";
+      run.termination = "error";
     }
     run.elapsedMs = performance.now() - started;
     const transcript = deps.session.transcript();
@@ -770,4 +819,13 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
     });
   }
   return run;
+}
+
+function terminationCategory(reason: string): Termination {
+  if (reason === "scenario_success") return "success";
+  if (reason === "death" || reason === "death_limit") return "death";
+  if (reason === "model_finished") return "agent_termination";
+  if (reason === "interrupted") return "interrupted";
+  if (/^(action_limit|game_turn_limit|model_turn_limit|token_budget|spending_budget|elapsed_time_limit|context_window_limit)$/.test(reason)) return "budget_exhaustion";
+  return "error";
 }

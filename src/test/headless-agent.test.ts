@@ -365,7 +365,7 @@ describe("autonomous Explorer controller", () => {
     expect(run.reason).toBe("model_finished");
     expect(run.finalAgentMessage).toBe("Visible ending.");
     expect(run.turns).toBe(1);
-    expect(session.dispose).toHaveBeenCalledExactlyOnceWith({ finalAgentMessage: "Visible ending." });
+    expect(session.dispose).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ finalAgentMessage: "Visible ending." }));
   });
 
   it("does not truncate final messages or fabricate text for legacy reports/transcripts", async () => {

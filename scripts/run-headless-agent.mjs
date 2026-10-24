@@ -15,11 +15,15 @@ const flags = {
   "--max-errors": "maxErrors", "--max-turns": "maxTurns",
   "--input-price": "inputUsdPerMillion", "--output-price": "outputUsdPerMillion",
   "--cache-read-multiplier": "cacheReadMultiplier",
+  "--max-game-turns": "maxGameTurns",
+  "--max-deaths": "maxDeaths",
 };
+const scenarioFlags = { "--scenario": "name", "--start-room": "startRoom", "--inventory": "inventory", "--explored-rooms": "exploredRooms", "--goal": "goal" };
 const defaultModel = "claude-haiku-4-5-20251001";
 
 export function parseArguments(args) {
   const options = {};
+  const scenario = {};
   let live = false;
   let verbose = false;
   let outputDirectory;
@@ -31,13 +35,23 @@ export function parseArguments(args) {
     if (flag === "--live") { live = true; continue; }
     if (flag === "--verbose") { verbose = true; continue; }
     if (flag === "--no-cache") { options.promptCaching = false; continue; }
-    if (!Object.hasOwn(flags, flag) && flag !== "--output-dir") throw new Error("Unknown option. Use --help.");
+    if (!Object.hasOwn(flags, flag) && !Object.hasOwn(scenarioFlags, flag) && flag !== "--output-dir") throw new Error("Unknown option. Use --help.");
     const value = args[++index];
     if (!value || value.startsWith("--")) throw new Error(`Missing value for ${flag}.`);
     if (flag === "--output-dir") { outputDirectory = resolve(root, value); continue; }
+    if (Object.hasOwn(scenarioFlags, flag)) {
+      if (!value.trim()) throw new Error(`Invalid value for ${flag}.`);
+      if (flag === "--inventory" || flag === "--explored-rooms") {
+        const ids = flag === "--explored-rooms" && value === "none" ? [] : value.split(",").map(id => id.trim());
+        if (ids.some(id => !id) || new Set(ids).size !== ids.length) throw new Error(`${flag} requires unique comma-separated IDs.`);
+        scenario[scenarioFlags[flag]] = ids;
+      } else scenario[scenarioFlags[flag]] = value;
+      continue;
+    }
     if (flag === "--model") options.model = value;
     else {
       if (!/^\d+(?:\.\d+)?$/.test(value) || !Number.isFinite(Number(value)) || Number(value) <= 0) throw new Error(`Invalid value for ${flag}.`);
+      if (flag === "--max-deaths" && !Number.isSafeInteger(Number(value))) throw new Error("--max-deaths requires a positive integer.");
       options[flags[flag]] = Number(value) * (flag.includes("timeout-seconds") ? 1000 : 1);
     }
   }
@@ -45,7 +59,8 @@ export function parseArguments(args) {
   if (options.model && options.model !== defaultModel && (!options.inputUsdPerMillion || !options.outputUsdPerMillion)) {
     throw new Error("A custom model requires --input-price and --output-price (USD per million tokens).");
   }
-  return { live, verbose, outputDirectory, options };
+  if (Object.keys(scenario).length && !scenario.name && !scenario.goal) throw new Error("One-off scenarios require --goal (or select --scenario).");
+  return { live, verbose, outputDirectory, options, ...(Object.keys(scenario).length ? { scenario } : {}) };
 }
 
 export async function loadCredential(repositoryRoot, environment = process.env) {
@@ -63,7 +78,8 @@ export async function loadCredential(repositoryRoot, environment = process.env) 
 const help = `Usage: node scripts/run-headless-agent.mjs --live [options]
 Requires Node 22+ and pnpm-installed dependencies. --live explicitly enables paid API execution.
 Credentials: ANTHROPIC_API_KEY, otherwise server/.env.local (same as the NPC backend).
-NPC dialogue: authored. Only game_command and game_information are available to Claude.
+NPC dialogue: AI (existing session setting; NPC backend may be required).
+Only game_command and game_information are available to Claude.
 
 --model MODEL                 Default: ${defaultModel}
 --max-actions N               Default: 25 (commands + information requests)
@@ -74,6 +90,14 @@ NPC dialogue: authored. Only game_command and game_information are available to 
 --max-cost-usd N              Default: 0.50 (estimated spend)
 --max-errors N                Default: 3 consecutive invalid tool requests
 --max-turns N                 Default: 40 message-creation attempts
+--max-game-turns N            Optional limit on actual game turns (free views use zero)
+--max-deaths N                Stop on death N; verified scenarios default to first death
+--scenario NAME               Named scenario: spa-entry, spa-trap or spa-trap-informed
+--start-room ROOM_ID          Override starting location (requires --scenario or --goal)
+--inventory ID,ID             Inject these existing items; replaces named starting inventory
+--explored-rooms ID,ID        Replace prior map familiarity; 'none' keeps only normal/start visits
+--goal TEXT                   Override objective; required for one-off scenarios
+                             Named success checks remain in force when overriding setup/goal.
 --input-price N               Default: 1 USD/million input tokens
 --output-price N              Default: 5 USD/million output tokens
                              Both prices required for a custom model.
@@ -124,16 +148,19 @@ export async function play(config, client) {
     const { runHeadlessAgent, DEFAULT_AGENT_OPTIONS, validateAgentOptions } = await loader.ssrLoadModule("/src/game/harness/agent.ts");
     validateAgentOptions({ ...DEFAULT_AGENT_OPTIONS, ...config.options });
     const { createHeadlessSession } = await loader.ssrLoadModule("/src/game/harness/session.ts");
+    const { resolveScenario } = await loader.ssrLoadModule("/src/game/harness/scenarios/index.ts");
+    const scenario = resolveScenario(config.scenario);
     let revision = "unknown";
     try {
       revision = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
       if (execFileSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim()) revision += " (working tree modified)";
     } catch { /* Revision metadata is optional and never sent to Claude. */ }
     session = createHeadlessSession({
+      scenario,
       transcriptDirectory: config.outputDirectory,
       onAiConversationFailure: (failure) => process.stderr.write(`[AI CONVERSATION FAILURE] ${JSON.stringify(failure)}\n`),
     });
-    process.stdout.write(`Starting fresh game with ${config.options.model ?? defaultModel}; NPC dialogue: authored or maybe not.\n`);
+    process.stdout.write(`Starting fresh game${scenario ? `; scenario: ${scenario.id}` : ""} with ${config.options.model ?? defaultModel}; NPC dialogue: AI (existing session setting).\n`);
     const run = await runHeadlessAgent({
       client, session, options: config.options, revision, signal: abort.signal,
       onProgress: (event) => {
@@ -145,6 +172,9 @@ export async function play(config, client) {
       },
     });
     process.stdout.write(`Stopped: ${run.reason}. Actions: ${run.actions}; model turns: ${run.turns}; tokens: ${run.inputTokens + run.outputTokens}; estimated cost: $${run.estimatedCostUsd.toFixed(4)}${run.usageUncertain ? " (additional usage unknown)" : ""}.\nTranscript: ${run.transcriptPath}\nReport: ${run.reportPath}\n`);
+    if (scenario) process.stdout.write(`Scenario: ${scenario.id}; verified success: ${run.playtest?.evaluation?.verified ?? false}; game turns: ${run.playtest?.gameTurns ?? 0}; final location: ${run.playtest?.final.roomId ?? "unavailable"}; alive: ${run.playtest?.final.alive ?? "unknown"}; termination: ${run.termination}.\n`);
+    if (scenario || config.options.maxDeaths !== undefined) process.stdout.write(`Deaths: ${run.playtest?.deaths ?? 0}; recovery attempts: ${run.playtest?.recoveryAttempts ?? 0}; death limit: ${run.limits.maxDeaths ?? (scenario?.success?.length ? 1 : "none")}.\n`);
+    if (run.configurationError) process.stderr.write(`${run.configurationError}\n`);
     if (run.finalAgentMessage !== undefined) {
       process.stdout.write(run.finalAgentMessage === ""
         ? "No final text was returned by the model.\n"
@@ -153,7 +183,8 @@ export async function play(config, client) {
           : "Final agent message captured in transcript and report.\n");
     }
     if (/failure/.test(run.reason)) process.exitCode = 1;
-  } catch {
+  } catch (error) {
+    if (error?.name === "Error" && error.message?.startsWith("Scenario configuration:")) process.stderr.write(`${error.message}\n`);
     if (session) process.stderr.write(`Run could not be completed. Completed gameplay transcript: ${session.transcript().path}\n`);
     else process.stderr.write("The autonomous player could not be initialized. Check model options and local configuration.\n");
     process.exitCode = 1;

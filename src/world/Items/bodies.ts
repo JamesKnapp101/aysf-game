@@ -518,7 +518,16 @@ export const corpseItems: Item[] = [
     initialDescription:
       "A man in a black swimsuit sits slumped in the corner on a cedar platform, his face turned toward the wall.",
     location: "Sauna",
-    vocab: ["freeny", "salk", "freeny salk", "man", "corpse", "body", "suit", "bathing"],
+    vocab: [
+      "freeny",
+      "salk",
+      "freeny salk",
+      "man",
+      "corpse",
+      "body",
+      "suit",
+      "bathing",
+    ],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 60,
@@ -533,79 +542,83 @@ export const corpseItems: Item[] = [
     id: "steamroomcorpseone",
     name: "older man",
     description:
-      "The middle-aged man lies where he fell, slightly overweight, balding, with hair at his head and chest dusted grey. He wears swimming trunks. On his left forearm is a tattoo: an upside-down isosceles triangle within a circle, pierced by a V-shape whose point meets the triangle’s tip, with the stylized letters “DeM” beneath. The crown of his head is almost white, his lips and ears faintly blue, and there are two deep puncture wounds at either side of his neck.",
+      "The young man is very fit, with fine blond hair and strong jaw. He's dressed in a pair of red swim trunks.",
     initialDescription:
-      "A middle-aged, slightly overweight man lies sprawled face down on the floor in swim trunks.",
+      "A fit young man and woman in swimwear sit in one corner together, arms clutching one another and foreheads touching. They're both dead, skin drained of color and a bluish tint to both their lips.",
     location: "SteamRoom",
-    vocab: ["older", "man", "corpse", "body"],
+    vocab: ["young", "man", "corpse", "body", "bil-billy"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "steam_room_guy_memory",
+      },
+    },
     itemWeight: 70,
     itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
     isContagious: true,
   },
-
   {
     id: "steamroomcorpsetwo",
-    name: "younger man",
+    name: "young woman",
     description:
-      "The younger man has dark, close-cropped hair. His eyes are frozen wide in terror, tongue bulging from his open mouth. He wears swimming trunks. The same tattoo marks his left forearm—triangle within a circle, pierced by a V, with “DeM” beneath. His face, neck, and shoulders all the way to his chest are nearly bloodless, with twin puncture wounds at either side of his neck.",
-    initialDescription:
-      "Near the corner of the room, a younger man’s body is sprawled in a half-sitting position, arms and legs thrown out at odd angles.",
+      "The woman is quite young, with a look of fear frozen on her face as the man attempted to comfort her.",
+    initialDescription: "",
     location: "SteamRoom",
-    vocab: ["young", "younger", "man", "corpse", "body"],
+    vocab: ["young", "woman", "corpse", "body", "rhim"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "steam_room_gal_memory",
+      },
+    },
     itemWeight: 65,
     itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
     isContagious: true,
   },
 
   // Mens / Womens room – ELVIS, etc. ----------------------------------------
-  {
-    id: "ELVIS",
-    name: "dead body",
-    description:
-      "A man in his thirties sits rigidly on the toilet, fully dressed in some kind of military uniform. His skin is waxy, face speckled red around the eyes and mouth, eyes frozen in a horrified stare toward the front of the stall. In better days he clutched a satchel and a small key; now he is just another uniform gone slack.",
-    initialDescription:
-      "A fully dressed man sits on the toilet inside the stall, wearing a military-style uniform and staring straight ahead in frozen horror.",
-    location: "MensRoom",
-    vocab: ["dead", "body", "man", "corpse"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 70,
-    itemSize: 8,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
+  // {
+  //   id: "ELVIS",
+  //   name: "dead body",
+  //   description:
+  //     "A man in his thirties sits rigidly on the toilet, fully dressed in some kind of military uniform. His skin is waxy, face speckled red around the eyes and mouth, eyes frozen in a horrified stare toward the front of the stall. In better days he clutched a satchel and a small key; now he is just another uniform gone slack.",
+  //   initialDescription:
+  //     "A fully dressed man sits on the toilet inside the stall, wearing a military-style uniform and staring straight ahead in frozen horror.",
+  //   location: "MensRoom",
+  //   vocab: ["dead", "body", "man", "corpse"],
+  //   itemClass: "solid",
+  //   itemCategory: "scenery",
+  //   itemWeight: 70,
+  //   itemSize: 8,
+  //   isWearable: false,
+  //   isReadable: false,
+  //   isContainer: false,
+  //   isContagious: true,
+  // },
 
-  {
-    id: "WomensShitterCorpse",
-    name: "woman's body",
-    description:
-      "The woman is sharply dressed in a pantsuit and pillbox hat. No amount of makeup can disguise how stark white her skin has become. Two deep puncture wounds mark either side of her neck, and her blue eyes bulge in frozen horror. Her lips are parted slightly, and whatever color they once held is long gone.",
-    initialDescription: undefined,
-    sceneryDescription:
-      "A well-dressed woman lies dead here, skin bloodless and eyes bulging wide.",
-    location: "WomensRoom",
-    vocab: ["woman", "corpse", "body"],
-    itemClass: "solid",
-    itemCategory: "scenery",
-    itemWeight: 60,
-    itemSize: 7,
-    isWearable: false,
-    isReadable: false,
-    isContainer: false,
-    isContagious: true,
-  },
+  // {
+  //   id: "WomensShitterCorpse",
+  //   name: "woman's body",
+  //   description:
+  //     "The woman is sharply dressed in a pantsuit and pillbox hat. No amount of makeup can disguise how stark white her skin has become. Two deep puncture wounds mark either side of her neck, and her blue eyes bulge in frozen horror. Her lips are parted slightly, and whatever color they once held is long gone.",
+  //   initialDescription: undefined,
+  //   sceneryDescription:
+  //     "A well-dressed woman lies dead here, skin bloodless and eyes bulging wide.",
+  //   location: "WomensRoom",
+  //   vocab: ["woman", "corpse", "body"],
+  //   itemClass: "solid",
+  //   itemCategory: "scenery",
+  //   itemWeight: 60,
+  //   itemSize: 7,
+  //   isWearable: false,
+  //   isReadable: false,
+  //   isContainer: false,
+  //   isContagious: true,
+  // },
 
   {
     id: "BODIES",

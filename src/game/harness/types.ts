@@ -1,5 +1,6 @@
 import type { MapInformationOptions } from "../map/shipMapText";
 import type { AiConversationFailure } from "../services/conversationDiagnostics";
+import type { DeathEvent, HostStatus, Scenario, ScenarioMetadata, StateSummary } from "./scenario";
 
 export type Observation = Readonly<{
   sequence: number;
@@ -22,6 +23,12 @@ export type TranscriptEntry = Readonly<{
   finalAgentMessage?: string;
   /** Host-only failures for this command; excluded from observations/tool results. */
   aiConversationFailures?: readonly AiConversationFailure[];
+  /** Host-only scenario setup and end summary; never part of the observation. */
+  scenario?: ScenarioMetadata;
+  initialState?: StateSummary;
+  agentSummary?: AgentSummary;
+  deathEvent?: DeathEvent;
+  recoveryAttempt?: number;
 }> & ActionExplanation;
 
 export type TranscriptInfo = Readonly<{ path: string; sessionId: string; records: number }>;
@@ -29,8 +36,20 @@ export type TranscriptInfo = Readonly<{ path: string; sessionId: string; records
 export type SessionOptions = Readonly<{
   transcriptDirectory?: string;
   onAiConversationFailure?: (failure: AiConversationFailure) => void;
+  scenario?: Scenario;
 }>;
-export type SessionEndOptions = Readonly<{ finalAgentMessage?: string }>;
+export type Termination = "success" | "death" | "budget_exhaustion" | "agent_termination" | "error" | "interrupted";
+export type AgentSummary = {
+  objective: string;
+  actions: number;
+  modelTurns: number;
+  reason: string;
+  termination: Termination;
+  recoveryAttempts?: number;
+  maxDeaths?: number;
+  playtest?: HostStatus;
+};
+export type SessionEndOptions = Readonly<{ finalAgentMessage?: string; agentSummary?: AgentSummary }>;
 
 /** Host-only metadata. Never attach this to a player observation or tool result. */
 export type MissingCapabilityDiagnostic = Readonly<{
@@ -53,10 +72,13 @@ export interface ExplorerPort {
 
 /** Trusted host controls. Only explorer is intended for a future player. */
 export interface SessionController {
+  readonly scenario?: Pick<Scenario, "id" | "objective" | "budgets" | "maxDeaths">;
   readonly explorer: ExplorerPort;
   start(): Promise<Observation>;
   reset(): Promise<Observation>;
   transcript(): TranscriptInfo;
   capabilityDiagnostics?(): readonly MissingCapabilityDiagnostic[];
+  /** Read-only trusted-host projection; never passed to the model. */
+  hostStatus?(): HostStatus | undefined;
   dispose(options?: SessionEndOptions): Promise<void>;
 }

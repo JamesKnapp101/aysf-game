@@ -19,6 +19,80 @@ afterEach(async () => {
 });
 
 describe("autonomous player launch configuration", () => {
+  it("parses named scenarios and one-off overrides without changing default configuration", async () => {
+    expect(await invoke('console.log(JSON.stringify(parseArguments(["--scenario", "spa-entry"])));'))
+      .toMatchObject({ scenario: { name: "spa-entry" }, options: {} });
+    expect(await invoke('console.log(JSON.stringify(parseArguments(["--start-room", "WalkIn", "--inventory", "CarvingKnife,Cooler", "--goal", "Enter Sauna safely", "--max-game-turns", "10"])));'))
+      .toMatchObject({ scenario: { startRoom: "WalkIn", inventory: ["CarvingKnife", "Cooler"], goal: "Enter Sauna safely" }, options: { maxGameTurns: 10 } });
+    expect(await invoke('console.log(JSON.stringify(parseArguments([])));')).not.toHaveProperty("scenario");
+    expect(await invoke('console.log(JSON.stringify(parseArguments(["--scenario", "spa-trap-informed", "--max-deaths", "3", "--explored-rooms", "Restaurant,ParkWest,Spa"])));'))
+      .toMatchObject({ options: { maxDeaths: 3 }, scenario: { name: "spa-trap-informed", exploredRooms: ["Restaurant", "ParkWest", "Spa"] } });
+    expect(await invoke('console.log(JSON.stringify(parseArguments(["--scenario", "spa-trap", "--explored-rooms", "none"])));'))
+      .toMatchObject({ scenario: { exploredRooms: [] } });
+    for (const args of [["--scenario"], ["--scenario", "spa-entry", "--scenario", "spa-trap"], ["--start-room", "WalkIn"],
+      ["--goal", "Try", "--inventory", "Cooler,,CarvingKnife"], ["--goal", "Try", "--inventory", "Cooler,Cooler"],
+      ["--scenario", "spa-trap", "--explored-rooms", "Spa,Spa"], ["--scenario", "spa-trap", "--explored-rooms", "Spa,,ParkWest"],
+      ["--max-deaths", "0"], ["--max-deaths", "1.5"], ["--max-deaths", "NaN"], ["--max-deaths", "3", "--max-deaths", "2"]]) {
+      expect(await invoke(`try { parseArguments(${JSON.stringify(args)}); console.log('false'); } catch { console.log('true'); }`)).toBe(true);
+    }
+  });
+
+  it("runs an informed scenario through normal regeneration until the configured death limit", async () => {
+    const directory = resolve(".headless-transcripts", `node-regeneration-${randomUUID()}`);
+    directories.push(directory);
+    const program = `
+      import { parseArguments, play } from './scripts/run-headless-agent.mjs';
+      const commands = ['open sauna door', 'north', 'north'];
+      let index = 0;
+      const client = { messages: {
+        countTokens: async () => ({ input_tokens: 100 }),
+        create: async () => ({ content: [{ type: 'tool_use', id: 'action-' + index, name: 'game_command', input: { command: commands[index++] } }],
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 } })
+      }};
+      await play(parseArguments(['--scenario', 'spa-trap-informed', '--start-room', 'Spa', '--max-deaths', '2', '--verbose', '--output-dir', ${JSON.stringify(directory)}]), client);
+    `;
+    const result = await execute(process.execPath, ["--input-type=module", "--eval", program], { timeout: 20000 });
+    expect(result.stderr).toBe("");
+    expect(result.stdout).toContain("Stopped: death_limit. Actions: 3");
+    expect(result.stdout).toContain("Deaths: 2; recovery attempts: 1; death limit: 2");
+    expect(result.stdout).toContain("You died and regenerated");
+    const files = await fs.readdir(directory);
+    const records = (await fs.readFile(resolve(directory, files.find(file => file.endsWith(".jsonl"))), "utf8")).trim().split("\n").map(JSON.parse);
+    expect(records[0].scenario.exploredRooms).toContain("Spa");
+    expect(records.at(-1).agentSummary).toMatchObject({ maxDeaths: 2, recoveryAttempts: 1, reason: "death_limit", playtest: { deaths: 2 } });
+    expect(records.at(-1).agentSummary.playtest.finalGameState.player.log).toHaveLength(1);
+  }, 20000);
+
+  it("runs a named scenario through the actual launcher with a mock SDK", async () => {
+    const directory = resolve(".headless-transcripts", `node-scenario-${randomUUID()}`);
+    directories.push(directory);
+    const program = `
+      import { parseArguments, play } from './scripts/run-headless-agent.mjs';
+      const client = { messages: {
+        countTokens: async () => ({ input_tokens: 100 }),
+        create: async () => ({ content: [{ type: 'tool_use', id: 'wait', name: 'game_command', input: { command: 'wait' } }],
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 20, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 } })
+      }};
+      await play(parseArguments(['--scenario', 'spa-entry', '--max-actions', '1', '--output-dir', ${JSON.stringify(directory)}]), client);
+    `;
+    const result = await execute(process.execPath, ["--input-type=module", "--eval", program], { timeout: 20000 });
+    expect(result.stderr).toBe("");
+    expect(result.stdout).toContain("scenario: spa-entry");
+    expect(result.stdout).toContain("verified success: false; game turns: 1; final location: WalkIn; alive: true; termination: budget_exhaustion");
+    const files = await fs.readdir(directory);
+    const records = (await fs.readFile(resolve(directory, files.find(file => file.endsWith(".jsonl"))), "utf8")).trim().split("\n").map(JSON.parse);
+    expect(records[0].scenario).toMatchObject({ id: "spa-entry", startRoom: "WalkIn", inventory: ["CarvingKnife", "Cooler"] });
+    expect(records.at(-1).agentSummary).toMatchObject({ actions: 1, termination: "budget_exhaustion", playtest: { evaluation: { verified: false } } });
+  }, 20000);
+
+  it("prints actionable errors for unknown scenario names before calling the model", async () => {
+    const program = `
+      import { play } from './scripts/run-headless-agent.mjs';
+      await play({ options: {}, scenario: { name: 'no-such-scenario' } }, { messages: { create: () => { throw new Error('Must not call'); } } });
+    `;
+    await expect(execute(process.execPath, ["--input-type=module", "--eval", program], { timeout: 20000 }))
+      .rejects.toMatchObject({ stderr: expect.stringContaining('Unknown scenario "no-such-scenario"') });
+  }, 20000);
   it("parses limits, output directory, and explicit live opt-in", async () => {
     const config = await invoke(`console.log(JSON.stringify(parseArguments(["--live", "--max-actions", "5", "--timeout-seconds", "30", "--request-timeout-seconds", "10", "--max-tokens", "2000", "--max-cost-usd", "0.05", "--max-errors", "2", "--max-turns", "8", "--max-output-tokens", "300", "--verbose", "--output-dir", ".headless-transcripts/custom"])));`);
     expect(config).toMatchObject({ live: true, verbose: true, options: { maxActions: 5, timeoutMs: 30000, requestTimeoutMs: 10000, maxTokens: 2000, maxCostUsd: 0.05, maxErrors: 2, maxTurns: 8, maxOutputTokens: 300 } });

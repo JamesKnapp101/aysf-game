@@ -275,6 +275,8 @@ Supports:
 
 # Tech Stack
 
+Development tooling: [autonomous scenario playtesting](scripts/headless-scenarios.md).
+
 - React
 - TypeScript
 - Modular state architecture

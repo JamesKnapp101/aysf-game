@@ -1,6 +1,89 @@
 import type { Item } from "@game/types/itemTypes";
 
+const menu =
+  "-----------------------------------------------------------------" +
+  "\n" +
+  "                     Elephant tenderloin\n" +
+  "\n" +
+  "    Wagyu elephant tenderloin roasted to perfection and\n" +
+  "    served in a black and pink peppercorn au jus.\n" +
+  "    Accompanied by honey glazed baby carrots and grilled\n" +
+  "    fennel.\n" +
+  "\n" +
+  "                      Baby Sea Turtle Soup\n" +
+  "\n" +
+  "    Succulent soft-shelled baby sea turtles fresh from the\n" +
+  "    egg, poached to perfection in a consommé de bourses de\n" +
+  "    sirène infused with dill and thyme.\n" +
+  "    Served with fresh baked sourdough oyster crackers.\n" +
+  "\n" +
+  "                    Ragoût de Grands Singes\n" +
+  "\n" +
+  "    A rich blend of gorilla, chimpanzee, and orangutan\n" +
+  "    stewed with vegetables and yam, and topped with a rose\n" +
+  "    of thinly shaved bonobo ceviche.\n" +
+  "    Served with fire roasted plantain and breadfruit.\n" +
+  "\n" +
+  "                      Bald Eagle Foie Gras\n" +
+  "\n" +
+  "    Rich foie gras sourced from only the most aggressively\n" +
+  "    overfed and rarest of specimens.\n" +
+  "    Served with toasted baguette.\n" +
+  "\n" +
+  "                       Shark Fin Tip Soup\n" +
+  "\n" +
+  "    A delicate soup created from only the very tips of only\n" +
+  "    the dorsal fins of real vat-grown sharks resulting in a\n" +
+  "    mouth-watering 99% waste of the animal.\n" +
+  "    Accompanied by an 8oz bottle of aged cognac.\n" +
+  "\n" +
+  "                       Baby Seal Paillard\n" +
+  "\n" +
+  "    The tenderest baby seal meat mercilessly pounded thin\n" +
+  "    then breaded and pan fried.\n" +
+  "    Served with honey glazed adult carrots and smashed\n" +
+  "    potatoes.\n" +
+  "\n" +
+  "                      Comme Chien et Chat\n" +
+  "\n" +
+  "    The cat and dog, lifelong enemies, make for exquisite\n" +
+  "    friends whose flavors and textures complement each other\n" +
+  "    perfectly in this slow cooked casserole.\n" +
+  "    Served with a side of pickled beets.\n" +
+  "\n" +
+  "                      Three Whale Sashimi\n" +
+  "\n" +
+  "    Choice cuts from three different species of whale; blue,\n" +
+  "    humpback, and sperm.\n" +
+  "    Accompanied by fresh grated wasabi and a soy and miso\n" +
+  "    dipping sauce.\n" +
+  "\n" +
+  "                        Suckling Dolphin\n" +
+  "\n" +
+  "    Whole suckling dolphin, spit roasted over flame with a\n" +
+  "    teriyaki glaze.\n" +
+  "    Served with rice pancakes and green onions.\n" +
+  "\n" +
+  "                            Long Pig\n" +
+  "\n" +
+  "    Chef's choice. Do you dare?";
+
 export const restaurantDiningRoomItems: Item[] = [
+  {
+    id: "Menu",
+    name: "upscale menu",
+    description: menu,
+    initialDescription:
+      "Lying on the floor next to one of the tables is a laminated menu.",
+    readableText: menu,
+    location: "Restaurant",
+    vocab: ["menu"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 1,
+    isReadable: true,
+  },
   {
     id: "EATERYDOOR2",
     name: "glass door",

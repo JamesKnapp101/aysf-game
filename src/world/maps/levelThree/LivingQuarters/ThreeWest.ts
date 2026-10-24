@@ -373,7 +373,7 @@ export const threeWestItems: Item[] = [
     name: "disgusting remains",
     description: `It's just like the remains in the living area, with the same stringy organic material left behind.`,
     sceneryDescription: `A pair of red sweatpants and a red t-shirt lay on the floor, within some sort of reddish-black spatter. A single foot sticks out of the end of one pant leg, the heel pointing upward.`,
-    location: "ThreeWestBath",
+    location: "ThreeWestBed",
     vocab: [
       "remains",
       "body",

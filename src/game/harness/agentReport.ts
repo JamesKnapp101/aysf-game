@@ -56,6 +56,52 @@ function cachingReport(run: AgentRun): string {
 Cumulative token budgets include uncached, cache-created and cache-read tokens. Spending reservations assume a complete cache miss. ${run.usageUncertain ? "Reported categories and estimates may be incomplete; the controller stopped before spending again." : "All received usage categories are accounted for."}`;
 }
 
+function playtestReport(run: AgentRun): string {
+  const status = run.playtest;
+  if (!status) return run.configurationError ? `## Scenario setup error\n\n${escape(run.configurationError)}\n\n` : "";
+  const scenario = status.scenario;
+  return `## Scenario and verified outcome
+
+- Scenario: ${scenario ? escape(scenario.id) : "none (ordinary exploration)"}
+- Initial player location: ${escape(status.initial.roomId)}
+- Injected inventory: ${scenario?.inventory.length ? scenario.inventory.map(escape).join(", ") : "none"}
+- Previously explored rooms: ${scenario?.exploredRooms?.length ? scenario.exploredRooms.map(escape).join(", ") : "none supplied"}
+- Objective given to the agent: ${escape(run.objective)}
+- Prerequisites: ${scenario?.prerequisites.length ? scenario.prerequisites.map(escape).join("; ") : "none"}
+- Verified success: ${status.evaluation?.verified ? "yes" : "no"}
+- Verification reason: ${escape(status.evaluation?.reason ?? "Success was not independently verified: no scenario success conditions supplied.")}
+- Actions/information requests: ${run.actions}; game turns: ${status.gameTurns}; model turns: ${run.turns}
+- Final player location: ${escape(status.final.roomId)}; alive: ${status.final.alive}; deaths during run: ${status.deaths}
+- Recovery attempts (first request after each regeneration): ${status.recoveryAttempts ?? 0}
+- Maximum deaths: ${run.limits.maxDeaths ?? (scenario?.success.length ? 1 : "no death limit")}
+- Termination category: ${run.termination ?? "unknown"}; detailed reason: ${escape(run.reason)}
+
+### Success conditions (all required)
+
+${scenario?.success.length ? scenario.success.map(condition => {
+  const result = status.evaluation?.checks.find(check => JSON.stringify(check.condition) === JSON.stringify(condition));
+  return `- [${result?.met ? "x" : " "}] ${escape(result?.description ?? JSON.stringify(condition))}`;
+}).join("\n") : "No machine-verifiable conditions supplied; an agent's final message is a subjective claim."}
+
+### Final game state (host-only)
+
+The JSONL end record contains the same runtime snapshot. Authored definitions, callbacks and RNG are excluded. This data is never sent to the agent.
+
+<details><summary>Final runtime state</summary>
+
+\`\`\`json
+${JSON.stringify(status.finalGameState ?? status.final, null, 2)}
+\`\`\`
+
+</details>
+
+### Death and regeneration events
+
+${status.deathEvents?.length ? status.deathEvents.map(event => `- Transcript #${event.sequence}, move ${event.move}: ${event.count} death(s), total ${event.totalDeaths}; died in ${event.deathRoomIds.map(escape).join(", ") || "unknown"}; location after resolution: ${escape(event.roomId)}; regenerated: ${event.regenerated}.`).join("\n") : "No death events recorded."}
+
+`;
+}
+
 /** Exploration uses player observations; capability metadata stays host-only. */
 export function renderAgentReport(run: AgentRun): string {
   const all = [run.opening.join("\n\n"), ...run.events.filter(event => !event.error).map(event => event.text.join("\n\n"))];
@@ -82,7 +128,7 @@ export function renderAgentReport(run: AgentRun): string {
 - Date (UTC): ${run.date}
 - Model: ${escape(run.model)}
 - Game revision: ${escape(run.revision)}
-- NPC conversation mode: authored
+- NPC conversation mode: ${run.playtest?.conversationMode ?? "not recorded"}
 - Initial objective: ${run.objective}
 - Gameplay actions/information requests: ${run.actions}; model turns: ${run.turns}
 - Reported input tokens: ${run.inputTokens}; output tokens: ${run.outputTokens}
@@ -90,10 +136,10 @@ export function renderAgentReport(run: AgentRun): string {
 - Usage completeness: ${run.usageUncertain ? "Incomplete: a failed request or missing usage metrics may have incurred additional unreported usage." : "All completed model responses accounted for."}
 - Elapsed: ${(run.elapsedMs / 1000).toFixed(2)} seconds
 - Termination: ${escape(run.reason)}
-- Limits: ${run.limits.maxActions} actions, ${run.limits.maxTurns} model turns, ${run.limits.timeoutMs / 1000}s elapsed, ${run.limits.requestTimeoutMs / 1000}s per API request, ${run.limits.maxTokens} total tokens, $${run.limits.maxCostUsd} estimated spend, ${run.limits.maxErrors} consecutive invalid requests
+- Limits: ${run.limits.maxActions} actions, ${run.limits.maxTurns} model turns, ${run.limits.maxGameTurns === undefined ? "no game-turn cap" : `${run.limits.maxGameTurns} game turns`}, ${run.limits.timeoutMs / 1000}s elapsed, ${run.limits.requestTimeoutMs / 1000}s per API request, ${run.limits.maxTokens} total tokens, $${run.limits.maxCostUsd} estimated spend, ${run.limits.maxErrors} consecutive invalid requests
 - Gameplay transcript: ${escape(run.transcriptPath)}
 
-${finalAgentMessageReport(run)}## Token categories and estimated spending
+${playtestReport(run)}${finalAgentMessageReport(run)}## Token categories and estimated spending
 
 ${cachingReport(run)}
 

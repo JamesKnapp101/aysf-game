@@ -1,5 +1,8 @@
-import { isSaunaDimlyLit, isSpaLightOn } from "../maps/levelThree/Park/spaLighting";
 import type { Item } from "../../game/types/itemTypes";
+import {
+  isSaunaDimlyLit,
+  isSpaLightOn,
+} from "../maps/levelThree/Park/spaLighting";
 
 export const levelThreeItems: Item[] = [
   {
@@ -221,14 +224,17 @@ export const levelThreeItems: Item[] = [
   },
   {
     id: "portholeSpa",
-    describeLookThrough: (state, item) => isSaunaDimlyLit(state)
-      ? "Beyond the open cedar door, very dim light reveals the Sauna's benches and the figure slumped on one of them."
-      : isSpaLightOn(state) ? item.lookThroughDescription! : "Beyond the glass, the Sauna is completely dark.",
+    describeLookThrough: (state, item) =>
+      isSaunaDimlyLit(state)
+        ? "Beyond the open cedar door, very dim light reveals the Sauna's benches and the figure slumped on one of them."
+        : isSpaLightOn(state)
+          ? item.lookThroughDescription!
+          : "Beyond the glass, the Sauna is completely dark.",
     name: "porthole",
     description:
       "A round porthole set into the cedar door at about head height, its glass clear enough to catch a little of the Spa's light.",
     lookThroughDescription:
-      "Through the porthole you can just make out the edges of cedar benches. A little Spa light reaches the doorway, but the Sauna beyond remains dark.",
+      "Through the porthole you can just make out the edges of cedar benches. A little Spa light reaches the doorway, but the Sauna beyond remains dark. With your face to the glass, you can hear something moving in that darkness, something big.",
     location: "Spa",
     vocab: ["porthole", "window", "glass"],
     itemClass: "solid",
@@ -241,13 +247,16 @@ export const levelThreeItems: Item[] = [
   },
   {
     id: "portholeSauna",
-    describeLookThrough: (state, item) => isSpaLightOn(state)
-      ? item.lookThroughDescription!
-      : "Through the glass you can make out the main Spa, but its overhead light is off.",
-    describeScenery: (state, item) => isSaunaDimlyLit(state)
-      ? "The open cedar doorway admits very dim light from the Spa."
-      : isSpaLightOn(state) ? item.sceneryDescription!
-      : "The porthole in the cedar door admits no light from the unlit Spa.",
+    describeLookThrough: (state, item) =>
+      isSpaLightOn(state)
+        ? item.lookThroughDescription!
+        : "Through the glass you can make out the main Spa, but its overhead light is off.",
+    describeScenery: (state, item) =>
+      isSaunaDimlyLit(state)
+        ? "The open cedar doorway admits very dim light from the Spa."
+        : isSpaLightOn(state)
+          ? item.sceneryDescription!
+          : "The porthole in the cedar door admits no light from the unlit Spa.",
     name: "porthole",
     description:
       "A circular glass porthole is set into the cedar door. The Sauna is cool now, and the glass is dry.",
