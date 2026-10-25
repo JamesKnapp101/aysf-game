@@ -17,6 +17,9 @@ export async function tryTell(
   target: ConversationTarget,
   topicRaw: string,
 ): Promise<ActionResult> {
+  if (target.kind === "npc" && target.npc.informationExchange) {
+    return tellNpc(state, target.npc, topicRaw, target.via);
+  }
   const topic = normalizeTopic(topicRaw, target);
 
   const registered = handleRegisteredTellAction(state, target, topic);

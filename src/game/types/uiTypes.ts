@@ -16,6 +16,7 @@ export type OverlayIntent = {
 };
 
 export type Overlay =
+  | ({ kind: "information-exchange"; npcId: string } & OverlayPostClose)
   | { kind: "none" }
   | ({
       body: string;

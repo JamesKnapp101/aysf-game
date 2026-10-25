@@ -73,9 +73,6 @@ function renderGossipTopic(topic: JuicyTopic, idx: number) {
             </span>
           </div>
 
-          <div>
-            Topic ID: <span style={{ fontWeight: 700 }}>{topic.id}</span>
-          </div>
         </div>
 
         <div className="logtab-rowBody">
@@ -91,6 +88,7 @@ function renderGossipTopic(topic: JuicyTopic, idx: number) {
           <div className="logtab-rowPreview logtab-rowPreview--full">
             {topic.summary || "No summary recorded."}
           </div>
+          {topic.sourceNpcId && <div>Source: {topic.sourceNpcId}</div>}
 
           {tags.length > 0 ? (
             <div className="logtab-rowTags">{tags.join(" | ")}</div>

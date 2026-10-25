@@ -15,6 +15,9 @@ import {
 } from "./helpers/gameTestHelpers";
 
 const COVERED_ACTIONS = [
+  // Voucher and gossip verbs are exercised in nailbot-exchange.test.ts.
+  "redeem",
+  "share",
   "abort",
   "open",
   "close",

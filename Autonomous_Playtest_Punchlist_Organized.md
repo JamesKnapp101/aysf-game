@@ -79,7 +79,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [ ] Either find a use for the jar of acid or remove it
 
-- [ ] To ensure the player solves the sauna puzzle before reaching the power station, put Feeny Salk in the sauna, carrying his locker key, which contains the insta-roids needed the get the yellow badge.
+- [x] To ensure the player solves the sauna puzzle before reaching the power station, put Feeny Salk in the sauna, carrying his locker key, which contains the insta-roids needed the get the yellow badge.
 
 - [ ] In the gym, add him to the signup sheet, and have him also with a reserved spot in the sauna as a hint to the player
 
@@ -88,7 +88,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 - [ ] In this hedonistic 'anything goes' culture steroids probably wouldn't be an illicit thing anymore, so rather than make it a down-low thing put it out front where maybe they even sell them at the juice bar, but it's closed and everybody is dead. That will alert the player to the fact that they exist, then they can make the connection that they might be able to lift the barbell with them, which then becomes 'where do I find some?' In that scenario it would be natural for the player to ask the robot about them specifically, and the robot can then indicate who might have some. The player can then get the locker number from the signup sheet once they get the name
   - [ ] Also, come up with an actual list of names for the different locker numbers, so the items relate to specific people
 
-- [ ] Once the agent knew Salk might have insta-roids it started looking for his key everywhere, the key will be moved to the sauna (along with Salk himself)
+- [x] Once the agent knew Salk might have insta-roids it started looking for his key everywhere, the key will be moved to the sauna (along with Salk himself)
 
 - [ ] At the minute, solving the treadmill puzzle doesn't buy anything except turning off the treadmill, which doesn't buy anything. There needs to be something here that helps the player progress
   - [ ]
@@ -101,11 +101,11 @@ Original item wording retained. Items are grouped by their primary workstream; n
   - [x] This will mean deciding how the frozen sample / Cooler puzzle works, and implementing those mechanics as well
 
 - [x] The Walk In needs work. Some of it is plugged in but need to close the loop on the following:
-  - [ ] Plug in the whole 'getting a sample from the doomed chef' mechanic
-    - [ ] Add a carving knife to the kitchen the player can use to carve off small slices, when they do the chef murmurs 'take all you need...'
-    - [ ] Decide what the actual sample rules are and implement them
-    - [ ] Make sure the cooler works correctly with the samples
-  - [ ] There's no way to turn off the freezer but rather than add it, add a menu option in the Power Station terminal to shut it off
+  - [x] Plug in the whole 'getting a sample from the doomed chef' mechanic
+    - [x] Add a carving knife to the kitchen the player can use to carve off small slices, when they do the chef murmurs 'take all you need...'
+    - [x] Decide what the actual sample rules are and implement them
+    - [x] Make sure the cooler works correctly with the samples
+  - [x] There's no way to turn off the freezer but rather than add it, add a menu option in the Power Station terminal to shut it off
 
 - [ ] The phone needs to be plugged in too, it could be used for other things as well, and the same calling ability needs to be added to all the living quarters phones
 
@@ -137,7 +137,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [ ] In the Level Three Corridor Three, 'examine doorway' indicated nothing can be made out inside and they can hear something moving, so this is why they never want to go in. That's stale, the room is now dimly lit, so encourage them to enter by indicating the room beyond does have some light
 
-- [ ] The three clone corpses need DNA profiles, but not NPC profiles since none have heads
+- [x] The three clone corpses need DNA profiles, but not NPC profiles since none have heads
 
 - [ ] In the Movie Theater bathroom the agent consistently tried to look in the stalls, so make them searchable and maybe put the e-cigar in one of the stalls perched on the toilet paper dispenser with a melted body but intact head sitting in the bowl. Add a DNA profile and an NPC profile that plays out a memory of him smoking while the usherbot yells from outside that it 'can detect smoke from out here' and that it will 'go in there if I have to' to give clues
   - [ ] This is another pro for the idea that not just any water will rehydrate the slug, as otherwise any stray toilet bowl could activate it
@@ -147,7 +147,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
   - [x] For the buffet basically describe a mish mash of the menu items without naming anything, make anything described examine-able but it can be one general description for all, to signal the buffet itself isn't part of any puzzle, save for maybe some named items among the display
   - [x] For the menu: Elephant tenderloin, baby sea turtle soup, great ape stew (containing gorilla, chimpanzee, and orangutan), bald eagle foie gras, shark fin tip soup, baby seal paillard (pounded thin), pouring stew (containing both cat and dog), three whale sashimi, suckling dolphin, and long pig
 
-- [ ] In the Restaurant, there are men's and women's bathrooms but they're just pretty much blank. Do they need to be there? If these people are so over the top hedoninstic might they have a comical shared bathroom space? What about something like a 'polyopticon' where there are no urinals, no stalls, and the toilets are arranged in a circle around a large circular room all facing in with no explanation, and in the center is a ring-shaped sink everybody uses, with some hoity toity phrase about having nothing to hide
+- [x] In the Restaurant, there are men's and women's bathrooms but they're just pretty much blank. Do they need to be there? If these people are so over the top hedoninstic might they have a comical shared bathroom space? What about something like a 'polyopticon' where there are no urinals, no stalls, and the toilets are arranged in a circle around a large circular room all facing in with no explanation, and in the center is a ring-shaped sink everybody uses, with some hoity toity phrase about having nothing to hide
 
 - [x] In the Kitchen the description mentions a 'large padlocked steel door' which was meant to be the walk in freezer, but I decided to leave it unlocked and it has a scenery description of its own so remove the reference in the room description
 

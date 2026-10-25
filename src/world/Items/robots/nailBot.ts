@@ -4,6 +4,7 @@ export const nailBotItems: Item[] = [
   {
     id: "NailBot",
     name: "The robot nail-tech",
+    nickname: "Mani-Pedi-Bot",
     idleActions: [
       "The nail-tech robot fans a set of tiny brushes across its workstation.",
       "The nail-tech robot rearranges several polish bottles into a flawless gradient.",

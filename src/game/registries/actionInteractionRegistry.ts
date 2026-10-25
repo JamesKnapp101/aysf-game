@@ -16,9 +16,17 @@ import {
   handleChefSampleExtraction,
   handleChefHeadCut,
   handleSpaLightCommand,
+  handleNailSalonVoucher,
 } from "src/world/zoneRegistrations";
 
-const COMMAND_ACTION_HANDLERS = [handleElevatorFloorSelection, handleSecurityDoorPartAction, handleChefHeadCut, handleChefSampleExtraction, (state: GameState, command: ParsedCommand) => handleSpaLightCommand(state, command)];
+const COMMAND_ACTION_HANDLERS = [
+  handleNailSalonVoucher,
+  handleElevatorFloorSelection,
+  handleSecurityDoorPartAction,
+  handleChefHeadCut,
+  handleChefSampleExtraction,
+  (state: GameState, command: ParsedCommand) => handleSpaLightCommand(state, command),
+];
 
 export function handleRegisteredCommandAction(
   state: GameState,

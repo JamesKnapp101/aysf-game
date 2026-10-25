@@ -1,4 +1,5 @@
 import { doAbort } from "@game/actions/abort/abort";
+import { doShareGossip } from "@game/rules/informationExchange";
 import { doAsk } from "@game/actions/ask/ask";
 import { doAttack } from "@game/actions/attack/attack";
 import { doBlow } from "@game/actions/blow/blow";
@@ -51,6 +52,7 @@ import { doWait } from "./wait/wait";
 import { doWear } from "./wear/wear";
 
 const BASE_ACTION_HANDLERS: Record<string, ActionHandler> = {
+  share: doShareGossip,
   abort: doAbort,
   open: doOpen,
   order: doOrder,
@@ -113,7 +115,7 @@ const BASE_ACTION_HANDLERS: Record<string, ActionHandler> = {
 export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   ...BASE_ACTION_HANDLERS,
   ...Object.fromEntries(
-    ["examine", "look", "touch", "swipe", "use", "show", "present", "push", "pick", "cut", "sever", "decapitate", "take", "get", "flip", "turn", "switch"].map((verb) => [
+    ["give", "redeem", "examine", "look", "touch", "swipe", "use", "show", "present", "push", "pick", "cut", "sever", "decapitate", "take", "get", "flip", "turn", "switch"].map((verb) => [
       verb,
       ((state, cmd) => handleRegisteredCommandAction(state, cmd) ??
         BASE_ACTION_HANDLERS[verb]?.(state, cmd) ??

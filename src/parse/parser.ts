@@ -68,6 +68,7 @@ const VERB_ALIASES: Record<string, string> = {
   inject: "inject",
   fill: "fill",
   ask: "ask",
+  talk: "ask",
   order: "order",
   eat: "eat",
   chew: "eat",
@@ -80,6 +81,10 @@ const VERB_ALIASES: Record<string, string> = {
 };
 
 const PHRASAL_VERB_ALIASES: Record<string, string> = {
+  "talk to": "ask",
+  "speak to": "ask",
+  "talk with": "ask",
+  "speak with": "ask",
   "pick up": "take",
   "get on": "ride",
   "talk into": "use",
@@ -109,6 +114,12 @@ export function parseCommand(rawInput: string): ParsedCommand {
   if (input === "iljio") return { type: "developerMode", raw: rawInput };
 
   const tokens = input.split(/\s+/);
+
+  // Information is free text: topic titles may themselves contain prepositions.
+  const exchange = /^(share|spill)\s+(.+?)(?:\s+with\s+(.+))?$/.exec(input);
+  if (exchange && (exchange[1] === "share" || exchange[2] === "tea")) {
+    return { type: "action", verb: "share", direct: exchange[2], indirect: exchange[3], preposition: exchange[3] ? "with" : undefined, raw: rawInput };
+  }
 
   if (tokens.length === 1 && DIR_MAP[tokens[0]]) {
     return { type: "move", direction: DIR_MAP[tokens[0]] };

@@ -191,6 +191,9 @@ describe("gossip system", () => {
       "true",
     );
     expect(screen.getByText("Director Affair")).toBeInTheDocument();
+    expect(screen.queryByText(/Topic ID/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(gossipTopic.id)).not.toBeInTheDocument();
+    expect(state.player.spiltTea[0].id).toBe(gossipTopic.id);
     expect(
       screen.getByText(
         "The director has been sneaking into the arboretum after curfew.",

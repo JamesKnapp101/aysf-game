@@ -71,6 +71,10 @@ export const MOVEMENT_COMMANDS = [
 
 export const ACTION_ROWS = [
   {
+    command: "share gossip, spill tea",
+    description: "Open a gossip exchange with an interested NPC. Tell <npc> about anything also opens it. Select Share in the exchange, or use share <topic title> with <npc> to submit a topic.",
+  },
+  {
     command: "get, take",
     description: "Collect an item and add it to your inventory.",
   },

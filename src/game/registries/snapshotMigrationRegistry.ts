@@ -1,3 +1,5 @@
+import { migrateNpcSecrets } from "@game/npcSecrets";
+import { migrateInformationExchangeLogs } from "@game/rules/informationExchange";
 import { updateItemLocation } from "@game/rules/items";
 import { reconcileObjectives } from "@game/rules/objectives";
 import { addToInventory, inventoryHas } from "@game/rules/state";
@@ -124,6 +126,8 @@ const SNAPSHOT_MIGRATIONS: SnapshotMigration[] = [
   (state) => migrateSpaLightingSnapshot(state),
   (state) => migrateSpaOrganismSnapshot(state),
   normalizeInventoryItemLocations,
+  migrateNpcSecrets,
+  migrateInformationExchangeLogs,
   migrateChefSampleSnapshot,
   preserveLegacyBadgeSwapProgress,
   migrateLegacyPlayerHusks,

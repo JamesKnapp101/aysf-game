@@ -4,12 +4,8 @@ import { shouldUseAiConversation } from "@game/helpers/conversationModeHelpers";
 import { NPC_DIALOG, resolveAskTopic } from "@game/npcDialog";
 import { getCharacterProfile } from "@game/npcProfiles";
 import { getNpcById } from "@game/npcRegistry";
-import {
-  canRevealNpcSecret,
-  getSecretForNpc,
-  isNpcSecretRevealed,
-  revealNpcSecretIfEligible,
-} from "@game/npcSecrets";
+import { getSecretForNpc, isNpcSecretRevealed } from "@game/npcSecrets";
+import { exchangeRefusal, openInformationExchange, requiresExchangePayment } from "@game/rules/informationExchange";
 import { normalize, resolveConversationTarget } from "@game/rules/scope";
 import {
   getClaudeResponse,
@@ -63,6 +59,7 @@ export function getPendingConversationLogMessage(
         ? getActiveRadioNpc(state)
         : undefined;
 
+  if (npc && (requiresExchangePayment(state, npc.id) || (npc.informationExchange && cmd.verb === "tell"))) return undefined;
   const profile = getCharacterProfile(npc?.characterProfileId);
   if (!npc?.aiEnabled || !profile) {
     return undefined;
@@ -166,74 +163,17 @@ export function appendNpcConversationHistory(
   });
 }
 
-function addGossipToldToNpc(
-  state: GameState,
-  npcId: string,
-  gossipId: string,
-): GameState {
-  const prevConversation = getNpcConversationState(state, npcId) ?? {};
-  const gossipToldIds = prevConversation.gossipToldIds ?? [];
-
-  // Don't add duplicates
-  if (gossipToldIds.includes(gossipId)) {
-    return state;
-  }
-
-  return setNpcConversationState(state, npcId, {
-    ...prevConversation,
-    gossipToldIds: [...gossipToldIds, gossipId],
-  });
-}
-
-function getGossipToldToNpc(state: GameState, npcId: string): string[] {
-  return getNpcConversationState(state, npcId)?.gossipToldIds ?? [];
-}
-
-function buildGossipContext(
-  state: GameState,
-  npcId: string,
-): GossipContext | undefined {
+function buildGossipContext(state: GameState, npcId: string): GossipContext | undefined {
   const secret = getSecretForNpc(npcId);
-  if (!secret) {
-    return undefined;
-  }
-
-  const gossipSharedWithNpc = getGossipToldToNpc(state, npcId);
-  const currentCount = gossipSharedWithNpc.length;
-
+  if (!secret) return undefined;
+  // Unrevealed narrative is never sent to the model. Game actions own the exchange.
   return {
-    gossipSharedWithNpc,
-    npcSecret: {
-      text: secret.text,
-      requiresGossipCount: secret.requiredGossipCount,
-      currentCount,
-    },
+    gossipSharedWithNpc: state.conversation?.npcs?.[npcId]?.gossipToldIds ?? [],
+    ...(isNpcSecretRevealed(state, npcId) ? { npcSecret: {
+      text: secret.text, requiresGossipCount: secret.requiredGossipCount,
+      currentCount: secret.requiredGossipCount,
+    } } : {}),
   };
-}
-
-function recordGossipToldIfPlayerHasIt(
-  state: GameState,
-  npcId: string,
-  topic: string,
-): GameState {
-  const gossipId = normalize(topic);
-  const playerHasGossip = state.player.spiltTea?.some(
-    (tea) => normalize(tea.id) === gossipId,
-  );
-
-  return playerHasGossip ? addGossipToldToNpc(state, npcId, gossipId) : state;
-}
-
-function getNpcSecretRevealLine(
-  state: GameState,
-  npcId: string,
-): string | undefined {
-  const secret = getSecretForNpc(npcId);
-  if (!secret || isNpcSecretRevealed(state, npcId)) {
-    return undefined;
-  }
-
-  return canRevealNpcSecret(state, npcId) ? secret.text : undefined;
 }
 
 function recordNpcConversationTurn(
@@ -475,15 +415,7 @@ async function getNpcAiResponse(
     return { state, response: null };
   }
 
-  // If this is a 'tell' about gossip, track it BEFORE sending to Claude
-  let nextState = state;
-  if (playerInput.type === "tell") {
-    nextState = recordGossipToldIfPlayerHasIt(
-      nextState,
-      npc.id,
-      playerInput.topic,
-    );
-  }
+  const nextState = state;
 
   const conversationHistory = getNpcConversationHistory(nextState, npc.id);
   const gossipContext = buildGossipContext(nextState, npc.id);
@@ -517,7 +449,7 @@ async function getNpcAiResponse(
     );
 
     return {
-      state: revealNpcSecretIfEligible(respondedState, npc.id),
+      state: respondedState,
       response: processedResponse,
     };
   } catch (error) {
@@ -591,6 +523,9 @@ async function askRadioNpc(
   npc: ConversationNpc,
   topic: string,
 ): Promise<ActionResult> {
+  const refusal = exchangeRefusal(state, npc.id);
+  if (refusal) return { state, message: refusal, consumesTurn: false };
+
   const aiResult = await getNpcAiResponse(state, npc, { type: "ask", topic });
   if (aiResult.response) {
     return {
@@ -633,6 +568,10 @@ async function tellRadioNpc(
   npc: ConversationNpc,
   topic: string,
 ): Promise<ActionResult> {
+  const refusal = exchangeRefusal(state, npc.id);
+  if (refusal) return { state, message: refusal, consumesTurn: false };
+  if (npc.informationExchange) return openInformationExchange(state, npc.id);
+
   const aiResult = await getNpcAiResponse(state, npc, {
     type: "tell",
     topic,
@@ -697,6 +636,9 @@ export async function askNpc(
   topic: string,
   via: "radio" | "direct" = "direct",
 ): Promise<ActionResult> {
+  const refusal = exchangeRefusal(state, npc.id);
+  if (refusal) return { state, message: refusal, consumesTurn: false };
+
   if (via === "radio") {
     return askRadioNpc(state, npc, topic);
   }
@@ -745,6 +687,10 @@ export async function tellNpc(
   topic: string,
   via: "radio" | "direct" = "direct",
 ): Promise<ActionResult> {
+  const refusal = exchangeRefusal(state, npc.id);
+  if (refusal) return { state, message: refusal, consumesTurn: false };
+  if (npc.informationExchange) return openInformationExchange(state, npc.id);
+
   if (via === "radio") {
     return tellRadioNpc(state, npc, topic);
   }
@@ -760,10 +706,9 @@ export async function tellNpc(
     };
   }
 
-  const fallbackState = recordGossipToldIfPlayerHasIt(state, npc.id, topic);
+  const fallbackState = state;
   const resolvedTopic = resolveAskTopic(topic);
-  const secretLine = getNpcSecretRevealLine(fallbackState, npc.id);
-  const fallbackLine = secretLine ?? getDirectTellFallbackLine(npc, resolvedTopic);
+  const fallbackLine = getDirectTellFallbackLine(npc, resolvedTopic);
   if (fallbackLine) {
     const topicKey = `tell:${resolvedTopic}`;
     const line = hasNpcTopicBeenUsed(state, npc.id, topicKey)
@@ -777,7 +722,7 @@ export async function tellNpc(
     );
 
     return {
-      state: revealNpcSecretIfEligible(recordedState, npc.id),
+      state: recordedState,
       message: formatDirectSpeech(line),
     };
   }

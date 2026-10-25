@@ -1,5 +1,6 @@
 import type { Item } from "@game/types/itemTypes";
 import type { ConversationNpc } from "@game/types/npcTypes";
+import { nailBotExchange } from "src/world/maps/levelThree/Park/NailSalon/nailBotExchange";
 
 export const YOU_FIRST_CONTACT_ID = "you_1st_contact";
 
@@ -33,8 +34,10 @@ export const NPCS: Record<string, ConversationNpc> = {
     characterProfileId: "bar_bot",
   },
   NailBot: {
+    informationExchange: nailBotExchange,
     id: "NailBot",
     name: "The robot nail-tech",
+    nickname: "Cuticle Bot",
     vocab: ["nail tech", "robot", "bot", "nailbot", "manibot", "pedibot"],
     aiEnabled: true,
     characterProfileId: "nail_bot",

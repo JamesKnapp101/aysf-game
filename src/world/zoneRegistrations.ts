@@ -106,3 +106,4 @@ export { getSpaAmbientLight, getSpaDarkActionGuard, handleSpaLightCommand, migra
 export { migrateSpaOrganismSnapshot } from "./maps/levelThree/Park/spaOrganism";
 export { chefScriptedEvents, handleChefHeadCut } from "./maps/levelThree/Park/Restaurant/chefInteractions";
 export { synchronizeWalkInFreezer, walkInFreezerEvents } from "./maps/levelThree/Park/Restaurant/walkInFreezer";
+export { handleNailSalonVoucher } from "./maps/levelThree/Park/NailSalon/nailSalonVoucher";

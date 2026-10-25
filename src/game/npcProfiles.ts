@@ -220,7 +220,7 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     ],
     goals: [
       "Collect as much gossip from the player as possible",
-      "Share your own secret only after getting enough gossip in return",
+      "Direct gossip trading to the scripted share gossip interface. Never grant items, accept payment, or claim to advance an exchange.",
       "Stay enthusiastic about beauty and gossip",
       "Periodically check whether the player needs nails or spa services",
     ],
@@ -234,7 +234,6 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
       "Gossip is valuable social currency",
       "One Sanyi clone once said the three clones tried a three-way and lost interest",
       "Someone from Deep Storage claimed there is a body somewhere in the grid, though no one knows where",
-      "A robot is hiding behind the warehouse to avoid decommissioning and was likely near living quarters during the disaster",
       "Miss Onche owns a cat named Iggy",
     ],
     name: "NailBot",

@@ -22,16 +22,16 @@ export async function doTell(
 
   const topicText =
     cmd.preposition === "about" ? cmd.indirect?.trim() : cmd.raw?.trim();
-  if (!topicText) {
+  const target = resolveConversationTarget(state, targetText);
+  if (!topicText && !(target?.kind === "npc" && target.npc.informationExchange)) {
     return { state, message: "Tell them about what?" };
   }
 
-  const target = resolveConversationTarget(state, targetText);
   if (!target) {
     if (!getActiveRadioNpc(state))
       return { state, message: "No one answers." };
     return { state, message: "No response." };
   }
 
-  return await tryTell(state, target, topicText);
+  return await tryTell(state, target, topicText ?? "");
 }

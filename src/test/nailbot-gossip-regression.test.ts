@@ -61,19 +61,16 @@ describe("NailBot gossip regression guards", () => {
     expect(afterGossip).not.toBe(beforeGossip);
   });
 
-  it("requires an immediate secret reveal once the gossip threshold is met", () => {
+  it("keeps secret revelations and rewards in scripted game actions", () => {
     const prompt = buildSystemPrompt(
       nailBotProfile,
       { type: "tell", topic: "horny clone" },
       gossipMetContext,
     );
 
-    expect(prompt).toContain(
-      "must react to it and explicitly reveal your secret",
-    );
-    expect(prompt).toContain(
-      "Do not withhold this secret, tease it, or postpone it to a later response.",
-    );
-    expect(prompt).not.toContain("When appropriate");
+    expect(prompt).toContain("handled by scripted game actions");
+    expect(prompt).toContain("Never claim to accept payment, count gossip, grant items, or reveal an unearned secret");
+    expect(prompt).toContain("The game has already revealed this information");
+    expect(prompt).not.toContain("must react to it and explicitly reveal your secret");
   });
 });

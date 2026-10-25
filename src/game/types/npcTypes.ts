@@ -28,11 +28,22 @@ export type CharacterProfile = CompactCharacterProfile | LegacyCharacterProfile;
 export type CharacterProfileId = string;
 
 export type ConversationNpc = {
+  informationExchange?: InformationExchangeDefinition;
   aiEnabled?: boolean;
   characterProfileId?: CharacterProfileId;
   id: string;
   name: string;
+  nickname?: string;
   vocab?: string[];
+};
+
+export type InformationExchangeDefinition = {
+  paymentTrigger?: string;
+  refusals: string[];
+  greeting: string;
+  responses: Record<string, string>;
+  fallbackResponse: string;
+  secretTransition: string;
 };
 
 export type ConversationChannel = "radio" | "direct";

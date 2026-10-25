@@ -34,6 +34,7 @@ function gossipText(state: GameState): string {
     ...topics.map((topic, index) => [
       `${index + 1}. ${formatTopicType(topic.type)}: ${topic.title || "Untitled topic"}`,
       topic.summary || "No summary recorded.",
+      ...(topic.sourceNpcId ? [`Source: ${topic.sourceNpcId}`] : []),
       ...(topic.tags?.filter(Boolean).length ? [`Tags: ${topic.tags.filter(Boolean).join(" | ")}`] : []),
     ].join("\n")),
     ...(topics.length ? [] : ["No gossip collected yet."]),

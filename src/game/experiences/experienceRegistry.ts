@@ -73,6 +73,14 @@ const BAR_VISION_QUEST_PRIZE_ITEM_ID = "TShirtPrize";
 const BAR_VISION_QUEST_SCORE_ID = "completed_vision_quest";
 const STEAM_ROOM_MEMORY_ROOM_ID = "SteamRoomMemory";
 
+const STEAM_ROOM_COVERUP_GOSSIP: JuicyTopic = {
+  id: "steam room coverup",
+  title: "Powerful people welcomed the change",
+  summary: "In a steam-room memory, Rhim said her father discovered powerful people were letting the transformation happen because they thought the change was good.",
+  tags: ["steam room", "cover-up"],
+  type: "gossip",
+};
+
 const NURSERY_MISHAP_GOSSIP: JuicyTopic = {
   id: "nursery mishap",
   title: "Lil-Lilly Tendwick made a costly mistake at the Aquarium",
@@ -390,6 +398,7 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
           {
             atElapsedTurns: 2,
             id: "convo-two",
+            overheardTea: [STEAM_ROOM_COVERUP_GOSSIP],
             message: `"What do you mean?" the man asks, and she shakes her head.\n\n"It's changing us," she says, her voice low. "My father told me. He found out that some people, powerful people, think it's too late, and that the change is good."\n\n"What change?" the man asks.\n\n"It turns us into, I don't know, something else," she says. "They're crazy, they think it's better, they're supposed to be stopping it and they're letting it happen!"`,
           },
           {

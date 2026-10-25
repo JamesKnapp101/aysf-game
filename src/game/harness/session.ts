@@ -1,4 +1,6 @@
 import { parseCommand } from "../../parse/parser";
+import { exchangeListing } from "../rules/informationExchange";
+import { informationExchangeCommandOutput } from "./informationExchange";
 import {
   DEFERRED_WORLD_CHUNK_IDS,
   isWorldChunkLoaded,
@@ -444,7 +446,7 @@ export function createHeadlessSession(
           );
         }
         const previous = state;
-        const output: string[] = [];
+        let output: string[] = [];
         const pending = getPendingConversationLogMessage(previous, parsed);
         const current = pending
           ? appendLog(appendLog(previous, `> ${trimmed}`), pending)
@@ -459,6 +461,11 @@ export function createHeadlessSession(
           fromRoomId: previous.player.roomId,
           toRoomId: result.player.roomId,
         });
+        if (parsed.type === "action" && (parsed.verb === "tell" || parsed.verb === "share")) {
+        if (parsed.type === "action" && (parsed.verb === "tell" || parsed.verb === "share")) {
+          output = informationExchangeCommandOutput(previous, state, trimmed, output);
+        }
+        }
 
         if (parsed.type === "restart") {
           episode += 1;
@@ -473,6 +480,10 @@ export function createHeadlessSession(
         // already applies logging, disposal and gossip acquisition in the action;
         // close notifications can be text without creating a UI lifecycle.
         let overlay = useUIOverlayStore.getState().overlay;
+        if (overlay.kind === "information-exchange") {
+          output.push(exchangeListing(state, overlay.npcId));
+          useUIOverlayStore.getState().closeOverlay();
+        }
         if (overlay.kind === "reader" || overlay.kind === "help") {
           output.push(
             overlay.kind === "reader"

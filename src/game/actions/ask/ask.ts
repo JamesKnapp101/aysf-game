@@ -46,7 +46,8 @@ export async function doAsk(
   }
 
   const topicText =
-    cmd.preposition === "about" ? cmd.indirect?.trim() : cmd.raw;
+    cmd.preposition === "about" ? cmd.indirect?.trim()
+      : /^(talk|speak)\b/i.test(cmd.raw) ? "self" : cmd.raw;
   if (!topicText) {
     return { state, message: "Ask about what?" };
   }

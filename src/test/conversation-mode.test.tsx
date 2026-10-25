@@ -9,13 +9,13 @@ import type { CometEntry } from "@game/components/comet-index";
 import type {
   ConversationMode,
   GameState,
-  JuicyTopic,
 } from "@game/types/gameTypes";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { parseCommand } from "../parse/parser";
+import { nailBotFixture } from "./helpers/nailBotTestHelpers";
 import { createTestState, getLastLogEntry } from "./helpers/gameTestHelpers";
 
 const sampleCometEntries: CometEntry[] = [
@@ -30,15 +30,6 @@ const sampleCometEntries: CometEntry[] = [
     body: "Comet is a portable Central Library access terminal.",
   },
 ];
-
-const hornyCloneGossip: JuicyTopic = {
-  id: "horny clone",
-  summary:
-    "One of the Sanyi clones harbored a deep lust for Isosceles Onche.",
-  tags: [],
-  title: "Horny Clone",
-  type: "gossip",
-};
 
 function withConversationMode(
   state: GameState,
@@ -110,27 +101,15 @@ describe("conversation mode", () => {
         response: "Generated response should not be used.",
       }),
     } as Response);
-    const baseState = createTestState({ roomId: "NailSalon" });
-    const state = withConversationMode(
-      {
-        ...baseState,
-        player: {
-          ...baseState.player,
-          spiltTea: [hornyCloneGossip],
-        },
-      },
-      "authored",
-    );
-
-    const next = await handleCommand(
-      state,
-      parseCommand("tell robot about horny clone"),
-    );
+    let next = withConversationMode(nailBotFixture(), "authored");
+    next = await handleCommand(next, parseCommand("use voucher"));
+    for (const id of ["horny clone", "nursery mishap", "steam room coverup"]) {
+      next = await handleCommand(next, parseCommand(`share ${id} with robot`));
+    }
 
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(next.player.inventory.general).toContain("RobotWhistle");
     expect(next.worldState.npcSecrets.NailBot).toMatchObject({
-      gossipSharedIds: ["horny clone"],
       secretRevealed: true,
     });
   });

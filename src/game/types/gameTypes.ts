@@ -392,7 +392,6 @@ export type CatState = {
 };
 
 export type NpcSecretState = {
-  gossipSharedIds: string[]; // Which gossip IDs have been shared
   secretRevealed: boolean; // Whether the NPC has revealed their secret
 };
 
@@ -435,6 +434,7 @@ type ConditionalExit = {
 };
 
 export type JuicyTopic = {
+  sourceNpcId?: string;
   id: string;
   summary: string;
   tags: string[];

@@ -10,6 +10,7 @@ import { HelpModal } from "./HelpModal";
 import { MessageMachineModal } from "./MessageMachineModal";
 import { PasswordPromptModal } from "./PasswordPromptModal";
 import { ReaderModal } from "./ReaderModal";
+import { InformationExchangeModal } from "./InformationExchangeModal";
 
 type RunAction = (verb: string, args?: Record<string, unknown>) => void;
 
@@ -130,6 +131,9 @@ export function OverlayHost({
   };
 
   switch (overlay.kind) {
+    case "information-exchange":
+      return <InformationExchangeModal state={state} npcId={overlay.npcId} onClose={onClose}
+        onShare={gossipId => runAction("command", { input: `share ${gossipId} with ${overlay.npcId}` })} />;
     case "help":
       return (
         <HelpModal

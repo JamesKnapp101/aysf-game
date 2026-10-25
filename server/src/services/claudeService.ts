@@ -121,32 +121,15 @@ export function buildSystemPrompt(
   const contextInstructions = assistantContext?.trim()
     ? `\nLive context for this interaction:\n${assistantContext.trim()}`
     : "";
-  if (gossipContext?.npcSecret) {
-    const { requiresGossipCount, currentCount, text } = gossipContext.npcSecret;
-    const remaining = requiresGossipCount - currentCount;
-
-    if (currentCount >= requiresGossipCount) {
-      const revealInstruction =
-        playerInput.type === "tell"
-          ? "The player's current message is gossip you accepted. In this response, you must react to it and explicitly reveal your secret."
-          : "Your gossip requirement is already satisfied. In this response, explicitly reveal your secret instead of hinting at it or saving it for later.";
-
-      gossipInstructions = `\nGossip:
-- Requirement met (${currentCount}/${requiresGossipCount})
-- ${revealInstruction}
-- Secret to reveal now: "${text}"
-- Do not withhold this secret, tease it, or postpone it to a later response.`;
-    } else {
-      gossipInstructions = `\nGossip:
-- Share your secret only after ${requiresGossipCount} different gossip items
-- Current count: ${currentCount}
-- Still needed: ${remaining}
-- When the player shares gossip, react enthusiastically and ask for more`;
+  if (gossipContext) {
+    gossipInstructions = `\nGossip exchanges, payment, secrets, and rewards are handled by scripted game actions.
+- Direct the player to share gossip to trade collected information.
+- Never claim to accept payment, count gossip, grant items, or reveal an unearned secret.`;
+    if (gossipContext.npcSecret) {
+      gossipInstructions += `\n- The game has already revealed this information to the player: "${gossipContext.npcSecret.text}"`;
     }
-
-    if (gossipContext.gossipSharedWithNpc.length > 0) {
-      gossipInstructions += `\n- Already heard:
-${gossipContext.gossipSharedWithNpc.map((id) => `  - ${id}`).join("\n")}`;
+    if (gossipContext.gossipSharedWithNpc.length) {
+      gossipInstructions += `\n- Already heard: ${gossipContext.gossipSharedWithNpc.join(", ")}`;
     }
   }
 

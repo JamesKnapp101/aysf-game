@@ -94,6 +94,7 @@ export interface Item {
   lookThroughDescription?: string;
   meta?: Record<string, any>;
   name: string;
+  nickname?: string;
   named?: (state: GameState, item?: Item) => string;
   npcDescribe?: (
     state: GameState,
