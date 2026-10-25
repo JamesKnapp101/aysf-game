@@ -297,12 +297,12 @@ export const levelThreeLivingQuartersDoors: DoorDefinition[] = [
   },
   {
     id: "UmboltzResidenceDoor",
-    name: "living quarters door 3EW",
+    name: "living quarters door",
     descriptionFromA:
       "To the west is a door affixed with a wooden placard that reads 'Umboltz Residence.'",
     descriptionFromB: `To the east is the unit's front door.`,
     kind: "standard",
-    vocab: ["west door", "door 3ew"],
+    vocab: ["west door", "door"],
     connects: {
       roomAId: "LevelThreeCorridorFive",
       roomBId: "LivingQuartersFiveWest",
@@ -418,7 +418,16 @@ export const levelThreeParkDoors: DoorDefinition[] = [
     descriptionFromB:
       "To the east is the freezer door, covered with a thin layer of frost.",
     kind: "keyed",
-    vocab: ["freezer door", "walk-in door", "walk in door", "fridge door", "steel door", "refrigerator door", "fridge", "refrigerator"],
+    vocab: [
+      "freezer door",
+      "walk-in door",
+      "walk in door",
+      "fridge door",
+      "steel door",
+      "refrigerator door",
+      "fridge",
+      "refrigerator",
+    ],
     connects: {
       roomAId: "Kitchen",
       roomBId: "WalkIn",

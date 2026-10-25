@@ -59,9 +59,9 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [ ] In the Bar, the agent asked the bartender about the trivia question and the bartender told it. The agent then (naturally) asked the bartender about Bufo Clutch A, and the bartender responded by giving it the answer to the trivia question so look into that. It might end up being tricky, because in order for the barbot to know the player answered the trivia question correctly it needs to know what the answer is, but it can never TELL the player what the answer is
 
-- [ ] I don't think the nailbot is plugged in correctly, right now even when the other NPCs respond via AI it still gives responses like 'the robot nail-tech has nothing to say about that', and when the agent tried (understandably) to 'give voucher to robot' it returned 'The robot nail-tech does not seem interested in the nail salon voucher' and 'use voucher' responds 'There's nothing to use', both should work. When the agent used 'tell robot I'd like a mani-pedi' it got back an AI response, so it might just be ask that's not plugged in, I might have only done the tell bit to test the gossip mechanic
+- [x] I don't think the nailbot is plugged in correctly, right now even when the other NPCs respond via AI it still gives responses like 'the robot nail-tech has nothing to say about that', and when the agent tried (understandably) to 'give voucher to robot' it returned 'The robot nail-tech does not seem interested in the nail salon voucher' and 'use voucher' responds 'There's nothing to use', both should work. When the agent used 'tell robot I'd like a mani-pedi' it got back an AI response, so it might just be ask that's not plugged in, I might have only done the tell bit to test the gossip mechanic
 
-- [ ] The nailbot gossip thing isn't quite working either, there's a message meant to play when the player hits the gossip criteria and hands over the whistle, and that never appears in any of the agent logs so it never successfully triggered that, BUT, after telling a bunch of gossip without using the specific gossip id the nailbot responded well, and eventually on its own told the player about the hiding robot but since the event was never triggered it never gave over the whistle
+- [x] The nailbot gossip thing isn't quite working either, there's a message meant to play when the player hits the gossip criteria and hands over the whistle, and that never appears in any of the agent logs so it never successfully triggered that, BUT, after telling a bunch of gossip without using the specific gossip id the nailbot responded well, and eventually on its own told the player about the hiding robot but since the event was never triggered it never gave over the whistle
 
 ## Progression chains
 
@@ -111,19 +111,19 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 ## World consistency and narrative
 
-- [ ] In the airlock there's a panel, and when examined it gives an obviously AI written description
+- [x] In the airlock there's a panel, and when examined it gives an obviously AI written description
 
-- [ ] Rename the 'Level Six Corridor' to 'Airlock' or 'Airlock Corridor' since that's what it is. Originally I think it was meant to be a trick but just say what it is, the player isn't meant to have amnesia anymore
+- [x] Rename the 'Level Six Corridor' to 'Airlock' or 'Airlock Corridor' since that's what it is. Originally I think it was meant to be a trick but just say what it is, the player isn't meant to have amnesia anymore
 
-- [ ] In the Eegler bedroom for the command 'examine picture' change the description so that the player knows who they are, it's Mox and Volonope in happier times
+- [x] In the Eegler bedroom for the command 'examine picture' change the description so that the player knows who they are, it's Mox and Volonope in happier times
 
 - [ ] Do we really need Mox's ID card? Right now it's a total red herring it doesn't do anything or serve any purpose now that the amnesia gimmick is dropped
 
 - [ ] Put something in Eegler's dresser, even if it's just flavor. Maybe a specific outfit for Mox that fits perfectly
 
-- [ ] For the Eegler living area sheet music instead of just referencing different projects try and come up with humorous titles that suggest in addition to science, Mox also has an interest in pretentious rock operas
+- [x] For the Eegler living area sheet music instead of just referencing different projects try and come up with humorous titles that suggest in addition to science, Mox also has an interest in pretentious rock operas
 
-- [ ] For Umboltz residence, the living quarters door has a reference to '3ew' that is stale
+- [x] For Umboltz residence, the living quarters door has a reference to '3ew' that is stale
 
 - [ ] There's a body up on Stair One that is wearing a uniform, either get rid of it entirely, or else add maybe a body with a blowtorch who'd been trying to cut through the door with no success. Give them a DNA profile, and a memory to watch as they frantically attempt to reason with the 'Mayor' to let them in, which the AI refuses to do as not to expose the AI's workings to the foreign organism
 
@@ -131,11 +131,11 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [ ] Right now on the clones message machine, Umboltz leaves a message about the warehouse between their units, but I've since moved all the units around. For this to match, the message should be left on Onche's machine, from Mox himself.
 
-- [ ] Stairs Level Three has a reference to 'sooty footprints' that when examined returns 'You don't see that here' but I think there used to be a burned body I got rid of, so just remove the footprints reference altogether
+- [x] Stairs Level Three has a reference to 'sooty footprints' that when examined returns 'You don't see that here' but I think there used to be a burned body I got rid of, so just remove the footprints reference altogether
 
 - [ ] Put some clothes in Onche's bedroom closet, even if it's just one
 
-- [ ] In the Level Three Corridor Three, 'examine doorway' indicated nothing can be made out inside and they can hear something moving, so this is why they never want to go in. That's stale, the room is now dimly lit, so encourage them to enter by indicating the room beyond does have some light
+- [x] In the Level Three Corridor Three, 'examine doorway' indicated nothing can be made out inside and they can hear something moving, so this is why they never want to go in. That's stale, the room is now dimly lit, so encourage them to enter by indicating the room beyond does have some light
 
 - [x] The three clone corpses need DNA profiles, but not NPC profiles since none have heads
 

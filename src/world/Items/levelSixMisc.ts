@@ -13,6 +13,7 @@ import {
   LEVEL_SIX_FLEX_PLUG_ID,
   LEVEL_SIX_SPACE_SUIT_ID,
 } from "../maps/levelSix/airlockAndStorageConstants";
+import { shootCameraThroughHydroponicsGap } from "../maps/levelSix/hydroponicsCamera";
 import {
   ATUM_CARTRIDGE_ITEM_ID,
   getAtumCartridgeDisplayName,
@@ -23,7 +24,6 @@ import {
   THREE_D_PRINTER_TRAY_ITEM_ID,
 } from "../maps/levelSix/threeDPrinter";
 import { lookThroughSpiderGap } from "./creatures/giantSpider";
-import { shootCameraThroughHydroponicsGap } from "../maps/levelSix/hydroponicsCamera";
 
 type ActionCommand = Extract<ParsedCommand, { type: "action" }>;
 
@@ -142,7 +142,7 @@ export const levelSixItems: Item[] = [
     id: "AirlockPanel",
     name: "airlock panel",
     description:
-      "A blank, flat panel is mounted above the heavy steel door to the south. A single embedded indicator glows an unwavering red, throwing a thin wash of color across the surrounding metal. There are no switches, no buttons—just the quiet, stubborn statement that the airlock is not interested in cooperating.",
+      "A blank, flat panel is mounted above the heavy steel door to the south. A single embedded indicator glows an unwavering red, throwing a thin wash of color across the surrounding metal.",
     sceneryDescription:
       "Above the southern airlock door, a featureless panel glows a steady, accusing red.",
     location: "LevelSixCorridor",

@@ -36,7 +36,7 @@ export const LEVEL_SIX: WorldChunk = {
     },
     {
       id: "LevelSixCorridor",
-      name: "Level Six Corridor",
+      name: "Airlock Corridor",
       description:
         "This is a short, heavy-walled airlock chamber extending north and south. The inner steel door to the north is closed, while the outer steel door to the south hangs open onto the storage quad. A flat status panel over the northern door glows red.",
       exits: [

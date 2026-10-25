@@ -431,7 +431,7 @@ export const threeEastItems: Item[] = [
     id: "EeglerFrame",
     name: "picture frame",
     description:
-      "In the photo, a man with receding blond hair stands smiling next to a woman with long brown hair, who is also smiling. They have their arms around each other in a casual way.",
+      "It's you and Volonope, together. In the photo you're both smiling, with your arms around each other in a casual way.",
     sceneryDescription:
       "and next to that is a small framed picture of a man and a woman standing next to each other and smiling.",
     location: "ThreeEastBed",
@@ -748,7 +748,7 @@ export const threeEastItems: Item[] = [
   {
     id: "EeglerSheetMusic",
     name: "sheet music",
-    description: `It's all handwritten and scribbled, pieces of different working projects.`,
+    description: `It's all handwritten and scribbled, pieces of different working projects; a rock opera about mankind rising up against AI before learning to love them, a rock musical about robot trapped in a man's body, and a seventy-minute psychedelic instrumental jam, all of which you plan to get to, you just haven't had a chance yet.`,
     sceneryDescription: `Here and there on the floor are stray pages of sheet music, written in a precise hand.`,
     location: "LivingQuartersThreeEast",
     vocab: ["sheet", "music"],

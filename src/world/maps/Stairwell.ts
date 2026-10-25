@@ -13,8 +13,11 @@ import { teleportationPadItems } from "../Items/teleportationPads";
 import { weaponItems } from "../Items/weapons";
 import { experienceRooms, experienceRoomsItems } from "./experienceRooms";
 import { resolveLevelFiveSpillLight } from "./levelFive/levelFiveLighting";
-import { elevatorItems, ELEVATOR_INTERIOR_DESCRIPTION } from "./stairwell/elevator";
 import { hasLevelTwoBombDetonated } from "./levelTwo/levelTwoBomb";
+import {
+  ELEVATOR_INTERIOR_DESCRIPTION,
+  elevatorItems,
+} from "./stairwell/elevator";
 
 function describeStairTwo(state: GameState): string {
   if (!hasLevelTwoBombDetonated(state)) {
@@ -75,7 +78,7 @@ export const STAIRWELL: WorldChunk = {
       id: "StairThree",
       name: "Stairs Level Three",
       description:
-        "This is the stair landing for Level Three. A set of emergency lights cast the stairwell in a dim glow. The stairs, flanked by a metal railing, continue up and down. A series of what look like sooty footprints can be seen on the stairs leading up and also down. It's difficult to tell which direction they head in.",
+        "This is the stair landing for Level Three. A set of emergency lights cast the stairwell in a dim glow. The stairs, flanked by a metal railing, continue up and down.",
       exits: [
         { direction: "up", toRoomId: "StairTwo" },
         { direction: "down", toRoomId: "StairFour" },
@@ -98,7 +101,9 @@ export const STAIRWELL: WorldChunk = {
       name: "Stairs Level Five",
       description: "",
       describe: (state) => {
-        const lobbyLight = state.worldState.powerRestoredSections["lights-level-five"]
+        const lobbyLight = state.worldState.powerRestoredSections[
+          "lights-level-five"
+        ]
           ? "the lit elevator lobby beyond"
           : "the dim elevator lobby beyond, illuminated mostly by light leaking through from the stairwell";
         return `This is the stair landing for the fifth floor, where emergency lights flicker over the walls. An open passage to the west reveals ${lobbyLight}, beneath a plastic sign labeled '5'.\n\nThe stairs, flanked by a metal railing, continue up and down.`;
@@ -150,8 +155,7 @@ export const STAIRWELL: WorldChunk = {
     {
       id: "LevelOneStairAccess",
       name: "Level One Stair Access",
-      description:
-        "This is a small elevator lobby. [[SCENERY]]",
+      description: "This is a small elevator lobby. [[SCENERY]]",
       exits: [
         { direction: "north", toRoomId: "Elevator" },
         { direction: "east", toRoomId: "StairOne" },
@@ -239,9 +243,7 @@ export const STAIRWELL: WorldChunk = {
       name: "Elevator Shaft Level Five",
       description:
         "This is an elevator shaft which continues into darkness above you. You are standing on a disused service platform. Stenciled in paint on the west wall is a large yellow number '5'. On the north wall are a series of metal rungs which extend upward, into the darkness. A sealed emergency access panel lies at your feet.",
-      exits: [
-        { direction: "up", toRoomId: "ShaftFour" },
-      ],
+      exits: [{ direction: "up", toRoomId: "ShaftFour" }],
     },
     {
       id: "Elevator",
@@ -334,7 +336,6 @@ export const stairwellItems: Item[] = [
       kind: "teleportation-terminal",
     },
   },
-
 
   {
     id: "levelThreeTerminalArchway",

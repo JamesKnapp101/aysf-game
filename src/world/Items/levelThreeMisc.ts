@@ -94,8 +94,8 @@ export const levelThreeItems: Item[] = [
     id: "CorridorThreeOpenDoorway",
     name: "open doorway",
     description:
-      "You peer into the darkness but can't make anything out inside. There is definitely something moving around in there, though.",
-    sceneryDescription: `The western unit is missing its door altogether, leaving only and empty frame that looks into darkness. You can't see anything in there, but you can hear something moving around and can sense some kind of presence.`,
+      "You peer through the doorway, and see that the light streaming in from the corridor is enough to keep the room beyond dimly lit.",
+    sceneryDescription: `The western unit is missing its door altogether, leaving only and empty frame that looks into a shadowy room. You can't see much from out here, but it doesn't sound like anybody's inside.`,
     location: "LevelThreeCorridorThree",
     vocab: ["doorway", "open", "west", "western"],
     itemClass: "solid",
