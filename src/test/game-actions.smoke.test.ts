@@ -15,6 +15,8 @@ import {
 } from "./helpers/gameTestHelpers";
 
 const COVERED_ACTIONS = [
+  // Gym commands are exercised in game-gym-enhancements.test.ts.
+  "buy", "purchase", "pull", "pump", "roll", "shut", "sign",
   // Voucher and gossip verbs are exercised in nailbot-exchange.test.ts.
   "redeem",
   "share",

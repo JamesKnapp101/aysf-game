@@ -8,8 +8,35 @@ import {
   GYM_TREADMILL_ID,
 } from "./gymConstants";
 import { isGymExerciseBallInRack } from "./gymExerciseBall";
+import { moveGymExerciseBallToRoom } from "./gymExerciseBall";
+import { stashItemInContainer } from "@game/helpers/itemPlacement";
+import { resolveItemByNoun } from "@game/rules/scope";
+import { GYM_EXERCISE_BALL_ID, GYM_EXERCISE_BALL_RACK_ID } from "./gymConstants";
 
 export { SPIN_STAGE_SPEED_DIAL_PASSWORD } from "./gymConstants";
+
+export function handleGymBallRoll(state: GameState, cmd: ParsedCommand) {
+  if (state.player.roomId !== GYM_ROOM_ID || cmd.type !== "action" || cmd.verb !== "roll") return undefined;
+  const match = /^(.*?)\s+(?:across (?:the )?(?:giant )?treadmill|west)$/.exec(cmd.direct ?? "");
+  if (!match || cmd.indirect) return undefined;
+  const noun = match[1].replace(/^(?:the|a|an)\s+/, "");
+  const ball = resolveItemByNoun(state, noun);
+  if (ball?.id !== GYM_EXERCISE_BALL_ID) return { state, message: "You don't see that here." };
+  const { angle, speed } = getGymTreadmillSettings(state);
+  if (speed === 0) return {
+    state: moveGymExerciseBallToRoom(state, GYM_SPIN_STAGE_ROOM_ID),
+    message: "You roll the ball across the deactivated treadmill, and it ends up over by the Spin Stage.",
+  };
+  const start = "You roll the ball across the treadmill and it begins to roll down the angled treadmill, then spins in place for a moment before the moving belt sends it shooting back! ";
+  const next = moveGymExerciseBallToRoom(state, GYM_ROOM_ID);
+  if (angle >= -20 && angle <= -15) return { state: next, message: start + "It hits the far wall just above the wire bin, then bounces off, hits the ceiling, then bounces around the room for a while before rolling to a stop." };
+  if (angle === -10) return {
+    state: stashItemInContainer(next, GYM_EXERCISE_BALL_ID, GYM_EXERCISE_BALL_RACK_ID),
+    message: start + "The ball continues to spin as it flies through the air in a perfect arc before landing right in the wire bin! Awesome!",
+  };
+  if (angle >= -9 && angle <= -1) return { state: next, message: start + "The ball flies past at about knee height before skidding off the floor and bouncing around for a bit, then rolling to a stop." };
+  return { state: next, message: "With the treadmill angled down toward your side, the ball quickly shoots back down the ramp, hits the base, and goes bouncing away." };
+}
 
 export type GymTreadmillSettings = {
   angle: number;
@@ -290,7 +317,7 @@ export const gymTreadmillItems: Item[] = [
     describeScenery: (state) =>
       `To the west, the entire floor is covered with a flat black surface that emits a constant hum. Past it, the spin instructor bike is visible on its podium with a woman's body lying beside it. ${getGymTreadmillAngleDescription(
         state,
-      )} ${getGymTreadmillSpeedDescription(state)}`,
+      )} ${getGymTreadmillSpeedDescription(state)}${(state.itemState.itemRoomId.DuffelBag ?? "SpinStage") === "SpinStage" ? " A black and neon pink duffel bag rests beside the woman's body on the podium." : ""}`,
     location: GYM_ROOM_ID,
     vocab: [
       "giant treadmill",

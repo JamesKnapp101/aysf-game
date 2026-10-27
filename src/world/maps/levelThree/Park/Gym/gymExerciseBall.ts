@@ -88,6 +88,7 @@ export const gymExerciseBallItems: Item[] = [
     capacity: 20,
     meta: {
       sceneryDescriptionOrder: 6,
+      transparentContainer: true,
     },
   },
   {

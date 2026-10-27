@@ -4,6 +4,8 @@ import { gymExerciseBallItems } from "./gymExerciseBall";
 import { gymShowerItems } from "./gymShowerItems";
 import { gymTreadmillItems } from "./gymTreadmill";
 import { gymWeightRoomItems } from "./gymWeightlifterPuzzle";
+import { gymAmenityItems } from "./gymAmenities";
+import { gymSpinStageItems } from "./gymSpinStageItems";
 
 export const gymRooms: Room[] = [
   {
@@ -197,6 +199,8 @@ export const gymItems: Item[] = [
   },
   ...gymTreadmillItems,
   ...gymExerciseBallItems,
+  ...gymAmenityItems,
+  ...gymSpinStageItems,
   {
     id: "GymShowerSigns",
     name: "shower signs",

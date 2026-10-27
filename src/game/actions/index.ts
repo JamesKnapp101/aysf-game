@@ -115,7 +115,7 @@ const BASE_ACTION_HANDLERS: Record<string, ActionHandler> = {
 export const ACTION_HANDLERS: Record<string, ActionHandler> = {
   ...BASE_ACTION_HANDLERS,
   ...Object.fromEntries(
-    ["give", "redeem", "examine", "look", "touch", "swipe", "use", "show", "present", "push", "pick", "cut", "sever", "decapitate", "take", "get", "flip", "turn", "switch"].map((verb) => [
+    [...new Set([...Object.keys(BASE_ACTION_HANDLERS), "buy", "purchase", "sign", "pull", "roll", "pump", "shut", "redeem", "swipe", "show", "present", "pick", "sever", "decapitate", "flip"])].map((verb) => [
       verb,
       ((state, cmd) => handleRegisteredCommandAction(state, cmd) ??
         BASE_ACTION_HANDLERS[verb]?.(state, cmd) ??

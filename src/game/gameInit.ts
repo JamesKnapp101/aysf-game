@@ -770,13 +770,18 @@ export function seedContainerContents(
   state: GameState,
   seeds: Record<string, string[]>,
 ): GameState {
+  // Loading another map chunk must preserve containers already emptied or changed.
+  const unseededHosts = Object.fromEntries(
+    Object.entries(seeds).filter(([hostId]) =>
+      !Object.hasOwn(state.itemState.containerContents, hostId)),
+  );
   return {
     ...state,
     itemState: {
       ...state.itemState,
       containerContents: mergeContents(
         state.itemState.containerContents,
-        seeds,
+        unseededHosts,
       ),
     },
   };

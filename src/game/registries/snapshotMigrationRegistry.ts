@@ -12,6 +12,7 @@ import {
 } from "@game/helpers/playerHuskHelpers";
 import type { GameState } from "@game/types/gameTypes";
 import { migrateChefSampleSnapshot, migrateElevatorSnapshot, migrateSpaContentSnapshot, migrateSpaLightingSnapshot } from "src/world/zoneRegistrations";
+import { migrateGymContentSnapshot } from "src/world/zoneRegistrations";
 import { migrateSpaOrganismSnapshot } from "src/world/zoneRegistrations";
 import { synchronizeWalkInFreezer } from "src/world/zoneRegistrations";
 
@@ -121,6 +122,7 @@ function migrateLegacyTeleportPadLocations(state: GameState): GameState {
 
 const SNAPSHOT_MIGRATIONS: SnapshotMigration[] = [
   synchronizeWalkInFreezer,
+  migrateGymContentSnapshot,
   migrateElevatorSnapshot,
   migrateSpaContentSnapshot,
   (state) => migrateSpaLightingSnapshot(state),

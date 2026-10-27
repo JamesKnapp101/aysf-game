@@ -17,9 +17,19 @@ import {
   handleChefHeadCut,
   handleSpaLightCommand,
   handleNailSalonVoucher,
+  handleGymAmenityCommand,
+  handleGymBallRoll,
+  handleGymPinnedWeightCommand,
+  handleGymWeightMachineCommand,
+  handleGymRemoteToteCommand,
 } from "src/world/zoneRegistrations";
 
 const COMMAND_ACTION_HANDLERS = [
+  handleGymRemoteToteCommand,
+  handleGymAmenityCommand,
+  handleGymBallRoll,
+  handleGymPinnedWeightCommand,
+  handleGymWeightMachineCommand,
   handleNailSalonVoucher,
   handleElevatorFloorSelection,
   handleSecurityDoorPartAction,

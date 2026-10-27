@@ -41,9 +41,9 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] In the Gym showers (men and women) the agent tried the very reasonable 'examine shower' and 'examine benches' and both return 'You don't see that here'
 
-- [ ] In the weight room, consider more things a player might try, the agent tried to 'pull badge' and 'push man' for example which are both reasonable so have responses ready
+- [x] In the weight room, consider more things a player might try, the agent tried to 'pull badge' and 'push man' for example which are both reasonable so have responses ready
 
-- [ ] In the weight room it also later tried 'remove plates from barbell' and 'take plates' so work something out for that. It can use the same mechanism the smart dumbells use where the weight is settable, but it's stuck for some reason, maybe it got damaged when it fell
+- [x] In the weight room it also later tried 'remove plates from barbell' and 'take plates' so work something out for that. It can use the same mechanism the smart dumbells use where the weight is settable, but it's stuck for some reason, maybe it got damaged when it fell
 
 - [x] It references a massage table in the nail salon but 'sit on massage table' returns 'You don't see that here'
 
@@ -55,7 +55,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] Debug the trashbot/key puzzle, in each run the agent thinks to drop an item to see if trashbot sweeps it up, one even noting that doing so might make it go empty the bin, so the logic seems fine. When it dropped things though the trashbot never swept them up. They always ended up solving the puzzle by using 'put \<item> in bin' which shouldn't work, but does (it does correctly trigger the emptying sequence)
 
-- [ ] In the Cardio Room, the agent tried different variations of 'put ball on treadmill', 'throw ball on treadmill', 'throw ball west', 'roll ball west' etc. with a stated reason of 'Experiment', and this is a reasonable thing a person might try, to see if it makes the ball go shooting off. It's a good idea to add support for that because it can also provide clues by shooting the ball off at different angles depending on the treadmill angle, and shooting it in the direction of the wire bin. Though bear in mind that the agent solved this puzzle on its own even without the clues.
+- [x] In the Cardio Room, the agent tried different variations of 'put ball on treadmill', 'throw ball on treadmill', 'throw ball west', 'roll ball west' etc. with a stated reason of 'Experiment', and this is a reasonable thing a person might try, to see if it makes the ball go shooting off. It's a good idea to add support for that because it can also provide clues by shooting the ball off at different angles depending on the treadmill angle, and shooting it in the direction of the wire bin. Though bear in mind that the agent solved this puzzle on its own even without the clues.
 
 - [ ] In the Bar, the agent asked the bartender about the trivia question and the bartender told it. The agent then (naturally) asked the bartender about Bufo Clutch A, and the bartender responded by giving it the answer to the trivia question so look into that. It might end up being tricky, because in order for the barbot to know the player answered the trivia question correctly it needs to know what the answer is, but it can never TELL the player what the answer is
 
@@ -81,17 +81,16 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] To ensure the player solves the sauna puzzle before reaching the power station, put Feeny Salk in the sauna, carrying his locker key, which contains the insta-roids needed the get the yellow badge.
 
-- [ ] In the gym, add him to the signup sheet, and have him also with a reserved spot in the sauna as a hint to the player
+- [x] In the gym, add him to the signup sheet, and have him also with a reserved spot in the sauna as a hint to the player
 
-- [ ] The agent found locker keys and immediately attempted to try them upon finding the gym, so it's time to populate them with items. Most of them will just be flavor or gimmick/fun items, but the insta-roids are a solution to a puzzle
+- [x] The agent found locker keys and immediately attempted to try them upon finding the gym, so it's time to populate them with items. Most of them will just be flavor or gimmick/fun items, but the insta-roids are a solution to a puzzle
 
-- [ ] In this hedonistic 'anything goes' culture steroids probably wouldn't be an illicit thing anymore, so rather than make it a down-low thing put it out front where maybe they even sell them at the juice bar, but it's closed and everybody is dead. That will alert the player to the fact that they exist, then they can make the connection that they might be able to lift the barbell with them, which then becomes 'where do I find some?' In that scenario it would be natural for the player to ask the robot about them specifically, and the robot can then indicate who might have some. The player can then get the locker number from the signup sheet once they get the name
-  - [ ] Also, come up with an actual list of names for the different locker numbers, so the items relate to specific people
+- [x] In this hedonistic 'anything goes' culture steroids probably wouldn't be an illicit thing anymore, so rather than make it a down-low thing put it out front where maybe they even sell them at the juice bar, but it's closed and everybody is dead. That will alert the player to the fact that they exist, then they can make the connection that they might be able to lift the barbell with them, which then becomes 'where do I find some?' In that scenario it would be natural for the player to ask the robot about them specifically, and the robot can then indicate who might have some. The player can then get the locker number from the signup sheet once they get the name
+  - [x] Also, come up with an actual list of names for the different locker numbers, so the items relate to specific people
 
 - [x] Once the agent knew Salk might have insta-roids it started looking for his key everywhere, the key will be moved to the sauna (along with Salk himself)
 
-- [ ] At the minute, solving the treadmill puzzle doesn't buy anything except turning off the treadmill, which doesn't buy anything. There needs to be something here that helps the player progress
-  - [ ]
+- [x] At the minute, solving the treadmill puzzle doesn't buy anything except turning off the treadmill, which doesn't buy anything. There needs to be something here that helps the player progress
 
 - [ ] Now that the player doesn't start with any flashlight, how can they get into the Bar Basement, and what is down there that they need?
 

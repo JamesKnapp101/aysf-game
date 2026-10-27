@@ -1,4 +1,5 @@
 export const INITIAL_CONTAINER_CONTENTS: Record<string, string[]> = {
+  DuffelBag: ["YogaPants", "CropTop", "TeacherId"],
   ReactorSupplyLocker: ["LevelFiveRadiationSuit"],
   ReactorCoolantPanel: ["ReactorCoolantValve", "ReactorCoolantGauge"],
   ThreeWestGimOneEndTable: ["GimOneJournal", "MensLockerKey2"],

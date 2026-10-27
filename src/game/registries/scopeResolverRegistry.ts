@@ -8,6 +8,7 @@ import {
   isHydroponicsSpiderRoom,
   isHydroponicsSpiderVisibleFromRoom,
   matchesAquariumThreatNoun,
+  resolveGymRemoteTote,
 } from "src/world/zoneRegistrations";
 
 type ScopeItemResolverContext = {
@@ -19,6 +20,7 @@ type ScopeItemResolverContext = {
 type ScopeItemResolver = (ctx: ScopeItemResolverContext) => Item | undefined;
 
 const SCOPE_ITEM_RESOLVERS: ScopeItemResolver[] = [
+  ({ noun, state }) => resolveGymRemoteTote(state, noun),
   ({ noun, room, state }) => {
     if (
       !isHydroponicsSpiderRoom(room.id) ||

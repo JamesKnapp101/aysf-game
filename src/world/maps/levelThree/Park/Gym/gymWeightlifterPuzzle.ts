@@ -19,6 +19,33 @@ import {
   GYM_WEIGHTLIFTER_MOVED_TRIGGER,
   GYM_YELLOW_BADGE_ID,
 } from "./gymConstants";
+import { resolveItemByNoun } from "@game/rules/scope";
+import { GYM_LIFTING_MESSAGE, exerciseOnGymMachine } from "./gymWeightMachines";
+
+export function handleGymPinnedWeightCommand(state: GameState, cmd: ParsedCommand) {
+  if (state.player.roomId !== GYM_WEIGHT_ROOM_ID || cmd.type !== "action" || !isGymWeightlifterPinningBadge(state)) return undefined;
+  const noun = (cmd.direct ?? "").replace(/^(?:the|a|an)\s+/, "");
+  const item = resolveItemByNoun(state, noun);
+  if (cmd.verb === "pull" && item?.id === GYM_YELLOW_BADGE_ID) return { state, message: "You get a grip on the corner and pull, but you can't get it to move." };
+  if (cmd.verb === "pull" && item && ["GymWeightRoomCrushedBody", "GymWeightlifterLanyard"].includes(item.id) && typeof item.overrides?.pull === "string") return { state, message: item.overrides.pull };
+  if (["turn", "shut", "switch"].includes(cmd.verb) &&
+      (item?.id === "GymPinnedBarbell" || /^(?:off (?:the )?)?(?:smart )?barbell(?: off)?$/.test(noun)) &&
+      (cmd.preposition === "off" || noun.startsWith("off ") || noun.endsWith(" off"))) {
+    return { state, message: "It's not responding to the controls, I think something damaged it." };
+  }
+  if (cmd.verb === "roll" && /^(?:the )?(?:weights|(?:smart )?barbell)(?: off (?:the )?(?:body|corpse|man))?$/.test(noun)) {
+    return { state, message: "The bar is embedded in about three inches of muscle and rib cage, it's not going anywhere." };
+  }
+  if (["remove", "take"].includes(cmd.verb) && noun === "plates" &&
+      (!cmd.indirect || resolveItemByNoun(state, cmd.indirect)?.id === "GymPinnedBarbell")) {
+    return { state, message: "There aren't any plates, it uses an adjustable gravity field to change the weight, which is unfortunately stuck at 4007 kilograms." };
+  }
+  return undefined;
+}
+
+const trappedBodyResponse = (message: string) => ({ state }: { state: GameState }) => ({
+  state, message: isGymWeightlifterPinningBadge(state) ? message : "You've already retrieved the badge from beneath him.",
+});
 
 type SmartbellSettings = Extract<ItemSettings, { kind: "smartbell" }>;
 export const RIGHT_SMARTBELL_ID = "RightSmartbell";
@@ -222,13 +249,14 @@ export const gymWeightRoomItems: Item[] = [
   },
   {
     id: "GymWeightRoomMachines",
+    isUseable: true,
     name: "weight machines",
     description:
       "The machines are built for serious resistance work, all cable stacks, thick pads, and adjustment levers.",
     sceneryDescription:
       "Various weight machines fill one side of the room, their adjustable seats and cable stacks set at different heights.",
     location: GYM_WEIGHT_ROOM_ID,
-    vocab: ["weight", "weights", "machine", "machines"],
+    vocab: ["machine", "machines", "weight machines"],
     itemClass: "solid",
     itemCategory: "scenery",
     itemWeight: 300,
@@ -236,9 +264,12 @@ export const gymWeightRoomItems: Item[] = [
     meta: {
       sceneryDescriptionOrder: 1,
     },
+    overrides: { use: ({ state, cmd }: { state: GameState; cmd?: ParsedCommand }) =>
+      cmd?.type === "action" && cmd.indirect ? { state, message: "You can't use the weight machines that way." } : exerciseOnGymMachine(state) },
   },
   {
     id: "GymWeightRoomFreeWeights",
+    isUseable: true,
     name: "free weights",
     description:
       "The free weights range from small dumbbells to plates big enough to make your wrists ache just looking at them.",
@@ -260,6 +291,7 @@ export const gymWeightRoomItems: Item[] = [
     meta: {
       sceneryDescriptionOrder: 2,
     },
+    overrides: { use: ({ state }: { state: GameState }) => ({ state, message: GYM_LIFTING_MESSAGE }), lift: GYM_LIFTING_MESSAGE },
   },
   {
     id: "GymWeightRoomMirrors",
@@ -297,11 +329,12 @@ export const gymWeightRoomItems: Item[] = [
   },
   {
     id: "GymWeightRoomCrushedBody",
+    isPushable: true,
     name: "crushed body",
     description:
-      "The man was heavily muscled and rugged-looking, with copper hair and a barely-there black tank top. A barbell stacked with four hundred pounds has crushed his ribcage flat.",
+      "The man was heavily muscled and rugged-looking, with copper hair and a barely-there black tank top. A malfunctioning smart barbell stuck at 4007 kilograms has crushed his ribcage flat.",
     sceneryDescription:
-      "Lying on the floor is the body of a heavily muscled, rugged-looking copper-haired man in a black tank top, camo shorts, and white sneakers. His lifeless eyes bug out at the ceiling as a barbell stacked with four hundred pounds crushes his ribcage.",
+      "Lying on the floor is the body of a heavily muscled, rugged-looking copper-haired man in a black tank top, camo shorts, and white sneakers. His lifeless eyes bug out at the ceiling as a malfunctioning smart barbell stuck at 4007 kilograms crushes his ribcage.",
     location: GYM_WEIGHT_ROOM_ID,
     vocab: [
       "body",
@@ -311,9 +344,6 @@ export const gymWeightRoomItems: Item[] = [
       "hair",
       "weightlifter",
       "lifter",
-      "barbell",
-      "barbel",
-      "weights",
     ],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -327,10 +357,26 @@ export const gymWeightRoomItems: Item[] = [
       sceneryDescriptionOrder: 5,
     },
     overrides: {
-      lift: ({ state }: { state: GameState }) =>
-        liftGymWeightlifterBarbell(state),
-      move: ({ state }: { state: GameState }) =>
-        liftGymWeightlifterBarbell(state),
+      push: trappedBodyResponse("The part you'd need to push looks like it would weigh a ton even if it wasn't pinned under a 4007 kilo barbell."),
+      pull: "You grab an arm and give it a heave but nothing moves an inch.",
+      lift: trappedBodyResponse("It's pinned under that barbell, you're going to have to find a way to move that first."),
+      move: trappedBodyResponse("You'll never move it with that weight pinning it down."),
     },
+  },
+  {
+    id: "GymPinnedBarbell", name: "smart barbell",
+    description: "Its display is cracked and appears to be damaged, registering a weight of 4007 kilograms. The bar has embedded itself in the man's broad chest.",
+    location: GYM_WEIGHT_ROOM_ID, vocab: ["barbell", "barbel", "smart barbell"],
+    itemClass: "solid", itemCategory: "scenery", itemWeight: 4007, itemSize: 10,
+    overrides: {
+      lift: ({ state }: { state: GameState }) => liftGymWeightlifterBarbell(state),
+      move: ({ state }: { state: GameState }) => liftGymWeightlifterBarbell(state),
+    },
+  },
+  {
+    id: "GymWeightlifterLanyard", name: "lanyard", description: "The man's lanyard leads down to the trapped yellow badge.",
+    location: GYM_WEIGHT_ROOM_ID, vocab: ["lanyard"],
+    itemClass: "solid", itemCategory: "scenery", itemWeight: 0, itemSize: 1,
+    overrides: { pull: "You pull the lanyard as hard as you can but you can't get it to budge an inch." },
   },
 ];
