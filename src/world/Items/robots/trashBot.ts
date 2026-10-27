@@ -20,13 +20,13 @@ const PARK_MAINTENANCE_ROOM_ID = "ParkMaintenance";
 const PARK_MAINTENANCE_INTERIOR_ROOM_ID = "ParkMaintenanceInterior";
 const TRASH_BOT_MAINTENANCE_TRIGGER_ID = "TrashBotMaintenanceDoorOpen";
 const TRASH_BOT_BIN_FULL_THRESHOLD = 3;
+const TRASH_BOT_MAX_ITEM_SIZE = 5;
 
 const TRASH_BOT_BIN_FULL_ANNOUNCEMENT =
   '"Trash collection bin full. Initiating bin emptying sequence."';
 const TRASH_BOT_HIDDEN_DOOR_OPEN_TEXT =
-  "With a soft mechanical whir, a hidden panel slides open, revealing a narrow passage into the concrete structure.";
-const TRASH_BOT_HIDDEN_DOOR_CLOSE_TEXT =
-  "The hidden panel slides shut again.";
+  "With a soft mechanical whir, a hidden panel slides open, revealing a narrow passage into the concrete structure. If you hurry, you can probably sneak in behind it before it shuts.";
+const TRASH_BOT_HIDDEN_DOOR_CLOSE_TEXT = "The hidden panel slides shut again.";
 
 function oppositeDir(dir: string): string {
   switch (dir) {
@@ -79,10 +79,7 @@ function setTrashBotState(
   };
 }
 
-function setMaintenanceDoorOpen(
-  state: GameState,
-  isOpen: boolean,
-): GameState {
+function setMaintenanceDoorOpen(state: GameState, isOpen: boolean): GameState {
   return {
     ...state,
     worldState: {
@@ -109,7 +106,9 @@ function getDirectionBetweenRooms(
   fromRoomId: string,
   toRoomId: string,
 ): string | undefined {
-  const room = state.world.rooms.find((candidate) => candidate.id === fromRoomId);
+  const room = state.world.rooms.find(
+    (candidate) => candidate.id === fromRoomId,
+  );
   if (!room) return undefined;
 
   return room.exits.find((exit) => {
@@ -118,10 +117,7 @@ function getDirectionBetweenRooms(
   })?.direction;
 }
 
-function moveTrashBotToRoom(
-  state: GameState,
-  roomId: string,
-): GameState {
+function moveTrashBotToRoom(state: GameState, roomId: string): GameState {
   const moved = relocateItemToRoom(state, TRASH_BOT_ID, roomId);
   const movedIds = new Set([TRASH_BOT_ID, TRASH_BOT_BIN_ID]);
 
@@ -137,7 +133,9 @@ function moveTrashBotToRoom(
 }
 
 function getTrashBotBinContents(state: GameState): Item[] {
-  const bin = state.world.items.find((candidate) => candidate.id === TRASH_BOT_BIN_ID);
+  const bin = state.world.items.find(
+    (candidate) => candidate.id === TRASH_BOT_BIN_ID,
+  );
   if (!bin) return [];
   return getContainerContentsItems(state, bin);
 }
@@ -164,6 +162,7 @@ function collectTrashInRoom(state: GameState, roomId: string) {
       return false;
     }
     if (candidate.itemCategory !== "collectable") return false;
+    if (candidate.itemSize > TRASH_BOT_MAX_ITEM_SIZE) return false;
     if (candidate.id === "PowerStationKey" && !canCollectPowerKey) return false;
     return true;
   });
@@ -171,6 +170,15 @@ function collectTrashInRoom(state: GameState, roomId: string) {
   let next = state;
   for (const candidate of collectableItems) {
     next = stashItemInContainer(next, candidate.id, TRASH_BOT_BIN_ID);
+  }
+
+  if (roomId === state.player.roomId && collectableItems.length > 0) {
+    next = appendLog(
+      next,
+      `The trashbot's brushes whisk ${formatNameList(
+        collectableItems.map((candidate) => candidate.name),
+      )} into its wire bin.`,
+    );
   }
 
   return { state: next, collected: collectableItems };
@@ -187,7 +195,9 @@ function getReachableHomeExits(
       exit,
       toRoomId: getExitDestinationRoomId(state, currentRoomId, exit),
     }))
-    .filter((entry): entry is { exit: Exit; toRoomId: string } => !!entry.toRoomId)
+    .filter(
+      (entry): entry is { exit: Exit; toRoomId: string } => !!entry.toRoomId,
+    )
     .filter(({ toRoomId }) => home.has(toRoomId));
 }
 
@@ -208,7 +218,12 @@ function getNextStepTowardRoom(
 
   while (queue.length > 0) {
     const current = queue.shift()!;
-    const exits = getReachableHomeExits(state, current.roomId, home, getRoomExits);
+    const exits = getReachableHomeExits(
+      state,
+      current.roomId,
+      home,
+      getRoomExits,
+    );
 
     for (const step of exits) {
       if (visited.has(step.toRoomId)) continue;
@@ -238,8 +253,7 @@ function logTravel(
   const playerRoomId = state.player.roomId;
   const latestMove = state.player.recentMoves?.[0];
   const playerMovedThisTurn =
-    latestMove?.atTurn === state.moves &&
-    latestMove.toRoomId === playerRoomId;
+    latestMove?.atTurn === state.moves && latestMove.toRoomId === playerRoomId;
   const playerHereAtStart = currentRoomId === playerRoomId;
   const playerHereAtEnd = destRoomId === playerRoomId;
   const isPassBy =
@@ -279,7 +293,11 @@ function logNearbyFromDestination(
     return state;
   }
 
-  const dirFromPlayer = getDirectionBetweenRooms(state, playerRoomId, destRoomId);
+  const dirFromPlayer = getDirectionBetweenRooms(
+    state,
+    playerRoomId,
+    destRoomId,
+  );
   if (!dirFromPlayer) return state;
   const readableDir =
     dirFromPlayer === "out"
@@ -338,7 +356,18 @@ function tickTrashBot({
   let next = state;
   let mode = getTrashBotMode(next);
 
-  if (mode === "wandering" && getTrashBotBinContents(next).length >= TRASH_BOT_BIN_FULL_THRESHOLD) {
+  // Sweep before cooldown or movement so a dropped item gets an immediate response.
+  if (
+    homeRooms.has(currentRoomId) &&
+    (mode === "wandering" || mode === "returning_to_maintenance")
+  ) {
+    next = collectTrashInRoom(next, currentRoomId).state;
+  }
+
+  if (
+    mode === "wandering" &&
+    getTrashBotBinContents(next).length >= TRASH_BOT_BIN_FULL_THRESHOLD
+  ) {
     next = beginMaintenanceRun(next, currentRoomId);
     mode = getTrashBotMode(next);
     if (mode === "door_open_for_entry") {
@@ -346,7 +375,10 @@ function tickTrashBot({
     }
   }
 
-  if (mode === "wandering" && (next.worldState.trashBot?.cooldownTurns ?? 0) > 0) {
+  if (
+    mode === "wandering" &&
+    (next.worldState.trashBot?.cooldownTurns ?? 0) > 0
+  ) {
     return {
       ...next,
       worldState: {
@@ -471,7 +503,12 @@ function tickTrashBot({
       getRoomExits,
     );
   } else {
-    const exits = getReachableHomeExits(next, currentRoomId, homeRooms, getRoomExits);
+    const exits = getReachableHomeExits(
+      next,
+      currentRoomId,
+      homeRooms,
+      getRoomExits,
+    );
     if (exits.length > 0) {
       chosen = exits[Math.floor(rng() * exits.length)];
     }
@@ -489,14 +526,7 @@ function tickTrashBot({
     const collected = collectTrashInRoom(next, destRoomId);
     next = collected.state;
 
-    if (playerHereAtEnd && collected.collected.length > 0) {
-      next = appendLog(
-        next,
-        `The trashbot's brushes whisk ${formatNameList(
-          collected.collected.map((candidate) => candidate.name),
-        )} into its wire bin.`,
-      );
-    } else {
+    if (!playerHereAtEnd || collected.collected.length === 0) {
       next = logNearbyFromDestination(next, currentRoomId, destRoomId);
     }
 
@@ -524,7 +554,10 @@ function tickTrashBot({
     next = logNearbyFromDestination(next, currentRoomId, destRoomId);
   }
 
-  if (mode === "returning_to_maintenance" && destRoomId === PARK_MAINTENANCE_ROOM_ID) {
+  if (
+    mode === "returning_to_maintenance" &&
+    destRoomId === PARK_MAINTENANCE_ROOM_ID
+  ) {
     next = setMaintenanceDoorOpen(next, true);
     next = setTrashBotState(next, { mode: "door_open_for_entry" });
     return logIfPlayerInRooms(
@@ -613,6 +646,8 @@ export const trashBotItems: Item[] = [
         "You can see through the wire mesh, but you can't get at anything inside the trash bot's bin.",
     },
     overrides: {
+      insert: () =>
+        "You can't put anything directly into the trash bot's wire bin.",
       open: "The wire bin is fixed to the trashbot, and there's no obvious way to open it.",
     },
   },

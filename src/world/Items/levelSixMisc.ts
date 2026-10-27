@@ -51,6 +51,28 @@ export const levelSixItems: Item[] = [
     },
   },
   {
+    // A corridor view only; the real teleport pad stays in Hydroponics.
+    id: "LevelSixCorridorEndDiskView",
+    name: "glassy green disk",
+    description:
+      "The smooth, glassy green disk lies on the floor beyond the damaged door. It's big enough to stand on, but beyond your reach from the corridor.",
+    location: "LevelSixCorridorEnd",
+    vocab: ["disk", "green", "green disk", "glassy green disk", "pad"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 0,
+    itemSize: 100,
+    describe: (state, item) =>
+      item.description +
+      (state.worldState.powerRestoredSections["teleport-pads-green"]
+        ? " It is lit with a sallow green glow."
+        : ""),
+    overrides: {
+      take: "The disk is beyond your reach on the other side of the damaged door.",
+      touch: "The disk is beyond your reach on the other side of the damaged door.",
+    },
+  },
+  {
     id: "LevelSixStairRailing",
     name: "metal railing",
     description:

@@ -462,7 +462,7 @@ export const createInitialState = (world: World): GameState => {
         menLocker5: ["IResign"],
         menLocker6: ["LottoTicket"],
         menLocker7: [],
-        menLocker8: [],
+        menLocker8: ["Bitterchew"],
         menLocker9: [],
         menLocker10: [],
         menLocker11: [],

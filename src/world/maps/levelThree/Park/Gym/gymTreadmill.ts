@@ -2,12 +2,12 @@ import { applyPlayerDamage } from "@game/rules/damage";
 import type { GameState } from "@game/types/gameTypes";
 import type { Item } from "@game/types/itemTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
-import { isGymExerciseBallInRack } from "./gymExerciseBall";
 import {
   GYM_ROOM_ID,
   GYM_SPIN_STAGE_ROOM_ID,
   GYM_TREADMILL_ID,
 } from "./gymConstants";
+import { isGymExerciseBallInRack } from "./gymExerciseBall";
 
 export { SPIN_STAGE_SPEED_DIAL_PASSWORD } from "./gymConstants";
 
@@ -256,7 +256,7 @@ export function resolveGymTreadmillMovement(
     return {
       kind: "block",
       state: applyPlayerDamage(state, 5),
-      message: `${launchStart} With the treadmill angled downward like it is, you fall forward and slam down on your chest, only to be launched through the air! You fly weightless for a moment only to The downward slope sends you into the air across the room, straight into the empty wire bin.`,
+      message: `${launchStart} With the treadmill angled downward like it is, you fall forward and slam down on your chest, only to be launched through the air! You fly weightless for a moment only to The downward slope sends you into the air across the room, straight into the empty wire bin!`,
     };
   }
 

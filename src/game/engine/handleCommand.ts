@@ -70,6 +70,14 @@ const DEVELOPER_MODE_ITEM_IDS = [
   "flashlight",
   "AllPurposeAdhesive",
   "PowerStationKey",
+  "MensLockerKey2",
+  "MensLockerKey4",
+  "MensLockerKey5",
+  "MensLockerKey8",
+  "MensLockerKey9",
+  "MensLockerKey11",
+  "WomensLockerKey12",
+  "WomensLockerKey13",
 ] as const;
 
 function moveItemIntoPlayerInventory(

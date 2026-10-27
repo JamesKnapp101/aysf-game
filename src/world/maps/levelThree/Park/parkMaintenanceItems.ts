@@ -21,6 +21,18 @@ export const parkMaintenanceItems: Item[] = [
     readableText: "Park Maintenance",
   },
   {
+    id: "ParkMaintenanceConcreteStructure",
+    name: "hidden panel",
+    description:
+      "If you strain your eyes you can make out the barest hint of the outline of a panel or doorway, but that's it.",
+    location: "ParkMaintenance",
+    vocab: ["hidden", "panel", "doorway"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 300,
+    itemSize: 10,
+  },
+  {
     id: "ParkMaintenanceMovieTheaterView",
     name: "movie theater front",
     description:
@@ -146,14 +158,7 @@ export const parkMaintenanceItems: Item[] = [
     sceneryDescription:
       "From there, a series of robotic arms on an overhead runner would sort the trash into the different bins; organic waste, e-waste, paper waste, metal and glass waste, plastic waste, biological waste, and toxic waste, but the sorting mechanism is powered down at the moment.",
     location: "ParkMaintenanceInterior",
-    vocab: [
-      "arms",
-      "robotic",
-      "runner",
-      "sorting",
-      "mechanism",
-      "sorter",
-    ],
+    vocab: ["arms", "robotic", "runner", "sorting", "mechanism", "sorter"],
     itemClass: "solid",
     itemCategory: "scenery",
     meta: {

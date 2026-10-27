@@ -74,6 +74,23 @@ export const levelThreeItems: Item[] = [
     },
   },
   {
+    id: "MensLockerKey8",
+    name: "blue locker key, labeled '8'",
+    description:
+      "It's a small key with a blue rubber grip. The grip has the number '8' pressed into it.",
+    location: "seeded",
+    vocab: ["key", "locker key", "eight", "8"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      lockerType: "men",
+      lockerIndex: 8,
+      kind: "key",
+    },
+  },
+  {
     id: "WomensLockerKey12",
     name: "white locker key, labeled '12'",
     description:
@@ -87,6 +104,23 @@ export const levelThreeItems: Item[] = [
     meta: {
       lockerType: "women",
       lockerIndex: 12,
+      kind: "key",
+    },
+  },
+  {
+    id: "WomensLockerKey13",
+    name: "white locker key, labeled '13'",
+    description:
+      "It's a small key with a white rubber grip. The grip has the number '13' pressed into it.",
+    location: "seeded",
+    vocab: ["key", "locker key", "thirteen", "13"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 1,
+    itemSize: 1,
+    meta: {
+      lockerType: "women",
+      lockerIndex: 13,
       kind: "key",
     },
   },

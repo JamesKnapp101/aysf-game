@@ -19,7 +19,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] Give the old man robe responses for examine, take, etc.
 
-- [ ] At the CorridorEnd on Level Six the green disk is visible through the gap, but when the agent examined the disk the response was 'you don't see that here' so some scope issue
+- [x] At the CorridorEnd on Level Six the green disk is visible through the gap, but when the agent examined the disk the response was 'you don't see that here' so some scope issue
 
 - [x] At the CorridorEnd the headless corpse is described as wearing a robe but when the agent tried to search the robe the response was 'you don't see that here'
 
@@ -47,13 +47,13 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] It references a massage table in the nail salon but 'sit on massage table' returns 'You don't see that here'
 
-- [ ] In the park after the trashbot enters the maintenance depot through the 'hidden panel' using 'examine panel' returns 'you don't see that here'
+- [x] In the park after the trashbot enters the maintenance depot through the 'hidden panel' using 'examine panel' returns 'you don't see that here'
 
 ## Existing puzzle correctness
 
 - [x] I forgot and left all the teleport rings active while testing, set those back to inactive until the player reactivates them in the power station terminal
 
-- [ ] Debug the trashbot/key puzzle, in each run the agent thinks to drop an item to see if trashbot sweeps it up, one even noting that doing so might make it go empty the bin, so the logic seems fine. When it dropped things though the trashbot never swept them up. They always ended up solving the puzzle by using 'put \<item> in bin' which shouldn't work, but does (it does correctly trigger the emptying sequence)
+- [x] Debug the trashbot/key puzzle, in each run the agent thinks to drop an item to see if trashbot sweeps it up, one even noting that doing so might make it go empty the bin, so the logic seems fine. When it dropped things though the trashbot never swept them up. They always ended up solving the puzzle by using 'put \<item> in bin' which shouldn't work, but does (it does correctly trigger the emptying sequence)
 
 - [ ] In the Cardio Room, the agent tried different variations of 'put ball on treadmill', 'throw ball on treadmill', 'throw ball west', 'roll ball west' etc. with a stated reason of 'Experiment', and this is a reasonable thing a person might try, to see if it makes the ball go shooting off. It's a good idea to add support for that because it can also provide clues by shooting the ball off at different angles depending on the treadmill angle, and shooting it in the direction of the wire bin. Though bear in mind that the agent solved this puzzle on its own even without the clues.
 
