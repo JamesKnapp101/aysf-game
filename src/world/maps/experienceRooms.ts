@@ -61,6 +61,41 @@ export const experienceRooms: Room[] = [
       "You're standing in the spa's steam room which is filled with a wet, heavy heat. Clouds of steam drift across slick white tile near the base of the tiered seating, where two figures sit.",
     exits: [],
   },
+  {
+    id: "OldWomanCorpseMemory",
+    name: "Memory: Park South",
+    description:
+      "You're standing in the southern section of the park near a wooden park bench. Paths lead northwest and northeast from here and you can see the stone obelisk off to the north.",
+    exits: [],
+  },
+  {
+    id: "OldWomanCorpseMemory",
+    name: "Memory: Park South",
+    description:
+      "You're standing in the southern section of the park near a wooden park bench. Paths lead northwest and northeast from here and you can see the stone obelisk off to the north.",
+    exits: [],
+  },
+  {
+    id: "OldManStairBottomMemory",
+    name: "Memory: Stairwell Bottom",
+    description:
+      "You're standing at the bottom of a long stairwell that extends up into the gloom above you. Boxes that look like they haven't moved in a long time are stacked underneath the stairwell.",
+    exits: [],
+  },
+  {
+    id: "StairSixBodyMemory",
+    name: "Memory: Stair Six",
+    description:
+      "You're standing in a long stairwell that extends into the gloom both up and down.",
+    exits: [],
+  },
+  {
+    id: "StairOneBodyMemory",
+    name: "Memory: Stair One",
+    description:
+      "You're standing at the top a long stairwell that extends down into the gloom.",
+    exits: [],
+  },
 ];
 
 export const experienceRoomsItems: Item[] = [

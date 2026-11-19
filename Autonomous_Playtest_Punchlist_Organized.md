@@ -67,7 +67,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [ ] In the Onche residence, instead of just background flavor, make the whiteboard, notes, and model all clues that together sketch out a way to reroute the Ozone generator from the water treatment plant to flood the ship's ventilation systems in order to eradicate the organism. Make at least some of the clues loggable. Onche of course died before she could ever implement any of it.
 
-- [ ] Add an NPC memory for Jolson Dend on Stair Six. Since he works in the 3D printing facility, have him carrying a cartridge of atums, and give the memory some connection where maybe he considers returning to the printing facility to print a tool that might help, but decides that to do that he'd need to get a space suit from [location] since it's above the cargo bay which has been depressurized due to a breach. Have him also reference that the elevators in the cargo bay have no power, but the gravity is out as well, so the facility is still accessible. Have him give a clue as to where he could find a space suit.
+- [x] Add an NPC memory for Jolson Dend on Stair Six. Since he works in the 3D printing facility, have him carrying a cartridge of atums, and give the memory some connection where maybe he considers returning to the printing facility to print a tool that might help, but decides that to do that he'd need to get a space suit from [location] since it's above the cargo bay which has been depressurized due to a breach. Have him also reference that the elevators in the cargo bay have no power, but the gravity is out as well, so the facility is still accessible. Have him give a clue as to where he could find a space suit.
 
 - [ ] The space suit currently isn't placed anywhere, so this is a good time to decide where it will go
 
@@ -124,9 +124,9 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] For Umboltz residence, the living quarters door has a reference to '3ew' that is stale
 
-- [ ] There's a body up on Stair One that is wearing a uniform, either get rid of it entirely, or else add maybe a body with a blowtorch who'd been trying to cut through the door with no success. Give them a DNA profile, and a memory to watch as they frantically attempt to reason with the 'Mayor' to let them in, which the AI refuses to do as not to expose the AI's workings to the foreign organism
+- [x] There's a body up on Stair One that is wearing a uniform, either get rid of it entirely, or else add maybe a body with a blowtorch who'd been trying to cut through the door with no success. Give them a DNA profile, and a memory to watch as they frantically attempt to reason with the 'Mayor' to let them in, which the AI refuses to do as not to expose the AI's workings to the foreign organism
 
-- [ ] Give the old man at the Stairwell Bottom a dna profile, and also an NPC profile memory that plays out as he scrambles down the stairwell to hide at the bottom. As this happens, his memories give clues along the lines of 'can't get caught', 'humanity's only chance', 'history will vindicate me'
+- [x] Give the old man at the Stairwell Bottom a dna profile, and also an NPC profile memory that plays out as he scrambles down the stairwell to hide at the bottom. As this happens, his memories give clues along the lines of 'can't get caught', 'humanity's only chance', 'history will vindicate me'
 
 - [ ] Right now on the clones message machine, Umboltz leaves a message about the warehouse between their units, but I've since moved all the units around. For this to match, the message should be left on Onche's machine, from Mox himself.
 
@@ -150,7 +150,7 @@ Original item wording retained. Items are grouped by their primary workstream; n
 
 - [x] In the Kitchen the description mentions a 'large padlocked steel door' which was meant to be the walk in freezer, but I decided to leave it unlocked and it has a scenery description of its own so remove the reference in the room description
 
-- [ ] Add the old woman corpse to the park bench, give her a dna profile, and an NPC profile
+- [x] Add the old woman corpse to the park bench, give her a dna profile, and an NPC profile
 
 - [ ] In the Bar the window is described as being covered in fliers, but 'examine fliers' just gives the window description again, which isn't the end of the world, but it's an opportunity to come up with some funny flier events
 

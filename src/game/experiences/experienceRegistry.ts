@@ -76,7 +76,8 @@ const STEAM_ROOM_MEMORY_ROOM_ID = "SteamRoomMemory";
 const STEAM_ROOM_COVERUP_GOSSIP: JuicyTopic = {
   id: "steam room coverup",
   title: "Powerful people welcomed the change",
-  summary: "In a steam-room memory, Rhim said her father discovered powerful people were letting the transformation happen because they thought the change was good.",
+  summary:
+    "In a steam-room memory, Rhim said her father discovered powerful people were letting the transformation happen because they thought the change was good.",
   tags: ["steam room", "cover-up"],
   type: "gossip",
 };
@@ -87,6 +88,24 @@ const NURSERY_MISHAP_GOSSIP: JuicyTopic = {
   summary:
     "Lil-Lilly Tendwick apparently set the water temperature incorrectly at the aquarium's octopus nursery, with unfortunate results.",
   tags: [],
+  type: "gossip",
+};
+
+const OLD_MAN_WITH_TIMER_GOSSIP: JuicyTopic = {
+  id: "bombing",
+  title: "Drastic Measures",
+  summary:
+    "In the memory of an old man named Ench Swinth he hid underneath the stairwell and ranted about taking 'drastic measures' in order to prevent his colleagues from doing something.",
+  tags: ["drastic measures"],
+  type: "gossip",
+};
+
+const OLD_WOMAN_GOSSIP: JuicyTopic = {
+  id: "choices",
+  title: "Apart at the End",
+  summary:
+    "In the memory of an old woman named Edtrith Swinth she was stood up by her husband when asked to meet her at a meaningful spot.",
+  tags: ["choices"],
   type: "gossip",
 };
 
@@ -442,6 +461,122 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
       },
     ],
     startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe steam room peels away as the memory takes hold...`,
+  },
+  old_man_stair_bottom_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The bottom of the stairwell snaps back into place around you.",
+    completeMessage: `"Someone had to do it," the old man hisses, more insistent, as if he were trying to convince someone. He stares at the empty air. "They'll understand. She'll understand...she'll..."\n\nHis voice chokes off as his eyes widen and his face begins to turn dark. He clutches the timer to his chest, to his heart, as he makes a desperate gasp for air, and the scene flickers away into nothing.`,
+    id: "old_man_stair_bottom_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 2,
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "rantings-one",
+            message: `"There's no other option," the old man says to himself, his voice a shaky whisper. "There's no other option. There's just no other option..."\n\nHe clutches himself, face contorting as he shakes his head back and forth.\n\n"It can't happen, I can't let it happen," he says. "No matter what it costs..."`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "rantings-two",
+            overheardTea: [OLD_MAN_WITH_TIMER_GOSSIP],
+            message: `"It's them, or everybody on the ship," he says to himself in a hushed voice, steeling himself. "It's them, or everybody, it doesn't matter who they are, it doesn't matter if you know them, they're going to be the end of us, millions of people, it can't happen, there's no other option, there's no more time, you have to stop them, you have to do it..."`,
+          },
+        ],
+        roomId: "OldManStairBottomMemory",
+      },
+    ],
+    startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe stairwell bottom peels away as the memory takes hold...`,
+  },
+  old_woman_park_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The sights and smells of the park snap back into place around you.",
+    completeMessage: `"I trust you know what you're doing," she whispers, folding her hands, and bowing her head.`,
+    id: "old_woman_park_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 3,
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "meeting-one",
+            message: `The old woman arrives at the park bench, and when she sees it empty she lets out an anxious sigh. She approaches the bench, casting glances about as if she's looking for somebody..."`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "meeting-two",
+            message: `When the old woman gets closer to the bench she sees a piece of paper resting on it, held down with a small stone.\n\nShe removes the stone and tosses it aside then picks up the paper which has writing on one side, turning it over so she can see."`,
+          },
+          {
+            atElapsedTurns: 3,
+            id: "meeting-three",
+            overheardTea: [OLD_WOMAN_GOSSIP],
+            message: `When she sees the handwriting, which she recognizes as her own, her face falls. She realizes her husband isn't coming. He'd gotten her message, she held the proof of it in her hands, his leaving it on the bench for her to find had been his response. Whatever he was mixed up in, he'd chosen it over her.`,
+          },
+        ],
+        roomId: "OldWomanCorpseMemory",
+      },
+    ],
+    startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe park warps, then peels away as the memory takes hold...`,
+  },
+  joelson_dend_stairwell_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The stairwell snaps back into place around you.",
+    completeMessage: `"I should probably go to the-"\n\nThe man jumps as there is a loud snap and the stairwell lights on the floors above him suddenly go out. He looks upward and sees only darkness, then begins to head down instead when there's another loud snap and the rest of the lights go out.\n\n"What was that?" the man asks, his voice dry. "Who's there?"\n\nSomething large comes moving down the stairwell from above, then. You can't see it, but you hear it grab the man, who lets out a howling scream as the memory scatters.`,
+    id: "joelson_dend_stairwell_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 3,
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "3d-printer-one",
+            message: `The man heads down the stairs at a quick clip, talking to himself under his breath.\n\n"3D Printing still has power, all I need to do is collect enough atum and get there..."`,
+          },
+          {
+            atElapsedTurns: 2,
+            id: "3d-printer-two",
+            message: `The man stops halfway down the steps, and curses under his breath.\n\n"Cargo bay's got no power," he mutters. "The elevator's down, how the hell am I supposed to get the 3D Printing?"`,
+          },
+          {
+            atElapsedTurns: 3,
+            id: "3d-printer-three",
+            message: `The man smacks his forehead.\n\n"Gravity's out in the cargo bay, too," he says to himself. "I can get up to the printing facility that way."\n\nHe starts down the stairs again.`,
+          },
+          {
+            atElapsedTurns: 4,
+            id: "3d-printer-four",
+            message: `The man stops again at the landing, and curses under his breath again.\n\n"Cargo's got no power, no gravity, and it's depressurized, idiot. Damn it! I'll need a space suit..."`,
+          },
+        ],
+        roomId: "StairSixBodyMemory",
+      },
+    ],
+    startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe stairwell warps, then peels away as the memory takes hold...`,
+  },
+  technician_stair_one_memory: {
+    abortMessage:
+      "You seize the edge of the memory and pull yourself free. The stairwell snaps back into place around you.",
+    completeMessage: `"I should probably go to the-"\n\nThe man jumps as there is a loud snap and the stairwell lights on the floors above him suddenly go out. He looks upward and sees only darkness, then begins to head down instead when there's another loud snap and the rest of the lights go out.\n\n"What was that?" the man asks, his voice dry. "Who's there?"\n\nSomething large comes moving down the stairwell from above, then. You can't see it, but you hear it grab the man, who lets out a howling scream as the memory scatters.`,
+    id: "technician_stair_one_memory",
+    kind: "memory",
+    stages: [
+      {
+        durationTurns: 1,
+        events: [
+          {
+            atElapsedTurns: 1,
+            id: "frantic-one",
+            message: `The man stops again at the landing, and curses under his breath again.\n\n"Cargo's got no power, no gravity, and it's depressurized, idiot. Damn it! I'll need a space suit..."`,
+          },
+        ],
+        roomId: "StairOneBodyMemory",
+      },
+    ],
+    startMessage: `As the barrel drifts to the head the device emits a beep, then a tiny voice.\n\n"Subject deceased, extractor activated. Initiate tissue sample liquification..."\n\nA translucent beam flares from the scanner, making the skull light up from the inside like a flashbulb and leaving a lingering, eggy smell in the air.\n\n"Viable topology found. Reconstructing memory..."\n\nThe stairwell warps, then peels away as the memory takes hold...`,
   },
 };
 

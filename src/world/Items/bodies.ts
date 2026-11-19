@@ -63,6 +63,12 @@ export const corpseItems: Item[] = [
     itemCategory: "scenery",
     itemWeight: 180,
     itemSize: 5,
+    meta: {
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "old_man_stair_bottom_memory",
+      },
+    },
     overrides: {
       examine: ({ state }: { state: GameState }) =>
         examineUnderStairwellDeadMan(state),
@@ -842,15 +848,22 @@ export const corpseItems: Item[] = [
 
   {
     id: "StairSixBody",
-    name: "dead soldier",
+    name: "dead guy",
     description:
       "His eyes are widened even in death, pupils dilated into black pools ringed with hazel. It's hard to interpret those eyes, if it's fear alone in them or something else, but the look is frozen on his face. On closer examination you see some ulceration of the skin creeping up from the V in his shirt, and when you lift the fabric for a better look it peels away in silky strands. Beneath the material you see that while his basic shape is intact, the skin is pocked with deep holes that merge together into soft honeycomb patterns. What could have caused it?",
     sceneryDescription:
       "A young man lies on his back in the middle of the landing, lifeless eyes gazing up the stairwell. He looks to have been no older than twenty, fit, and healthy looking but his mouth is frozen open and he's as still as a stone. He's dressed in a blue collared short-sleeve shirt and a pair of khaki pants, the tips of his leather shoes pointing in opposite directions.",
     location: "StairSix",
-    vocab: ["dead", "body", "corpse", "young", "man"],
+    vocab: ["dead", "body", "corpse", "young", "man", "joelson", "dend"],
     itemClass: "solid",
     itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "joelson_dend_stairwell_memory",
+      },
+    },
     itemWeight: 75,
     itemSize: 9,
     isWearable: false,
@@ -859,25 +872,31 @@ export const corpseItems: Item[] = [
     isContagious: true,
   },
 
-  // {
-  //   id: "StairOneBody",
-  //   name: "corpse",
-  //   description:
-  //     "The woman is long past saving—cold and rigid to the touch. Brushing her hair aside reveals red speckling around the corners of her eyes and mouth, as if countless tiny blood vessels had burst. Her tongue is so swollen it forces her lips apart slightly.",
-  //   initialDescription: undefined,
-  //   sceneryDescription:
-  //     "A woman lies on the stairs, skin gone still and cold, hair half-hiding a face marked with fine red speckling.",
-  //   location: "StairOne",
-  //   vocab: ["body", "corpse", "woman"],
-  //   itemClass: "solid",
-  //   itemCategory: "scenery",
-  //   itemWeight: 60,
-  //   itemSize: 7,
-  //   isWearable: false,
-  //   isReadable: false,
-  //   isContainer: false,
-  //   isContagious: true,
-  // },
+  {
+    id: "StairOneBody",
+    name: "corpse",
+    description: "The man has soot on his face and hands .",
+    initialDescription: undefined,
+    sceneryDescription:
+      "The body of a man wearing a technician's flight suit lay face down on the floor in front of the door, his entire back caved into his body and still gripping a blowtorch in one hand. The panel around the door's badge reader is heavily scored with soot and there's a horizontal cut underneath it but that's as far as he got.",
+    location: "StairOne",
+    vocab: ["body", "corpse", "man", "technician", "back"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    meta: {
+      sceneryDescriptionOrder: 4,
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "technician_stair_one_memory",
+      },
+    },
+    itemWeight: 60,
+    itemSize: 7,
+    isWearable: false,
+    isReadable: false,
+    isContainer: false,
+    isContagious: true,
+  },
 
   // Dead other self / gorilla -----------------------------------------------
   {

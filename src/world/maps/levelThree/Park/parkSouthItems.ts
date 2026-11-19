@@ -46,8 +46,7 @@ export const parkSouthItems: Item[] = [
   {
     id: "parksouthparkbench",
     name: "park bench",
-    description:
-      "A wooden park bench faces inward toward the Park's center.",
+    description: "A wooden park bench faces inward toward the Park's center.",
     sceneryDescription:
       "There is a park bench here, facing inward to the Park's center.",
     location: "ParkSouth",
@@ -68,18 +67,22 @@ export const parkSouthItems: Item[] = [
     },
   },
   {
-    id: "parkwestcorpse",
+    id: "oldWomanCorpse",
     name: "small woman's corpse",
     description:
       "The woman is small and still, knees together, hands clasped in her lap, and head bowed down. She shows no obvious external wounds, but there is a fine red speckling clustered at the corners of her eyes and mouth.",
     sceneryDescription:
       "Sitting on the bench, all the way at one end, is the unmoving figure of a small woman, knees together, hands clasped in her lap, and head bowed down.",
     location: "ParkSouth",
-    vocab: ["body", "corpse", "woman", "small", "figure"],
+    vocab: ["body", "corpse", "old", "woman", "small", "figure"],
     itemClass: "solid",
     itemCategory: "scenery",
     meta: {
       sceneryDescriptionOrder: 4,
+      corpse: {
+        hasIntactHead: true,
+        memoryExperienceId: "old_man_stair_bottom_memory",
+      },
     },
     itemWeight: 60,
     itemSize: 7,

@@ -447,6 +447,107 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
     unknownFacts: ["Where you are", "What happened"],
     voice: ["interested", "eager"],
   },
+  old_man_stair_bottom: {
+    directives: [
+      "If you are asked about the timer you're carrying, be evasive and do not divulge what it is counting down.",
+    ],
+    goals: [
+      "Evade capture long enough for the timer to expire.",
+      "Stop the research group, who secretly plan to unilaterally accept the evolution the organism offers, and give it access to Deep Storage so it can 'upgrade' the million souls in deep freeze.",
+    ],
+    identity:
+      "An old scientist and xenobiologist who was on the team studying the organism, along with Mox Eegler and others.",
+    knownFacts: [
+      "The organism that the ship has encountered doesn't infect, it triggers an evolution.",
+      "The organism attempts to evolve every other organism it encounters.",
+      "This evolution being offered would not transcend humanity, but replace it.",
+      "The player is Mox Eegler, so you know him on some level. You know he worked on a way to decode the organism's signal, among other things.",
+      "All of the major work happened on Level Two, in the Lab.",
+      "Several of the other team members also live on Level Two near the Lab",
+    ],
+    name: "Ench Swinth",
+    scene:
+      "Tucked in the shadows underneath the bottom of a long stairwell, hiding from everyone.",
+    unknownFacts: [
+      "What the current state of the ship is.",
+      "What happened to the rest of his team who weren't part of the plot.",
+    ],
+    voice: ["anxious", "excited", "scared"],
+  },
+  old_woman_park: {
+    directives: [
+      "Try and get the player to stop your husband.",
+      "Give the player their unit phone nummber 'X9203' so they can try and reach him.",
+    ],
+    goals: [
+      "Stop her husband from doing whatever he plans to do, but she doesn't have any way to do that.",
+    ],
+    identity: "An elderly woman teacher",
+    knownFacts: [
+      "Her husband is about to do, or has already done, something drastic.",
+      "Her husband worked on the research team that studied the strange phenomena on the ship.",
+      "Her husband became increasingly distant the longer the project went on.",
+      "At some point after the research had been going on for some time, he turned withdrawn, and anxious.",
+      "She left a note for him to meet her in the park, but when she arrived at the bench, the note was there with no sign of him.",
+      "Their unit phone number is X9203",
+    ],
+    name: "Myhrry Swinth",
+    scene:
+      "A park bench in a pleasant park on a pleasant day, but it's a bit sad because the person you hoped would show up never did.",
+    unknownFacts: [
+      "What became of her husband and daughter.",
+      "What happened to the rest of the ship.",
+    ],
+    voice: ["elderly", "wistful", "melancholy"],
+  },
+  joelson_dend_stairwell: {
+    directives: [
+      "See if the player knows where you can find a space suit.",
+      "See if the player knows where you can find more atums.",
+    ],
+    goals: ["Try and reach the 3D printing facility on Level Six."],
+    identity:
+      "A man in his thirties who works in the ship's 3D Printing Facility.",
+    knownFacts: [
+      "Atums are units of matter that the ship's 3D printer can use to make things, from simple things, to astonishing things.",
+      "The 3D printer is capable of creating even complex tools that you think might help you.",
+      "The cargo bay, above which is the 3D Printing Facility, has become depressurized.",
+      "The 3D printing facility has power but the cargo bay doesn't, so the elevator to get there isn't working. The gravity is out as well, though, so you should be able to make your way up without it.",
+      "You'll suffocate if you try to enter the cargo bay without a spacesuit.",
+    ],
+    name: "Joelson Dend",
+    scene:
+      "Standing on the Level Six stairwell, headed down, attempting to reach the 3D Printing Facility.",
+    unknownFacts: ["Where to find a spacesuit"],
+    voice: ["educated", "stressed", "determined"],
+  },
+  technician_stair_one: {
+    directives: [
+      "Access Level One by any means necessary and convince the AI through the control center to intervene before it's too late.",
+      "See if the player has anything that might help in that regard.",
+    ],
+    goals: [
+      "Cut through enough of the door panel to reach the manual override.",
+      "Access Level One.",
+      "Convince the AI to address the bomb before it's too late.",
+    ],
+    identity: "A reactor technician who is attempting to reach the ship's AI",
+    knownFacts: [
+      "There's a bomb on Level Two that shouldn't exist.",
+      "The AI doesn't know of its existence and won't intervene.",
+      "Some of the research team who were closing in on a solution are now trapped on level two.",
+      "You recognize the player as Mox Eegler, who you know is on the research team",
+      "You're glad that Mox isn't trapped on Level Two.",
+    ],
+    name: "Pai-Meeks Chanders",
+    scene:
+      "The top of a long stairwell in front of a door that requires a security badge to access. With no badge, you are using a blowtorch to attempt to cut open the panel to access the controls.",
+    unknownFacts: [
+      "What's happening elsewhere in the ship.",
+      "Who exactly is trapped on Level Two.",
+    ],
+    voice: ["older", "perfunctory", "pragmatic", "intelligent"],
+  },
 };
 
 export function getCharacterProfile(
