@@ -52,6 +52,7 @@ describe("NailBot's persistent exchange journal", () => {
     expect(shared.message).toBeUndefined();
     state = shared.state;
     expect(state.player.log).toEqual([{
+      id: "exchange:NailBot",
       source: "NailBot", title: "Gossip exchange with NailBot", loggedAtTurn: firstTurn,
       body: formatExchangeTranscript("NailBot", exchangeTranscript(state, "NailBot")),
     }]);
@@ -62,7 +63,7 @@ describe("NailBot's persistent exchange journal", () => {
     let state = await paid();
     state.uiState.conversationMode = mode;
     // Keep another journal record to verify updates preserve position and unrelated entries.
-    const unrelated = { source: "Research", title: "Research memo", loggedAtTurn: 0, body: "Original record." };
+    const unrelated = { id: "research-memo", source: "Research", title: "Research memo", loggedAtTurn: 0, body: "Original record." };
     state.player.log = [unrelated];
     let firstTurn: number | undefined;
     for (const [index, id] of ids.entries()) {

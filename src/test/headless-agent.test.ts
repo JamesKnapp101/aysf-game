@@ -846,12 +846,16 @@ describe("autonomous Explorer controller", () => {
   });
 
   it("supports every permitted information view and lets the harness validate acquired records", async () => {
-    const sdk = client([message([info("log"), info("gossip"), info("dna"), info("objectives"), info("room"), info("history"), info("dna", 1)])]);
+    const sdk = client([message([info("log"), info("gossip"), info("dna"), info("objectives"), info("room"), info("history"), info("dna", 1), info("trivia"), info("contacts"), info("trivia", 1), info("contacts", 1)])]);
     const run = await runHeadlessAgent({ client: sdk, session: realSession() });
-    expect(run.actions).toBe(7);
+    expect(run.actions).toBe(11);
     expect(run.reason).toBe("model_finished");
     expect(run.events[6].error).toBe(false);
     expect(run.events[6].text.join(" ")).toContain("Choose a record number");
+    expect(run.events[7].text.join(" ")).toContain("Trivia (0)");
+    expect(run.events[8].text.join(" ")).toContain("Contacts (0)");
+    expect(run.events[9].error).toBe(false);
+    expect(run.events[10].error).toBe(false);
     expect(JSON.stringify(request(sdk, 1)[0].messages)).not.toMatch(/dnaBank|spiltTea|worldState|itemState|loggedAtTurn/);
   });
 

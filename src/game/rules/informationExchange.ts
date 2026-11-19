@@ -15,6 +15,7 @@ import type { GameState, JuicyTopic } from "@game/types/gameTypes";
 import type { ConversationNpc } from "@game/types/npcTypes";
 import type { ParsedCommand } from "@game/types/parserTypes";
 import { buildLogNotification, enqueueNotification } from "@game/rules/notifications";
+import { collectLogEntry } from "@game/rules/knowledge";
 
 export function requiresExchangePayment(
   state: GameState,
@@ -143,16 +144,10 @@ export function recordInformationExchange(state: GameState, npcId: string, notif
   const lines = exchangeTranscript(state, npcId);
   if (!lines.length) return state;
   const title = `Gossip exchange with ${npcId}`;
-  const entries = state.player.log ?? [];
-  const index = entries.findIndex(entry => entry.source === npcId && entry.title === title);
-  const previous = entries[index];
   const body = formatExchangeTranscript(npcId, lines);
-  if (previous?.body === body) return state;
-  const entry = previous ? { ...previous, body }
-    : { source: npcId, title, loggedAtTurn: state.moves, body };
-  const log = previous ? entries.map((current, i) => i === index ? entry : current) : [...entries, entry];
-  const next = { ...state, player: { ...state.player, log } };
-  return !previous && notify
+  const collected = collectLogEntry(state, { id: `exchange:${npcId}`, source: npcId, title, body }, true);
+  const next = collected.state;
+  return collected.added && notify
     ? enqueueNotification(next, buildLogNotification("You log the message for future reference."))
     : next;
 }

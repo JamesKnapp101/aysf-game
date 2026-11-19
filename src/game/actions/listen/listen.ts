@@ -1,8 +1,6 @@
 import { tryListen } from "@game/actions/listen/tryListen";
-import {
-  collectTeaFromItemResult,
-  queueGossipNotification,
-} from "@game/rules/gossip";
+import { collectDiscoveries } from "@game/rules/discoveries";
+import { enqueueNotifications } from "@game/rules/notifications";
 import { resolveItemByNoun } from "@game/rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
 import type { GameState } from "../../types/gameTypes";
@@ -23,11 +21,8 @@ export function doListen(state: GameState, cmd: ParsedCommand): ActionResult {
   const item = resolveItemByNoun(state, listenee);
 
   if (item) {
-    const teaResult = collectTeaFromItemResult(state, item);
-    const next = queueGossipNotification(
-      teaResult.state,
-      teaResult.obtainedNewTea,
-    );
+    const discovered = collectDiscoveries(state, item);
+    const next = enqueueNotifications(discovered.state, discovered.notifications);
     const listenOverride = item.overrides?.listen;
 
     if (typeof listenOverride === "string") {

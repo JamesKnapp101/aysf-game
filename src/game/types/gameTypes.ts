@@ -201,10 +201,41 @@ type PlayerMoveEvent = {
 };
 
 export type PlayerLogEntry = {
+  id: string;
   body: string;
   loggedAtTurn: number;
   source: string;
   title: string;
+};
+
+/** Authored answer identity; future trivia games compare id, never display text. */
+export type TriviaFact = {
+  id: string;
+  title: string;
+  answer: string;
+  body?: string;
+  source?: string;
+};
+
+export type PlayerTrivia = TriviaFact & { loggedAtTurn: number };
+
+/** Missing name means the extension's owner has not been identified. */
+export type ContactDiscovery = {
+  extension: string;
+  name?: string;
+  description?: string;
+};
+
+export type PlayerContact = ContactDiscovery & {
+  id: string;
+  loggedAtTurn: number;
+};
+
+/** Explicit awards only: narrative text and AI responses are never parsed. */
+export type KnowledgeDiscoveries = {
+  containsTea?: JuicyTopic[];
+  containsTrivia?: TriviaFact[];
+  containsContacts?: ContactDiscovery[];
 };
 
 export type PlayerObjectiveStatus = "active" | "completed";
@@ -225,6 +256,7 @@ export type PlayerInventory = {
 };
 
 export interface PlayerState {
+  contacts: PlayerContact[];
   dnaBank: DNAResult[];
   inventory: PlayerInventory;
   log: PlayerLogEntry[];
@@ -235,6 +267,7 @@ export interface PlayerState {
   recentMoves?: PlayerMoveEvent[];
   roomId: string;
   spiltTea: JuicyTopic[];
+  trivia: PlayerTrivia[];
   statusEffects: StatusEffect[];
   vitals: PlayerVitals;
   mirror: PlayerMirrorState;

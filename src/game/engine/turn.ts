@@ -19,6 +19,7 @@ import {
   enqueueNotification,
 } from "@game/rules/notifications";
 import { inventoryHas, removeFromAllBuckets } from "@game/rules/state";
+import { collectLogEntry } from "@game/rules/knowledge";
 import { TickContext } from "@game/types/context";
 import { playerMemoryMap, playerScoreMap } from "../constants";
 import {
@@ -181,24 +182,12 @@ function appendSyndromeXStageLog(state: GameState): GameState {
 
   next = appendLog(next, SYNDROME_X_SIGNAL_TRANSCRIPT_NOTE);
 
-  const withFragment: GameState = {
-    ...next,
-    player: {
-      ...next.player,
-      log: [
-        ...next.player.log,
-        {
-          body: fragment,
-          loggedAtTurn: next.moves,
-          source: SYNDROME_X_SIGNAL_LOG_SOURCE,
-          title: `Unidentified Signal Fragment ${String(fragmentIndex + 1).padStart(
-            2,
-            "0",
-          )}`,
-        },
-      ],
-    },
-  };
+  const withFragment = collectLogEntry(next, {
+    id: `syndrome-x:fragment:${fragmentIndex + 1}`,
+    body: fragment,
+    source: SYNDROME_X_SIGNAL_LOG_SOURCE,
+    title: `Unidentified Signal Fragment ${String(fragmentIndex + 1).padStart(2, "0")}`,
+  }).state;
 
   if (
     withFragment.player.vitals.theSickness === 0 &&

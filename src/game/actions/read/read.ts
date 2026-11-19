@@ -1,13 +1,11 @@
-import {
-  collectTeaFromItemResult,
-  getPostCloseGossipNotifications,
-} from "@game/rules/gossip";
+import { collectDiscoveries } from "@game/rules/discoveries";
 import { updateItemLocation } from "@game/rules/items";
+import { collectLogEntry } from "@game/rules/knowledge";
 import { buildLogNotification } from "@game/rules/notifications";
 import { removeFromAllBuckets } from "@game/rules/state";
 import { resolveItemByNoun } from "../../rules/scope";
 import type { ActionResult } from "../../types/actionsTypes";
-import type { GameState, PlayerLogEntry } from "../../types/gameTypes";
+import type { GameState } from "../../types/gameTypes";
 import type { Item } from "../../types/itemTypes";
 import type { ParsedCommand } from "../../types/parserTypes";
 
@@ -43,28 +41,19 @@ export function readItem(state: GameState, item: Item): ActionResult {
   const isLoggable = item.isLoggable === true;
   const category = item.itemCategory;
 
-  const teaResult = collectTeaFromItemResult(state, item);
-  let next: GameState = teaResult.state;
-  const postCloseNotifications = getPostCloseGossipNotifications(
-    teaResult.obtainedNewTea,
-  );
+  const collectedDiscoveries = collectDiscoveries(state, item);
+  let next: GameState = collectedDiscoveries.state;
+  const postCloseNotifications = collectedDiscoveries.notifications;
 
   if (isLoggable) {
-    const entry: PlayerLogEntry = {
+    const collected = collectLogEntry(next, {
+      id: item.readableId ?? `item:${item.id}`,
       source: item.name ?? item.id,
       title: item.readableTitle ?? item.name ?? "Read",
-      loggedAtTurn: state.moves,
       body: text,
-    };
-
-    next = {
-      ...next,
-      player: {
-        ...next.player,
-        log: [...next.player.log, entry],
-      },
-    };
-    postCloseNotifications.unshift(
+    });
+    next = collected.state;
+    if (collected.added) postCloseNotifications.unshift(
       buildLogNotification(
         category === "collectable"
           ? "You log the message for future reference, then discard the original."

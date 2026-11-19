@@ -1,8 +1,5 @@
-import {
-  collectTeaFromItemResult,
-  getPostCloseGossipNotifications,
-  queueGossipNotification,
-} from "@game/rules/gossip";
+import { collectDiscoveries } from "@game/rules/discoveries";
+import { enqueueNotifications } from "@game/rules/notifications";
 import {
   applyExamineSideEffects,
   buildGenericExamineResult,
@@ -29,19 +26,17 @@ export function doExamine(state: GameState, cmd: ParsedCommand): ActionResult {
   }
 
   const { item } = target;
-  const teaResult = collectTeaFromItemResult(state, item);
-  const next = applyExamineSideEffects(teaResult.state, item);
-  const postCloseNotifications = getPostCloseGossipNotifications(
-    teaResult.obtainedNewTea,
-  );
-  const withImmediateGossip = (resultState: GameState) =>
-    queueGossipNotification(resultState, teaResult.obtainedNewTea);
+  const discovered = collectDiscoveries(state, item);
+  const next = applyExamineSideEffects(discovered.state, item);
+  const postCloseNotifications = discovered.notifications;
+  const withImmediateDiscoveries = (resultState: GameState) =>
+    enqueueNotifications(resultState, postCloseNotifications);
 
   const context = {
     item,
     state: next,
     postCloseNotifications,
-    withImmediateGossip,
+    withImmediateDiscoveries,
   };
 
   return (

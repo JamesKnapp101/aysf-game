@@ -62,7 +62,7 @@ export type MissingCapabilityDiagnostic = Readonly<{
   overlayEntered: boolean;
 }>;
 
-export type InformationView = "log" | "gossip" | "dna" | "objectives" | "room" | "history" | "map";
+export type InformationView = "log" | "gossip" | "dna" | "trivia" | "contacts" | "objectives" | "room" | "history" | "map";
 
 export interface ExplorerPort {
   command(input: string, explanation?: ActionExplanation): Promise<Observation>;

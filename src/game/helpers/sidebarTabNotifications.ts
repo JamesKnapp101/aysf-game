@@ -128,7 +128,7 @@ function getObjectivesSignature(state: GameState): string {
 
 function getLogSignature(state: GameState): string {
   const entries = (state.player.log ?? []).map(
-    (entry) => `${entry.loggedAtTurn}:${entry.source}:${entry.title}`,
+    (entry) => `${entry.id}:${entry.loggedAtTurn}:${entry.source}:${entry.title}:${entry.body}`,
   );
   const gossip = (state.player.spiltTea ?? []).map(
     (topic) => `${topic.id}:${topic.type}`,
@@ -141,6 +141,8 @@ function getLogSignature(state: GameState): string {
     `entries:${entries.join(",")}`,
     `gossip:${gossip.join(",")}`,
     `dna:${dna.join(",")}`,
+    `trivia:${JSON.stringify(state.player.trivia)}`,
+    `contacts:${JSON.stringify(state.player.contacts)}`,
   ].join("|");
 }
 

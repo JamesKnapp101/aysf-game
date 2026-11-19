@@ -30,7 +30,7 @@ export const restaurantBathroomItems: Item[] = [
       "A small plastic plaque mounted near the sink lists a series of important phone numbers in tiny, utilitarian print.",
     sceneryDescription:
       "The plaque is slightly yellowed around the edges, its printed lines protected under a thin layer of clear laminate. The numbers themselves are arranged in neat rows, padded with dots to keep them aligned, like someone thought order would make emergencies easier to navigate.",
-    location: "BathroomEntrance",
+    location: "Toilettes",
     vocab: ["plaque", "numbers", "phone", "sink"],
     itemClass: "solid",
     itemCategory: "scenery",
@@ -41,6 +41,11 @@ export const restaurantBathroomItems: Item[] = [
     isContainer: false,
     isLoggable: true,
     readableTitle: `Phone Numbers Found in Restaurant`,
+    containsContacts: [
+      { extension: "9111", name: "Police" },
+      { extension: "0000", name: "Poison Control" },
+      { extension: "8111", name: "Emergency" },
+    ],
     readableText:
       "Police..............9111\n" +
       "Poison Control......0000\n" +

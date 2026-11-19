@@ -2,7 +2,7 @@ import { isPlayerUnderwater } from "../helpers/environmentHelpers";
 import { getDisplayedFlashlightStatus } from "../helpers/flashlightHelpers";
 import { canPlayerSeeInRoom, getRoomVisualLightLevel } from "../helpers/visibilityHelpers";
 import { getVisibleObjectives } from "../rules/objectives";
-import { formatDNASampleBody, formatTopicType, previewText } from "../text/playerKnowledge";
+import { contactName, formatContactBody, formatDNASampleBody, formatTopicType, formatTriviaBody, previewText } from "../text/playerKnowledge";
 import type { DNAResult } from "../rules/dnaReader";
 import type { GameState } from "../types/gameTypes";
 import type { InformationView } from "./types";
@@ -64,6 +64,22 @@ function objectivesText(state: GameState): string {
   ].join("\n");
 }
 
+function triviaText(state: GameState): string {
+  const facts = state.player.trivia;
+  return [`Trivia (${facts.length})`,
+    ...facts.map((fact, index) => `${index + 1}. ${fact.title}\nAnswer: ${fact.answer}`),
+    facts.length ? "Review a fact with :trivia <number>." : "No trivia collected yet.",
+  ].join("\n");
+}
+
+function contactsText(state: GameState): string {
+  const contacts = state.player.contacts;
+  return [`Contacts (${contacts.length})`,
+    ...contacts.map((contact, index) => `${index + 1}. ${contactName(contact)}\nExtension: ${contact.extension}${contact.description ? `\n${contact.description}` : ""}`),
+    contacts.length ? "Review a contact with :contacts <number>." : "No contacts collected yet.",
+  ].join("\n");
+}
+
 function roomText(state: GameState): string {
   const flashlight = getDisplayedFlashlightStatus(state);
   const light = getRoomVisualLightLevel(state, state.player.roomId);
@@ -91,12 +107,22 @@ export function informationText(state: GameState, view: InformationView, record?
       const sample = state.player.dnaBank?.[record - 1];
       return sample ? `${dnaTitle(sample)}\n\n${formatDNASampleBody(sample)}` : CHOOSE_RECORD;
     }
-    return "Record selection is available only for :log and :dna.";
+    if (view === "trivia") {
+      const fact = state.player.trivia[record - 1];
+      return fact ? `${fact.title}\n\n${formatTriviaBody(fact)}` : CHOOSE_RECORD;
+    }
+    if (view === "contacts") {
+      const contact = state.player.contacts[record - 1];
+      return contact ? formatContactBody(contact) : CHOOSE_RECORD;
+    }
+    return "Record selection is available only for :log, :dna, :trivia and :contacts.";
   }
   switch (view) {
-    case "log": return ["Player Log", documentsText(state), gossipText(state), dnaText(state)].join("\n\n");
+    case "log": return ["Player Log", documentsText(state), gossipText(state), dnaText(state), triviaText(state), contactsText(state)].join("\n\n");
     case "gossip": return gossipText(state);
     case "dna": return dnaText(state);
+    case "trivia": return triviaText(state);
+    case "contacts": return contactsText(state);
     case "objectives": return objectivesText(state);
     case "room": return roomText(state);
     case "history": return ["Recent gameplay messages", ...state.log].join("\n\n");

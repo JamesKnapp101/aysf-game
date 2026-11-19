@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import "../../styles/components/message-machine.css";
 import { CrtModal } from "./CrtModal";
+import type { KnowledgeDiscoveries } from "@game/types/gameTypes";
 
-export type PhoneMessage = {
+export type PhoneMessage = KnowledgeDiscoveries & {
   id: string;
   title?: string;
   transcript: string;

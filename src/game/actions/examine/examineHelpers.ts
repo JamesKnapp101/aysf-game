@@ -120,14 +120,14 @@ export function buildGenericExamineResult(
 
   if (!ex) {
     return {
-      state: ctx.withImmediateGossip(ctx.state),
+      state: ctx.withImmediateDiscoveries(ctx.state),
       message: itemDesc,
     };
   }
 
   if (typeof ex === "string") {
     return {
-      state: ctx.withImmediateGossip(ctx.state),
+      state: ctx.withImmediateDiscoveries(ctx.state),
       message: ex.trim() || itemDesc,
     };
   }
@@ -136,14 +136,14 @@ export function buildGenericExamineResult(
 
   if (typeof out === "string") {
     return {
-      state: ctx.withImmediateGossip(ctx.state),
+      state: ctx.withImmediateDiscoveries(ctx.state),
       message: out.trim() || itemDesc,
     };
   }
 
   if (!out) {
     return {
-      state: ctx.withImmediateGossip(ctx.state),
+      state: ctx.withImmediateDiscoveries(ctx.state),
       message: itemDesc,
     };
   }
@@ -160,7 +160,7 @@ export function buildGenericExamineResult(
   }
 
   return {
-    state: ctx.withImmediateGossip(nextState),
+    state: ctx.withImmediateDiscoveries(nextState),
     message: (out.message ?? itemDesc).trim() || itemDesc,
   };
 }

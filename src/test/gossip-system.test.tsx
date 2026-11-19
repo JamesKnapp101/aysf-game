@@ -152,10 +152,11 @@ describe("gossip system", () => {
     });
   });
 
-  it("splits log entries, gossip, and DNA into separate subtabs", async () => {
+  it("combines text and gossip under Discoveries with filters and specialized tabs", async () => {
     const user = userEvent.setup();
     const baseState = createTestState();
     const logEntry: PlayerLogEntry = {
+      id: "memo",
       source: "Research Terminal",
       title: "Incident Memo",
       loggedAtTurn: 12,
@@ -176,18 +177,18 @@ describe("gossip system", () => {
       screen
         .getAllByRole("tab")
         .map((tab) => tab.textContent?.replace(/\s+/g, " ").trim()),
-    ).toEqual(["Log Entries 1", "Gossip 1", "DNA 0"]);
-    expect(screen.getByRole("tab", { name: /log entries/i })).toHaveAttribute(
+    ).toEqual(["Discoveries 2", "Contacts 0", "DNA 0"]);
+    expect(screen.getByRole("tab", { name: /discoveries/i })).toHaveAttribute(
       "aria-selected",
       "true",
     );
     expect(screen.getByText("Incident Memo")).toBeInTheDocument();
-    expect(screen.queryByText("Director Affair")).not.toBeInTheDocument();
+    expect(screen.getByText("Director Affair")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("tab", { name: /^gossip/i }));
+    await user.click(screen.getByRole("button", { name: "Gossip" }));
 
-    expect(screen.getByRole("tab", { name: /^gossip/i })).toHaveAttribute(
-      "aria-selected",
+    expect(screen.getByRole("button", { name: "Gossip" })).toHaveAttribute(
+      "aria-pressed",
       "true",
     );
     expect(screen.getByText("Director Affair")).toBeInTheDocument();

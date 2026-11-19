@@ -422,6 +422,7 @@ describe("General gameplay", () => {
     const priorFragments = Array.from(
       { length: SYNDROME_X_SIGNAL_FRAGMENT_COUNT - 1 },
       (_, index) => ({
+        id: `syndrome-x:fragment:${index + 1}`,
         body: getSyndromeXSignalFragment(index) ?? "",
         loggedAtTurn: index,
         source: SYNDROME_X_SIGNAL_LOG_SOURCE,

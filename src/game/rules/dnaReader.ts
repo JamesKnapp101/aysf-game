@@ -1,6 +1,7 @@
 import { DNA_DATABASE } from "@game/dnaDatabase";
 import { GameState } from "@game/types/gameTypes";
 import { Item } from "@game/types/itemTypes";
+import { formatDNASampleBody } from "@game/text/playerKnowledge";
 
 export type DNAResult = {
   id: string;
@@ -41,7 +42,7 @@ export function takeDNASample(state: GameState, item: Item) {
     ? { ...template, loggedAtTurn: state.moves }
     : createUnknownResult(item.id, state.moves);
 
-  const formattedResult = `\n\nDNA Analysis Results:\n--------------------\nName: ${result.name}\nGender: ${result.gender}\nAge: ${result.age}\nOccupation: ${result.occupation}\nAdditional Info: ${result.info}`;
+  const formattedResult = `\n\n${formatDNASampleBody(result)}`;
 
   const alreadyBanked = state.player.dnaBank.some(
     (sample) => sample.id === result.id,

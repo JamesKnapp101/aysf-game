@@ -6,7 +6,7 @@ import type {
 import type { ActionResult } from "./actionsTypes";
 import type {
   GameState,
-  JuicyTopic,
+  KnowledgeDiscoveries,
   PlayerScoreId,
   StatusEffect,
   StatusId,
@@ -33,14 +33,13 @@ export type clothingSlots =
   | "wrist"
   | "body";
 
-export interface Item {
+export interface Item extends KnowledgeDiscoveries {
   commandAliases?: ItemCommandAlias[];
   allowedContentsIds?: string[];
   canHideUnder?: boolean;
   capacity?: number;
   capacityOn?: number;
   clothingSlot?: clothingSlots;
-  containsTea?: JuicyTopic[];
   description: string;
   describe?: (state: GameState, item: Item, ctx: DescriptionContext) => string;
   describeInitial?: (
@@ -71,6 +70,8 @@ export interface Item {
   isContagious?: boolean;
   isInjectable?: boolean;
   isLoggable?: boolean;
+  /** Override when several objects intentionally reveal the same text record. */
+  readableId?: string;
   isOn?: boolean;
   isOpenable?: boolean;
   isPushable?: boolean;

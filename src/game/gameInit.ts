@@ -141,6 +141,8 @@ export const createInitialState = (world: World): GameState => {
       inventory: startingInventory,
       log: [],
       dnaBank: [],
+      contacts: [],
+      trivia: [],
       recentDrinkItemIds: [],
       spiltTea: [],
       memoriesTriggered: {

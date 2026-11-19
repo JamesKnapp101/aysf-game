@@ -11,7 +11,7 @@ if (args.includes("--help")) {
     "Ordinary game commands; :reset starts fresh, :transcript shows host transcript metadata, :quit exits.\n" +
     "Uses authored NPC dialogue. Inventory, status, reading and help are available as text.\n" +
     "Phone message machines: examine phone, then play for one message at a time, and close to continue.\n" +
-    "Player information: :log [number], :gossip, :dna [number], :objectives, :room, :history, :map [overview|nearby|full] [2-7].\n" +
+    "Player information: :log [number], :gossip, :dna [number], :trivia [number], :contacts [number], :objectives, :room, :history, :map [overview|nearby|full] [2-7].\n" +
     "State stays in memory; transcripts are flushed to .headless-transcripts/*.jsonl.\n" +
     "Reset is required at unsupported UI interactions. The engine log cap does not limit transcript capture.\n",
   );
@@ -81,14 +81,14 @@ async function play(demo) {
       return;
     }
 
-    process.stdout.write("Enter a game command; player views: :log [number], :gossip, :dna [number], :objectives, :room, :history, :map [overview|nearby|full] [2-7]. Phone controls: play, close. Host controls: :reset, :transcript, :quit.\n");
+    process.stdout.write("Enter a game command; player views: :log [number], :gossip, :dna [number], :trivia [number], :contacts [number], :objectives, :room, :history, :map [overview|nearby|full] [2-7]. Phone controls: play, close. Host controls: :reset, :transcript, :quit.\n");
     const terminal = Boolean(process.stdin.isTTY && process.stdout.isTTY);
     input = createInterface({ input: process.stdin, output: process.stdout, terminal });
     if (terminal) { input.setPrompt("> "); input.prompt(); }
     for await (const line of input) {
       if (stopping) break;
       const control = line.trim();
-      const information = control.match(/^:(log|gossip|dna|objectives|room|history|map)(?:\s+(.*))?$/i);
+      const information = control.match(/^:(log|gossip|dna|trivia|contacts|objectives|room|history|map)(?:\s+(.*))?$/i);
       if (control === ":quit") break;
       if (control === ":reset") show(await session.reset());
       else if (control === ":transcript") process.stdout.write(`${JSON.stringify(session.transcript(), null, 2)}\n`);

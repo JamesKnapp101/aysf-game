@@ -30,7 +30,7 @@ export function DNASampleTab({ gameState }: { gameState: GameState }) {
         {entries.length === 0 ? (
           <div className="dna-tab-empty">No samples collected yet.</div>
         ) : (
-          entries.map((e, idx) => {
+          entries.map((e) => {
             const onActivate = () => openEntry(e);
             const title = e.title || "Unknown sample origin";
             const name = e.name || "Unknown";
@@ -42,7 +42,7 @@ export function DNASampleTab({ gameState }: { gameState: GameState }) {
                 : "Unknown";
 
             return (
-              <div key={`${e.loggedAtTurn}-${e.title}-${idx}`} role="listitem">
+              <div key={e.id} role="listitem">
                 <div
                   className="dna-tab-row"
                   role="button"

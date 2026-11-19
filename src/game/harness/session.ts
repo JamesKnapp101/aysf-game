@@ -592,6 +592,8 @@ export function createHeadlessSession(
           "log",
           "gossip",
           "dna",
+          "trivia",
+          "contacts",
           "objectives",
           "room",
           "history",
@@ -599,7 +601,7 @@ export function createHeadlessSession(
         ].includes(view)
       ) {
         return record("information", [
-          "Available information views: log, gossip, dna, objectives, room, history, map.",
+          "Available information views: log, gossip, dna, trivia, contacts, objectives, room, history, map.",
         ]);
       }
       const input =

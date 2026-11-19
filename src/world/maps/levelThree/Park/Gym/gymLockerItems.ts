@@ -171,6 +171,7 @@ export const gymLockerItems: Item[] = [
     isLoggable: true,
     readableTitle: `Phone Number Found in Gym Locker`,
     readableText: "X7239",
+    containsContacts: [{ extension: "X7239" }],
     scoreId: "obtained_secret_phone_number_1",
   },
 ];

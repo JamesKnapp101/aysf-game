@@ -14,15 +14,17 @@ import { createHeadlessSession } from "../game/harness/session";
 import type { InformationView, Observation, SessionController, TranscriptEntry } from "../game/harness/types";
 import { updateItemLocation } from "../game/rules/items";
 import { getVisibleObjectives } from "../game/rules/objectives";
+import { collectContacts, collectTrivia } from "../game/rules/knowledge";
 import { useUIOverlayStore } from "../game/store/store";
 import type { GameState } from "../game/types/gameTypes";
 import { createTestState } from "./helpers/gameTestHelpers";
+import { DEFERRED_WORLD_CHUNK_IDS } from "../world/World";
 
 const sessions: SessionController[] = [];
 const directories: string[] = [];
 const text = (observation: Observation) => observation.text.join("\n\n");
 const execute = engine.handleCommand;
-const views: InformationView[] = ["log", "gossip", "dna", "objectives", "room", "history"];
+const views: InformationView[] = ["log", "gossip", "dna", "trivia", "contacts", "objectives", "room", "history"];
 
 async function session(fixture?: GameState) {
   if (fixture) vi.spyOn(gameInit, "createFreshGameState").mockResolvedValueOnce(fixture);
@@ -43,6 +45,31 @@ afterEach(async () => {
 });
 
 describe("headless player knowledge", () => {
+  it("exposes trivia and contacts only after acquisition and returns complete read-only details", async () => {
+    let initial = updateItemLocation(fixture(), "PHONENUMBERS", "StairWellSeven");
+    initial = { ...initial, world: { ...initial.world, meta: { ...initial.world.meta, loadedChunkIds: [...DEFERRED_WORLD_CHUNK_IDS] }, items: initial.world.items.map(item => item.id === "PHONENUMBERS" ? {
+      ...item, containsTrivia: [{ id: "PrivateFactId", title: "Acquired fact", answer: "A known answer", body: "The entire explanation.", source: "The plaque" }],
+    } : item) } };
+    const controller = await session(initial);
+    for (const view of ["trivia", "contacts"] as const) {
+      expect(text(await controller.explorer.information(view))).toContain(`No ${view} collected yet.`);
+      expect(text(await controller.explorer.information(view, 1))).toContain("Choose a record number");
+    }
+    await controller.explorer.command("read plaque");
+    const spy = vi.spyOn(engine, "handleCommand");
+    expect(text(await controller.explorer.information("trivia"))).toContain("1. Acquired fact\nAnswer: A known answer");
+    expect(text(await controller.explorer.information("trivia", 1))).toBe("Acquired fact\n\nAnswer: A known answer\n\nThe entire explanation.\n\nSource: The plaque");
+    expect(text(await controller.explorer.information("contacts", 2))).toBe("Poison Control\n\nExtension: 0000");
+    const all = text(await controller.explorer.information("log"));
+    expect(all).toContain("Trivia (1)");
+    expect(all).toContain("Contacts (3)");
+    expect(all).not.toMatch(/PrivateFactId|contact:|loggedAtTurn|containsTrivia/);
+    for (const view of ["trivia", "contacts"] as const) {
+      for (const record of [0, -1, NaN, Infinity, 1.5, 1000]) expect(text(await controller.explorer.information(view, record))).toContain("Choose a record number");
+    }
+    expect(spy).not.toHaveBeenCalled();
+  });
+
   it("lists only acquired records and lets a consumed document be reviewed without rereading", async () => {
     const controller = await session();
     const spy = vi.spyOn(engine, "handleCommand");
@@ -71,8 +98,8 @@ describe("headless player knowledge", () => {
   it("preserves document order, authored bodies and browser previews while omitting metadata", () => {
     const state = fixture();
     state.player.log = [
-      { title: "First memorandum", body: "First line.\n\n" + "More detail. ".repeat(10), source: "PrivateSourceId", loggedAtTurn: 999 },
-      { title: "Second memorandum", body: "Second body with exact spacing.\n  Retain this line.", source: "PrivateOtherId", loggedAtTurn: 1000 },
+      { id: "first-memo", title: "First memorandum", body: "First line.\n\n" + "More detail. ".repeat(10), source: "PrivateSourceId", loggedAtTurn: 999 },
+      { id: "second-memo", title: "Second memorandum", body: "Second body with exact spacing.\n  Retain this line.", source: "PrivateOtherId", loggedAtTurn: 1000 },
     ];
     const { getByText } = render(<LogTab gameState={state} />);
     const preview = state.player.log[0].body.replace(/\s+/g, " ").trim().slice(0, 50).trimEnd() + "...";
@@ -270,10 +297,10 @@ describe("headless player knowledge", () => {
   it("clears all acquired knowledge categories on reset and player restart", async () => {
     const acquired = () => {
       const state = fixture();
-      state.player.log = [{ title: "Recorded note", body: "Acquired document.", source: "PrivateNoteId", loggedAtTurn: 1 }];
+      state.player.log = [{ id: "recorded-note", title: "Recorded note", body: "Acquired document.", source: "PrivateNoteId", loggedAtTurn: 1 }];
       state.player.spiltTea = [{ id: "PrivateTopicId", title: "Recorded gossip", summary: "Acquired topic.", tags: [], type: "gossip" }];
       state.player.dnaBank = [{ id: "PrivateSampleId", title: "Recorded sample", loggedAtTurn: 1, causeOfDeath: "Unknown", name: "Known subject", gender: "Non-binary", age: 20, occupation: "Engineer", info: "Acquired analysis." }];
-      return state;
+      return collectContacts(collectTrivia(state, [{ id: "fact", title: "Recorded fact", answer: "Acquired answer" }]).state, [{ extension: "X001", name: "Recorded caller" }]).state;
     };
     for (const resetKind of ["reset", "restart"] as const) {
       const controller = await session(acquired());
@@ -281,12 +308,16 @@ describe("headless player knowledge", () => {
       expect(before).toContain("Log Entries (1)");
       expect(before).toContain("Gossip (1)");
       expect(before).toContain("DNA (1)");
+      expect(before).toContain("Trivia (1)");
+      expect(before).toContain("Contacts (1)");
       if (resetKind === "reset") await controller.reset();
       else await controller.explorer.command("restart");
       const after = text(await controller.explorer.information("log"));
       expect(after).toContain("Log Entries (0)");
       expect(after).toContain("Gossip (0)");
       expect(after).toContain("DNA (0)");
+      expect(after).toContain("Trivia (0)");
+      expect(after).toContain("Contacts (0)");
       expect(after).not.toMatch(/Recorded|Acquired|Known subject|Private/);
       expect(text(await controller.explorer.information("dna", 1))).toContain("Choose a record number");
       await controller.dispose();
@@ -309,7 +340,7 @@ it("plays the new player-information requests through the actual Node CLI", asyn
       if (error) reject(error);
       else resolveOutput({ stdout, stderr });
     });
-    child.stdin!.end(":log\n:objectives\nread paper\n:log\n:log 1\n:gossip\n:dna\n:objectives\nup\n:room\n:history\n:reset\n:log 1\n:transcript\n:quit\n");
+    child.stdin!.end(":log\n:objectives\nread paper\n:log\n:log 1\n:gossip\n:dna\n:trivia\n:trivia 1\n:contacts\n:contacts 1\n:objectives\nup\n:room\n:history\n:reset\n:log 1\n:transcript\n:quit\n");
   });
   expect(stderr).toBe("");
   expect(stdout).toContain("Log Entries (0)");
@@ -318,6 +349,8 @@ it("plays the new player-information requests through the actual Node CLI", asyn
   expect(stdout).toContain("Get equipment from your quarters");
   expect(stdout).toContain("Gossip (0)");
   expect(stdout).toContain("DNA (0)");
+  expect(stdout).toContain("Trivia (0)");
+  expect(stdout).toContain("Contacts (0)");
   expect(stdout).toContain("Visibility:");
   expect(stdout).toContain("Recent gameplay messages");
   expect(stdout).not.toMatch(/MysteriousNote|StairWellSeven|toRoomId|activatedAtTurn|Error:/);

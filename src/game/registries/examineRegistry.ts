@@ -6,7 +6,7 @@ export type ExamineItemContext = {
   item: Item;
   state: GameState;
   postCloseNotifications: GameNotificationDraft[];
-  withImmediateGossip: (state: GameState) => GameState;
+  withImmediateDiscoveries: (state: GameState) => GameState;
 };
 
 type SpecialExamineHandler = {
@@ -55,7 +55,7 @@ function handleReflectiveExamine(ctx: ExamineItemContext): ActionResult {
   };
 
   return {
-    state: ctx.withImmediateGossip(next),
+    state: ctx.withImmediateDiscoveries(next),
     message: reflectMsg,
   };
 }
@@ -104,7 +104,7 @@ function buildHydroponicsTerminalOverlay(
 function buildPowerStationOverlay(ctx: ExamineItemContext): ActionResult {
   if (!ctx.state.worldState.powerRestoredSections["power-initialized"]) {
     return {
-      state: ctx.withImmediateGossip(ctx.state),
+      state: ctx.withImmediateDiscoveries(ctx.state),
       message: ctx.item.meta?.onNoPower ?? "The screen is dark.",
     };
   }

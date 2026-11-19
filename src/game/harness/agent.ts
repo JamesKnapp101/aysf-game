@@ -50,6 +50,8 @@ export type AgentOptions = {
 const views: InformationView[] = [
   "log",
   "gossip",
+  "trivia",
+  "contacts",
   "dna",
   "objectives",
   "room",
@@ -84,7 +86,7 @@ export const PLAYER_TOOLS: Tool[] = [
   {
     name: "game_information",
     description:
-      "Consult player-visible log, gossip, dna, objectives, current room, recent history, or the ship map (:map), including your location, visited labels and the visible layout of unexplored spaces. Map detail can be overview, nearby or full, with optional level 2-7. An optional one-based record selects an acquired log document or DNA sample only. These read-only requests do not modify gameplay state or advance a game turn.",
+      "Consult player-visible log, gossip, dna, trivia, contacts, objectives, current room, recent history, or the ship map (:map), including your location, visited labels and the visible layout of unexplored spaces. Map detail can be overview, nearby or full, with optional level 2-7. An optional one-based record selects an acquired log document, DNA sample, trivia fact or contact. These read-only requests do not modify gameplay state or advance a game turn.",
     input_schema: {
       type: "object",
       properties: {
@@ -362,7 +364,7 @@ function validateTool(tool: ToolUseBlock): GameplayRequest | undefined {
     data.view !== "map" && views.includes(data.view as InformationView) &&
     (data.record === undefined ||
       (Number.isSafeInteger(data.record) && Number(data.record) > 0 &&
-        (data.view === "log" || data.view === "dna")))
+        (["log", "dna", "trivia", "contacts"].includes(data.view as string))))
   ) {
     return { view: data.view as InformationView, ...(data.record === undefined ? {} : { record: data.record as number }), ...explanation };
   }
@@ -691,7 +693,7 @@ export async function runHeadlessAgent(deps: Dependencies): Promise<AgentRun> {
         const request = validateTool(tool);
         if (!request) {
           const text =
-            "Unsupported or malformed request. Use game_command with a nonempty command string, or game_information with an available view, an optional positive log/dna record number, or map detail/level options. Include a short visible-information goal and a one-sentence reason. No other fields are permitted.";
+            "Unsupported or malformed request. Use game_command with a nonempty command string, or game_information with an available view, an optional positive log/dna/trivia/contacts record number, or map detail/level options. Include a short visible-information goal and a one-sentence reason. No other fields are permitted.";
           errors += 1;
           publish({
             request: `Rejected ${tool.name}: ${JSON.stringify(tool.input)?.slice(0, 2000) ?? "missing input"}`,

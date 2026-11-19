@@ -85,6 +85,8 @@ export function createMessageMachineAdapter() {
     })).state;
     activeIndex = nextIndex;
     text.push(`Message ${nextIndex + 1}/${archive.length}: ${message.title?.trim() || "Message"}`, message.transcript, CONTROLS);
+    const previousNotifications = new Set(state.uiState.notifications.map(notification => notification.id));
+    text.push(...next.uiState.notifications.filter(notification => !previousNotifications.has(notification.id)).map(notification => notification.text));
     return { state: next, text, closed: false };
   }
 

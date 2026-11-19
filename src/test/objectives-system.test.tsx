@@ -180,6 +180,7 @@ describe("objectives", () => {
           ...state.player.log,
           {
             body: "Heard warning re: reactor overload, look into that.",
+            id: "reactor-warning",
             loggedAtTurn: state.moves,
             source: "Mysterious Note",
             title: "Note Found on Body: Stairwell Bottom",

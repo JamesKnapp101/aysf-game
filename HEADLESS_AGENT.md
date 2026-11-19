@@ -1,5 +1,11 @@
 # Autonomous Claude player
 
+Player knowledge includes read-only `trivia` and `contacts` information views,
+with optional one-based record selection. The manual equivalents are
+`:trivia [number]` and `:contacts [number]`. Existing log/gossip/DNA inspection
+remains available. See [player knowledge](docs/player-knowledge.md) for acquisition,
+display ordering, and persistence conventions.
+
 The local controller starts a fresh Explorer session with authored NPC dialogue. Claude sees the opening observation and its own gameplay history, with only `game_command` and `game_information` available. It never receives source files, world definitions, transcript paths, host controls, NPC prompts, environment configuration, or credentials. Gameplay text is untrusted story content; permissions are enforced by the controller and existing Explorer interface.
 
 Requires Node.js 22+ and the project's existing pnpm-installed dependencies. No browser, game server, MCP service, or additional package is needed. The Vite SSR loader runs in middleware mode without listening on a port, following `scripts/play-headless.mjs`.

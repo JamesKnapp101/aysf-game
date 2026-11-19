@@ -83,7 +83,7 @@ describe("information exchange overlay", () => {
     expect(view.state().uiState.notifications).toEqual(notifications);
     expect(exchangeTranscript(view.state(), "NailBot")).toEqual(lines);
     await user.keyboard("{Escape}");
-    await user.click(screen.getByRole("tab", { name: /^gossip/i }));
+    await user.click(screen.getByRole("button", { name: "Gossip" }));
     expect(screen.getByText("The Hiding Robot")).toBeInTheDocument();
     expect(screen.getByText(NPC_SECRETS.nailbot_secret.text)).toBeInTheDocument();
     expect(screen.getByText("Source: NailBot")).toBeInTheDocument();

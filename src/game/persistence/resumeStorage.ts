@@ -13,7 +13,8 @@ import {
 
 const RESUME_STORAGE_KEY = "aysf:resume";
 const MANUAL_SAVE_STORAGE_KEY = "aysf:save";
-const RESUME_SNAPSHOT_VERSION = 1;
+// Development snapshots before stable knowledge IDs are intentionally obsolete.
+const RESUME_SNAPSHOT_VERSION = 2;
 const OBSOLETE_WORLD_ITEM_IDS = new Set([
   "InckGlassboolMemoryBathroom",
   "InckGlassboolMemoryBasement",
@@ -21,7 +22,7 @@ const OBSOLETE_WORLD_ITEM_IDS = new Set([
 
 type SerializedWorldItem = Record<string, unknown> & { id: string };
 
-type GameSnapshotV1 = {
+type GameSnapshotV2 = {
   version: typeof RESUME_SNAPSHOT_VERSION;
   savedAt: string;
   loadedChunkIds: WorldChunkId[];
@@ -135,7 +136,7 @@ function applySerializedWorldItems(
   };
 }
 
-function buildSnapshot(state: GameState): GameSnapshotV1 {
+function buildSnapshot(state: GameState): GameSnapshotV2 {
   const loadedChunkIds = normalizeLoadedChunkIds(state.world.meta?.loadedChunkIds);
   const persistedWorldState = { ...state.worldState } as Partial<
     GameState["worldState"]
@@ -153,7 +154,7 @@ function buildSnapshot(state: GameState): GameSnapshotV1 {
     rating: state.rating,
     log: state.log,
     player: state.player,
-    worldState: persistedWorldState as GameSnapshotV1["worldState"],
+    worldState: persistedWorldState as GameSnapshotV2["worldState"],
     itemState: state.itemState,
     conversation: state.conversation,
     radio: state.radio,
@@ -166,11 +167,11 @@ function buildSnapshot(state: GameState): GameSnapshotV1 {
   };
 }
 
-function parseSnapshot(raw: string | null): GameSnapshotV1 | null {
+function parseSnapshot(raw: string | null): GameSnapshotV2 | null {
   if (!raw) return null;
 
   try {
-    const parsed = JSON.parse(raw) as Partial<GameSnapshotV1> | null;
+    const parsed = JSON.parse(raw) as Partial<GameSnapshotV2> | null;
     if (!parsed || parsed.version !== RESUME_SNAPSHOT_VERSION) return null;
     if (!Array.isArray(parsed.log)) return null;
     if (!parsed.player || !parsed.itemState || !parsed.worldState) return null;
@@ -183,7 +184,7 @@ function parseSnapshot(raw: string | null): GameSnapshotV1 | null {
         (item): item is SerializedWorldItem =>
           Boolean(item && typeof item === "object" && typeof item.id === "string"),
       ),
-    } as GameSnapshotV1;
+    } as GameSnapshotV2;
   } catch {
     return null;
   }

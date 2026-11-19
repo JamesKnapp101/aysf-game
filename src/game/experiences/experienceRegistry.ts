@@ -1,5 +1,6 @@
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
-import { collectTeaResult, queueGossipNotification } from "@game/rules/gossip";
+import { collectDiscoveries } from "@game/rules/discoveries";
+import { enqueueNotifications } from "@game/rules/notifications";
 import { updateItemLocation } from "@game/rules/items";
 import { triggerScoreOnce } from "@game/rules/score";
 import { addToInventory } from "@game/rules/state";
@@ -9,6 +10,7 @@ import type {
   ExperienceKind,
   GameState,
   JuicyTopic,
+  KnowledgeDiscoveries,
 } from "@game/types/gameTypes";
 
 type ExperienceStageContext = {
@@ -23,7 +25,7 @@ type ExperienceStageEventContext = ExperienceStageContext & {
   turnsRemaining: number;
 };
 
-type ExperienceStageEventDefinition = {
+type ExperienceStageEventDefinition = KnowledgeDiscoveries & {
   atElapsedTurns?: number;
   atTurnsRemaining?: number;
   id: string;
@@ -507,7 +509,8 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
           {
             atElapsedTurns: 2,
             id: "meeting-two",
-            message: `When the old woman gets closer to the bench she sees a piece of paper resting on it, held down with a small stone.\n\nShe removes the stone and tosses it aside then picks up the paper which has writing on one side, turning it over so she can see."`,
+            containsContacts: [{ extension: "X9203", name: "Swinth residence" }],
+            message: `When the old woman gets closer to the bench she sees a piece of paper resting on it, held down with a small stone.\n\nShe removes the stone and tosses it aside then picks up the paper which has writing on one side, turning it over so she can see."\n\n"Our unit extension is X9203," she says. "If you can reach him, try it."`,
           },
           {
             atElapsedTurns: 3,
@@ -702,10 +705,10 @@ function runExperienceStageEvents(
     if (!shouldRunExperienceEvent(next, event, ctx)) continue;
 
     if (event.run) next = event.run(next, ctx);
-    if (event.overheardTea?.length) {
-      const teaResult = collectTeaResult(next, event.overheardTea);
-      next = queueGossipNotification(teaResult.state, teaResult.obtainedNewTea);
-    }
+    const discovered = collectDiscoveries(next, {
+      ...event, containsTea: [...(event.containsTea ?? []), ...(event.overheardTea ?? [])],
+    });
+    next = enqueueNotifications(discovered.state, discovered.notifications);
 
     const message = getExperienceEventMessage(next, event, ctx);
     if (message?.trim()) messages.push(message.trim());

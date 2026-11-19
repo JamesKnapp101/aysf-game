@@ -1,5 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Menu } from "@game/components/Menu";
+import { collectLogEntry } from "@game/rules/knowledge";
+import { buildLogNotification, enqueueNotification } from "@game/rules/notifications";
 import { buildHydroponicsTerminalMenu } from "src/world/maps/levelSix/hydroponicsPuzzle";
 import type { GameState } from "../types/gameTypes";
 import type { MenuLeafNode } from "../types/menuTypes";
@@ -27,28 +29,14 @@ export function HydroponicsAdminTerminalModal({
     const title = `Employee Record: ${leaf.title}`;
     const body = leaf.description.trim();
 
-    setGameState((prev) => {
-      const alreadyLogged = prev.player.log.some(
-        (entry) =>
-          entry.source === HYDROPONICS_LOG_SOURCE && entry.title === title
-      );
-      if (alreadyLogged) return prev;
-
-      return {
-        ...prev,
-        player: {
-          ...prev.player,
-          log: [
-            ...prev.player.log,
-            {
-              source: HYDROPONICS_LOG_SOURCE,
-              title,
-              loggedAtTurn: prev.moves,
-              body,
-            },
-          ],
-        },
-      };
+    setGameState(prev => {
+      const collected = collectLogEntry(prev, {
+        id: `hydroponics:${leaf.id}`,
+        source: HYDROPONICS_LOG_SOURCE, title, body,
+      });
+      return collected.added
+        ? enqueueNotification(collected.state, buildLogNotification("You log the message for future reference."))
+        : collected.state;
     });
   }
 
