@@ -1,4 +1,3 @@
-import { isItemOpen } from "@game/rules/containers";
 import { startRadioCall } from "@game/helpers/conversationHelpers";
 import {
   getCurrentRadioFrequency,
@@ -6,6 +5,7 @@ import {
 } from "@game/helpers/radioHelpers";
 import { YOU_FIRST_CONTACT_ID } from "@game/npcRegistry";
 import { applyRegisteredRadioCallEffects } from "@game/registries/radioCallEffectRegistry";
+import { isItemOpen } from "@game/rules/containers";
 import type { GameState } from "../../game/types/gameTypes";
 import type { Item } from "../../game/types/itemTypes";
 
@@ -256,7 +256,12 @@ export const specialItems: Item[] = [
   {
     id: "Radio",
     commandAliases: [
-      { verb: "turn", preposition: "on", device: "direct", canonicalVerb: "push" },
+      {
+        verb: "turn",
+        preposition: "on",
+        device: "direct",
+        canonicalVerb: "push",
+      },
     ],
     name: "a two-way radio",
     description:
@@ -326,5 +331,31 @@ export const specialItems: Item[] = [
     isSwitchable: true,
     clothingSlot: "face",
     scoreId: "obtained_nv_goggles",
+  },
+  {
+    id: "DispatchedRobot",
+    name: "emergency services robot",
+    description:
+      "A flat chassis forms a platform mounted on a set of treads, but the white casing is now blackened with soot, partially obscuring a logo reading 'Emergency Services.' Affixed to the platform is a long, three-jointed metal arm that ends in a claw currently limp.",
+    initialDescription:
+      "On the floor is a flat robot with treads, it's chassis marred with soot and its single arm limp.",
+    location: "seeded",
+    vocab: ["rescue", "robot", "dispatched"],
+    itemClass: "solid",
+    itemCategory: "scenery",
+    itemWeight: 2,
+    itemSize: 30,
+  },
+  {
+    id: "Truncheon",
+    name: "a soft rubber truncheon",
+    description:
+      "A squat, soft rubber truncheon. It doesn't look that effective.",
+    location: "seeded",
+    vocab: ["soft", "rubber", "truncheon"],
+    itemClass: "solid",
+    itemCategory: "collectable",
+    itemWeight: 2,
+    itemSize: 5,
   },
 ];

@@ -1,7 +1,7 @@
 import { movePlayerToRoom } from "@game/helpers/gameHelpers";
 import { collectDiscoveries } from "@game/rules/discoveries";
-import { enqueueNotifications } from "@game/rules/notifications";
 import { updateItemLocation } from "@game/rules/items";
+import { enqueueNotifications } from "@game/rules/notifications";
 import { triggerScoreOnce } from "@game/rules/score";
 import { addToInventory } from "@game/rules/state";
 import { getCurrentScore } from "@game/selectors/scoreSelectors";
@@ -509,8 +509,10 @@ const EXPERIENCE_DEFINITIONS: Record<string, ExperienceDefinition> = {
           {
             atElapsedTurns: 2,
             id: "meeting-two",
-            containsContacts: [{ extension: "X9203", name: "Swinth residence" }],
-            message: `When the old woman gets closer to the bench she sees a piece of paper resting on it, held down with a small stone.\n\nShe removes the stone and tosses it aside then picks up the paper which has writing on one side, turning it over so she can see."\n\n"Our unit extension is X9203," she says. "If you can reach him, try it."`,
+            containsContacts: [
+              { extension: "20720", name: "Swinth residence" },
+            ],
+            message: `When the old woman gets closer to the bench she sees a piece of paper resting on it, held down with a small stone.\n\nShe removes the stone and tosses it aside then picks up the paper which has writing on one side, turning it over so she can see."\n\n"Our unit extension is 20720," she says. "If you can reach him, try it."`,
           },
           {
             atElapsedTurns: 3,
@@ -706,7 +708,11 @@ function runExperienceStageEvents(
 
     if (event.run) next = event.run(next, ctx);
     const discovered = collectDiscoveries(next, {
-      ...event, containsTea: [...(event.containsTea ?? []), ...(event.overheardTea ?? [])],
+      ...event,
+      containsTea: [
+        ...(event.containsTea ?? []),
+        ...(event.overheardTea ?? []),
+      ],
     });
     next = enqueueNotifications(discovered.state, discovered.notifications);
 

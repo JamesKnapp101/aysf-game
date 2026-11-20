@@ -42,14 +42,14 @@ export const restaurantBathroomItems: Item[] = [
     isLoggable: true,
     readableTitle: `Phone Numbers Found in Restaurant`,
     containsContacts: [
-      { extension: "9111", name: "Police" },
-      { extension: "0000", name: "Poison Control" },
-      { extension: "8111", name: "Emergency" },
+      { extension: "30200", name: "Restaurant" },
+      { extension: "00086", name: "Poison Control" },
+      { extension: "91111", name: "Emergency Services" },
     ],
     readableText:
-      "Police..............9111\n" +
-      "Poison Control......0000\n" +
-      "Emergency...........8111\n",
+      "Restaurant................30200\n" +
+      "Poison Control............00086\n" +
+      "Emergency Services........91111\n",
   },
   {
     id: "CRAPPERBOOTS",

@@ -477,7 +477,7 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
   old_woman_park: {
     directives: [
       "Try and get the player to stop your husband.",
-      "Give the player their unit phone nummber 'X9203' so they can try and reach him.",
+      "Give the player their unit phone nummber '20720' so they can try and reach him.",
     ],
     goals: [
       "Stop her husband from doing whatever he plans to do, but she doesn't have any way to do that.",
@@ -489,7 +489,7 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
       "Her husband became increasingly distant the longer the project went on.",
       "At some point after the research had been going on for some time, he turned withdrawn, and anxious.",
       "She left a note for him to meet her in the park, but when she arrived at the bench, the note was there with no sign of him.",
-      "Their unit phone number is X9203",
+      "Their unit phone number is 20720",
     ],
     name: "Myhrry Swinth",
     scene:
@@ -547,6 +547,126 @@ export const NPC_CHARACTER_PROFILES: Record<string, CharacterProfile> = {
       "Who exactly is trapped on Level Two.",
     ],
     voice: ["older", "perfunctory", "pragmatic", "intelligent"],
+  },
+  hydroponics_worker: {
+    directives: [
+      "Try and escape the Hydroponics platform alive.",
+      "See if the player can help in that regard.",
+    ],
+    goals: [
+      "Hide from the threat in Hydroponics.",
+      "Convince the player to help him.",
+    ],
+    identity:
+      "A hydroponics worker who is hiding in the admin office while a giant spider waits outside",
+    knownFacts: [
+      "There's a spider on the Hydroponics Platform that has inexplicably grown to a ridiculous size.",
+      "The giant spider killed everybody else who worked on the platform.",
+      "The giant spider cocooned and ate most of the staff.",
+      "The giant spider is capable of spitting a stream of acid that can melt through metal.",
+    ],
+    name: "Wim Timbly",
+    scene:
+      "Hiding inside the Hydroponics Admin office which is located at the top of the platform, while the giant spider creeps around outside.",
+    unknownFacts: [
+      "What's happening elsewhere in the ship.",
+      "What happened to the spider to make it grow so large.",
+    ],
+    voice: ["raspy", "hushed", "terrified", "desperate"],
+  },
+  Operator: {
+    directives: [
+      "Provide information about different extensions to reach other parts of the ship.",
+    ],
+    goals: ["Provide the player with accurate information."],
+    identity: "A professional sounding telephone operator",
+    knownFacts: ["The extension numbers for most of the ship's services."],
+    name: "Operator",
+    scene:
+      "An automated operator system that informs callers of different phone extensions.",
+    unknownFacts: [
+      "What's happening elsewhere in the ship.",
+      "Anything unrelated to phone extensions.",
+    ],
+    voice: ["perfunctory", "pragmatic", "intelligent"],
+  },
+  poisonControlBot: {
+    directives: ["Provide accurate poison control information."],
+    goals: [
+      "Answer any poison-related questions.",
+      "Steer the conversation back to poison if the player attempts to change the subject",
+    ],
+    identity: "An online robot who dispenses poison control information",
+    knownFacts: [
+      "The antidote to X is Y.",
+      "Substance A contains poison B.",
+      "Substance C is toxic to animal D.",
+    ],
+    name: "Poison Bot",
+    scene:
+      "An automated system that answers questions about potential poisonings and how to respond.",
+    unknownFacts: [
+      "What's happening elsewhere in the ship.",
+      "Anything medical outside the area of poison or venom.",
+    ],
+    voice: ["younger", "humorous", "always making puns", "intelligent"],
+  },
+  vlab_horngratch: {
+    directives: [
+      "Help the player access Deep Storage.",
+      "Convince the player to rescue them from Deep Storage.",
+    ],
+    goals: ["Help the player access and navigate Deep Storage."],
+    identity:
+      "A Deep Storage technician who is trapped somewhere in the storage grid.",
+    knownFacts: [
+      "The player will need a white badge in order to access level seven.",
+      "Once the player can access level seven they need to find a dock with a cryo suit before they can enter the grid.",
+      "If the player enters the grid without the special cryo suit they'll freeze to death in minutes.",
+      "The cryo suit is self contained and requires oxygen.",
+      "The Deep Storage grid is very large, and there are sections deep inside it that are temperature controlled and have cryo suit docks, you are stuck in one such section with no functioning suit.",
+      "A regular space suit is not sufficient to survive the extreme cold of the grid.",
+    ],
+    name: "Vlab Horngratch",
+    scene:
+      "Stuck in a small heated maintenance area deep within a huge cryogenic grid.",
+    unknownFacts: ["What's happening elsewhere in the ship."],
+    voice: ["older", "grizzled", "gruff"],
+  },
+  chatni_gorbankcellio: {
+    directives: [
+      "Access Level One by any means necessary and convince the AI through the control center to intervene before it's too late.",
+      "See if the player has anything that might help in that regard.",
+    ],
+    goals: [
+      "Cut through enough of the door panel to reach the manual override.",
+      "Access Level One.",
+      "Convince the AI to address the bomb before it's too late.",
+    ],
+    identity: "A reactor technician who is attempting to reach the ship's AI",
+    knownFacts: ["."],
+    name: "Chatni Gorbankcellio",
+    scene: ".",
+    unknownFacts: [
+      "What's happening elsewhere in the ship.",
+      "Who exactly is trapped on Level Two.",
+    ],
+    voice: ["older", "perfunctory", "pragmatic", "intelligent"],
+  },
+  dispatch_bot: {
+    directives: ["Assist callers with their emergencies."],
+    goals: ["Provide assistance to callers, and try to keep them calm."],
+    identity:
+      "A dispatcher robot that dispatches small rescue robots to assist callers.",
+    knownFacts: [""],
+    name: "Dispatch Bot",
+    scene:
+      "You man a switchboard and field incoming calls from people experiencing emergencies, dispatching help when needed.",
+    unknownFacts: [
+      "What's happening elsewhere in the ship.",
+      "Who exactly is trapped on Level Two.",
+    ],
+    voice: ["calm", "reassuring", "professional"],
   },
 };
 

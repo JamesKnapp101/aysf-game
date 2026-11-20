@@ -180,6 +180,48 @@ export const NPCS: Record<string, ConversationNpc> = {
     vocab: ["manager", "robot manager", "robot", "boss"],
     aiEnabled: false,
   },
+  hydroponics_worker: {
+    id: "hydroponics_worker",
+    name: "The terrified hydroponics worker",
+    vocab: ["wim", "timbly", "hydroponics", "worker"],
+    aiEnabled: true,
+    characterProfileId: "hydroponics_worker",
+  },
+  Operator: {
+    id: "Operator",
+    name: "The robot Operator",
+    vocab: ["operator", "robot operator", "robot"],
+    aiEnabled: true,
+    characterProfileId: "Operator",
+  },
+  poisonControlBot: {
+    id: "poisonControlBot",
+    name: "The poison control robot",
+    vocab: ["poison", "control", "robot"],
+    aiEnabled: true,
+    characterProfileId: "poisonControlBot",
+  },
+  vlab_horngratch: {
+    id: "vlab_horngratch",
+    name: "Vlab Horngratch",
+    vocab: ["vlab", "horngratch"],
+    aiEnabled: true,
+    characterProfileId: "vlab_horngratch",
+  },
+  chatni_gorbankcellio: {
+    id: "chatni_gorbankcellio",
+    name: "Chatni Gorbankcellio",
+    vocab: ["Chatni", "Gorbankcellio"],
+    aiEnabled: true,
+    characterProfileId: "chatni_gorbankcellio",
+  },
+  dispatch_bot: {
+    id: "dispatch_bot",
+    name: "The robot dispatcher",
+    vocab: ["dispatcher", "robot"],
+    aiEnabled: true,
+    characterProfileId: "dispatch_bot",
+  },
 };
 
 export function getNpcById(npcId?: string): ConversationNpc | undefined {

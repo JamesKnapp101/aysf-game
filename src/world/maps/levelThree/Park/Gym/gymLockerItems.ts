@@ -158,7 +158,7 @@ export const gymLockerItems: Item[] = [
     id: "PhoneNumber",
     name: "slip of paper",
     description:
-      "A torn strip of paper with a single extension number written on it:\n\n            X7239",
+      "A torn strip of paper with a single extension number written on it:\n\n            07239",
     location: "ChickLocker12",
     vocab: ["phone", "number", "slip", "paper"],
     itemClass: "solid",
@@ -170,8 +170,8 @@ export const gymLockerItems: Item[] = [
     isContainer: false,
     isLoggable: true,
     readableTitle: `Phone Number Found in Gym Locker`,
-    readableText: "X7239",
-    containsContacts: [{ extension: "X7239" }],
+    readableText: "07239",
+    containsContacts: [{ extension: "07239" }],
     scoreId: "obtained_secret_phone_number_1",
   },
 ];
